@@ -82,11 +82,17 @@ class PortCourses extends Command
 			'tags' => Tag::class,
 		] as $table => $model) {
 			foreach ($legacy->table($table)->whereNull('deleted_at')->get() as $row) {
+				// Legacy calls the label `description` on every taxonomy table,
+				// and has neither an `order` nor a `publish` column for them.
 				$created = $model::create([
-					'title' => $this->translated($row->title ?? $row->name ?? '{}'),
+					'title' => $this->translated($row->description),
 					'order' => $row->order ?? 0,
 					'publish' => (bool) ($row->publish ?? true),
 				]);
+
+				if (blank($created->getTranslations('title'))) {
+					$this->findings[] = "{$table} {$row->id}: imported with no title";
+				}
 
 				$map[$table][$row->id] = $created->id;
 			}
