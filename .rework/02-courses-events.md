@@ -80,26 +80,36 @@ should become a real sanitiser with attribute filtering.
 `php artisan port:courses` reconciles and reports rather than silently coercing.
 Against the current snapshot:
 
+Against the 2026-09-11 production dump (41 courses, 341 live events):
+
 | Finding | Count | Disposition |
 |---|---:|---|
+| `events.date` year typed as two digits | **14** | **skipped — needs a decision** |
+| Published events with no date at all | 2 | skipped — invisible on the live site too, since a NULL date fails both the upcoming and past comparisons |
 | `events.date` disagreed with first `event_date` | 3 | first date wins |
-| Published events with no date at all | 2 | **skipped** — invisible on the live site too, since a NULL date fails both the upcoming and past comparisons |
-| `events.date` year typed as two digits (`0025`) | 11 | **skipped — needs a decision** |
 | Course rich text entity-encoded (`&auml;`) | 24 of 35 | decoded to UTF-8 on port |
 | English subtitles still lorem ipsum | 6 | content task, not code |
 | Event state: flag and timestamp disagree | 1 | flag wins (what the app read) |
 
-### The `0025` batch needs your decision
+### Two-digit years: a live bug, not a historical one
 
-Eleven events created in one sitting on 2025-06-03 were typed with two-digit
-years. `events.date` holds the intended day in year 0025; the `event_dates` rows
-silently fell back to the creation date. For 202 and 207 the two agree, so the
-real date is recoverable. For 203, 204, 205 and 208–213 the event_dates are
-placeholders and only the corrupted column carries intent.
+Fourteen events carry a `date` in year 25 or 26 AD, entered in **three separate
+batches** — 2025-06-03 (11), 2025-11-13 (1), 2025-11-21 (2). It is an ongoing
+failure mode in the live application, not one bad afternoon.
 
-None has bookings and all are in the past, so nothing is at stake — but the port
-will not guess a date that gets shown to students. **Options:** drop them, or
-restore from `events.date + 2000 years`.
+Where `events.date` disagrees with the `event_dates` rows, the latter fell back
+to the creation date. For 202, 207, 294 and 295 the two agree and the real date
+is recoverable; for the rest only the corrupted column carries intent.
+
+**All fourteen have zero bookings, and that is the finding.** A date in year 25
+fails every upcoming-events comparison, so these course dates were published and
+then never appeared anywhere on the site. Events 294 and 295 (SketchUp, intended
+2026-01-26) were entered 2025-11-21 and would have been sellable for two months.
+This is lost revenue, not untidy data.
+
+**Needs a decision:** drop them, or restore from `events.date + 2000 years`. And
+separately: the legacy entry form should reject a date before 2000 — a one-line
+fix worth making on the live site regardless of the rework.
 
 ## Open questions
 

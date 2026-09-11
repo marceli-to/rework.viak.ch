@@ -149,3 +149,20 @@ the design should only shift slightly.
 3. Fresh production dump before cutover rehearsal.
 4. VAT treatment for software licences — blocks chunk 03. Needs the client's bookkeeper.
 5. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
+
+## Working data (updated 2026-09-11)
+
+`viak_legacy` now holds the **2026-09-11 production dump**, scrubbed in place by
+`php artisan db:scrub` — 578 users, 710 bookings, 569 invoices, 360 events.
+
+The scrub replaces customer identities and leaves everything reconciliation
+compares. Verified by comparing untruncated MD5 fingerprints of the
+non-identity columns against a pristine import: identical for invoices,
+bookings, events and the non-PII user columns.
+
+Two things that verification caught, worth remembering:
+
+- `GROUP_CONCAT` silently truncates at 1024 bytes. A fingerprint built without
+  raising `group_concat_max_len` compares the first few rows and nothing else,
+  and will happily report two different databases as identical.
+- `invoices.due_at` rewrites itself on any UPDATE — see `03-invoices.md`.
