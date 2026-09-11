@@ -1,0 +1,21 @@
+/* Brand tokens carried over from the legacy SCSS (resources/sass/config/_colors.scss)
+   plus the derived tones the mockup introduces. Teal is unchanged: #46baba. */
+@theme {
+	--color-ink: #000000;
+	--color-text: #333333;
+	--color-muted: #505050;
+	--color-faint: #969696;
+
+	--color-teal: #46baba;
+	--color-teal-dark: #2d8f8f;
+	--color-teal-tint: #eaf6f6;
+
+	--color-line: #e2e2e2;
+	--color-paper: #f7f7f7;
+	--color-light: #eeeeee;
+
+	--color-danger: #ff2800;
+	--color-warning: #ff944f;
+	--color-success: #5fad56;
+	--color-info: #505050;
+}

@@ -1,0 +1,6 @@
+/* The mockup moves from Effra (legacy, Adobe Fonts) to Poppins.
+   Confirm licensing / brand sign-off before this is final — see .rework/00-foundation.md.
+   The @font-face import itself lives at the top of app.css for CSS ordering reasons. */
+@theme {
+	--font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+}
