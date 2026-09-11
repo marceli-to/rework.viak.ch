@@ -107,9 +107,10 @@ then never appeared anywhere on the site. Events 294 and 295 (SketchUp, intended
 2026-01-26) were entered 2025-11-21 and would have been sellable for two months.
 This is lost revenue, not untidy data.
 
-**Needs a decision:** drop them, or restore from `events.date + 2000 years`. And
-separately: the legacy entry form should reject a date before 2000 — a one-line
-fix worth making on the live site regardless of the rework.
+**Deferred — see `Todo.md`** for the full reconstruction table and the three rows
+that need a human. Not solved now: all 14 are in the past with no bookings, and
+the legacy validation is fixed forward (legacy branch
+`fix/invoice-due-at-auto-update`, commit `d4974ff`), so no new ones can appear.
 
 ## Open questions
 
