@@ -88,7 +88,10 @@ Carried from the chunk docs so they are in one place:
   The hierarchy would have dropped the two top-listed public experts, who are
   Admin + Expert. See `02-courses-events.md`.
 - ~~Poppins vs Effra~~ — **resolved 2026-09-11**: staying with Effra (Typekit
-  `kcs4ept`). Legacy also loads a second kit, `bmx5jih`; confirm it is dead.
+  `bmx5jih`).
+- **Legacy quick win:** `head.blade.php` loads Typekit kit `kcs4ept`
+  (neuzeit-grotesk), which no stylesheet references — a dead render-blocking
+  request on every page. Safe to delete from the live site.
 - **Production PHP version** — the rework is pinned to 8.3. Raise it if production
   runs 8.4.
 - **English on the public site** — currently admin-only behind `role:admin`.

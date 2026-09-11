@@ -129,11 +129,13 @@ Brand teal is unchanged from the legacy SCSS: `#46baba`. The mockup's derived to
 (`--color-teal-dark: #2d8f8f`, `--color-line`, `--color-paper`) are added in
 `resources/css/partials/colors.css`.
 
-**Decided (2026-09-11):** stay with **Effra**, the legacy typeface, loaded from the
-existing Typekit kit `kcs4ept`. The mockup proposed Poppins; the client declined.
+**Decided (2026-09-11):** stay with **Effra**, the legacy typeface. The mockup
+proposed Poppins; the client declined.
 
-Legacy loads two Typekit kits — `kcs4ept` (head.blade.php) and `bmx5jih` (_fonts.scss).
-Only `kcs4ept` is carried over; confirm the other is dead before the legacy site is retired.
+Effra comes from Typekit kit **`bmx5jih`** (400, 500, 700 + italics). Legacy loads a
+second kit, `kcs4ept`, from `head.blade.php` — it serves *neuzeit-grotesk* and is
+referenced by nothing in the stylesheets. It is a dead render-blocking request on
+every page of the live site and is not carried over; worth deleting there too.
 
 ## Commands
 

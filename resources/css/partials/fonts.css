@@ -1,9 +1,12 @@
 /* Effra, via Adobe Fonts (Typekit) — the legacy typeface, kept.
    The mockup proposed Poppins; the client chose to stay with Effra.
 
-   Legacy loads TWO different kits: kcs4ept in resources/views/web/partials/head.blade.php
-   and bmx5jih in resources/sass/typo/_fonts.scss. Only one is needed — kcs4ept is the one
-   on every page, so that is the one carried over. Worth confirming the other is dead.
+   Kit `bmx5jih` (weights 400, 500, 700, plus italics). Legacy loads a SECOND
+   kit, `kcs4ept`, from head.blade.php — that one serves neuzeit-grotesk and is
+   referenced by nothing in the stylesheets, so it is a dead render-blocking
+   request on every page of the live site. Not carried over; worth removing
+   there too.
+
    The @import itself lives at the top of app.css for CSS ordering reasons. */
 @theme {
 	--font-sans: effra, ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
