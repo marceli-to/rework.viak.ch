@@ -15,7 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'role', 'password'])]
+#[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,14 +27,35 @@ class User extends Authenticatable
 	use HasUuid;
 	use Notifiable;
 
+	/** @var \Illuminate\Support\Collection<int, Role>|null */
+	private ?\Illuminate\Support\Collection $roleNames = null;
+
 	/** @return array<string, string> */
 	protected function casts(): array
 	{
 		return [
 			'email_verified_at' => 'datetime',
 			'password' => 'hashed',
-			'role' => Role::class,
 		];
+	}
+
+	/**
+	 * Roles held, as a pivot. Cached per request because authorisation asks
+	 * repeatedly and these never change mid-request.
+	 *
+	 * @return \Illuminate\Support\Collection<int, Role>
+	 */
+	public function roles(): \Illuminate\Support\Collection
+	{
+		return $this->roleNames ??= \Illuminate\Support\Facades\DB::table('role_user')
+			->where('user_id', $this->getKey())
+			->pluck('role')
+			->map(fn (string $role) => Role::from($role));
+	}
+
+	public function hasRole(Role $role): bool
+	{
+		return $this->roles()->contains($role);
 	}
 
 	/** Course dates this user teaches. Only experts and admins have any. */
@@ -45,11 +66,16 @@ class User extends Authenticatable
 
 	public function isAdmin(): bool
 	{
-		return $this->role === Role::Admin;
+		return $this->hasRole(Role::Admin);
 	}
 
-	public function isAtLeast(Role $role): bool
+	/**
+	 * Teaches courses. Holding the role is necessary but not sufficient for
+	 * appearing on the public Experten page — that also needs the publish and
+	 * visible flags, as it does today.
+	 */
+	public function isExpert(): bool
 	{
-		return $this->role->atLeast($role);
+		return $this->hasRole(Role::Expert);
 	}
 }

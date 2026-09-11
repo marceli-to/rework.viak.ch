@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Enums\Role;
 use App\Models\Course;
 use App\Models\User;
 
@@ -35,17 +34,17 @@ class CoursePolicy
 
 	public function create(User $user): bool
 	{
-		return $user->isAtLeast(Role::Admin);
+		return $user->isAdmin();
 	}
 
 	public function update(User $user, Course $course): bool
 	{
-		return $user->isAtLeast(Role::Admin);
+		return $user->isAdmin();
 	}
 
 	public function delete(User $user, Course $course): bool
 	{
-		return $user->isAtLeast(Role::Admin);
+		return $user->isAdmin();
 	}
 
 	private function teaches(User $user, Course $course): bool

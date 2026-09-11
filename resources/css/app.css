@@ -1,5 +1,5 @@
-/* Google Fonts must precede every other rule (CSS @import ordering). */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+/* Font imports must precede every other rule (CSS @import ordering). */
+@import url('https://use.typekit.net/kcs4ept.css');
 @import 'tailwindcss';
 
 @import './partials/fonts.css';

@@ -45,12 +45,23 @@ unconfirmed. `events.state` is now the single source of truth, written only by
 Cancelling is terminal. A cancelled event has told students it is off and may
 have triggered penalty invoices, so reinstating it throws.
 
-### Roles collapse from a pivot to a column
+### Roles stay a pivot — they are capabilities, not a rank
 
-Of 468 legacy users, 465 hold exactly one role and all three exceptions are
-Admins who additionally hold Expert and/or Student. The pivot only ever
-expressed a hierarchy, so `Role` is an enum column with `atLeast()`. Verified
-lossless against `viak_legacy`.
+An earlier draft of this chunk collapsed `role_user` into a single `role`
+column with Admin implying Expert implying Student, on the grounds that 465 of
+468 users held exactly one role. **That was wrong**, and the production data
+says so plainly: the two people at the top of the public Experten page (users
+501 and 2) are Admin + Expert + Student. "Highest role wins" would have dropped
+both from the page; `atLeast(Expert)` would instead have swept in five admins
+who have no bio and teach nothing.
+
+Admin is a permission level, Expert means *teaches, has a bio, appears on the
+site*, Student means *books courses*. One person is legitimately all three, so
+the pivot does real work and stays. `role_user` now holds the enum value
+directly — the legacy three-row `roles` lookup table is dropped, since three
+fixed values belong in an enum rather than in an editable table.
+
+Pinned by `tests/Feature/RolesTest.php`.
 
 ### `events.date` derives from the event's dates
 

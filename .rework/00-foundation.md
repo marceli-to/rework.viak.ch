@@ -129,9 +129,11 @@ Brand teal is unchanged from the legacy SCSS: `#46baba`. The mockup's derived to
 (`--color-teal-dark: #2d8f8f`, `--color-line`, `--color-paper`) are added in
 `resources/css/partials/colors.css`.
 
-**Open:** the mockup moves type from **Effra** (Adobe Fonts) to **Poppins**. Currently
-scaffolded as Poppins. Needs brand sign-off — it is a visible change and the brief says
-the design should only shift slightly.
+**Decided (2026-09-11):** stay with **Effra**, the legacy typeface, loaded from the
+existing Typekit kit `kcs4ept`. The mockup proposed Poppins; the client declined.
+
+Legacy loads two Typekit kits — `kcs4ept` (head.blade.php) and `bmx5jih` (_fonts.scss).
+Only `kcs4ept` is carried over; confirm the other is dead before the legacy site is retired.
 
 ## Commands
 

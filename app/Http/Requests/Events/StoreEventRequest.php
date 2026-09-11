@@ -93,8 +93,10 @@ class StoreEventRequest extends FormRequest
 	}
 
 	/**
-	 * Only users who actually teach may be attached as experts — an admin-only
-	 * endpoint is still no reason to let an arbitrary user id through.
+	 * Only users who actually hold the Expert role may be attached — an
+	 * admin-only endpoint is still no reason to let an arbitrary user id
+	 * through. Note this is the Expert role specifically, not "admin or
+	 * above": several admins neither teach nor have a bio.
 	 *
 	 * @return array<int, int>
 	 */
@@ -107,7 +109,10 @@ class StoreEventRequest extends FormRequest
 		}
 
 		return User::whereIn('uuid', $uuids)
-			->where('role', '!=', Role::Student->value)
+			->whereExists(fn ($query) => $query->selectRaw(1)
+				->from('role_user')
+				->whereColumn('role_user.user_id', 'users.id')
+				->where('role_user.role', Role::Expert->value))
 			->pluck('id')
 			->all();
 	}

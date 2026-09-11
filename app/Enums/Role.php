@@ -5,16 +5,24 @@ declare(strict_types=1);
 namespace App\Enums;
 
 /**
- * Who someone is in the system.
+ * What a person can do. **Not a hierarchy** — these are capabilities, and one
+ * person legitimately holds several.
  *
- * Legacy modelled this as a many-to-many `role_user` pivot, but the data never
- * needed it: of 468 users, 465 hold exactly one role, and all three exceptions
- * are Admins who additionally hold Expert and/or Student. So the pivot only
- * ever expressed a hierarchy, and a single column with `atLeast()` expresses
- * the same thing without the join.
+ * An earlier draft collapsed the legacy `role_user` pivot into a single column
+ * with Admin implying Expert implying Student, on the grounds that 465 of 468
+ * users held exactly one role. That was wrong, and visibly so: the two people
+ * at the top of the public Experten page (users 501 and 2) are Admin + Expert
+ * + Student. "Highest role wins" would have dropped both from the page, and
+ * `atLeast(Expert)` would instead have swept in five admins who have no bio
+ * and teach nothing.
  *
- * Migration maps each legacy user to their highest role. Verified lossless
- * against `viak_legacy` — see [[01-schema]].
+ * So the pivot stays. See [[02-courses-events]].
+ *
+ * - Admin:   runs the backoffice.
+ * - Expert:  teaches courses, has a public bio, appears on the Experten page
+ *            (subject to its own publish/visible flags — holding the role is
+ *            necessary but not sufficient).
+ * - Student: books courses.
  */
 enum Role: string
 {
@@ -22,18 +30,23 @@ enum Role: string
 	case Expert = 'expert';
 	case Admin = 'admin';
 
-	private function rank(): int
+	/** The legacy `roles.id` this maps to, for the port. */
+	public function legacyId(): int
 	{
 		return match ($this) {
-			self::Student => 1,
+			self::Admin => 1,
 			self::Expert => 2,
-			self::Admin => 3,
+			self::Student => 3,
 		};
 	}
 
-	/** Admin satisfies Expert, Expert satisfies Student. */
-	public function atLeast(self $role): bool
+	public static function fromLegacyId(int $id): self
 	{
-		return $this->rank() >= $role->rank();
+		return match ($id) {
+			1 => self::Admin,
+			2 => self::Expert,
+			3 => self::Student,
+			default => self::Student,
+		};
 	}
 }

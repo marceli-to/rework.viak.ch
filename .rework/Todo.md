@@ -84,9 +84,11 @@ Carried from the chunk docs so they are in one place:
 - **Licence fulfilment** — manual dispatch or reseller API? Blocks chunk 05 scoping.
 - **Historical invoice due dates** — recoverable from Run My Accounts? See
   `03-invoices.md`. Only matters if dunning or the accounting export needs them.
-- **Roles as a single enum column** rather than the legacy pivot. Lossless against
-  today's data; wrong shape if a true multi-role user is ever wanted.
-- **Poppins vs Effra** — the mockup changes the typeface. Needs brand sign-off.
+- ~~Roles as a single enum column~~ — **resolved 2026-09-11**: reverted to a pivot.
+  The hierarchy would have dropped the two top-listed public experts, who are
+  Admin + Expert. See `02-courses-events.md`.
+- ~~Poppins vs Effra~~ — **resolved 2026-09-11**: staying with Effra (Typekit
+  `kcs4ept`). Legacy also loads a second kit, `bmx5jih`; confirm it is dead.
 - **Production PHP version** — the rework is pinned to 8.3. Raise it if production
   runs 8.4.
 - **English on the public site** — currently admin-only behind `role:admin`.
