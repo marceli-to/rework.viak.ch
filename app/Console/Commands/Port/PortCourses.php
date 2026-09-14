@@ -14,6 +14,7 @@ use App\Models\Location;
 use App\Models\Software;
 use App\Models\Tag;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -23,6 +24,11 @@ use Illuminate\Support\Facades\DB;
  *
  * Reconciliation is the point, not the copying. Every mismatch it reports is
  * a decision someone has to make before cutover.
+ *
+ * **Legacy uuids are carried across, not regenerated.** They are the route key
+ * ([[HasUuid]]), so a fresh one would break every bookmarked and emailed link
+ * on cutover day. They are also the only stable identifier the later ports can
+ * join on, since auto-increment ids are not preserved.
  */
 class PortCourses extends Command
 {
@@ -43,13 +49,19 @@ class PortCourses extends Command
 			return self::SUCCESS;
 		}
 
-		DB::transaction(function () use ($legacy): void {
-			$this->clear();
+		// Unguarded because the port assigns `uuid`, which is deliberately not
+		// fillable: it is the public route key and must never be settable from
+		// a request. Here it has to carry across from legacy unchanged.
+		Model::unguarded(function () use ($legacy): void {
+			DB::transaction(function () use ($legacy): void {
 
-			$taxonomyMap = $this->portTaxonomies($legacy);
-			$locationMap = $this->portLocations($legacy);
-			$courseMap = $this->portCourses($legacy, $taxonomyMap);
-			$this->portEvents($legacy, $courseMap, $locationMap);
+				$this->clear();
+
+				$taxonomyMap = $this->portTaxonomies($legacy);
+				$locationMap = $this->portLocations($legacy);
+				$courseMap = $this->portCourses($legacy, $taxonomyMap);
+				$this->portEvents($legacy, $courseMap, $locationMap);
+			});
 		});
 
 		$this->reconcile($legacy);
@@ -107,6 +119,8 @@ class PortCourses extends Command
 		$map = [];
 
 		foreach ($legacy->table('locations')->whereNull('deleted_at')->get() as $row) {
+			// Locations are the one legacy table with no uuid of its own, so
+			// these are newly minted. Nothing links to a location by uuid.
 			$map[$row->id] = Location::create([
 				'description' => $this->translated($row->description),
 				'address' => $this->translated($row->address),
@@ -128,6 +142,7 @@ class PortCourses extends Command
 
 		foreach ($legacy->table('courses')->whereNull('deleted_at')->orderBy('id')->get() as $row) {
 			$course = Course::create([
+				'uuid' => $row->uuid,
 				'number' => $row->number,
 				'slug' => $this->translated($row->slug),
 				'title' => $this->translated($row->title),
@@ -181,7 +196,12 @@ class PortCourses extends Command
 	 */
 	private function portEvents($legacy, array $courseMap, array $locationMap): void
 	{
-		foreach ($legacy->table('events')->whereNull('deleted_at')->orderBy('id')->get() as $row) {
+		// Soft-deleted events come across too, still soft-deleted. 19 of them
+		// exist and 2 carry bookings — including two seats that were paid for
+		// before the event was called off. Dropping the event row would take
+		// that booking history with it, and a cancelled-but-paid seat is
+		// exactly the kind of thing someone will later need to explain.
+		foreach ($legacy->table('events')->orderBy('id')->get() as $row) {
 			if (! isset($courseMap[$row->course_id])) {
 				$this->findings[] = "event {$row->id}: course {$row->course_id} is soft-deleted; event skipped";
 
@@ -229,6 +249,8 @@ class PortCourses extends Command
 			$state = $this->resolveState($legacy, $row);
 
 			$event = Event::create([
+				'uuid' => $row->uuid,
+				'deleted_at' => $row->deleted_at,
 				'date' => $dates->first()->date ?? $row->date,
 				'registration_until' => $row->registration_until,
 				'min_participants' => $row->min_participants,
@@ -312,8 +334,12 @@ class PortCourses extends Command
 			'events' => Event::class,
 			'locations' => Location::class,
 		] as $table => $model) {
-			$before = $legacy->table($table)->whereNull('deleted_at')->count();
-			$after = $model::count();
+			// Events include the soft-deleted ones on both sides, since those
+			// are ported rather than dropped.
+			$before = $table === 'events'
+				? $legacy->table($table)->count()
+				: $legacy->table($table)->whereNull('deleted_at')->count();
+			$after = $model::withTrashed()->count();
 			$skipped = $before - $after;
 			$rows[] = [
 				$table,
