@@ -47,22 +47,40 @@ from a request.
 `locations` is the one legacy table with no uuid; those are newly minted, and
 nothing links to a location by uuid.
 
-### Soft-deleted events are ported, still soft-deleted
+### Soft-deleted rows are ported, still soft-deleted
 
-19 legacy events are soft-deleted and 2 of them carry bookings — including two
-seats that were **paid for** before the event was called off. Dropping the event
-row would take that booking history with it.
+The rule: if anything still points at a row, it comes across rather than being
+dropped, and keeps its `deleted_at`.
+
+- **19 events** are soft-deleted and 2 carry bookings — including two seats that
+  were **paid for** before the event was called off.
+- **5 discount codes** are soft-deleted and 1 had been spent: booking 000640
+  used a CHF 50 voucher on 2026-04-02 that was deleted on 2026-05-07.
+
+Dropping either would leave a booking pointing at nothing — a seat with no
+event, or a CHF 50 discount with nothing to say what it was. Soft-deleting on
+the way in keeps the history and still keeps the row out of everything live: a
+deleted voucher is not redeemable, because `DiscountCode::validOn()` never sees
+it. `tests/Feature/Bookings/BookingTest.php` pins both halves of that.
 
 ## Data findings from the port
 
-Against the 2026-09-11 dump, `port:users` reports 7 findings plus 1 accepted.
-None blocks the build.
+Against the 2026-09-11 dump, `port:users` reports **no findings**: 6
+observations and 1 accepted item, nothing outstanding.
 
-| Finding | Count | Disposition |
+The output has three buckets, because lumping them together buries the one
+thing that actually needs somebody:
+
+| Bucket | Means | Count |
+|---|---|---:|
+| **Findings** | Nobody has decided this yet. Blocks cutover. | 0 |
+| **Observations** | The data is odd; the design already answers it. | 6 |
+| **Accepted** | Looked at, deliberately left alone. | 1 |
+
+| What | Count | Disposition |
 |---|---:|---|
-| Booking invoiced at half its `course_fee` | 6 | Reported, not corrected — the invoice is the money |
-| Live booking for a past event, never invoiced | 1 | **Accepted 2026-09-14** — left as it is |
-| Discount code used on a booking, later deleted | 1 | Amount kept, link dropped |
+| Booking invoiced at half its `course_fee` | 6 | Observation — the invoice is the money |
+| Live booking for a past event, never invoiced | 1 | Accepted 2026-09-14 — left as it is |
 
 ### The invoice is the money, not the booking
 

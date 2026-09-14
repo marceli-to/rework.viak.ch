@@ -65,6 +65,23 @@ it('treats an open-ended validity window as still valid', function () {
 		->and($valid)->not->toContain('FUTURE');
 });
 
+/**
+ * Booking 000640 spent a CHF 50 voucher that was deleted a month later. The
+ * code is ported soft-deleted so the booking can still say what it spent —
+ * but a deleted voucher must never be redeemable again, which is what the
+ * SoftDeletes global scope is doing here. Both halves matter.
+ */
+it('keeps a booking linked to a discount code that was later deleted', function () {
+	$code = DiscountCode::factory()->create(['code' => 'GONE']);
+	$booking = Booking::factory()->create(['discount_code_id' => $code->id, 'discount_amount' => '50.00']);
+
+	$code->delete();
+
+	expect($booking->fresh()->discountCode()->withTrashed()->first()->code)->toBe('GONE')
+		->and(DiscountCode::where('code', 'GONE')->exists())->toBeFalse()
+		->and(DiscountCode::validOn(now())->pluck('code'))->not->toContain('GONE');
+});
+
 it('keeps the frozen invoice address as structured data', function () {
 	$booking = Booking::factory()->create([
 		'invoice_address' => ['lines' => ['Antonia Haller', 'Kaiserstr. 76', '7752 Orsières']],

@@ -50,6 +50,15 @@ class PortUsers extends Command
 	/** @var array<int, string> Known and decided; reported, but not as work. */
 	private array $accepted = [];
 
+	/**
+	 * Things worth seeing but with nothing to decide — where the data is odd
+	 * and the port already handles it the way the design says it should.
+	 * Separate from findings so a real decision is never buried among them.
+	 *
+	 * @var array<int, string>
+	 */
+	private array $observations = [];
+
 	public function handle(): int
 	{
 		$legacy = DB::connection('legacy');
@@ -237,7 +246,12 @@ class PortUsers extends Command
 	{
 		$map = [];
 
-		foreach ($legacy->table('discount_codes')->whereNull('deleted_at')->orderBy('id')->get() as $row) {
+		// Soft-deleted codes come across too, still soft-deleted — the same
+		// rule as soft-deleted events, and for the same reason. Booking 000640
+		// spent a CHF 50 voucher that was deleted a month later; dropping the
+		// row would leave the discount on the booking with nothing to say what
+		// it was. 5 of the 107 codes are in this state.
+		foreach ($legacy->table('discount_codes')->orderBy('id')->get() as $row) {
 			$type = $this->discountType($row);
 
 			if ($type === null) {
@@ -254,6 +268,7 @@ class PortUsers extends Command
 				'valid_from' => $row->valid_from,
 				'valid_to' => $row->valid_to,
 				'remarks' => $row->remarks,
+				'deleted_at' => $row->deleted_at,
 			])->id;
 		}
 
@@ -387,7 +402,9 @@ class PortUsers extends Command
 		foreach ([
 			'users' => [User::withTrashed()->count(), $legacy->table('users')->count()],
 			'user_addresses' => [UserAddress::count(), $legacy->table('user_addresses')->whereNull('deleted_at')->count()],
-			'discount_codes' => [DiscountCode::count(), $legacy->table('discount_codes')->whereNull('deleted_at')->count()],
+			// Soft-deleted codes are ported rather than dropped, so both sides
+			// count them.
+			'discount_codes' => [DiscountCode::withTrashed()->count(), $legacy->table('discount_codes')->count()],
 			'bookings' => [Booking::count(), $legacy->table('bookings')->whereNull('deleted_at')->count()],
 		] as $table => [$after, $before]) {
 			$skipped = $before - $after;
@@ -407,6 +424,15 @@ class PortUsers extends Command
 
 		$this->reportUninvoicedBookings($legacy);
 		$this->reportFeeMismatches($legacy);
+
+		if ($this->observations !== []) {
+			$this->newLine();
+			$this->components->info(count($this->observations).' observation(s) — the data is odd, the handling is settled:');
+
+			foreach ($this->observations as $note) {
+				$this->line('  - '.$note);
+			}
+		}
 
 		if ($this->accepted !== []) {
 			$this->newLine();
@@ -465,6 +491,9 @@ class PortUsers extends Command
 	 * Six bookings were invoiced at exactly half their course fee under an
 	 * arrangement recorded nowhere but the invoice. Reported, not corrected:
 	 * the invoice is what the customer paid and what the books show.
+	 *
+	 * An observation rather than a finding — the design already answers it,
+	 * and nobody has to decide anything before cutover.
 	 */
 	private function reportFeeMismatches($legacy): void
 	{
@@ -478,7 +507,7 @@ class PortUsers extends Command
 			->get();
 
 		foreach ($rows as $row) {
-			$this->findings[] = sprintf(
+			$this->observations[] = sprintf(
 				'booking %s: course_fee %s but invoice %s charged %s — the invoice is the money, booking left as-is',
 				$row->number,
 				$row->course_fee,
