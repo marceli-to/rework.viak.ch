@@ -7,7 +7,9 @@ detail to act on without redoing the investigation.
 
 ## Restore the 14 events lost to two-digit years
 
-**Decide during chunk 02 of the real build. Marcel to confirm the reconstruction.**
+**Blocks the production migration. Not a chunk 02 decision — the port keeps
+skipping and reporting until then. Marcel to confirm the reconstruction before
+cutover.**
 
 ### What happened
 
@@ -65,13 +67,21 @@ Best estimate: ~10 real lost course dates, ~4 duplicate attempts.
 
 ### When it gets solved
 
-`port:courses` currently **skips** all 14 and reports them. Options at build time:
+**At migration, before we go to production.** Nothing in the build depends on the
+answer: all 14 are in the past, none took a booking, and none of them has ever
+been visible on the site. But the final port that produces the production
+database cannot ship with a silent skip in it — whatever we decide has to be
+written into `port:courses` and be reproducible on the cutover run.
+
+`port:courses` currently **skips** all 14 and reports them. The two options:
 
 1. Drop them. They are historical, unbooked, and invisible. Cheapest, loses nothing
    a customer ever saw.
 2. Restore from the table above, so the course history is complete for reporting.
 
-Either way the port should stop skipping silently once the decision is made.
+Either way the port must stop skipping silently once the decision is made — an
+explicit drop list or an explicit reconstruction map, not a warning on stderr
+that the cutover run is free to ignore.
 
 ---
 

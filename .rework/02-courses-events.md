@@ -118,14 +118,16 @@ then never appeared anywhere on the site. Events 294 and 295 (SketchUp, intended
 2026-01-26) were entered 2025-11-21 and would have been sellable for two months.
 This is lost revenue, not untidy data.
 
-**Deferred — see `Todo.md`** for the full reconstruction table and the three rows
-that need a human. Not solved now: all 14 are in the past with no bookings, and
-the legacy validation is fixed forward (legacy branch
-`fix/invoice-due-at-auto-update`, commit `d4974ff`), so no new ones can appear.
+**Deferred to the migration — see `Todo.md`** for the full reconstruction table
+and the three rows that need a human. Nothing in this chunk depends on it: all 14
+are in the past with no bookings, and the legacy validation is fixed forward
+(legacy branch `fix/invoice-due-at-auto-update`, commit `d4974ff`), so no new
+ones can appear. It becomes blocking at cutover, when the port has to produce the
+production database without a silent skip in it.
 
 ## Open questions
 
-1. The `0025` batch, above.
+1. The `0025` batch, above — resolved at migration, not here.
 2. `courses.reviews` — a `text` column holding what looks like structured data.
    Ported as-is; needs a shape before it can be edited.
 3. English is admin-only on the public site today (legacy gates `/en` behind

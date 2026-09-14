@@ -151,6 +151,8 @@ every page of the live site and is not carried over; worth deleting there too.
 1. Production PHP version (pin above).
 2. Poppins vs Effra.
 3. Fresh production dump before cutover rehearsal.
+6. The 14 two-digit-year events: drop or restore. Blocks the cutover port, not the
+   build — see `Todo.md`.
 4. VAT treatment for software licences — blocks chunk 03. Needs the client's bookkeeper.
 5. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
 
