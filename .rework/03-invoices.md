@@ -35,21 +35,27 @@ person does not "fix" it.
 `is_rental` is a **CHF 80 laptop rental** attached to a booking, not a software
 licence. 29 invoices, every one of them `80.00 + 6.50 = 86.50`.
 
-### Rounding: legacy rounds VAT to 5 centimes, the shop screenshot does not
+### Rounding: to the centime — decided 2026-09-14
 
 `RentalInvoice::getVat()` is `round( $amount / 100 * $rate * 20 ) / 20` — round to
-the nearest **0.05**. On 80.00 that is 8.1 % = 6.48, stored as **6.50**.
+the nearest **0.05**. On 80.00 that is 8.1 % = 6.48, stored as **6.50**. The shop
+rounds to the centime instead: 370.00 × 8.1 % = 29.97, where 5-centime rounding
+would give 29.95.
 
-The screenshot rounds to the centime instead: 370.00 × 8.1 % = 29.97 exactly, where
-5-centime rounding would give 29.95. **Both cannot be right.** Swiss practice is
-that VAT is computed to the centime and only a cash payment total is rounded to
-0.05, which makes the screenshot correct and the legacy `* 20 ) / 20` a habit
-carried in from cash rounding.
+**The rework computes VAT to the centime.** Swiss practice is that VAT is figured
+to the centime and only a *cash* payment total is rounded to 0.05; the legacy
+`* 20 ) / 20` is that cash habit applied a step too early. The shop was right.
 
-**To confirm with the client before chunk 03 is built:** compute VAT to the
-centime, and treat the 29 historical `6.50` values as legacy artefacts to port
-verbatim rather than recompute. Nothing else depends on the answer, but the
-invoice PDFs do.
+Two consequences for the build:
+
+- **No 5-centime rounding anywhere in the VAT calculation.** `round($net * $rate,
+  2)`. Worth a test with an amount whose centime and 5-centime results differ —
+  80.00 is exactly such a case (6.48 vs 6.50), so it doubles as the regression pin.
+- **The 29 historical rentals keep their `6.50`.** They are what the customer was
+  invoiced and what the books recorded; the port copies `vat` across verbatim and
+  never recomputes it. Any reconciliation that recalculates VAT from `total` will
+  flag all 29 — that is expected, not a port bug, and the reconciliation should
+  say so rather than "fix" them.
 
 ## Run My Accounts — answered 2026-09-14
 

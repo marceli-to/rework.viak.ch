@@ -163,8 +163,8 @@ every page of the live site and is not carried over; worth deleting there too.
    chunk 03; what the port does with the 541 lost and the open/overdue deadlines
    is cutover work — see `Todo.md`.
 4. ~~VAT treatment for software licences~~ — **answered 2026-09-14**: 8.1 % on the
-   net price, posted to Run My Accounts exactly like a course. See `03-invoices.md`.
-   Open sub-question: round VAT to the centime or to 0.05.
+   net price, rounded to the centime, posted to Run My Accounts exactly like a
+   course. Courses stay VAT-exempt. See `03-invoices.md`.
 5. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
 
 ## Working data (updated 2026-09-11)
