@@ -55,13 +55,13 @@ row would take that booking history with it.
 
 ## Data findings from the port
 
-Against the 2026-09-11 dump, `port:users` reports 8 findings. None blocks the
-build; all belong in front of a human before cutover.
+Against the 2026-09-11 dump, `port:users` reports 7 findings plus 1 accepted.
+None blocks the build.
 
 | Finding | Count | Disposition |
 |---|---:|---|
 | Booking invoiced at half its `course_fee` | 6 | Reported, not corrected — the invoice is the money |
-| Live booking for a past event, never invoiced | 1 | Needs a human — see below |
+| Live booking for a past event, never invoiced | 1 | **Accepted 2026-09-14** — left as it is |
 | Discount code used on a booking, later deleted | 1 | Amount kept, link dropped |
 
 ### The invoice is the money, not the booking
@@ -83,16 +83,21 @@ sides as they are: the booking is the offer, the invoice is what was paid and
 what the books show. This is why `bookings` has no total — a second answer to a
 question that already has one is how the two drift apart.
 
-### One booking that was never billed
+### One booking that was never billed — accepted
 
 Booking **000309**, event 2024-07-08, `course_fee` 0.00, no invoice, not
 cancelled. Every other uninvoiced booking is for an event still in the future,
 which is normal — the bill goes out closer to the date. This one is two years
-past and free. Probably a test or a comp; worth a human confirming before
-cutover rather than assuming.
+past and free.
 
-The port reports any uninvoiced booking whose event has already happened, so
-this check keeps working on a fresher dump.
+**Decided 2026-09-14: leave it.** Two years old, nothing to collect, nobody
+waiting on it.
+
+The check itself stays, because the *class* of problem is real — a booking for
+an event that has happened with no bill against it is money that was never asked
+for. 000309 is listed by number in `PortUsers::ACCEPTED_UNINVOICED` and reported
+under "known and accepted" rather than as a finding, so a **new** one still
+stands out instead of disappearing into a check somebody switched off.
 
 ## Reconciliation
 
@@ -114,9 +119,8 @@ working; Laravel rehashes on next login if the cost has changed.
 
 ## Open questions
 
-1. Booking 000309 — comp, test, or oversight?
-2. `user_documents` — where do 1,162 generated PDFs live, and are the historical
+1. `user_documents` — where do 1,162 generated PDFs live, and are the historical
    ones worth carrying at all?
-3. The 14 two-digit-year events remain skipped by `port:courses`, and their
+2. The 14 two-digit-year events remain skipped by `port:courses`, and their
    bookings with them. All 14 have zero bookings, so nothing is lost today — but
    restoring them later means re-running `port:users` too. See `Todo.md`.

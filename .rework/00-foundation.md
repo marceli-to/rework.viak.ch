@@ -159,9 +159,7 @@ every page of the live site and is not carried over; worth deleting there too.
 3. Fresh production dump before cutover rehearsal.
 6. The 14 two-digit-year events: drop or restore. Blocks the cutover port, not the
    build — see `Todo.md`.
-7. Booking 000309 — a free, uninvoiced, two-year-old booking. Comp, test, or
-   oversight? See `01-schema.md`.
-8. `invoices.due_at` rewrites itself on every UPDATE. The column fix belongs in
+7. `invoices.due_at` rewrites itself on every UPDATE. The column fix belongs in
    chunk 03; what the port does with the 541 lost and the open/overdue deadlines
    is cutover work — see `Todo.md`.
 4. ~~VAT treatment for software licences~~ — **answered 2026-09-14**: 8.1 % on the

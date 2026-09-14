@@ -32,8 +32,23 @@ class PortUsers extends Command
 
 	protected $description = 'Port users, addresses, discount codes and bookings from the legacy database';
 
+	/**
+	 * Uninvoiced bookings that have been looked at and deliberately left
+	 * alone. Listed by number so a *new* one still shows up as a finding
+	 * rather than being lost in a check somebody switched off.
+	 *
+	 * - 000309: free (fee 0.00), event 2024-07-08, two years past and never
+	 *   billed. Accepted 2026-09-14 — too old to be worth reconstructing.
+	 *
+	 * @var array<int, string>
+	 */
+	private const ACCEPTED_UNINVOICED = ['000309'];
+
 	/** @var array<int, string> */
 	private array $findings = [];
+
+	/** @var array<int, string> Known and decided; reported, but not as work. */
+	private array $accepted = [];
 
 	public function handle(): int
 	{
@@ -393,6 +408,15 @@ class PortUsers extends Command
 		$this->reportUninvoicedBookings($legacy);
 		$this->reportFeeMismatches($legacy);
 
+		if ($this->accepted !== []) {
+			$this->newLine();
+			$this->components->info(count($this->accepted).' known and accepted:');
+
+			foreach ($this->accepted as $note) {
+				$this->line('  - '.$note);
+			}
+		}
+
 		if ($this->findings === []) {
 			$this->components->info('No data-quality findings.');
 
@@ -427,6 +451,12 @@ class PortUsers extends Command
 			->get();
 
 		foreach ($rows as $row) {
+			if (in_array($row->number, self::ACCEPTED_UNINVOICED, true)) {
+				$this->accepted[] = "booking {$row->number}: never invoiced, event {$row->date} — accepted 2026-09-14, left as it is";
+
+				continue;
+			}
+
 			$this->findings[] = "booking {$row->number}: event was {$row->date} and it was never invoiced (fee {$row->course_fee})";
 		}
 	}
