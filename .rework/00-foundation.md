@@ -63,19 +63,20 @@ A fresh dump is still required at the cutover rehearsal itself.
 |---|---:|---:|
 | users | 468 | 578 |
 | bookings | 543 | 710 |
-| invoices | 448 (CHF 313k lifetime; 6 open, 9 overdue) | 569 |
+| invoices | 448 (CHF 313k lifetime; 6 open, 9 overdue) | 561 live + 8 soft-deleted (CHF 380k paid lifetime; 9 open, 3 overdue, 8 cancelled) |
 | events | 240 | 360 |
 | courses | 35 | 41 |
-| rental invoices | 24 | not re-measured |
-| `jobs` (legacy mail queue, never pruned) | 4,523 | not re-measured |
-
-The right-hand column is the current dump. The lifetime total, the open/overdue
-split and the last two rows have not been re-measured against it — re-run before
-anything depends on them.
+| laptop-rental invoices (`is_rental`) | 24 | 29 |
+| `jobs` (legacy mail queue, never pruned) | 4,523 | 5,964 |
 
 A year of trading adds roughly a quarter to every table and changes nothing about
-the approach: 569 invoices can still be migrated and then reconciled **row by row**,
+the approach: 561 invoices can still be migrated and then reconciled **row by row**,
 not sampled. See `01-schema.md`.
+
+`is_rental` means a **CHF 80 laptop rental** added to a booking, not a software
+licence — `config('invoice.cost_rental')`, offered in the basket to students
+without a suitable machine. It is the only thing on the legacy site that has ever
+carried VAT.
 
 ## Code style conventions
 
@@ -161,7 +162,9 @@ every page of the live site and is not carried over; worth deleting there too.
 7. `invoices.due_at` rewrites itself on every UPDATE. The column fix belongs in
    chunk 03; what the port does with the 541 lost and the open/overdue deadlines
    is cutover work — see `Todo.md`.
-4. VAT treatment for software licences — blocks chunk 03. Needs the client's bookkeeper.
+4. ~~VAT treatment for software licences~~ — **answered 2026-09-14**: 8.1 % on the
+   net price, posted to Run My Accounts exactly like a course. See `03-invoices.md`.
+   Open sub-question: round VAT to the centime or to 0.05.
 5. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
 
 ## Working data (updated 2026-09-11)

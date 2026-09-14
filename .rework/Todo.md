@@ -144,8 +144,12 @@ or not the migration is close.
 
 Carried from the chunk docs so they are in one place:
 
-- **VAT on software licences** — rate, and how it posts to Run My Accounts.
-  Blocks `03-invoices.md`. Needs the client's bookkeeper.
+- ~~VAT on software licences~~ — **answered 2026-09-14**: 8.1 % added to the net
+  price, and it posts to Run My Accounts exactly like a course. Chunk 03 is
+  unblocked. Two things left in `03-invoices.md`: confirm VAT rounds to the
+  centime (the shop says yes, the legacy code rounds to 0.05), and keep the
+  Run My Accounts client **mocked until cutover** — nothing posts to the client's
+  live accounting from a prototype.
 - **Licence fulfilment** — manual dispatch or reseller API? Blocks chunk 05 scoping.
 - **Historical invoice due dates** — recoverable from Run My Accounts? Folded
   into the `due_at` migration section above; only matters if dunning or the

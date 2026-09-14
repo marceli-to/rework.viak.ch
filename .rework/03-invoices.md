@@ -3,6 +3,64 @@
 Placeholder for the money chunk. One finding is recorded here already because it
 affects the **live** site and should not wait for the rework.
 
+## VAT — answered 2026-09-14
+
+**Rate: 8.1 %, added on top of a net price.** Confirmed by the client against the
+existing shop's basket summary: `Gesamtnettosumme 370.00` → `zzgl. 8.1 % MwSt.
+29.97` → `Gesamtsumme 399.97`.
+
+This unblocks the VAT half of the chunk. What the legacy system actually does
+today, for the port to reproduce or deliberately depart from:
+
+### Courses carry no VAT, and that is on purpose
+
+532 of the 561 live invoices have `vat = 0.00`. Swiss VAT exempts education
+(*Bildungsleistungen*), so course sales are outside the tax. The legacy code
+hard-zeroes it in `BasketController::getTotals()`:
+
+```php
+// @todo: fix vat on event
+$vat = round( ( ( $total - $discount ) / 100 * config('invoice.vat_rate')) * 20 ) / 20;
+$vat = 0;
+```
+
+The computed line is dead — overwritten on the very next statement — and
+`Invoice::…` writes `'vat' => 0.00` directly. The `@todo` reads like unfinished
+work, but the zero is the correct answer for courses. **Keep the zero in the
+rework; drop the dead line and the todo, and say why in a comment** so the next
+person does not "fix" it.
+
+### The only VAT the site has ever charged is the laptop rental
+
+`is_rental` is a **CHF 80 laptop rental** attached to a booking, not a software
+licence. 29 invoices, every one of them `80.00 + 6.50 = 86.50`.
+
+### Rounding: legacy rounds VAT to 5 centimes, the shop screenshot does not
+
+`RentalInvoice::getVat()` is `round( $amount / 100 * $rate * 20 ) / 20` — round to
+the nearest **0.05**. On 80.00 that is 8.1 % = 6.48, stored as **6.50**.
+
+The screenshot rounds to the centime instead: 370.00 × 8.1 % = 29.97 exactly, where
+5-centime rounding would give 29.95. **Both cannot be right.** Swiss practice is
+that VAT is computed to the centime and only a cash payment total is rounded to
+0.05, which makes the screenshot correct and the legacy `* 20 ) / 20` a habit
+carried in from cash rounding.
+
+**To confirm with the client before chunk 03 is built:** compute VAT to the
+centime, and treat the 29 historical `6.50` values as legacy artefacts to port
+verbatim rather than recompute. Nothing else depends on the answer, but the
+invoice PDFs do.
+
+## Run My Accounts — answered 2026-09-14
+
+Licence sales **post exactly like course sales** — same entry, no special case.
+
+**Nothing may be posted to Run My Accounts while this is in development.** The
+integration is mocked until cutover: a fake client in local/testing, asserted
+against in tests, with the real endpoint reachable only from production config.
+A prototype that quietly writes into the client's live accounting is the one
+mistake here that cannot be undone.
+
 ## `invoices.due_at` overwrites itself
 
 ```sql
