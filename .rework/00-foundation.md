@@ -54,23 +54,28 @@ Three, all on MySQL 8 (`127.0.0.1:3307`):
 | `viak_legacy` | copy of live data, imported from the 5.7 `viakch` database |
 
 `viak_legacy` is what chunk 01 migrates *from* and what the port is verified against.
-Its copy is current to **2025-09-18** — roughly a year stale. Fine for building;
-a fresh dump is required before the cutover rehearsal.
+Its copy is current to **2026-09-11**, scrubbed in place — see *Working data* below.
+A fresh dump is still required at the cutover rehearsal itself.
 
 ### Live data volumes (measured, not estimated)
 
-| | rows |
-|---|---:|
-| users | 468 |
-| bookings | 543 |
-| invoices | 448 (CHF 313k lifetime; 6 open, 9 overdue) |
-| events | 240 |
-| courses | 35 |
-| rental invoices | 24 |
-| `jobs` (legacy mail queue, never pruned) | 4,523 |
+| | 2025-09-18 | 2026-09-11 |
+|---|---:|---:|
+| users | 468 | 578 |
+| bookings | 543 | 710 |
+| invoices | 448 (CHF 313k lifetime; 6 open, 9 overdue) | 569 |
+| events | 240 | 360 |
+| courses | 35 | 41 |
+| rental invoices | 24 | not re-measured |
+| `jobs` (legacy mail queue, never pruned) | 4,523 | not re-measured |
 
-This is small, and it changes the risk profile of chunk 01 substantially: 448 invoices
-can be migrated and then reconciled **row by row**, not sampled. See `01-schema.md`.
+The right-hand column is the current dump. The lifetime total, the open/overdue
+split and the last two rows have not been re-measured against it — re-run before
+anything depends on them.
+
+A year of trading adds roughly a quarter to every table and changes nothing about
+the approach: 569 invoices can still be migrated and then reconciled **row by row**,
+not sampled. See `01-schema.md`.
 
 ## Code style conventions
 
