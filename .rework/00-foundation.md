@@ -154,18 +154,25 @@ every page of the live site and is not carried over; worth deleting there too.
 
 ## Open questions carried forward
 
-1. Production PHP version (pin above).
-2. Poppins vs Effra.
-3. Fresh production dump before cutover rehearsal.
-6. The 14 two-digit-year events: drop or restore. Blocks the cutover port, not the
-   build — see `Todo.md`.
-7. `invoices.due_at` rewrites itself on every UPDATE. The column fix belongs in
+**Blocking the build:**
+
+1. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
+2. Production PHP version (pin above). Only bites at deploy time.
+
+**Blocking the cutover, not the build** — see `Todo.md` for both:
+
+3. The 14 two-digit-year events: drop or restore.
+4. `invoices.due_at` rewrites itself on every UPDATE. The column fix belongs in
    chunk 03; what the port does with the 541 lost and the open/overdue deadlines
-   is cutover work — see `Todo.md`.
-4. ~~VAT treatment for software licences~~ — **answered 2026-09-14**: 8.1 % on the
-   net price, rounded to the centime, posted to Run My Accounts exactly like a
+   is cutover work.
+5. A fresh production dump before the cutover rehearsal.
+
+**Answered:**
+
+6. ~~VAT treatment for software licences~~ — **2026-09-14**: 8.1 % on the net
+   price, rounded to the centime, posted to Run My Accounts exactly like a
    course. Courses stay VAT-exempt. See `03-invoices.md`.
-5. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
+7. ~~Poppins vs Effra~~ — **2026-09-11**: Effra, Typekit kit `bmx5jih`.
 
 ## Working data (updated 2026-09-11)
 
