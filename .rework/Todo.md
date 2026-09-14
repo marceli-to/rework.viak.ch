@@ -85,6 +85,61 @@ that the cutover run is free to ignore.
 
 ---
 
+## Fix `invoices.due_at` before the data goes to production
+
+**Blocks the production migration. Same shape as the events above: nothing in the
+build is waiting on it, but the port that produces the production database has to
+have an answer written into it.**
+
+### What happened
+
+`2023_01_11_133351_alter_invoices_table_add_due_at.php` added `due_at` as a bare
+`timestamp`. It was the first TIMESTAMP column in `invoices`, so MySQL applied its
+implicit rule and attached `ON UPDATE CURRENT_TIMESTAMP`:
+
+```sql
+`due_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+```
+
+Nothing in the Laravel code asks for it and nothing in the codebase reveals it.
+**Any write to an invoice row resets its payment deadline to now.** In the
+2026-09-11 dump: all **541 paid invoices** have `due_at` within two hours of
+`paid_at`, and every OPEN/OVERDUE invoice claims a deadline of today — bumped
+daily by whatever last touched the row, so the deadline can never actually pass.
+Invoice 000552 is dated 2026-08-13, marked OVERDUE, and due today. It also means
+the legacy branch's *"payment deadline 10 days before event start"* change is
+being silently overwritten.
+
+Full write-up in `03-invoices.md`.
+
+### What the migration has to decide
+
+1. **The column itself.** In the rework, declare `due_at` explicitly nullable so
+   the implicit rule never applies, plus a test that updating an unrelated
+   invoice column leaves `due_at` alone. Cheap, and it should just be part of
+   building chunk 03 — but it has to be verified on the cutover database, not
+   only in tests.
+2. **The 541 lost deadlines.** Not recoverable from the `invoices` table. The
+   question is whether they matter — for dunning, for the accounting export, for
+   a reprinted PDF. If they do, they may be reconstructible from the invoice PDFs
+   or from Run My Accounts, which received `duedate` at creation time. That
+   reconstruction is migration work and has to happen against the dump we
+   actually cut over, so it needs deciding before the port is frozen.
+3. **The open and overdue ones.** These are live money. Whatever `due_at` they
+   carry at cutover is today's date, which is wrong for all of them. Either
+   recompute from the booking's event start (the rule the legacy branch was
+   reaching for) or carry them over knowingly wrong. Pick one, in the port.
+
+### Available earlier, independently
+
+On the **live** site, `ALTER TABLE invoices MODIFY due_at TIMESTAMP NULL DEFAULT
+NULL;` stops the bleeding immediately. It does not recover anything already lost,
+and it does not remove any of the three decisions above — but every day it waits
+is another day of open invoices having their deadline bumped. Worth doing whether
+or not the migration is close.
+
+---
+
 ## Other open questions
 
 Carried from the chunk docs so they are in one place:
@@ -92,8 +147,9 @@ Carried from the chunk docs so they are in one place:
 - **VAT on software licences** — rate, and how it posts to Run My Accounts.
   Blocks `03-invoices.md`. Needs the client's bookkeeper.
 - **Licence fulfilment** — manual dispatch or reseller API? Blocks chunk 05 scoping.
-- **Historical invoice due dates** — recoverable from Run My Accounts? See
-  `03-invoices.md`. Only matters if dunning or the accounting export needs them.
+- **Historical invoice due dates** — recoverable from Run My Accounts? Folded
+  into the `due_at` migration section above; only matters if dunning or the
+  accounting export needs them.
 - ~~Roles as a single enum column~~ — **resolved 2026-09-11**: reverted to a pivot.
   The hierarchy would have dropped the two top-listed public experts, who are
   Admin + Expert. See `02-courses-events.md`.

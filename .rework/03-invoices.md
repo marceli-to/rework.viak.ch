@@ -43,6 +43,11 @@ trusted.
    from the invoice PDFs or from Run My Accounts, which received `duedate` at
    creation time.
 
+Items 2 and 3 are **owed at the migration** — the fix has to be verified on the
+cutover database, and the open/overdue invoices need a deliberate `due_at` in the
+port rather than the today's-date value they will otherwise carry across. Tracked
+in `Todo.md`. Item 1 stands on its own and is worth doing on the live site now.
+
 ## Also unresolved here
 
 Invoice is 1:1 with booking (`invoices.booking_id`), which does not survive
