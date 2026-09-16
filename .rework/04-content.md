@@ -59,15 +59,39 @@ conventions, and the three costs of bringing it in are real:
    Statamic reaches that only through custom tags calling back into our code —
    which is the work we were trying to avoid.
 
-**What would reverse this:** if VIAK wants to create new marketing pages, with
-layouts nobody has designed, without calling us. Then bucket 3 below goes to
-Statamic and buckets 1–2 stay ours. Nothing in the mockups or in
-`history/Client-Requirements.md` suggests they want that — but it has not been
-asked directly, and it should be before this chunk starts.
+**Confirmed 2026-09-16.** The one thing that would have reversed this — VIAK
+wanting to create marketing pages with layouts nobody has designed — is not a
+requirement. Asked and answered: no. Bucket 3 below stays ours, and the decision
+is settled rather than assumed.
 
 Filament was the other candidate, for the same CRUD savings without a second
 frontend paradigm. Declined for the same reason 1: it still means two admin UIs,
 and the transactional dashboard from chunk 02 already exists in Vue.
+
+## Decision: the admin edits DE only, the data stays translatable
+
+**Decided 2026-09-16.** EN does not ship publicly today — legacy gates `/en`
+behind `role:admin` — and it is not in scope for the rework.
+
+What does **not** change: `spatie/laravel-translatable` on the models, the
+`{de, en}` maps the Resources return (chunk 02), the `Locale` enum, and the
+port, which keeps carrying whatever EN content exists. The data model is
+untouched.
+
+What changes is only the **admin UI**. `Field::text('title')->translatable()`
+still declares the field translatable; the `FormRenderer` decides whether to
+draw locale tabs from the configured locale list, and with one locale it draws a
+plain input. The public site already picks the locale it needs.
+
+So this is not a one-way door. Turning EN on later is a config change plus
+content entry — not a rebuild. That matters, because **whether EN ever ships is
+still an open client question** (see *Open questions*), and the answer arriving
+after this chunk is built must not be expensive.
+
+Worth being accurate about the saving: this removes the tab chrome, per-locale
+error display, a copy-DE→EN affordance, and testing every field twice. That is
+roughly 15–20 % off the field kit, not the halving an earlier estimate
+suggested.
 
 ## Three buckets
 
@@ -241,9 +265,11 @@ Neither is homepage-specific, and both are needed elsewhere:
 A shape, not an estimate. Recorded because the working figure from the week of
 2026-09-07 predates the mockups and is now clearly low.
 
+Revised 2026-09-16 for the DE-only admin decision above.
+
 | | h |
 |---|---:|
-| Field kit (12 components, renderer, locale tabs, errors) | 32–40 |
+| Field kit (12 components, renderer, errors; DE only) | 28–34 |
 | Media field + `spatie/laravel-medialibrary` behind it | 8 |
 | Globals / Settings | 4 |
 | `Page` + `Article` (Aktuelles, with its filters) | 10 |
@@ -251,7 +277,7 @@ A shape, not an estimate. Recorded because the working figure from the week of
 | `Testimonial` | 3 |
 | Software hub / Überblick / Lizenzen templates | 12 |
 | Homepage (built last, from existing partials) | 8–12 |
-| | **~85–97** |
+| | **~81–91** |
 
 Priced at conventional hand-coding rates, which sits awkwardly against the
 observed pace of chunks 00–02 (three chunks across three working days, 7.3k LOC,
@@ -262,14 +288,13 @@ tiptap and an image cropper do not.
 
 ### Levers, if the number has to come down
 
-1. **Does EN ship publicly?** Already open in `Todo.md` — legacy gates `/en`
-   behind `role:admin`. If the answer is no, every translatable field loses its
-   locale tab and the form UI gets materially cheaper. The largest single lever,
-   and it costs nothing to ask.
-2. **Fold `*-Ueberblick` into the software hub page.** Two templates doing one
+The EN lever is spent — DE-only is decided above and already priced into the
+table. Three left, all smaller:
+
+1. **Fold `*-Ueberblick` into the software hub page.** Two templates doing one
    job; the mockup splits them, nothing requires it.
-3. **Globals in a config file**, not a DB screen. The phone number never changes.
-4. **Testimonials hardcoded in Blade** until they actually change. Saves the
+2. **Globals in a config file**, not a DB screen. The phone number never changes.
+3. **Testimonials hardcoded in Blade** until they actually change. Saves the
    module, costs a deploy when a quote changes.
 
 None of these touch the field kit, which is the one line not worth cutting:
@@ -278,14 +303,19 @@ forms.
 
 ## Open questions
 
-1. **Does the client want to build pages we have not designed?** The one
-   question that would reverse the Statamic decision. Not yet asked.
-2. **Does EN ship publicly?** Carried from `Todo.md` and `02-courses-events.md`.
-   Now also the biggest driver of this chunk's cost.
-3. **`courses.reviews` → `Testimonial`** — the shape proposed above needs
+1. ~~Does the client want to build pages we have not designed?~~ —
+   **answered 2026-09-16: no.** The Statamic decision is settled.
+2. ~~Does EN ship publicly?~~ — **answered 2026-09-16: not in this rework.**
+   Replaced by the question below, which is narrower and for the client.
+3. **Will EN ever be implemented?** The admin is DE-only and the data model
+   stays translatable precisely so the answer can arrive late without costing
+   anything. Still worth asking, because if the answer is a firm never, the
+   translatable columns and the `{de, en}` Resource maps become dead weight
+   that a later chunk could simplify away.
+4. **`courses.reviews` → `Testimonial`** — the shape proposed above needs
    confirming against what those 35 rows actually hold.
-4. **Which of the six Vorhaben are real**, and are there more coming? The
+5. **Which of the six Vorhaben are real**, and are there more coming? The
    template is cheap; six is assumed from the mockups.
-5. **Media**: `spatie/laravel-medialibrary` assumed. Confirm against the
+6. **Media**: `spatie/laravel-medialibrary` assumed. Confirm against the
    "image handling (frontend output)" requirement before building the image
    field, since the field is the thin part and the pipeline is the thick one.

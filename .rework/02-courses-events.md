@@ -132,5 +132,8 @@ production database without a silent skip in it.
    Ported as-is; needs a shape before it can be edited. The mockups answer this:
    the homepage and `Rhino.html` both want quote + name + role + featured, which
    is a `Testimonial` model rather than a column. See `04-content.md`.
-3. English is admin-only on the public site today (legacy gates `/en` behind
-   `role:admin`). Does the rework ship EN publicly?
+3. ~~English is admin-only on the public site today (legacy gates `/en` behind
+   `role:admin`). Does the rework ship EN publicly?~~ — **answered 2026-09-16:
+   no.** The rework ships DE. The translation maps this chunk introduced stay
+   exactly as they are; only the admin UI drops to one locale. See
+   `04-content.md`.

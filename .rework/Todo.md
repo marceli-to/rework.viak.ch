@@ -164,11 +164,12 @@ Carried from the chunk docs so they are in one place:
   request on every page. Safe to delete from the live site.
 - **Production PHP version** — the rework is pinned to 8.3. Raise it if production
   runs 8.4.
-- **English on the public site** — currently admin-only behind `role:admin`.
-  Does the rework ship EN publicly? Now also the single biggest cost driver in
-  chunk 04: if EN does not ship, every translatable field loses its locale tab
-  and the admin form work drops materially. Costs nothing to ask. See
-  `04-content.md`.
-- **Does the client want to build pages we have not designed?** The one question
-  that would reverse the no-Statamic decision in `04-content.md`. Nothing in the
-  mockups or the requirements doc suggests it, but it has not been asked.
+- ~~English on the public site~~ — **answered 2026-09-16: not in this rework.**
+  The admin edits DE only; the data model stays translatable so the decision can
+  be reversed cheaply. See `04-content.md`.
+- **Will EN ever be implemented?** Still worth asking the client. Nothing waits
+  on it — the translatable columns and the `{de, en}` Resource maps are staying
+  either way — but a firm never would let a later chunk simplify them away.
+- ~~Does the client want to build pages we have not designed?~~ —
+  **answered 2026-09-16: no.** The no-Statamic decision in `04-content.md` is
+  settled rather than assumed.
