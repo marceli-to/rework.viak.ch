@@ -108,6 +108,7 @@ app/
     Resources/
   Models/
   Policies/
+  Schemas/            # admin form field definitions — see 04-content.md
   Jobs/
   Notifications/
   Support/
@@ -116,6 +117,7 @@ resources/
   css/                # app.css + partials/{fonts,colors}.css
   js/
     app/              # the dashboard SPA (Vue 3 + Pinia + router)
+      components/fields/  # the field kit — see 04-content.md
     site/             # public-site Vue islands (basket, filter, checkout)
   views/
     components/layout/{app,site}.blade.php

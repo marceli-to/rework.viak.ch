@@ -129,6 +129,8 @@ production database without a silent skip in it.
 
 1. The `0025` batch, above — resolved at migration, not here.
 2. `courses.reviews` — a `text` column holding what looks like structured data.
-   Ported as-is; needs a shape before it can be edited.
+   Ported as-is; needs a shape before it can be edited. The mockups answer this:
+   the homepage and `Rhino.html` both want quote + name + role + featured, which
+   is a `Testimonial` model rather than a column. See `04-content.md`.
 3. English is admin-only on the public site today (legacy gates `/en` behind
    `role:admin`). Does the rework ship EN publicly?

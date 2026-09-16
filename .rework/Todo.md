@@ -165,4 +165,10 @@ Carried from the chunk docs so they are in one place:
 - **Production PHP version** — the rework is pinned to 8.3. Raise it if production
   runs 8.4.
 - **English on the public site** — currently admin-only behind `role:admin`.
-  Does the rework ship EN publicly?
+  Does the rework ship EN publicly? Now also the single biggest cost driver in
+  chunk 04: if EN does not ship, every translatable field loses its locale tab
+  and the admin form work drops materially. Costs nothing to ask. See
+  `04-content.md`.
+- **Does the client want to build pages we have not designed?** The one question
+  that would reverse the no-Statamic decision in `04-content.md`. Nothing in the
+  mockups or the requirements doc suggests it, but it has not been asked.
