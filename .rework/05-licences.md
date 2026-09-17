@@ -54,32 +54,34 @@ booking and does not require ever having been a student.
 This is the structural half of the answer, and it lands on chunk 03, not here:
 
 - **`invoices.booking_id` cannot survive.** A licence-only order has no booking.
-  The Order/OrderItem design in `03-invoices.md` stops being a preference and
-  becomes required.
+  That alone does *not* force Order/OrderItem — a polymorphic `invoiceable`
+  solves it, and more cheaply. The open question is whether one checkout produces
+  one invoice or several; see `03-invoices.md`.
 - **A buyer is a user with no booking.** Chunk 01 ported 578 users who are all
   students. The rework now has account holders who have never attended anything —
   which touches the role pivot from chunk 02, the account pages, and whatever
   the checkout does about guests.
 - **A basket can hold both.** A course (VAT-exempt) and a licence (8.1 %) in one
-  order — see the VAT consequence below.
+  checkout. Whether that becomes one invoice with two VAT treatments or two
+  invoices with one each is the granularity question in `03-invoices.md`.
 
-## Consequence: VAT moves to the line — decided here, belongs to chunk 03
+## Consequence: an invoice granularity question — belongs to chunk 03
 
-The legacy `invoices` table carries **one** `vat` column for the whole invoice,
-and it gets away with it because the legacy site has never issued a mixed
-invoice: the only VAT it charges is the CHF 80 laptop rental, and that rental is
-billed on its own separate invoice — all 29 are exactly `80.00 + 6.50 = 86.50`,
-with nothing else on them.
+Legacy carries **one** `vat` column for the whole invoice and gets away with it
+because it has never issued a mixed invoice: the only VAT it charges is the CHF 80
+laptop rental, and every rental is billed separately.
 
-Once anyone can put a course and a licence in the same basket, that trick stops
-working. One order, one invoice, two lines, two different VAT treatments.
+A basket holding a course (exempt) and a licence (8.1 %) only breaks that **if
+one checkout produces one invoice**. Legacy's rule is one invoice per item — 35
+multi-booking baskets in the data, every booking invoiced on its own — so the
+scalar column keeps working if that rule is kept, and a polymorphic `invoiceable`
+is then enough to carry licences.
 
-**VAT is computed and stored per line item, and the invoice total is the sum.**
-A single invoice-level `vat` column cannot represent a mixed order, and splitting
-every mixed basket into two invoices to preserve it would be the legacy
-workaround carried forward for no reason. The historical rows keep their
-invoice-level `vat` verbatim on the port — see `03-invoices.md`, which also owns
-the rounding rule (to the centime, never to 0.05).
+**That is a live decision, not a foregone one**, and it is chunk 03's. The
+trade-off table and the recommendation (invoice per order, so a customer buying a
+course and a licence gets one bill rather than two) are in `03-invoices.md`.
+Whichever way it goes, the 561 historical invoices keep their stored `vat`
+verbatim on the port.
 
 ## What a licence is — answered 2026-09-17
 

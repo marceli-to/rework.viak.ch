@@ -182,8 +182,9 @@ is settled; the one licence question still open — whether the Bildung tier's
 8. ~~Licence fulfilment: manual dispatch or reseller API?~~ — **2026-09-17**:
    **manual, no API.** The customer orders and pays, VIAK gets an email, a human
    orders from the reseller and sends the licence on. No integration to build.
-9. ~~May a non-student buy a licence?~~ — **2026-09-17**: **yes, anyone.** Which
-   is what finally kills `invoices.booking_id` — see `03-invoices.md`.
+9. ~~May a non-student buy a licence?~~ — **2026-09-17**: **yes, anyone.** So
+   `invoices.booking_id` goes. It does *not* by itself force Order/OrderItem —
+   see the granularity question in `03-invoices.md`.
 10. ~~What a licence *is*~~ — **2026-09-17**: products have **variants**; some
     software is **not directly purchasable** ("Preis auf Anfrage") and renders as
     an enquiry; and *Meine Lizenzen* is **purchase history only** — no validity,

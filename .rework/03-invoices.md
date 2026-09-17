@@ -112,33 +112,74 @@ cutover database, and the open/overdue invoices need a deliberate `due_at` in th
 port rather than the today's-date value they will otherwise carry across. Tracked
 in `Todo.md`. Item 1 stands on its own and is worth doing on the live site now.
 
-## Order/OrderItem — unblocked 2026-09-17
+## The invoice's shape — the real question is granularity
 
-Invoice is 1:1 with booking (`invoices.booking_id`), which does not survive
-contact with software licences. The Order/OrderItem design belongs in this chunk,
-and both things it was waiting on have now been answered:
+Two things had to be answered before this could be designed: VAT treatment
+(2026-09-14, above) and whether a non-student may buy a licence (2026-09-17: yes,
+anyone — `05-licences.md`). Both are answered. What they do **not** settle is the
+shape, and an earlier draft of this section overstated the case for Order/OrderItem.
+Correcting that, because it changes the decision.
 
-- **VAT treatment** — 2026-09-14, above.
-- **Who may buy a licence** — 2026-09-17: **anyone**, student or not. A
-  licence-only order has no booking at all, so `booking_id` is not merely awkward,
-  it is unfillable. See `05-licences.md`.
+### What the legacy data actually shows
 
-### VAT belongs on the line, not the invoice
+Three facts, checked against the 2026-09-11 dump:
 
-Legacy carries **one** `vat` column for the whole invoice and gets away with it
-because it has never issued a mixed invoice. The only VAT it charges is the CHF 80
-laptop rental, and every rental is billed on an invoice of its own — net `80.00`,
-VAT `6.50`, nothing else on it. Checked against the 2026-09-11 dump: all 30
-`is_rental` rows (29 live, 1 soft-deleted) are exactly that, and **no non-rental
-invoice has ever carried VAT at all** — `WHERE is_rental = 0 AND vat <> 0` returns
-zero rows.
+- **`invoices.booking_id` is already nullable**, and `invoices.user_id` already
+  exists. An invoice already knows its customer without going through a booking.
+- **Invoice is already not 1:1 with booking.** A booking with `has_rental` gets
+  *two* invoices — the course and a separate CHF 80 rental. It is booking → many.
+- **A basket has never produced a combined invoice.** 35 baskets hold more than
+  one booking (three at most), and every booking in them was invoiced separately.
+  Legacy's rule is simply **one invoice per item**.
 
-A basket holding a course (exempt) and a licence (8.1 %) breaks that. One order,
-one invoice, two lines, two treatments.
+### So relationships do solve the licence case
 
-**Compute and store VAT per line item; the invoice total is the sum.** Splitting
-mixed baskets into two invoices to keep a scalar `vat` column would be the legacy
-workaround carried forward for no reason.
+A polymorphic `invoiceable` — `Booking | LicenceOrderItem` — handles everything a
+licence throws at this:
 
-The 561 historical invoices keep their invoice-level `vat` verbatim on the port —
-nothing is recomputed, per the rounding note above.
+- a licence-only order has no booking, and `booking_id` disappears rather than
+  going unfilled;
+- **the single `vat` column survives**, because each invoice still covers exactly
+  one thing with one VAT treatment. That is precisely why legacy bills the rental
+  separately — it is the only VAT-bearing item, and splitting it keeps the scalar
+  column honest;
+- the port stays 1:1 and all 561 invoices map straight across.
+
+The earlier claim that licences force Order/OrderItem, and force VAT onto the
+line, was wrong as stated. Both follow only from **one checkout = one invoice**,
+which legacy does not do and which nobody has decided.
+
+### The decision, then
+
+| | Invoice per item (polymorphic) | Invoice per order (Order/OrderItem) |
+|---|---|---|
+| Change | Small — `booking_id` → `invoiceable` | A new aggregate above the invoice |
+| VAT | Stays one column per invoice | Must move to the line |
+| Port | 561 rows straight across | Each legacy invoice wrapped in a synthetic one-line order |
+| Customer buying a course **and** a licence | Two invoices, two QR bills, two payments | One invoice, one bill, one payment |
+| Cancelling one item of three | Cancel that invoice | Partial-order logic |
+
+**Recommendation: invoice per order.** Not because licences force it — they do
+not — but because the point of the new site is selling licences alongside
+courses, and the polymorphic route bills that customer twice. With a CHF 995
+licence next to a CHF 1200 course, two separate QR bills for one checkout is a
+worse experience than today, and it gets worse as cross-selling is the whole
+premise. The cost is line-level VAT and a port that wraps each historical invoice
+in a one-line order — both contained, and both cheaper now than retrofitted.
+
+**If the answer is that a checkout may keep producing several invoices, take the
+polymorphic route instead** — it is legitimate, materially smaller, and keeps the
+single `vat` column. This needs deciding before the schema is written; it is a
+business call about how customers pay, not a modelling preference.
+
+### VAT per line, only under invoice-per-order
+
+If the recommendation is taken, a basket holding a course (exempt) and a licence
+(8.1 %) puts two treatments on one invoice, and **VAT is computed and stored per
+line item with the invoice total as the sum**. Legacy's scalar column cannot
+express that; it only ever worked because no mixed invoice has ever existed.
+Checked: all 30 `is_rental` rows are a lone CHF 80 net with 6.50 VAT, and
+`WHERE is_rental = 0 AND vat <> 0` returns zero rows.
+
+Either way, the 561 historical invoices keep their stored `vat` verbatim on the
+port — nothing is recomputed, per the rounding note above.

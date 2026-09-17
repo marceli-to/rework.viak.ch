@@ -158,10 +158,16 @@ Carried from the chunk docs so they are in one place:
   worklist of outstanding licence orders — an email to `info@` is not a work
   queue. See `05-licences.md`.
 - ~~May a non-student buy a licence?~~ — **answered 2026-09-17: yes, anyone.**
-  A licence-only order has no booking, so `invoices.booking_id` is unfillable and
-  the Order/OrderItem design in chunk 03 is now required rather than preferred.
-  It also puts a course and a licence in one basket, which is why VAT moves to the
-  line item. See `03-invoices.md`.
+  A licence-only order has no booking, so `invoices.booking_id` goes. A
+  polymorphic `invoiceable` is enough for that on its own.
+- **One checkout: one invoice or several?** *Open, and chunk 03 needs it before
+  the schema is written.* Legacy issues **one invoice per item** — 35 multi-item
+  baskets, each booking invoiced separately, and a rental billed apart from its
+  course. Keeping that rule means a polymorphic `invoiceable`, a single `vat`
+  column and a 1:1 port; changing it means Order/OrderItem and VAT per line, but
+  a customer buying a course and a licence gets one bill instead of two.
+  Recommendation and trade-off table in `03-invoices.md`. A business call about
+  how customers pay, not a modelling preference.
 - ~~What a licence actually is~~ — **answered 2026-09-17.** Products have
   **variants** (Einzelplatz / Netzwerk / Studierende) at their own prices; some
   software is **not directly purchasable** — "Preis auf Anfrage" is real and is
