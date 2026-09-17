@@ -149,13 +149,13 @@ which:
 | Legacy facade | LOC | Rework |
 |---|---|---|
 | `Invoice` | 294 | `Actions/Invoices/*`, `Support/InvoiceNumber`, `Support/Vat` — **built**, chunk 03 |
-| `Booking` | 243 | `Actions/Bookings/` — not yet built |
+| `Booking` | 243 | `Actions/Bookings/` — **chunk 06** |
 | `RentalInvoice` | 208 | Nothing of its own — see below |
-| `Discount` | 165 | `Actions/Discounts/`, with code generation in `Support/` |
-| `Bookmark` | 82 | `Actions/Bookmarks/`, or model methods; it is five one-liners over a pivot |
-| `ParticipantsChange` | 59 | A listener. It is pure notification |
+| `Discount` | 165 | `Actions/Discounts/`, with code generation in `Support/` — **chunk 06** |
+| `Bookmark` | 82 | Model methods on `User`; 17 rows in three years — **chunk 06** |
+| `ParticipantsChange` | 59 | A listener. It is pure notification — **chunk 06** |
 | `NewsletterSubscriber` | 41 | Open — is the Mailchimp sync still in scope? |
-| `Message` | 32 | Folded into the booking Action |
+| `Message` | 32 | Folded into the booking Action — **chunk 06** |
 
 **`RentalInvoice` is a copy of `Invoice`.** The same nine methods —
 `findFromBooking`, `findOrCreateFromBooking`, `createFromBooking`, `cancel`,
@@ -172,6 +172,11 @@ One thing the split hid: `Booking::getNumber()`, `Invoice::getNumber()` and
 (`withTrashed()->get()->last()->number + 1`). `Support/InvoiceNumber` fixes it
 for invoices and documents why; bookings still need the same treatment when
 their Action is built.
+
+Mapping the eight also turned up the gap that `06-bookings.md` now fills: five of
+them — `Booking`, `Discount`, `Bookmark`, `ParticipantsChange`, `Message`, 581
+lines between them — had no chunk to land in. The rework could raise an invoice
+from a booking before it could make one.
 
 ### Notify on crossing, not on equality
 

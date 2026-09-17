@@ -8,6 +8,11 @@ settled.
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-17.
 
+Questions 15–18 come from `06-bookings.md`, a chunk that was scoped on
+2026-09-17 after the legacy facade map showed five facades with nowhere to land.
+**15 is the one worth asking first** — whether the cancellation penalty is really
+enforced decides how much of that chunk is automatic.
+
 | # | Question | Owner | Blocks |
 |---|---|---|---|
 | 1 | Is the Bildung licence tier real? | Client | Chunk 05, partly |
@@ -24,6 +29,10 @@ and none of these held it up. Updated 2026-09-17.
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
 | 14 | How does the queue worker run in production? | Marcel | Deploy |
+| 15 | Is the cancellation penalty actually enforced? | Client | Chunk 06 — how much of it is automatic |
+| 16 | Is a fixed-amount discount per basket or per booking? | Client | Chunk 06 — one test either way |
+| 17 | A paid booking cancelled late: credit note, or nothing? | Client | Chunk 06 |
+| 18 | Are bookmarks worth porting? 17 rows in three years | Client | Nothing — it is five one-liners |
 
 ---
 
@@ -121,6 +130,48 @@ either a live integration nobody has listed, or a feature that quietly lapsed.
 **Decides:** whether the rework carries a Mailchimp dependency, an API key and a
 sync at all, or whether `subscribe_newsletter` is just a flag the admin can read.
 
+### 15. Is the cancellation penalty actually enforced?
+
+Legacy charges 100 % of the fee for cancelling inside 11 days of the course and
+50 % inside 20. Fourteen student cancellations qualified under that rule; **six
+were charged**, and one of those six was then waived by cancelling the penalty
+invoice. The dates rule out the feature having arrived late — uncharged
+cancellations sit either side of charged ones, from 2024-03 to 2026-09.
+
+**Decides:** whether the rework raises the penalty invoice automatically,
+proposes it for an admin to approve, or only records that one is due. It is the
+single biggest question in chunk 06, because it is the difference between an
+automated rule and a worklist. See `06-bookings.md`.
+
+### 16. Is a fixed-amount discount per basket or per booking?
+
+Legacy shows one and charges the other: the basket applies the code to the total,
+`Booking::create()` applies it again to each event's fee. Two customers with a
+two-course basket were given the fixed amount twice — CHF 30 became 60, CHF 50
+became 100. Percentage codes are unaffected.
+
+**Decides:** one line in the checkout pricing, and a test. Worth asking because
+either answer is defensible and only one matches what the client thinks they
+sell.
+
+### 17. What happens when a student who has already paid cancels late?
+
+`createFromBookingWithPenalty()` returns the existing invoice untouched if it is
+paid. So a customer who paid the full fee and then cancels inside the 50 % window
+keeps a paid full-price invoice: no credit note, no refund, no record that half
+of it was never owed.
+
+**Decides:** whether chunk 06 needs a credit note at all. Nothing in the data
+shows it has ever come up, which is worth saying out loud when asking.
+
+### 18. Are bookmarks worth porting?
+
+The feature has **17 rows** across the life of the site — a facade, a controller,
+two routes, a model and a table for seventeen saved courses.
+
+**Decides:** almost nothing, and it is cheap either way. Worth one sentence of
+the client's attention rather than a silent decision.
+
 ---
 
 ## For Marcel
@@ -178,6 +229,13 @@ the same breath.
 - **Delete Typekit kit `kcs4ept` from the legacy `head.blade.php`.** It serves
   neuzeit-grotesk, no stylesheet references it, and it is a dead render-blocking
   request on every page of the live site.
+- **Invoice 000419 is open at CHF −149.00.** Booking 000512 took a fixed CHF 648
+  discount code against a CHF 499 course and nothing clamped it; the same booking
+  carries a CHF 80 laptop rental that was never invoiced. One booking of 710, but
+  it is a negative open invoice in the live books, and per chunk 03's doctrine the
+  port copies rather than recomputes — so it comes across as it stands unless
+  someone decides otherwise. Raise it with the client before the cutover. See
+  `06-bookings.md`.
 - **A fresh production dump before the cutover rehearsal.** The current copy is
   2026-09-11.
 - **Licence copy at launch.** The mockups are wireframes, so nothing to decide,
