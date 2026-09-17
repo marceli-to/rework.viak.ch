@@ -158,7 +158,9 @@ every page of the live site and is not carried over; worth deleting there too.
 
 **Blocking the build:**
 
-1. Licence fulfilment: manual dispatch or reseller API? Blocks chunk 05 scoping.
+1. What a licence *is*: one shop item, or the variants, tiers and validity the
+   mockups show? The fulfilment half is answered (below); this half replaced it.
+   Blocks chunk 05 scoping. See `05-licences.md`.
 2. Production PHP version (pin above). Only bites at deploy time.
 
 **Blocking the cutover, not the build** — see `Todo.md` for both:
@@ -175,6 +177,11 @@ every page of the live site and is not carried over; worth deleting there too.
    price, rounded to the centime, posted to Run My Accounts exactly like a
    course. Courses stay VAT-exempt. See `03-invoices.md`.
 7. ~~Poppins vs Effra~~ — **2026-09-11**: Effra, Typekit kit `bmx5jih`.
+8. ~~Licence fulfilment: manual dispatch or reseller API?~~ — **2026-09-17**:
+   **manual, no API.** The customer orders and pays, VIAK gets an email, a human
+   orders from the reseller and sends the licence on. No integration to build.
+9. ~~May a non-student buy a licence?~~ — **2026-09-17**: **yes, anyone.** Which
+   is what finally kills `invoices.booking_id` — see `03-invoices.md`.
 
 ## Working data (updated 2026-09-11)
 

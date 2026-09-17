@@ -150,7 +150,32 @@ Carried from the chunk docs so they are in one place:
   One standing constraint, not a question: the Run My Accounts client stays
   **mocked until cutover** — nothing posts to the client's live accounting from a
   prototype. See `03-invoices.md`.
-- **Licence fulfilment** — manual dispatch or reseller API? Blocks chunk 05 scoping.
+- ~~Licence fulfilment: manual dispatch or reseller API?~~ — **answered
+  2026-09-17: manual, and there is no API.** The customer orders and pays, VIAK
+  gets an email, a human orders from the reseller and forwards the licence on.
+  Nothing to integrate. Two consequences: *paid but not yet fulfilled* is a normal
+  order state that the customer has to be able to see, and the admin needs a
+  worklist of outstanding licence orders — an email to `info@` is not a work
+  queue. See `05-licences.md`.
+- ~~May a non-student buy a licence?~~ — **answered 2026-09-17: yes, anyone.**
+  A licence-only order has no booking, so `invoices.booking_id` is unfillable and
+  the Order/OrderItem design in chunk 03 is now required rather than preferred.
+  It also puts a course and a licence in one basket, which is why VAT moves to the
+  line item. See `03-invoices.md`.
+- **What a licence actually is** — *new, and now the blocker chunk 05 scoping is
+  waiting on.* The client says "the software as a shop item, that's it". The
+  signed-off mockups show tiers (Einzelplatz / Netzwerk / Studierende), "ab CHF"
+  from-prices, seven of nine products at "Preis auf Anfrage", an education tier
+  gated behind "Nachweis einreichen", and a *Meine Lizenzen* page built out of
+  validity, expiry, renewal and a Verwalten action. Those are different builds.
+  Five questions listed in `05-licences.md`.
+- **`Twinmotion-Lizenzen.html` promises "Lieferung sofort per E-Mail"** — and
+  delivery is a human at VIAK forwarding an email, so it is not immediate. Either
+  the copy changes before launch or the promise breaks on every sale. A one-line
+  mockup fix now; a real problem if it ships. Worth raising on its own.
+- **Licence pricing rules** — none yet (asked 2026-09-17). Whether discount codes
+  apply to licences, and whether students pay a different price, stay open. Not
+  blocking: decide after the shape is settled.
 - **Historical invoice due dates** — recoverable from Run My Accounts? Folded
   into the `due_at` migration section above; only matters if dunning or the
   accounting export needs them.

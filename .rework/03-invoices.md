@@ -112,8 +112,33 @@ cutover database, and the open/overdue invoices need a deliberate `due_at` in th
 port rather than the today's-date value they will otherwise carry across. Tracked
 in `Todo.md`. Item 1 stands on its own and is worth doing on the live site now.
 
-## Also unresolved here
+## Order/OrderItem — unblocked 2026-09-17
 
 Invoice is 1:1 with booking (`invoices.booking_id`), which does not survive
-contact with software licences. The Order/OrderItem design belongs in this
-chunk. VAT treatment blocks it — see `00-foundation.md`.
+contact with software licences. The Order/OrderItem design belongs in this chunk,
+and both things it was waiting on have now been answered:
+
+- **VAT treatment** — 2026-09-14, above.
+- **Who may buy a licence** — 2026-09-17: **anyone**, student or not. A
+  licence-only order has no booking at all, so `booking_id` is not merely awkward,
+  it is unfillable. See `05-licences.md`.
+
+### VAT belongs on the line, not the invoice
+
+Legacy carries **one** `vat` column for the whole invoice and gets away with it
+because it has never issued a mixed invoice. The only VAT it charges is the CHF 80
+laptop rental, and every rental is billed on an invoice of its own — net `80.00`,
+VAT `6.50`, nothing else on it. Checked against the 2026-09-11 dump: all 30
+`is_rental` rows (29 live, 1 soft-deleted) are exactly that, and **no non-rental
+invoice has ever carried VAT at all** — `WHERE is_rental = 0 AND vat <> 0` returns
+zero rows.
+
+A basket holding a course (exempt) and a licence (8.1 %) breaks that. One order,
+one invoice, two lines, two treatments.
+
+**Compute and store VAT per line item; the invoice total is the sum.** Splitting
+mixed baskets into two invoices to keep a scalar `vat` column would be the legacy
+workaround carried forward for no reason.
+
+The 561 historical invoices keep their invoice-level `vat` verbatim on the port —
+nothing is recomputed, per the rounding note above.
