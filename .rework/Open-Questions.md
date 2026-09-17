@@ -8,11 +8,10 @@ settled.
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-17.
 
-Questions 17 and 18 come from `06-bookings.md`, a chunk scoped on 2026-09-17
-after the legacy facade map showed five facades with nowhere to land. Its two
-big questions were both answered the same day — the cancellation penalty **is**
-raised automatically, and a discount code discounts the **order** — and have
-moved into the chunk doc.
+`06-bookings.md` was scoped on 2026-09-17, after the legacy facade map showed
+five facades with nowhere to land. It raised four client questions and **all four
+were answered the same day**, so none of them appear below; they are in the chunk
+doc with the reasoning. Nothing in chunk 06 waits on the client.
 
 | # | Question | Owner | Blocks |
 |---|---|---|---|
@@ -30,8 +29,6 @@ moved into the chunk doc.
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
 | 14 | How does the queue worker run in production? | Marcel | Deploy |
-| 17 | A paid booking cancelled late: credit note, or nothing? | Client | Chunk 06 |
-| 18 | Are bookmarks worth porting? 17 rows in three years | Client | Nothing — it is five one-liners |
 
 ---
 
@@ -128,28 +125,6 @@ either a live integration nobody has listed, or a feature that quietly lapsed.
 
 **Decides:** whether the rework carries a Mailchimp dependency, an API key and a
 sync at all, or whether `subscribe_newsletter` is just a flag the admin can read.
-
-### 17. What happens when a student who has already paid cancels late?
-
-`createFromBookingWithPenalty()` returns the existing invoice untouched if it is
-paid. So a customer who paid the full fee and then cancels inside the 50 % window
-keeps a paid full-price invoice: no credit note, no refund, no record that half
-of it was never owed.
-
-**It has never happened.** All four already-paid late cancellations were in the
-100 % window, where the full fee was owed anyway. Worth saying when asking,
-because it makes *leave it unbuilt* a cheap and defensible answer.
-
-**Decides:** whether chunk 06 needs a credit note at all, or just a way for an
-admin to put it right the first time it occurs.
-
-### 18. Are bookmarks worth porting?
-
-The feature has **17 rows** across the life of the site — a facade, a controller,
-two routes, a model and a table for seventeen saved courses.
-
-**Decides:** almost nothing, and it is cheap either way. Worth one sentence of
-the client's attention rather than a silent decision.
 
 ---
 

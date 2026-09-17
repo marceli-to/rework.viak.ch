@@ -205,6 +205,19 @@ items that are ours rather than the client's.
   raised invoice, and makes the −149.00 invoice unrepresentable. Percentage codes
   are unaffected.
 
+- ~~A student who has already paid cancels inside the 50 % window~~ — **answered
+  2026-09-17: VIAK corrects it by hand.** No credit-note flow is built. It has
+  never occurred in 710 bookings: all four already-paid late cancellations sat in
+  the 100 % window, where the full fee was owed anyway. The one thing to keep in
+  view is that a correction made *entirely outside* the rework leaves the invoice
+  here reading PAID at the full amount, which then disagrees with Run My
+  Accounts; cancelling the invoice with a reason and replacing it — the same
+  affordance the penalty waiver needs — avoids that for free.
+- ~~Are bookmarks worth porting?~~ — **answered 2026-09-17: keep them.** 17 rows
+  across the life of the site, so the answer sets the budget rather than the
+  question: two model methods on `User` over the existing pivot, two routes, the
+  star on a course card, and no place in the SPA's primary navigation.
+
 - **Licence dispatch: before or after payment?** Invoice payment is offered and
   fulfilment is a human forwarding a key. Dispatch first risks handing over a key
   that is never paid for; dispatch second makes the customer wait an invoice cycle.

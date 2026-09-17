@@ -4,7 +4,13 @@ How a seat is sold, discounted, cancelled and charged for.
 
 ## Status
 
-Not built, and until 2026-09-17 not scoped. The chunk was found by mapping the
+Not built. Scoped 2026-09-17, and **every client question it raised was answered
+the same day** — the cancellation penalty stays automatic, a discount code
+discounts the order, a paid booking cancelled late is VIAK's to correct by hand,
+and bookmarks are kept. Nothing here waits on anyone; one item (question 6) is
+ours to settle by reading the legacy dashboard.
+
+The chunk was found by mapping the
 legacy facade layer onto the rework in `00-foundation.md`: five of the eight
 facades — `Booking` (243 LOC), `Discount` (165), `Bookmark` (82),
 `ParticipantsChange` (59), `Message` (32) — had no chunk to land in. 581 lines of
@@ -339,13 +345,16 @@ are cancelled bookings on cancelled courses and two are on a course that has not
 been confirmed yet — all correct — one (000496) was cancelled 22 days out, which
 is the free window, and one (000512, above) is the genuine miss.
 
-### Bookmarks: 17 rows in three years
+### Bookmarks stay — decided 2026-09-17
 
-The whole feature — a facade, a controller, two routes, a model, a table — has
-17 rows across the life of the site. It is five one-liners over a pivot, so it is
-cheap either way, but it does not deserve a facade, an Action layer or a place in
-the SPA's navigation. Build it as model methods on `User`, or ask the client
-whether it is worth carrying across at all.
+**Marcel, 2026-09-17: keep them.** So the 17 rows port and the feature is built.
+
+That is 17 rows across the life of the site, which sets the budget rather than
+the question: no facade, no Action layer, no place in the SPA's primary
+navigation. Two model methods on `User` over the existing pivot, two routes, and
+the star on a course card. `Booking::create()` already clears the bookmark when
+the course is booked — that behaviour carries across, because a saved course you
+have since booked is noise.
 
 ### Participant thresholds are notifications, so they are a listener
 
@@ -365,19 +374,27 @@ not on equality** there.
    the order.** A CHF 50 code takes CHF 50 off the checkout, once. It needs a
    checkout record for the discount to be level with, and a draw-down rather than
    a proportional split; see above. Percentage codes are unaffected.
-3. **What happens when a student who has already paid cancels inside the 50 %
-   window?** `createFromBookingWithPenalty()` returns the paid invoice untouched:
-   no credit note, no refund, no record. **It has never happened** — all four
-   already-paid late cancellations were in the 100 % window, where the full fee
-   was owed anyway. So this is cheap to leave unbuilt, but it should be a
-   deliberate omission rather than an accident, and the admin needs *some* way to
-   put it right when it eventually occurs. *Client question, low urgency.*
+3. ~~What happens when a student who has already paid cancels inside the 50 %
+   window?~~ — **answered 2026-09-17: VIAK handles it by hand.** No credit-note
+   flow is built. It has never occurred in 710 bookings — all four already-paid
+   late cancellations sat in the 100 % window, where the full fee was owed anyway
+   — so building for it would be building for nothing.
+
+   One consequence worth stating rather than discovering: if the correction
+   happens **entirely outside** the rework, the invoice here still reads PAID at
+   the full amount and the rework disagrees with Run My Accounts about that row.
+   The cheap avoidance is the affordance question 1 already owes — cancel an
+   invoice with a reason, and raise a replacement — used on a paid invoice. That
+   costs nothing extra to allow and keeps the two books saying the same thing.
 4. **Invoice 000419 (booking 000512) is open at −149.00, and its CHF 80 rental
    was never billed.** Ours to raise with the client before the port carries it
    across verbatim — which, per chunk 03's doctrine, is what the port will
-   otherwise do.
-5. **Are bookmarks worth porting?** 17 rows. *Client question.*
+   otherwise do. The draw-down rule means the rework cannot *produce* another one,
+   but it does not retro-fix this row.
+5. ~~Are bookmarks worth porting?~~ — **answered 2026-09-17: yes, keep them.**
+   17 rows, built small. See above.
 6. **Does an admin cancel a booking on a student's behalf, and through which
    path?** Not needed for the penalty rule any more, but it decides whether the
    cancellation reason needs a fourth case and whether such a cancellation should
-   skip the penalty the way a VIAK-cancelled course does.
+   skip the penalty the way a VIAK-cancelled course does. *Ours to answer by
+   reading the legacy dashboard, not a client question.*
