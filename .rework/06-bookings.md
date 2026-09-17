@@ -114,29 +114,48 @@ In the rework, **cancellation carries its reason as data** — the same shape as
 chunk 03's `CancellationReason` enum — and the penalty Action reads it. One path,
 an explicit rule, and the expensive case is a branch rather than a coincidence.
 
-### The penalty is a rule on paper — confirm it is a rule in practice
+### The penalty is raised automatically, and waiving it is a human act — answered 2026-09-17
 
-Fourteen student cancellations qualified under legacy's own rule (inside 20 days,
-fee greater than discount, event not free). **Six produced a penalty invoice:**
+**Marcel, 2026-09-17: the rule keeps firing automatically. If VIAK then decides
+to cancel the invoice, that is their decision.** Which is exactly what legacy
+does, and the data confirms it fired every single time.
 
-| Booking | Days before | Original | Penalty | Outcome |
-|---|---:|---:|---:|---|
-| 000200 | 12 | 499.00 | 249.50 | PAID |
-| 000466 | 12 | 1295.00 | 647.50 | PAID |
-| 000281 | 7 | 549.00 | 549.00 | PAID |
-| 000349 | 0 | 549.00 | 549.00 | PAID |
-| 000626 | 5 | 499.00 | 499.00 | OVERDUE |
-| 000344 | 1 | 549.00 | 549.00 | raised, then **cancelled** |
+Fourteen student cancellations qualified under the rule (inside 20 days, fee
+greater than discount, event not free). All fourteen were handled correctly:
 
-The other eight were not charged, and the dates rule out "the feature came
-later": the first penalty is 2024-02-29, and 000225 (2024-03-19), 000303
-(2024-08-23), 000392 and 000396 (both 2024-11-08) and 000680 (2026-09-02) all
-came after it and went uncharged. 000344 shows the penalty being raised and then
-withdrawn by cancelling the replacement.
+| | Bookings | What happened |
+|---|---:|---|
+| Penalty invoice raised at cancellation | 10 | At the right rate every time — 50 % at 17, 17, 13, 12 and 12 days; 100 % at 8, 7, 5, 1 and 0 days |
+| Already paid in full, left alone | 4 | All four were in the 100 % window (7, 6, 5 and −1 days), so the full fee already on the paid invoice *was* the penalty |
+| — of the ten raised, later cancelled by a human | 2 | 000148 three days after raising, 000286 five days after |
 
-So the honest reading is that the penalty is **enforced by hand, roughly half the
-time**, and the code is what makes the invoice when someone decides to. That is a
-client question before it is a build question — see below.
+So there is no gap to close. The rework raises the penalty invoice on
+cancellation, at 100 % inside 11 days and 50 % inside 20, and an admin may
+cancel that invoice afterwards like any other.
+
+> **Correction, same day.** This section first read that the rule was "enforced
+> by hand, roughly half the time — six of fourteen". That was wrong, and the
+> cause is worth recording: penalties were detected by
+> `cancel_reason LIKE 'Replaced by%'`, which only finds a penalty that *replaced*
+> an existing invoice. Ten of the fourteen had no invoice yet — the course had
+> not been invoiced when the student cancelled — so their penalty was raised
+> fresh and carried no such reason. Detect a penalty invoice by its **amount and
+> its date**, not by the cancellation reason on some other row.
+
+**One thing the rework has to add: record why an invoice was waived.** Legacy
+cancels a penalty by setting `status = CANCELLED` and leaving `cancel_reason`
+**NULL** — the only two null-reason cancellations in 569 invoices are precisely
+these two waivers. A waived penalty is therefore indistinguishable from a
+cancellation nobody explained.
+
+Chunk 03's `CancellationReason` has `Replaced` and `BookingCancelled`. This chunk
+adds a third — the deliberate, admin-initiated waiver — so the invoice says who
+decided and why. The port maps the two legacy NULLs onto it; every other null
+stays null, because `fromLegacyText()` reports rather than guesses.
+
+That also makes an admin requirement concrete: cancelling an invoice is a
+first-class action with a reason attached, which belongs with the invoice
+worklist chunk 03 deferred.
 
 ### A discount is priced once, server-side, and cannot exceed the fee
 
@@ -144,14 +163,46 @@ Three separate problems, all in the same seam.
 
 **The basket and the booking disagree.** `BasketController::getTotals()` applies
 the code to the **basket total**; `Booking::create()` applies it again per event,
-against each `courseFee`. For a percentage code the two agree. For a fixed-amount
-code the customer is given the discount once per booking. It has happened:
+against each `courseFee`. For a percentage code the two agree, which is why this
+went unnoticed for three years. For a fixed-amount code they do not.
+
+A real basket, user 123 on 2023-12-23, code `VIAK-2GDV-2HUE` — **fixed CHF 50**:
+
+| | Interior Design mit SketchUp | Visualisieren mit SketchUp | Total |
+|---|---:|---:|---:|
+| Course fee | 949.00 | 499.00 | 1448.00 |
+| What the basket screen showed | | | **−50.00** → pay 1398.00 |
+| What `Booking::create()` stored | −50.00 | −50.00 | **−100.00** → pay 1348.00 |
+
+The customer agreed to 1398 and was billed 1348. Same shape for user 67 with a
+CHF 30 code across two courses — shown 30, given 60. With a **10 %** code (user
+216) both readings give 150, because 10 % of each fee sums to 10 % of the total.
+
+So the question is which of the two is the rule. Both are defensible:
+
+- **Per booking** — what the code already does. Simple, survives one course being
+  cancelled, and the basket display just has to say "CHF 50 off each course".
+- **Per basket** — what the screen promises. Now harder than it was in legacy,
+  because chunk 03 raises an invoice **per confirmed course**, weeks apart. A
+  basket-wide CHF 50 has to be split across those invoices at checkout and
+  frozen — 949/1448 × 50 = 32.77 and 499/1448 × 50 = 17.23 — and if one course is
+  never confirmed, its share is either lost or has to be moved onto an invoice
+  that may already be paid.
+
+The recommendation is **per booking**, with the basket copy corrected to match:
+it is what happens today, it needs no allocation, and it cannot strand a share of
+a discount on a course that never runs. But it gives more away than the screen
+implies, so it is the client's call, not ours.
+
+It has happened three times:
 
 | Customer | Code | Type | Bookings | Shown | Given |
 |---|---|---|---:|---:|---:|
 | 67 | `VIAK-VNTV-RJD6` | fixed 30 | 2 | 30 | **60** |
 | 123 | `VIAK-2GDV-2HUE` | fixed 50 | 2 | 50 | **100** |
 | 216 | `VIAK-27C9-MMP7` | 10 % | 2 | 150 | 150 ✓ |
+
+CHF 80 given away in total — the point is the undefined rule, not the money.
 
 **Nothing clamps the discount to the fee.** Booking 000512 took a fixed CHF 648
 code against a CHF 499 course and produced **invoice 000419 with a grand total of
@@ -265,24 +316,26 @@ not on equality** there.
 
 ## Open questions
 
-1. **Is the cancellation penalty actually enforced?** Six of fourteen qualifying
-   cancellations were charged, one of those was then waived, and the dates rule
-   out the rule having arrived late. Ask the client whether the rework should
-   raise the penalty invoice automatically, propose it for a human to approve, or
-   record the entitlement and leave the charging to an admin. *Client question,
-   and it decides how much of this chunk is automatic.*
+1. ~~Is the cancellation penalty actually enforced?~~ — **answered 2026-09-17:
+   yes, automatically.** It keeps firing on cancellation; if VIAK then cancels
+   the invoice, that is their call. See above — and note that the rework owes a
+   third `CancellationReason` so a waiver is recorded rather than left null.
 2. **Is a fixed-amount code per basket or per booking?** Legacy displays one and
    charges the other. Two customers were given double. *Client question, cheap to
    answer, and the answer belongs in a test.*
-3. **What happens when a student who has already paid cancels late?**
-   `createFromBookingWithPenalty()` returns the paid invoice untouched: no credit
-   note, no refund, no record. A 50 % penalty on a paid booking currently means
-   the customer keeps paying 100 %. *Client question.*
+3. **What happens when a student who has already paid cancels inside the 50 %
+   window?** `createFromBookingWithPenalty()` returns the paid invoice untouched:
+   no credit note, no refund, no record. **It has never happened** — all four
+   already-paid late cancellations were in the 100 % window, where the full fee
+   was owed anyway. So this is cheap to leave unbuilt, but it should be a
+   deliberate omission rather than an accident, and the admin needs *some* way to
+   put it right when it eventually occurs. *Client question, low urgency.*
 4. **Invoice 000419 (booking 000512) is open at −149.00, and its CHF 80 rental
    was never billed.** Ours to raise with the client before the port carries it
    across verbatim — which, per chunk 03's doctrine, is what the port will
    otherwise do.
 5. **Are bookmarks worth porting?** 17 rows. *Client question.*
-6. **Does an admin cancel on a student's behalf, and through which path?** It
-   would explain some of the eight uncharged cancellations, and it decides
-   whether `CancellationReason` needs a third case.
+6. **Does an admin cancel a booking on a student's behalf, and through which
+   path?** Not needed for the penalty rule any more, but it decides whether the
+   cancellation reason needs a fourth case and whether such a cancellation should
+   skip the penalty the way a VIAK-cancelled course does.

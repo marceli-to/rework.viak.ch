@@ -184,6 +184,15 @@ items that are ours rather than the client's.
   invoices become one-line invoices, the 29 rentals stay separate documents
   (their PDFs and numbers are already with customers, and reconciliation is
   row-by-row), and nothing is recomputed. See `03-invoices.md`.
+- ~~Is the cancellation penalty enforced automatically?~~ — **answered
+  2026-09-17: yes, and it stays that way.** The rule fires on cancellation; if
+  VIAK then cancels the invoice, that is their decision. The data backs it: all
+  14 qualifying cancellations were handled correctly — 10 raised a penalty
+  invoice at the right rate, 4 were already paid in full in the 100 % window — and
+  2 of the 10 were later waived by hand. One thing owed: legacy records a waiver
+  as `status = CANCELLED` with a **null** `cancel_reason`, so the rework adds a
+  third `CancellationReason` for a deliberate waiver. See `06-bookings.md`.
+
 - **Licence dispatch: before or after payment?** Invoice payment is offered and
   fulfilment is a human forwarding a key. Dispatch first risks handing over a key
   that is never paid for; dispatch second makes the customer wait an invoice cycle.

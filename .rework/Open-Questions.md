@@ -8,10 +8,10 @@ settled.
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-17.
 
-Questions 15–18 come from `06-bookings.md`, a chunk that was scoped on
-2026-09-17 after the legacy facade map showed five facades with nowhere to land.
-**15 is the one worth asking first** — whether the cancellation penalty is really
-enforced decides how much of that chunk is automatic.
+Questions 16–18 come from `06-bookings.md`, a chunk scoped on 2026-09-17 after
+the legacy facade map showed five facades with nowhere to land. Its biggest
+question, whether the cancellation penalty is enforced automatically, was
+answered the same day — **it is** — and has moved into the chunk doc.
 
 | # | Question | Owner | Blocks |
 |---|---|---|---|
@@ -29,7 +29,6 @@ enforced decides how much of that chunk is automatic.
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
 | 14 | How does the queue worker run in production? | Marcel | Deploy |
-| 15 | Is the cancellation penalty actually enforced? | Client | Chunk 06 — how much of it is automatic |
 | 16 | Is a fixed-amount discount per basket or per booking? | Client | Chunk 06 — one test either way |
 | 17 | A paid booking cancelled late: credit note, or nothing? | Client | Chunk 06 |
 | 18 | Are bookmarks worth porting? 17 rows in three years | Client | Nothing — it is five one-liners |
@@ -130,29 +129,24 @@ either a live integration nobody has listed, or a feature that quietly lapsed.
 **Decides:** whether the rework carries a Mailchimp dependency, an API key and a
 sync at all, or whether `subscribe_newsletter` is just a flag the admin can read.
 
-### 15. Is the cancellation penalty actually enforced?
-
-Legacy charges 100 % of the fee for cancelling inside 11 days of the course and
-50 % inside 20. Fourteen student cancellations qualified under that rule; **six
-were charged**, and one of those six was then waived by cancelling the penalty
-invoice. The dates rule out the feature having arrived late — uncharged
-cancellations sit either side of charged ones, from 2024-03 to 2026-09.
-
-**Decides:** whether the rework raises the penalty invoice automatically,
-proposes it for an admin to approve, or only records that one is due. It is the
-single biggest question in chunk 06, because it is the difference between an
-automated rule and a worklist. See `06-bookings.md`.
-
 ### 16. Is a fixed-amount discount per basket or per booking?
 
-Legacy shows one and charges the other: the basket applies the code to the total,
-`Booking::create()` applies it again to each event's fee. Two customers with a
-two-course basket were given the fixed amount twice — CHF 30 became 60, CHF 50
-became 100. Percentage codes are unaffected.
+Legacy shows one and charges the other. A real basket — user 123, two SketchUp
+courses at CHF 949 and CHF 499, one **fixed CHF 50** code:
 
-**Decides:** one line in the checkout pricing, and a test. Worth asking because
-either answer is defensible and only one matches what the client thinks they
-sell.
+- The basket screen took CHF 50 off the **total** and showed **1398.00**.
+- `Booking::create()` took CHF 50 off **each course** and billed **1348.00**.
+
+Percentage codes are unaffected — 10 % of each fee sums to 10 % of the total —
+which is why nobody noticed for three years. It has happened three times, CHF 80
+in total.
+
+**Decides:** one line in the checkout pricing, and a test. It matters more than
+the money because chunk 03 raises an invoice per **confirmed course**, weeks
+apart: a basket-wide discount has to be split across those invoices at checkout
+and frozen, and a share stranded on a course that never runs has nowhere to go.
+Per booking avoids all of that. See `06-bookings.md` for both options worked
+through.
 
 ### 17. What happens when a student who has already paid cancels late?
 
@@ -161,8 +155,12 @@ paid. So a customer who paid the full fee and then cancels inside the 50 % windo
 keeps a paid full-price invoice: no credit note, no refund, no record that half
 of it was never owed.
 
-**Decides:** whether chunk 06 needs a credit note at all. Nothing in the data
-shows it has ever come up, which is worth saying out loud when asking.
+**It has never happened.** All four already-paid late cancellations were in the
+100 % window, where the full fee was owed anyway. Worth saying when asking,
+because it makes *leave it unbuilt* a cheap and defensible answer.
+
+**Decides:** whether chunk 06 needs a credit note at all, or just a way for an
+admin to put it right the first time it occurs.
 
 ### 18. Are bookmarks worth porting?
 
