@@ -135,6 +135,21 @@ must keep the ids those `event_expert` rows point at.
 Password hashes carry across unchanged, so everyone's existing password keeps
 working; Laravel rehashes on next login if the cost has changed.
 
+## Proposed since the build — 2026-09-17
+
+One change to `bookings`, driven by a chunk 03 finding rather than anything wrong
+with the port: **`rental_fee`, frozen at booking time the way `course_fee` is.**
+
+The rental is a bare `has_rental` boolean today and its price is read from config
+when the invoice is raised — which happens when the *event confirms*, a mean 27.7
+days after the booking and up to 209. A rate change inside that window invoices
+the customer at a price they were never quoted. It is the same bug `course_fee`
+already guards against, on the same row.
+
+Never triggered, because CHF 80 has never moved. Full reasoning, and a second
+item about where a discount lives if codes ever apply to licences, in
+`03-invoices.md`.
+
 ## Open questions
 
 1. `user_documents` — where do 1,162 generated PDFs live, and are the historical

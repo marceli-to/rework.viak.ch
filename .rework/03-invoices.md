@@ -236,6 +236,51 @@ The merged two-line invoice above is what a *new* booking with a rental produces
 from cutover onwards. Old and new invoices will legitimately differ in shape, and
 reconciliation should expect exactly one line on every ported row.
 
+## Two changes to tables chunk 01 already built — proposed 2026-09-17
+
+Both fall out of invoicing on confirmation. **Proposals, not decisions.**
+
+### `bookings.rental_fee` — freeze it, the way `course_fee` is frozen
+
+The bookings migration freezes the course price on purpose:
+
+> What this booking was sold for, captured at booking time. The event's fee can
+> change afterwards and this must not follow it.
+
+The laptop rental gets no such treatment. It is a bare `has_rental` boolean, and
+the price is read from `config('invoice.cost_rental')` when the invoice is
+raised — which, per the confirmation rule above, is a **mean 27.7 days later, and
+up to 209**.
+
+**So a booking taken at CHF 80 is invoiced at CHF 90 if the rate changes in
+between.** That is precisely the bug `course_fee` exists to prevent, on the same
+row, through a window far longer than anyone would guess from reading the code.
+
+It has never bitten because the price has never moved — all 30 `is_rental` rows
+are 80.00. That is luck, not design.
+
+```php
+$table->decimal('rental_fee', 8, 2)->default(0);  // frozen at booking
+```
+
+The port sets it from `config('invoice.cost_rental')` for the 30 historical rows,
+which is correct because the price has never changed; the invoice's stored `vat`
+still governs, and nothing is recomputed.
+
+### Where the discount lives, if codes apply to licences
+
+`discount_code_id` and `discount_amount` are frozen on `bookings` today, which is
+right for courses: the discount is part of what was offered, and 79 of 79 uses
+resolve to course bookings.
+
+If discount codes also apply to licences — **open question 3** — that no longer
+holds, because the discount then belongs to something that is not a booking.
+It would move to the invoice line, with the booking keeping its frozen copy as
+the record of the offer.
+
+Nothing to do until the question is answered; noting it so the answer does not
+arrive after the schema is written.
+
 ### One thing to settle with the client
 
 Invoice payment is offered ("Zahlung per TWINT, Kreditkarte oder Rechnung"), and

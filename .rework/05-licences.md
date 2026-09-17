@@ -118,23 +118,76 @@ That is a fair v1 trade — the licence's real state lives with the vendor anywa
 but it is a deliberate departure from the mockup, not an oversight. **Do not
 "fix" it later without asking.**
 
-## The shape that falls out
+## The shape that falls out — proposed 2026-09-17
 
-Small, and entirely ours:
+Small, and entirely ours. **Proposals, not decisions** — written down so the
+build starts from something concrete rather than re-deriving it.
 
-- **Product** — the software. Already has a marketing page in chunk 04.
-- **Variant** — belongs to a product; a name, and a price that is **nullable**.
-  No price *is* "Preis auf Anfrage": it renders as an enquiry, never as a basket
-  button. That keeps the two cases one model rather than two, and makes the
-  hub's "ab CHF" a `min(price)` over the purchasable variants.
-- **OrderItem** — points at a variant instead of a booking. Carries its own VAT,
-  per `03-invoices.md`.
-- **Fulfilment** — a status and a timestamp on the licence order item: *paid,
-  awaiting dispatch* → *dispatched*, set by a human.
-- **The admin worklist** — outstanding licence orders, worked through and ticked
-  off. This is the actual deliverable of the chunk; an email to `info@` is not a
-  work queue.
-- **Meine Lizenzen** — a query over fulfilled licence order items. No new model.
+### `licence_orders` — the missing parallel to `Booking`
+
+For a course, `Booking` is the thing that exists between checkout and invoicing:
+it freezes what was sold, and the invoice arrives later when the event confirms.
+A licence has no equivalent, and it needs one. The fulfilment state has to live
+somewhere, and the admin worklist needs a table to query.
+
+```
+licence_orders   uuid, number, user_id
+                 software_variant_id
+                 price            frozen at purchase, as bookings.course_fee is
+                 invoice_address  json, frozen — same reason as on bookings
+                 state            AWAITING_DISPATCH | DISPATCHED
+                 ordered_at, dispatched_at, dispatched_by
+```
+
+`invoice_items.itemable` then points at `Booking | LicenceOrder`, which is the
+same morph pattern `course_taxonomy` already uses.
+
+`dispatched_by` is worth having from the start: fulfilment is a person doing
+something manual, and when a customer says the licence never arrived, the
+question is who sent it and when.
+
+Whether `state` gains a third value — dispatch before or after payment — is open
+question 2 in `Open-Questions.md`.
+
+### `software` outgrows being a taxonomy
+
+`software` is one of five identically-shaped taxonomy tables today: uuid, `json
+title`, order, publish. The licence catalogue needs it to be a content entity —
+slug, descriptions, SEO, a marketing page — plus **variants**:
+
+```
+software              + slug, summary, description, seo_*, manufacturer_id
+software_variants     software_id, title, price NULLABLE, order, publish
+```
+
+**The nullable price is what makes "Preis auf Anfrage" work** without a second
+model: a variant with a price is purchasable, a variant without one renders as an
+enquiry. The hub's "ab CHF 590.–" is then `min(price)` over the priced variants.
+
+The mockups also filter by **Hersteller** — Robert McNeel, Chaos, Epic Games,
+Maxon — which is just another taxonomy, so the cheapest route is adding
+`manufacturers` to the existing taxonomy migration's `TABLES` array. Identical
+shape, no new pattern.
+
+**This breaks a symmetry on purpose.** `2026_09_11_000002_create_taxonomy_tables`
+deliberately built all five taxonomies from one loop because they differ only in
+meaning. `software` now stops being one of the five and becomes a model with a
+taxonomy-shaped past. That is the right call — it is the only one of the five
+that is a thing customers buy rather than a label — but it should be a decision
+rather than a drift.
+
+The payoff is that courses and licences hang off the same `software` row, which
+is exactly what the Vorhaben pages need: a curated list of courses *and* licences
+for one tool, from one relation.
+
+### The account area gates on being logged in, not on `Role::Student`
+
+`Role::Student` is documented as "books courses". A licence-only buyer books
+nothing and may well be a company. Nothing gates on the role yet, so this is a
+note for when the SPA routes are built rather than a fix: *has an account* is not
+one of the three capabilities, and should not be made into one.
+
+The roles stay as they are — the pivot decision in `02-courses-events.md` holds.
 
 ## Open questions
 

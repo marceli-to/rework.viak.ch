@@ -301,6 +301,23 @@ None of these touch the field kit, which is the one line not worth cutting:
 cutting it does not save 40h, it spends 60 elsewhere and leaves ten inconsistent
 forms.
 
+## The software pages need `software` to stop being a taxonomy — 2026-09-17
+
+Three of the nine templates here are software pages — the hub, "Was ist X?", and
+Lizenzen — and between them they drive 30 to 45 of the pages in this chunk. They
+all read from `software`, which is currently one of five identically-shaped
+taxonomy tables: uuid, `json title`, order, publish. Enough to tag a course,
+nowhere near enough to render a product page.
+
+It grows a slug, descriptions, SEO fields and a `manufacturer_id`, and gains
+`software_variants` for the licences themselves. The Hersteller filter on the hub
+is just another taxonomy and can join the existing migration's `TABLES` loop.
+
+Proposed shape and the reasoning — including why breaking the five-identical-
+taxonomies symmetry is the right call — are in `05-licences.md`. It matters here
+because the field kit has to edit these, and because a software entity is what
+lets a Vorhaben page pull courses *and* licences for one tool from one relation.
+
 ## Open questions
 
 1. ~~Does the client want to build pages we have not designed?~~ —

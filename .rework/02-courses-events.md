@@ -63,6 +63,13 @@ fixed values belong in an enum rather than in an editable table.
 
 Pinned by `tests/Feature/RolesTest.php`.
 
+#### A licence buyer does not get a fourth role — 2026-09-17
+
+Software licences bring account holders who book nothing and may be companies.
+That is *not* a new capability: `Role::Student` means "books courses" and should
+keep meaning it, and "has an account" is not a role at all. The account area gates
+on being logged in. The pivot is unchanged. See `05-licences.md`.
+
 ### `events.date` derives from the event's dates
 
 Legacy let the two drift, so an event could sort under one date and display
