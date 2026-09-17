@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Events;
 
 use App\Enums\EventState;
+use App\Events\EventConfirmed;
 use App\Models\Event;
 use RuntimeException;
 
@@ -18,6 +19,11 @@ use RuntimeException;
  *
  * Cancelling is terminal: a cancelled event has told its students it is off and
  * may have triggered penalty invoices, so it cannot quietly come back.
+ *
+ * Confirming is where the money starts: it dispatches [[EventConfirmed]], which
+ * raises an invoice for every seat ([[03-invoices]]). That is the domain rule,
+ * not a convenience — a booking is a commitment, and only a confirmed event is
+ * something there is anything to charge for.
  */
 class SetEventState
 {
@@ -35,8 +41,21 @@ class SetEventState
 			$attributes[$column] = now();
 		}
 
-		$event->update($attributes);
+		$wasConfirmed = $event->state === EventState::Confirmed;
 
-		return $event->refresh();
+		$event->update($attributes);
+		$event->refresh();
+
+		// Only on the transition *into* confirmed. Re-saving a confirmed event
+		// must not re-bill it — the action that raises invoices is idempotent
+		// anyway, but an event that fires on every save is one somebody will
+		// eventually hang a second listener on. A seat sold on an already
+		// confirmed event is billed at checkout instead, which is the same rule
+		// from the other side ([[RaiseInvoiceForBooking]]).
+		if ($state === EventState::Confirmed && ! $wasConfirmed) {
+			EventConfirmed::dispatch($event);
+		}
+
+		return $event;
 	}
 }

@@ -67,6 +67,11 @@ class Event extends Model
 		return $this->hasMany(EventDate::class)->orderBy('date');
 	}
 
+	public function bookings(): HasMany
+	{
+		return $this->hasMany(Booking::class);
+	}
+
 	public function experts(): BelongsToMany
 	{
 		return $this->belongsToMany(User::class, 'event_expert');
@@ -83,6 +88,49 @@ class Event extends Model
 		}
 
 		return (string) ($this->fee ?? $this->course->fee);
+	}
+
+	/**
+	 * The "Kurs-Nummer" a student sees: the course number, padded to two
+	 * digits, and the event's date — `07-120326`.
+	 *
+	 * Derived rather than stored, as it was in legacy. The format is not ours
+	 * to improve: 569 invoices and every participation confirmation ever sent
+	 * carry a number in exactly this shape, and customers quote it back.
+	 */
+	public function number(): string
+	{
+		return str_pad((string) $this->course->number, 2, '0', STR_PAD_LEFT)
+			.'-'.$this->date->format('dmy');
+	}
+
+	/**
+	 * The event's days, written the way an invoice line prints them:
+	 * `12.–13.03.2026` for consecutive days in one month, `26.01.2026` for a
+	 * single day, and a full pair of dates when a course straddles a month.
+	 *
+	 * Lives on the model rather than in a view because it is frozen into
+	 * `invoice_items.description` at issue — the invoice has to keep saying
+	 * what it said, so this runs once, not at render time.
+	 */
+	public function dateRange(): string
+	{
+		$days = $this->dates->pluck('date')->filter()->sort()->values();
+
+		if ($days->isEmpty()) {
+			return $this->date->format('d.m.Y');
+		}
+
+		$first = $days->first();
+		$last = $days->last();
+
+		if ($first->isSameDay($last)) {
+			return $first->format('d.m.Y');
+		}
+
+		return $first->isSameMonth($last)
+			? $first->format('d.').'–'.$last->format('d.m.Y')
+			: $first->format('d.m.').'–'.$last->format('d.m.Y');
 	}
 
 	public function scopePublished(Builder $query): Builder

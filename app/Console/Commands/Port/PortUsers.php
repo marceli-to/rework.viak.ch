@@ -15,6 +15,7 @@ use App\Models\Event;
 use App\Models\ExpertProfile;
 use App\Models\User;
 use App\Models\UserAddress;
+use App\Support\LegacyInvoiceAddress;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -323,37 +324,17 @@ class PortUsers extends Command
 				'discount_code_id' => $codeId,
 				'discount_amount' => $row->discount_amount ?? 0,
 				'has_rental' => (bool) $row->has_rental,
-				'invoice_address' => $this->parseInvoiceAddress($row->invoice_address),
+				// Frozen from config, which is correct here for a reason that
+				// will not hold forever: the rental has cost CHF 80 for the
+				// whole life of the system — all 30 legacy rental invoices are
+				// 80.00 — so there is no historical price to lose. From here
+				// on the fee is captured at booking time ([[03-invoices]]).
+				'rental_fee' => $row->has_rental ? config('invoice.rental_fee') : 0,
+				'invoice_address' => LegacyInvoiceAddress::parse($row->invoice_address),
 				'booked_at' => $row->booked_at,
 				'cancelled_at' => $row->cancelled_at,
 			]);
 		}
-	}
-
-	/**
-	 * Legacy froze the billing address as a rendered HTML fragment:
-	 * `Antonia Haller<br>Kaiserstr. 76<br>7752 Orsières`. There is no reliable
-	 * way back to fields from that — a two-word line could be a first and last
-	 * name or a company, and a street number may or may not be split off.
-	 *
-	 * So the port keeps the lines verbatim under `lines` and does not guess.
-	 * The structured shape is for addresses captured from here on; the 126
-	 * historical ones stay as the text that was actually printed on the bill,
-	 * which is the honest answer to "what address did we invoice?".
-	 */
-	private function parseInvoiceAddress(?string $html): ?array
-	{
-		if (blank($html)) {
-			return null;
-		}
-
-		$lines = preg_split('/<br\s*\/?>/i', $html) ?: [];
-		$lines = array_values(array_filter(array_map(
-			fn (string $line) => trim(html_entity_decode(strip_tags($line), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
-			$lines,
-		), 'filled'));
-
-		return $lines === [] ? null : ['lines' => $lines];
 	}
 
 	/** Legacy stored the multi-select as a CSV of display labels. */

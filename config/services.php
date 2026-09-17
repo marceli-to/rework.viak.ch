@@ -22,6 +22,23 @@ return [
 		'key' => env('RESEND_API_KEY'),
 	],
 
+	/*
+	 * Run My Accounts — VIAK's books ([[AccountingSystem]]).
+	 *
+	 * Deliberately empty everywhere but production. The service provider hands
+	 * out the fake client unless all of this is present AND the environment is
+	 * production, so a prototype cannot write into the client's live
+	 * accounting. Do not put these keys in a local .env to "test the real
+	 * thing"; the fake records what would have been posted.
+	 */
+	'run_my_accounts' => [
+		'base_url' => env('RMA_API_BASE', ''),
+		'key' => env('RMA_API_KEY', ''),
+		'create_path' => env('RMA_API_CREATE', ''),
+		'status_path' => env('RMA_API_STATUS', ''),
+		'prefix' => env('RMA_INVOICE_PREFIX', 'VIAK_'),
+	],
+
 	'ses' => [
 		'key' => env('AWS_ACCESS_KEY_ID'),
 		'secret' => env('AWS_SECRET_ACCESS_KEY'),

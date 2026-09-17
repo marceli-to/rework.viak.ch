@@ -22,6 +22,7 @@ Built. `php artisan port:courses && php artisan port:users` reproduces the
 | `discount_codes.fix` + `.percent` | `discount_codes.type` enum | Two booleans could say "both" and "neither" — states with no meaning |
 | `bookings.discount_code` string | `discount_code_id` FK + kept `discount_amount` | All 79 uses resolve, so the link is safe; the amount stays frozen |
 | `bookings.invoice_address` HTML | `invoice_address` JSON | A rendered `<br>` fragment cannot be corrected or exported |
+| `has_rental` + `config('invoice.cost_rental')` | `has_rental` + frozen `rental_fee` | Added 2026-09-17: the invoice is raised a mean 27.7 days later, so a rate change would rebill the customer ([[03-invoices]]) |
 
 ### What is deliberately *not* modelled
 
@@ -30,7 +31,8 @@ Built. `php artisan port:courses && php artisan port:users` reproduces the
 - **`user_documents`** (1,162 rows: 568 invoice PDFs, 594 participation
   confirmations) is not ported. Its two halves belong to `03-invoices.md` and to
   whichever chunk owns generated documents, and the files themselves need a
-  storage decision first.
+  storage decision first. Chunk 03 keeps `invoices.filename` so the link back to
+  a PDF a customer already holds is not lost in the meantime.
 
 ### Legacy uuids are carried across, not regenerated
 
@@ -135,10 +137,11 @@ must keep the ids those `event_expert` rows point at.
 Password hashes carry across unchanged, so everyone's existing password keeps
 working; Laravel rehashes on next login if the cost has changed.
 
-## Proposed since the build — 2026-09-17
+## Changed since the build — 2026-09-17
 
 One change to `bookings`, driven by a chunk 03 finding rather than anything wrong
 with the port: **`rental_fee`, frozen at booking time the way `course_fee` is.**
+Decided and built the same day, in chunk 03.
 
 The rental is a bare `has_rental` boolean today and its price is read from config
 when the invoice is raised — which happens when the *event confirms*, a mean 27.7
@@ -146,9 +149,13 @@ days after the booking and up to 209. A rate change inside that window invoices
 the customer at a price they were never quoted. It is the same bug `course_fee`
 already guards against, on the same row.
 
-Never triggered, because CHF 80 has never moved. Full reasoning, and a second
-item about where a discount lives if codes ever apply to licences, in
-`03-invoices.md`.
+Never triggered, because CHF 80 has never moved. `port:users` fills it from
+`config('invoice.rental_fee')` for the 40 historical `has_rental` bookings, which
+is right precisely because the price never moved, and `RaiseInvoiceForBooking`
+refuses to bill a rental whose frozen price is 0.00 rather than guess.
+
+Full reasoning, and the second item it came with — where a discount lives, now
+settled as *on the invoice line* — in `03-invoices.md`.
 
 ## Open questions
 

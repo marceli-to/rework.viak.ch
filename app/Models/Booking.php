@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -29,7 +31,7 @@ class Booking extends Model
 
 	protected $fillable = [
 		'number', 'event_id', 'user_id', 'course_fee',
-		'discount_code_id', 'discount_amount', 'has_rental',
+		'discount_code_id', 'discount_amount', 'has_rental', 'rental_fee',
 		'invoice_address', 'booked_at', 'cancelled_at',
 	];
 
@@ -39,6 +41,7 @@ class Booking extends Model
 			'course_fee' => 'decimal:2',
 			'discount_amount' => 'decimal:2',
 			'has_rental' => 'boolean',
+			'rental_fee' => 'decimal:2',
 			'invoice_address' => 'array',
 			'booked_at' => 'datetime',
 			'cancelled_at' => 'datetime',
@@ -80,5 +83,27 @@ class Booking extends Model
 	public function netFee(): string
 	{
 		return bcsub((string) $this->course_fee, (string) $this->discount_amount, 2);
+	}
+
+	/**
+	 * The invoices this booking appears on — through the line, not a column.
+	 * Usually one; six historical bookings have two, because a late
+	 * cancellation cancels the original invoice and raises a penalty one.
+	 */
+	public function invoiceItems(): MorphMany
+	{
+		return $this->morphMany(InvoiceItem::class, 'itemable');
+	}
+
+	/**
+	 * Has this booking already been billed? Anything cancelled does not count
+	 * — a cancelled invoice is one that was withdrawn, and the booking still
+	 * owes for the seat.
+	 */
+	public function isInvoiced(): bool
+	{
+		return $this->invoiceItems()
+			->whereHas('invoice', fn (Builder $query) => $query->where('status', '!=', InvoiceStatus::Cancelled))
+			->exists();
 	}
 }

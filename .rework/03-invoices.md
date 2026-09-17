@@ -1,7 +1,25 @@
-# 03 — Invoices (not yet built)
+# 03 — Invoices
 
-Placeholder for the money chunk. One finding is recorded here already because it
-affects the **live** site and should not wait for the rework.
+The money. Invoices, their lines, the rule that decides *when* one is raised,
+and the boundary to VIAK's books.
+
+## Status
+
+Built, 2026-09-17. `php artisan port:invoices` reproduces the 2026-09-11
+production data exactly: **569 invoices, 569 lines, every row matching its
+legacy self amount for amount** — Σ net 410,455.00, Σ discount 15,251.00,
+Σ VAT 195.00, Σ grand total 395,399.00 on both sides. 110 tests green.
+
+Two findings stand, both of them the `due_at` decisions already tracked in
+`Todo.md`; the port names them on every run rather than carrying them quietly.
+
+**Deferred, deliberately:** the QR-bill PDF and `user_documents`, the admin
+invoice worklist, and the checkout trigger (a seat sold on an already-confirmed
+event bills at purchase — [[RaiseInvoiceForBooking]] takes a single booking and
+is ready for it). Nothing in the chunk waits on them.
+
+One finding below is about the **live** site and should not wait for the
+rework — see *`invoices.due_at` overwrites itself*.
 
 ## VAT — answered 2026-09-14
 
@@ -100,8 +118,13 @@ trusted.
 1. **On the live site, soon:** `ALTER TABLE invoices MODIFY due_at TIMESTAMP
    NULL DEFAULT NULL;`. Stops the bleeding. The deadlines already lost are not
    recoverable from this table.
-2. **In the rework:** declare `due_at` explicitly nullable, and add a test that
-   updating an unrelated invoice column leaves `due_at` alone.
+2. **In the rework:** ~~declare `due_at` explicitly nullable, and add a test that
+   updating an unrelated invoice column leaves `due_at` alone~~ — **done
+   2026-09-17.** It is a `date` column, nullable, and MySQL's implicit rule
+   cannot attach to a DATE at all, so the bug is not merely fixed but
+   unrepresentable. `tests/Feature/Invoices/InvoiceTest.php` pins it by writing
+   an unrelated column and asserting the deadline did not move. Still owed *on
+   the cutover database*, which is where the verification has to happen.
 3. **Client question:** do the historical due dates matter — for dunning,
    for the accounting export, for anything? If so, they may be reconstructible
    from the invoice PDFs or from Run My Accounts, which received `duedate` at
@@ -236,9 +259,9 @@ The merged two-line invoice above is what a *new* booking with a rental produces
 from cutover onwards. Old and new invoices will legitimately differ in shape, and
 reconciliation should expect exactly one line on every ported row.
 
-## Two changes to tables chunk 01 already built — proposed 2026-09-17
+## Two changes to tables chunk 01 already built — decided 2026-09-17
 
-Both fall out of invoicing on confirmation. **Proposals, not decisions.**
+Both fall out of invoicing on confirmation. **Both decided and built.**
 
 ### `bookings.rental_fee` — freeze it, the way `course_fee` is frozen
 
@@ -263,23 +286,39 @@ are 80.00. That is luck, not design.
 $table->decimal('rental_fee', 8, 2)->default(0);  // frozen at booking
 ```
 
-The port sets it from `config('invoice.cost_rental')` for the 30 historical rows,
-which is correct because the price has never changed; the invoice's stored `vat`
-still governs, and nothing is recomputed.
+**Built.** `port:users` sets it from `config('invoice.rental_fee')` for the 40
+historical `has_rental` bookings, which is correct because the price has never
+changed; the invoice's stored `vat` still governs, and nothing is recomputed.
 
-### Where the discount lives, if codes apply to licences
+One consequence worth knowing about: `RaiseInvoiceForBooking` **throws** rather
+than bill a rental whose frozen price is 0.00. Both ways of guessing are wrong —
+zero gives the laptop away, today's config rate overcharges someone who was
+quoted last year's — so it names the booking and lets the other seats on the
+course be billed.
 
-`discount_code_id` and `discount_amount` are frozen on `bookings` today, which is
-right for courses: the discount is part of what was offered, and 79 of 79 uses
-resolve to course bookings.
+### Where the discount lives — on the line
 
-If discount codes also apply to licences — **open question 3** — that no longer
-holds, because the discount then belongs to something that is not a booking.
-It would move to the invoice line, with the booking keeping its frozen copy as
-the record of the offer.
+Legacy carried one `discount` column on the invoice header. **Decided
+2026-09-17: the discount lives on the line, and the header sums it.**
 
-Nothing to do until the question is answered; noting it so the answer does not
-arrive after the schema is written.
+A discount reduces the taxable base of the thing it was given against, so with
+mixed lines an invoice-wide figure cannot be attributed to a VAT rate at all:
+CHF 50 off a CHF 680 invoice is exempt if it came off the course and taxable if
+it came off the laptop. `vat = round((net − discount) × rate, 2)`, per line.
+
+`bookings.discount_code_id` and `discount_amount` stay frozen where they are —
+the discount is part of what was *offered*, and 79 of 79 uses resolve to course
+bookings. If codes ever apply to licences (**open question 3**), the line is
+already where that discount would land.
+
+**Superseded the same day, in the right direction.** `06-bookings.md` then
+decided that a code discounts the **order**, not each course, and that each
+invoice **consumes what is left of the checkout's discount, capped at its own
+net**. That needs a per-line discount with a per-invoice cap — which is what was
+built — so the only thing that changes is where the number is read from:
+`RaiseInvoiceForBooking` takes the booking's frozen copy today and will ask the
+checkout row once chunk 06 exists. The clamp is already in place, and there is a
+test for it.
 
 ### One thing to settle with the client
 
@@ -290,3 +329,132 @@ the customer attends weeks later. On a licence paid by invoice, dispatching firs
 means handing over a key that may never be paid for, and dispatching second means
 a customer waits on an invoice cycle for something the site implied was quick.
 Worth asking; it decides whether fulfilment hangs off *paid* or off *ordered*.
+
+
+## As built — 2026-09-17
+
+### The tables
+
+```
+invoices          number, user_id, status, date, due_at, paid_at, cancelled_at,
+                  cancellation_reason, replaced_by_invoice_id, invoice_address,
+                  net, discount, vat, grand_total, filename
+
+invoice_items     invoice_id, type, itemable (nullable morph), description,
+                  reference, position, net, discount, vat_rate, vat, total
+```
+
+Three details worth knowing before reading the migration:
+
+- **`due_at` is a `date`, not a `timestamp`.** MySQL's implicit
+  `ON UPDATE CURRENT_TIMESTAMP` rule only applies to TIMESTAMP and DATETIME
+  columns, so the bug that destroyed every historical deadline cannot recur —
+  not "is fixed", cannot recur. A payment deadline is a day anyway, never an
+  instant.
+- **`cancel_reason` became an enum plus a link.** Legacy wrote English prose
+  into a text column and exactly two sentences ever occurred. `Replaced by
+  Invoice No. 000182` is now `cancellation_reason = replaced` and
+  `replaced_by_invoice_id`, so the penalty flow's 6 pairs are navigable instead
+  of greppable.
+- **`queued` is gone.** It was a boolean on every invoice driving a pair of
+  nightly tasks — one setting it on all pending invoices, one taking a single
+  row off the queue per run, so clearing a backlog of twelve took twelve
+  nights. Which invoices need asking about is a query (`Invoice::pending()`),
+  not state on a document. All 569 rows carry 0 anyway.
+
+### Where the rule lives
+
+| File | What it is for |
+|---|---|
+| `SetEventState` | dispatches `EventConfirmed` on the transition *into* confirmed — and only that transition |
+| `RaiseInvoicesOnConfirmation` | the listener; synchronous, because raising a bill is not a mail's business |
+| `RaiseInvoicesForEvent` | one invoice per active seat; failures collected, never thrown at the confirmation |
+| `RaiseInvoiceForBooking` | composes the lines and the deadline; idempotent, so re-running picks up what is missing |
+| `IssueInvoice` | the only place an invoice is created: number, lines, stored totals, then the books |
+| `Vat` | 8.1 % to the centime, and the 80.00 → 6.48 pin |
+| `InvoiceNumber` | six digits, never reused, minted under a row lock inside a transaction |
+| `AccountingSystem` | the boundary; `FakeAccountingSystem` everywhere but production |
+| `SyncInvoiceStatus` + `invoices:sync` | payment comes *from* the books; nobody marks an invoice paid by hand |
+
+Legacy created invoices **inside a Mailable's `build()`** —
+`EventConfirmationStudent` raised the invoice while rendering the confirmation
+email, and `RentalAdded` and `BookingCancelledWithPenalty` did the same for
+theirs. So the document a customer legally owes money against came into
+existence when a mail template was rendered, and could be created twice or not
+at all depending on the queue. That is the single biggest structural change in
+the chunk: confirmation raises the invoice, the mail merely attaches it.
+
+### What the port actually did
+
+```
+                 legacy      ported
+invoices            569         569   ok
+invoice_items       569         569   ok
+Σ net        410,455.00  410,455.00   ok
+Σ discount    15,251.00   15,251.00   ok
+Σ vat            195.00      195.00   ok
+Σ grand_total 395,399.00  395,399.00  ok
+```
+
+Every legacy invoice matches its ported row amount for amount, field by field —
+the reconciliation compares `net`, `discount`, `vat`, `grand_total` and `status`
+on all 569 and reports any difference as a finding, because an invoice that
+changed in the port is an invoice that no longer matches the PDF the customer
+holds.
+
+**The 8 soft-deleted invoices come across still soft-deleted**, which the chunk
+01 rule already implied but which has a second reason here: their numbers must
+stay taken, or the next invoice this system issues reuses a number that is on a
+document somebody already has. `InvoiceNumber::next()` returns `000570` against
+the ported data, not `000562`.
+
+Three observations, all settled, reported on every run so nobody "fixes" them:
+
+- 30 rental lines keep a VAT figure this rework would compute differently
+  (000248: stored 6.50, centime rounding gives 6.48);
+- 19 invoices have a grand total of 0.00 — a fully discounted course, or a fee
+  of zero. Real documents with real numbers;
+- 10 bookings took a laptop and have no rental invoice (7 cancelled, the rest
+  on events never confirmed). Nothing to bill: the rule is
+  invoice-on-confirmation, seen from the other side.
+
+And a third finding, added once `06-bookings.md` found it: **invoice 000419 has
+a grand total of −149.00 and is still OPEN** — booking 000512 spent a fixed CHF
+648 code on a CHF 499 course, because legacy clamped the discount at nothing.
+Ported verbatim, like everything else, and reported on every run because it is
+live money that needs a human rather than a migration rule. The rework cannot
+produce another: a line takes at most what it is worth.
+
+#### One honest caveat about ported descriptions
+
+Legacy had **no description column at all** — the PDF derived the course title
+at render time from the live course. So a ported line's `description` is
+composed from what the course is called *now*, and can differ from what the PDF
+says wherever a course has been renamed since. The PDF in `user_documents` is
+the document that was sent; the ported description is a readable label for a row
+in a list. Frozen descriptions are a promise the rework can only keep for
+invoices it issues itself, and the port is where that stops being invisible.
+
+Ported rental lines read `Mietcomputer für {Kurs}` and ported course lines
+`{Kurs}, {Datum}`, matching the two legacy templates. A *newly issued* rental
+line says `Laptopmiete` and sits on the course invoice instead of on its own.
+
+### Tests, and what each one is really for
+
+110 green. The ones that exist to stop a specific thing coming back:
+
+- **`due_at` survives an unrelated write** — the bug that cost 541 deadlines.
+- **80.00 → 6.48, and 370.00 → 29.97** — centime rounding, against the client's
+  own basket summary.
+- **a 100 % discount still issues a document, a free event does not** — the two
+  halves of a distinction legacy also made, and the reason `grand_total = 0.00`
+  is not a bug on 19 rows.
+- **a rental rides on its course invoice, taxed alone** — 680.00 net, 6.48 VAT,
+  one number, where today it is two invoices and two QR bills.
+- **a renamed course does not retitle an issued invoice.**
+- **a deleted invoice's number is never reissued.**
+- **a discount bigger than the fee lands at 0.00, not at −149.00** — the shape
+  of the one negative invoice in the live books.
+- **the fake accounting system is bound even with credentials present**, and the
+  real client refuses to exist without them. The one mistake here that cannot be
+  undone is writing into VIAK's live books from a prototype.
