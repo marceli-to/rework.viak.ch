@@ -167,39 +167,74 @@ catalogue are billed on genuinely different triggers:
 A basket holding a course and a licence therefore *has* to produce two invoices,
 on different days. That is not a compromise — it falls out of the domain.
 
-## What this means for the schema
+## The schema — decided 2026-09-17
 
-`invoices.booking_id` still goes, because a licence invoice has no booking. A
-**polymorphic `invoiceable`** carries it, the scalar `vat` column survives, and
-the port stays 1:1 across all 561 rows. That is the minimum, and it is coherent.
+**An invoice is a header with line items, and it covers what became billable at
+the same moment.**
 
-The one question left is whether an invoice should have **line items** anyway —
-not to combine a checkout, which is now ruled out, but to combine the things that
-*do* become billable at the same instant. There are two such cases:
+That rule reproduces legacy's per-course split exactly — two courses confirming
+three weeks apart are still two invoices — and stops splitting in the one place
+where the split only ever existed to work around the schema.
 
-1. **A course and its laptop rental.** Same booking, same confirmation, same
-   moment — and today they are two invoices and two QR bills, split only because
-   the rental carries VAT and a scalar `vat` column cannot hold two treatments.
-   With lines it is one invoice: course line exempt, rental line at 8.1 %.
-2. **Several licences in one checkout.** All billable immediately, so three
-   licences would otherwise mean three invoices and three payment slips for
-   something with no uncertainty in it at all.
+`invoices.booking_id` goes. The link to what was sold moves down to the line.
 
-**Recommendation: give the invoice line items, and keep one invoice per billing
-event.** The rule becomes *an invoice covers what became billable at the same
-moment* — which reproduces legacy's per-course split exactly, and stops splitting
-in the two places where the split only ever existed to work around the schema.
-VAT then lives on the line, which the rental case needs on its own merits and
-which has nothing to do with licences.
+### Shape
 
-**If that is not worth it, take the plain polymorphic route.** It is smaller,
-it keeps the scalar `vat`, and it reproduces today's behaviour including the
-separate rental bill. Both are defensible; this one is a judgement call about 29
-historical rentals and an unknown number of future multi-licence orders, not a
-correctness question.
+```
+invoices          number, date, due_at, status, user_id,
+                  invoice_address, net, vat, grand_total, …
 
-Either way, the 561 historical invoices keep their stored `vat` verbatim on the
-port — nothing is recomputed, per the rounding note above.
+invoice_items     invoice_id
+                  type           COURSE | RENTAL | LICENCE
+                  itemable       polymorphic, nullable — Booking | LicenceOrderItem
+                  description    frozen at issue, not derived at render time
+                  net, vat_rate, vat, total
+```
+
+The invoice's `net`, `vat` and `grand_total` are the sums of its lines and are
+stored, not computed on read — an invoice is a document that was sent, and it has
+to keep saying what it said.
+
+`description` is frozen for the same reason. A course renamed in 2027 must not
+retitle an invoice issued in 2024.
+
+### VAT on the line
+
+Each line carries its own rate and amount: a course line at 0.00 (exempt), a
+rental or licence line at 8.1 % of its net, **rounded to the centime** per the
+rule above. The invoice's `vat` is their sum. This is what the decision buys —
+a booking with a laptop rental becomes one invoice:
+
+| | net | VAT |
+|---|---:|---:|
+| Blender Modeling, 12.–13.03. | 600.00 | 0.00 |
+| Laptopmiete | 80.00 | 6.50 |
+| | **680.00** | **6.50** |
+
+Today that is two invoices, two numbers and two QR bills for one booking.
+
+### The port does not merge anything — this is the important part
+
+**Every legacy invoice becomes one invoice with one line.** All 561 of them,
+including the 29 rentals, which stay 29 separate invoices in the rework.
+
+Line items are for invoices the rework *issues*. They are not a licence to
+rewrite history:
+
+- those 29 rental invoices were sent as their own documents, with their own
+  numbers, and the customer has the PDF;
+- `user_documents` holds 568 invoice PDFs that must keep matching their rows;
+- reconciliation is row-by-row against the legacy table, and merging pairs of
+  invoices would make all 561 uncomparable.
+
+So the port maps `invoices.is_rental = 1` to a single `RENTAL` line and
+everything else to a single `COURSE` line, copies `total`, `vat` and
+`grand_total` verbatim onto both the line and the header, and recomputes
+**nothing**. The 6.50 values that 5-centime rounding produced stay 6.50.
+
+The merged two-line invoice above is what a *new* booking with a rental produces
+from cutover onwards. Old and new invoices will legitimately differ in shape, and
+reconciliation should expect exactly one line on every ported row.
 
 ### One thing to settle with the client
 

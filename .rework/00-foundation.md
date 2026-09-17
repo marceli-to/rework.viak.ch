@@ -193,6 +193,10 @@ is settled; the one licence question still open — whether the Bildung tier's
     booking does not mean the course will run (mean lag 27.7 days in the live
     data). A licence has no confirmation step and bills at purchase. See
     `03-invoices.md`.
+12. ~~Invoice line items?~~ — **2026-09-17**: **yes.** An invoice is a header plus
+    lines covering what became billable at the same moment; VAT lives on the line.
+    The port still maps all 561 legacy invoices to one line each and merges
+    nothing. See `03-invoices.md`.
 
 ## Working data (updated 2026-09-11)
 

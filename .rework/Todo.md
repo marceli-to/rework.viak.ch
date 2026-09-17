@@ -168,13 +168,13 @@ Carried from the chunk docs so they are in one place:
   combined invoice would have to be credited when one course is cancelled. A
   licence has no confirmation step and bills at purchase, so a mixed basket
   produces two invoices on two different days by construction.
-- **Should an invoice have line items anyway?** *Open, chunk 03, judgement call.*
-  Not to combine a checkout — that is ruled out — but for the two things that do
-  become billable at the same instant: a course and its laptop rental (today two
-  invoices and two QR bills for one booking, split only because a scalar `vat`
-  column cannot hold two treatments), and several licences in one checkout. Lines
-  mean VAT per line; the alternative is a plain polymorphic `invoiceable` that
-  reproduces today's behaviour exactly. Both defensible — see `03-invoices.md`.
+- ~~Should an invoice have line items?~~ — **decided 2026-09-17: yes.** An
+  invoice is a header plus lines and covers what became billable at the same
+  moment, so a course and its laptop rental become one invoice instead of two
+  bills. VAT moves to the line. **The port merges nothing:** all 561 legacy
+  invoices become one-line invoices, the 29 rentals stay separate documents
+  (their PDFs and numbers are already with customers, and reconciliation is
+  row-by-row), and nothing is recomputed. See `03-invoices.md`.
 - **Licence dispatch: before or after payment?** Invoice payment is offered and
   fulfilment is a human forwarding a key. Dispatch first risks handing over a key
   that is never paid for; dispatch second makes the customer wait an invoice cycle.
