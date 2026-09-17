@@ -162,17 +162,24 @@ Carried from the chunk docs so they are in one place:
   the Order/OrderItem design in chunk 03 is now required rather than preferred.
   It also puts a course and a licence in one basket, which is why VAT moves to the
   line item. See `03-invoices.md`.
-- **What a licence actually is** — *new, and now the blocker chunk 05 scoping is
-  waiting on.* The client says "the software as a shop item, that's it". The
-  signed-off mockups show tiers (Einzelplatz / Netzwerk / Studierende), "ab CHF"
-  from-prices, seven of nine products at "Preis auf Anfrage", an education tier
-  gated behind "Nachweis einreichen", and a *Meine Lizenzen* page built out of
-  validity, expiry, renewal and a Verwalten action. Those are different builds.
-  Five questions listed in `05-licences.md`.
-- **`Twinmotion-Lizenzen.html` promises "Lieferung sofort per E-Mail"** — and
-  delivery is a human at VIAK forwarding an email, so it is not immediate. Either
-  the copy changes before launch or the promise breaks on every sale. A one-line
-  mockup fix now; a real problem if it ships. Worth raising on its own.
+- ~~What a licence actually is~~ — **answered 2026-09-17.** Products have
+  **variants** (Einzelplatz / Netzwerk / Studierende) at their own prices; some
+  software is **not directly purchasable** — "Preis auf Anfrage" is real and is
+  the majority case, so a variant's price is nullable and a priceless variant
+  renders as an enquiry; and *Meine Lizenzen* is **purchase history only**. That
+  last one removes an entity: no licence record with a validity, no expiry to
+  notice, no renewal flow, no "Verwalten", and no licence key stored anywhere —
+  VIAK forwards it from their own mailbox. A deliberate departure from the
+  mockup; see `05-licences.md` before anyone "fixes" it.
+- **Is the Bildung tier in scope, with its Nachweis?** *The one licence question
+  still open.* CHF 145/Jahr behind "Nachweis nötig", CTA "Nachweis einreichen" —
+  an upload, a human review and an approval before the basket. Build it, treat
+  Bildung as an enquiry variant (cheap, probably right for v1), or drop the tier.
+  Gates a corner of chunk 05, not the chunk.
+- **Licence copy at launch** — the mockups are wireframes and their wording is
+  filler, so nothing to decide, but the real copy cannot repeat
+  `Twinmotion-Lizenzen.html`'s "Lieferung sofort per E-Mail" (delivery is a human
+  at VIAK) or *Meine Lizenzen*'s validity dates (we do not track them).
 - **Licence pricing rules** — none yet (asked 2026-09-17). Whether discount codes
   apply to licences, and whether students pay a different price, stay open. Not
   blocking: decide after the shape is settled.

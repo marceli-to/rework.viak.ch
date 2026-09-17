@@ -1,15 +1,17 @@
-# 05 — Software licences (not yet scoped)
+# 05 — Software licences (not yet built)
 
-The second thing VIAK sells. Placeholder: it holds the client answers of
-2026-09-17 and the questions they opened, so the scoping pass has somewhere to
-start.
+The second thing VIAK sells.
 
 ## Status
 
-Not built, not scoped. The fulfilment answer below removes what was the only
-question blocking the build (`00-foundation.md`), but the mockups and the answers
-disagree about what a licence *is* — see *Where the answers and the mockups
-disagree*. Scoping waits on that.
+Not built. Shape settled 2026-09-17 against the client's answers and the mockups
+in `history/mockup/`. One question left open — the Bildung tier's Nachweis — and
+it gates a corner of the chunk rather than the chunk itself.
+
+The short version: **there is no integration, and a licence is not an entity.**
+Fulfilment is a human forwarding an email, and *Meine Lizenzen* is purchase
+history. What is left is a catalogue with variants, an order line, and an admin
+worklist. Chunk 03 owns the money and is where the real weight sits.
 
 ## Fulfilment is manual, and there is no reseller API — answered 2026-09-17
 
@@ -79,76 +81,84 @@ workaround carried forward for no reason. The historical rows keep their
 invoice-level `vat` verbatim on the port — see `03-invoices.md`, which also owns
 the rounding rule (to the centime, never to 0.05).
 
-## Where the answers and the mockups disagree
+## What a licence is — answered 2026-09-17
 
-The client's description of the product is **"the software as a shop item, that's
-it"**. The 24 signed-off mockups in `history/mockup/` describe something with
-considerably more structure. This is not a small gap and it should be closed
-before anything is modelled.
+The first answer was "the software as a shop item, that's it". Put next to the
+mockups, it resolved into three decisions:
 
-What the mockups actually show:
+| | Decision |
+|---|---|
+| **Variants** | **Yes.** A product has purchasable variants — Einzelplatz / Netzwerk / Studierende — at their own prices. The "ab CHF 590.–" on the hub is the cheapest of them. |
+| **Preis auf Anfrage** | **Real.** Some software cannot be bought directly at all. Seven of the nine products on `Software.html` are in this state, so it is the common case, not the exception. |
+| **Meine Lizenzen** | **Purchase history only.** Not a licence with a life. |
 
-| Mockup | What it shows | What a flat shop item gives you |
-|---|---|---|
-| `Twinmotion-Lizenzen.html` | Two tiers — Einzelplatz **CHF 590/Jahr**, Bildung **CHF 145/Jahr** | One price |
-| `Software.html` | Filter *Lizenztyp*: **Einzelplatz / Netzwerk / Studierende** | No types |
-| `Software.html` | "**ab** CHF 590.–", "**ab** CHF 995.–" | A from-price implies variants to be cheapest of |
-| `Software.html` | 7 of 9 products are "**Preis auf Anfrage**" | Not purchasable at all — an enquiry, not a basket |
-| `Twinmotion-Lizenzen.html` | Bildung tier: "**Nachweis nötig**", CTA is "Nachweis einreichen" | No gate, no proof, no approval step |
-| `Meine-Lizenzen.html` | "Gültig **unbefristet**" vs "Gültig **bis** 03.02.2027" | No validity period |
-| `Meine-Lizenzen.html` | "**Verlängert am** 03.02.2026" | No renewal |
-| `Meine-Lizenzen.html` | "**Verwalten** →" per licence | Nothing to manage |
+### Meine Lizenzen is history — and that is the decision that shrinks this chunk
 
-Three of these are not modelling details, they are separate features:
+The mockup shows validity ("Gültig unbefristet", "Gültig bis 03.02.2027"), a
+renewal ("Verlängert am 03.02.2026") and a per-licence "Verwalten →". **None of
+that is being built.** The page lists what the customer bought and when.
 
-1. **Preis auf Anfrage.** Seven of the nine products on the software hub have no
-   price. Either they are enquiry forms that never enter a basket, or the
-   catalogue is genuinely two-thirds unfinished. Those are very different builds.
-2. **The Bildung tier's proof.** "Nachweis einreichen" is an upload, a review, an
-   approval and only then a purchase — with a human decision in the middle. It is
-   its own flow, and it is the one place where *who* is buying actually matters,
-   which sits oddly next to "anyone may buy".
-3. **Meine Lizenzen.** The page is built entirely out of things a flat shop item
-   does not have: validity, expiry, renewal, management. Without them it degrades
-   to a list of past orders — which may be fine for a first release, but it is
-   not the page in the mockup.
+This is worth stating loudly because it removes an entity. A licence is **not** a
+record with an owner, a state and a lifespan — it is a line on an order that has
+been fulfilled. Everything that would have followed from the other reading goes
+away with it:
 
-### And one outright contradiction
+- no `Licence` model holding a key, a seat count and a validity window,
+- nothing that has to notice an expiry, and no scheduled job to notice it with,
+- no renewal flow — a renewal is just buying again,
+- no "Verwalten", which would have meant either a vendor portal we do not
+  integrate with or an account management surface nobody has designed.
 
-`Twinmotion-Lizenzen.html` promises, in body copy:
+It also means **we never hold a licence key.** VIAK forwards it from their own
+mailbox; it does not pass through the system. That is one less secret to store,
+and it is why the history page can only ever show a product, a variant and a date.
 
-> Offizieller Schweizer Reseller von Epic Games. Zahlung per TWINT, Kreditkarte
-> oder Rechnung, **Lieferung sofort per E-Mail**.
+The cost is the customer's: a year after buying an annual licence, *Meine
+Lizenzen* will still say they bought it and will not say whether it still works.
+That is a fair v1 trade — the licence's real state lives with the vendor anyway —
+but it is a deliberate departure from the mockup, not an oversight. **Do not
+"fix" it later without asking.**
 
-Delivery is *not* immediate. It is a human at VIAK reading an email, placing an
-order with the reseller, waiting for it, and forwarding it on. Either the copy
-changes before launch or the promise is broken on every single sale. This is a
-one-line fix on a mockup and a serious problem if it ships — worth raising with
-the client on its own, ahead of any scoping.
+## The shape that falls out
+
+Small, and entirely ours:
+
+- **Product** — the software. Already has a marketing page in chunk 04.
+- **Variant** — belongs to a product; a name, and a price that is **nullable**.
+  No price *is* "Preis auf Anfrage": it renders as an enquiry, never as a basket
+  button. That keeps the two cases one model rather than two, and makes the
+  hub's "ab CHF" a `min(price)` over the purchasable variants.
+- **OrderItem** — points at a variant instead of a booking. Carries its own VAT,
+  per `03-invoices.md`.
+- **Fulfilment** — a status and a timestamp on the licence order item: *paid,
+  awaiting dispatch* → *dispatched*, set by a human.
+- **The admin worklist** — outstanding licence orders, worked through and ticked
+  off. This is the actual deliverable of the chunk; an email to `info@` is not a
+  work queue.
+- **Meine Lizenzen** — a query over fulfilled licence order items. No new model.
 
 ## Open questions
 
 Blocking the scoping of this chunk:
 
-1. **Is a licence one price or a set of variants?** The mockups say Einzelplatz /
-   Netzwerk / Studierende at different prices; the client says one shop item.
-2. **What happens to "Preis auf Anfrage"?** Enquiry form, or a price to be filled
-   in later? Seven of nine products depend on the answer.
-3. **Is the Bildung tier in scope?** If yes it brings proof upload and manual
-   approval with it. If no, the tier comes off the mockup.
-4. **Does the licence key enter the system?** If VIAK forwards it from their own
-   mailbox, we never hold it, and "Meine Lizenzen" can show an order and a date
-   and nothing more. If it is pasted into the admin at dispatch, the page in the
-   mockup becomes possible — and we are then storing a licence key, which needs a
-   deliberate decision about where and how.
-5. **Do licences expire?** "pro Jahr" and "Gültig bis" say yes. If they do,
-   something has to notice an expiry and something has to sell a renewal, and
-   neither is a shop item.
+1. **Is the Bildung tier in scope, with its Nachweis?** `Twinmotion-Lizenzen.html`
+   prices it at CHF 145/Jahr behind "Nachweis nötig", and the CTA is "Nachweis
+   einreichen" rather than a buy button. That is an upload, a human review and an
+   approval standing between the customer and the basket — a different flow from
+   both "buy" and "enquire", and the only place where *who* is buying matters.
+   Three ways out, and it needs the client: build the proof flow, treat Bildung as
+   an enquiry variant like Preis auf Anfrage (cheap, and probably right for v1),
+   or drop the tier.
 
 Not blocking:
 
-- **Pricing rules** — the client has none yet (asked 2026-09-17). Whether
-  discount codes apply to licences, and whether students pay differently, are
-  open but can be decided after the shape is settled.
+- **Pricing rules** — none yet (asked 2026-09-17). Whether discount codes apply
+  to licences, and whether students pay differently, can be decided once the
+  catalogue exists.
 - **Payment methods** — both software mockups advertise TWINT, credit card and
-  invoice. That belongs to chunk 03.
+  invoice. Belongs to chunk 03.
+- **Copy at launch.** The mockups are wireframes and their words are filler —
+  `Twinmotion-Lizenzen.html` currently promises "Lieferung sofort per E-Mail",
+  which a human-in-the-loop process cannot honour, and *Meine Lizenzen* shows
+  validity we do not track. Nothing to decide, but the real copy has to say that
+  a licence arrives by email once VIAK has ordered it.

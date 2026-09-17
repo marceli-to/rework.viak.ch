@@ -158,10 +158,12 @@ every page of the live site and is not carried over; worth deleting there too.
 
 **Blocking the build:**
 
-1. What a licence *is*: one shop item, or the variants, tiers and validity the
-   mockups show? The fulfilment half is answered (below); this half replaced it.
-   Blocks chunk 05 scoping. See `05-licences.md`.
-2. Production PHP version (pin above). Only bites at deploy time.
+1. Production PHP version (pin above). Only bites at deploy time.
+
+Nothing else blocks the build. Chunk 03 is buildable today and chunk 05's shape
+is settled; the one licence question still open — whether the Bildung tier's
+"Nachweis" flow is in scope — gates a corner of chunk 05, not the chunk. See
+`05-licences.md`.
 
 **Blocking the cutover, not the build** — see `Todo.md` for both:
 
@@ -182,6 +184,10 @@ every page of the live site and is not carried over; worth deleting there too.
    orders from the reseller and sends the licence on. No integration to build.
 9. ~~May a non-student buy a licence?~~ — **2026-09-17**: **yes, anyone.** Which
    is what finally kills `invoices.booking_id` — see `03-invoices.md`.
+10. ~~What a licence *is*~~ — **2026-09-17**: products have **variants**; some
+    software is **not directly purchasable** ("Preis auf Anfrage") and renders as
+    an enquiry; and *Meine Lizenzen* is **purchase history only** — no validity,
+    no expiry, no renewal, and we never hold a licence key. See `05-licences.md`.
 
 ## Working data (updated 2026-09-11)
 
