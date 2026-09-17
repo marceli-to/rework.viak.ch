@@ -61,27 +61,24 @@ This is the structural half of the answer, and it lands on chunk 03, not here:
   students. The rework now has account holders who have never attended anything —
   which touches the role pivot from chunk 02, the account pages, and whatever
   the checkout does about guests.
-- **A basket can hold both.** A course (VAT-exempt) and a licence (8.1 %) in one
-  checkout. Whether that becomes one invoice with two VAT treatments or two
-  invoices with one each is the granularity question in `03-invoices.md`.
+- **A basket can hold both.** A course and a licence in one checkout — billed on
+  two different triggers, so two invoices on two different days. See below.
 
-## Consequence: an invoice granularity question — belongs to chunk 03
+## A licence bills on a different trigger — belongs to chunk 03
 
-Legacy carries **one** `vat` column for the whole invoice and gets away with it
-because it has never issued a mixed invoice: the only VAT it charges is the CHF 80
-laptop rental, and every rental is billed separately.
+A course invoice is raised when the **event is confirmed**, not at checkout —
+mean lag 27.7 days in the live data. A booking is a commitment; until the course
+has the numbers there may be nothing to charge for.
 
-A basket holding a course (exempt) and a licence (8.1 %) only breaks that **if
-one checkout produces one invoice**. Legacy's rule is one invoice per item — 35
-multi-booking baskets in the data, every booking invoiced on its own — so the
-scalar column keeps working if that rule is kept, and a polymorphic `invoiceable`
-is then enough to carry licences.
+A licence has no such step. No headcount, nothing to call off, available the
+moment it is paid for — so it is invoiced **at purchase**.
 
-**That is a live decision, not a foregone one**, and it is chunk 03's. The
-trade-off table and the recommendation (invoice per order, so a customer buying a
-course and a licence gets one bill rather than two) are in `03-invoices.md`.
-Whichever way it goes, the 561 historical invoices keep their stored `vat`
-verbatim on the port.
+That means a basket holding a course and a licence necessarily produces two
+invoices, on different days. Not a compromise; it falls out of the domain. It
+also means `invoices.booking_id` goes (a licence invoice has no booking) while
+the scalar `vat` column can survive, since each invoice still covers one billing
+event. See `03-invoices.md` for the schema call and for the one question it
+raises: whether VIAK orders from the reseller before or after the money arrives.
 
 ## What a licence is — answered 2026-09-17
 

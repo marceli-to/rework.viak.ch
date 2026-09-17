@@ -112,74 +112,101 @@ cutover database, and the open/overdue invoices need a deliberate `due_at` in th
 port rather than the today's-date value they will otherwise carry across. Tracked
 in `Todo.md`. Item 1 stands on its own and is worth doing on the live site now.
 
-## The invoice's shape — the real question is granularity
+## An invoice is created on confirmation, not at checkout — 2026-09-17
 
-Two things had to be answered before this could be designed: VAT treatment
-(2026-09-14, above) and whether a non-student may buy a licence (2026-09-17: yes,
-anyone — `05-licences.md`). Both are answered. What they do **not** settle is the
-shape, and an earlier draft of this section overstated the case for Order/OrderItem.
-Correcting that, because it changes the decision.
+This is the load-bearing fact about the whole chunk and it was not written down
+anywhere. From the client: **a booking does not mean the course will run.** An
+event is confirmed once it has the numbers, and *that* is when the invoice is
+raised. Booking is a commitment; invoicing waits to see whether there is anything
+to charge for.
 
-### What the legacy data actually shows
+Measured against the 2026-09-11 dump, across the 539 non-rental invoices that
+have a booking:
 
-Three facts, checked against the 2026-09-11 dump:
+| | |
+|---|---:|
+| invoiced later than the booking date | **430** |
+| invoiced the same day | 109 |
+| mean lag | **27.7 days** |
+| longest lag | 209 days |
 
-- **`invoices.booking_id` is already nullable**, and `invoices.user_id` already
-  exists. An invoice already knows its customer without going through a booking.
-- **Invoice is already not 1:1 with booking.** A booking with `has_rental` gets
-  *two* invoices — the course and a separate CHF 80 rental. It is booking → many.
-- **A basket has never produced a combined invoice.** 35 baskets hold more than
-  one booking (three at most), and every booking in them was invoiced separately.
-  Legacy's rule is simply **one invoice per item**.
+The 109 same-day ones are bookings taken *after* the event had already been
+confirmed, which is the same rule seen from the other side.
 
-### So relationships do solve the licence case
+And the multi-item baskets show exactly why this matters. User 32 booked two
+courses on 2023-02-14 and was invoiced on **2023-03-15** and **2023-04-11** —
+27 days apart, because the two courses confirmed at different times:
 
-A polymorphic `invoiceable` — `Booking | LicenceOrderItem` — handles everything a
-licence throws at this:
+| booked | invoice | invoice date | event |
+|---|---|---|---|
+| 2023-02-14 | 000014 | 2023-03-15 | 2023-03-24 |
+| 2023-02-14 | 000018 | 2023-04-11 | 2023-04-20 |
 
-- a licence-only order has no booking, and `booking_id` disappears rather than
-  going unfilled;
-- **the single `vat` column survives**, because each invoice still covers exactly
-  one thing with one VAT treatment. That is precisely why legacy bills the rental
-  separately — it is the only VAT-bearing item, and splitting it keeps the scalar
-  column honest;
-- the port stays 1:1 and all 561 invoices map straight across.
+### So separate invoices are required, not a legacy wart
 
-The earlier claim that licences force Order/OrderItem, and force VAT onto the
-line, was wrong as stated. Both follow only from **one checkout = one invoice**,
-which legacy does not do and which nobody has decided.
+A combined invoice at checkout is not merely undesirable, it is **impossible**:
+at the moment of the basket nobody knows whether either course will run, and
+issuing one bill for two courses means re-issuing or crediting it when one of
+them is cancelled. The legacy behaviour is correct and the rework keeps it.
 
-### The decision, then
+**My earlier recommendation of invoice-per-order is withdrawn.** It was reasoned
+from the customer's payment experience without knowing the confirmation rule, and
+the rule beats the experience.
 
-| | Invoice per item (polymorphic) | Invoice per order (Order/OrderItem) |
-|---|---|---|
-| Change | Small — `booking_id` → `invoiceable` | A new aggregate above the invoice |
-| VAT | Stays one column per invoice | Must move to the line |
-| Port | 561 rows straight across | Each legacy invoice wrapped in a synthetic one-line order |
-| Customer buying a course **and** a licence | Two invoices, two QR bills, two payments | One invoice, one bill, one payment |
-| Cancelling one item of three | Cancel that invoice | Partial-order logic |
+### Licences bill on a different trigger
 
-**Recommendation: invoice per order.** Not because licences force it — they do
-not — but because the point of the new site is selling licences alongside
-courses, and the polymorphic route bills that customer twice. With a CHF 995
-licence next to a CHF 1200 course, two separate QR bills for one checkout is a
-worse experience than today, and it gets worse as cross-selling is the whole
-premise. The cost is line-level VAT and a port that wraps each historical invoice
-in a one-line order — both contained, and both cheaper now than retrofitted.
+A licence has no confirmation step — there is no minimum headcount and nothing to
+call off. It is available the moment it is paid for. So the two things in the
+catalogue are billed on genuinely different triggers:
 
-**If the answer is that a checkout may keep producing several invoices, take the
-polymorphic route instead** — it is legitimate, materially smaller, and keeps the
-single `vat` column. This needs deciding before the schema is written; it is a
-business call about how customers pay, not a modelling preference.
+| Sold | Invoice raised |
+|---|---|
+| Course booking | when the **event is confirmed**, often weeks later |
+| Software licence | at **purchase** |
 
-### VAT per line, only under invoice-per-order
+A basket holding a course and a licence therefore *has* to produce two invoices,
+on different days. That is not a compromise — it falls out of the domain.
 
-If the recommendation is taken, a basket holding a course (exempt) and a licence
-(8.1 %) puts two treatments on one invoice, and **VAT is computed and stored per
-line item with the invoice total as the sum**. Legacy's scalar column cannot
-express that; it only ever worked because no mixed invoice has ever existed.
-Checked: all 30 `is_rental` rows are a lone CHF 80 net with 6.50 VAT, and
-`WHERE is_rental = 0 AND vat <> 0` returns zero rows.
+## What this means for the schema
+
+`invoices.booking_id` still goes, because a licence invoice has no booking. A
+**polymorphic `invoiceable`** carries it, the scalar `vat` column survives, and
+the port stays 1:1 across all 561 rows. That is the minimum, and it is coherent.
+
+The one question left is whether an invoice should have **line items** anyway —
+not to combine a checkout, which is now ruled out, but to combine the things that
+*do* become billable at the same instant. There are two such cases:
+
+1. **A course and its laptop rental.** Same booking, same confirmation, same
+   moment — and today they are two invoices and two QR bills, split only because
+   the rental carries VAT and a scalar `vat` column cannot hold two treatments.
+   With lines it is one invoice: course line exempt, rental line at 8.1 %.
+2. **Several licences in one checkout.** All billable immediately, so three
+   licences would otherwise mean three invoices and three payment slips for
+   something with no uncertainty in it at all.
+
+**Recommendation: give the invoice line items, and keep one invoice per billing
+event.** The rule becomes *an invoice covers what became billable at the same
+moment* — which reproduces legacy's per-course split exactly, and stops splitting
+in the two places where the split only ever existed to work around the schema.
+VAT then lives on the line, which the rental case needs on its own merits and
+which has nothing to do with licences.
+
+**If that is not worth it, take the plain polymorphic route.** It is smaller,
+it keeps the scalar `vat`, and it reproduces today's behaviour including the
+separate rental bill. Both are defensible; this one is a judgement call about 29
+historical rentals and an unknown number of future multi-licence orders, not a
+correctness question.
 
 Either way, the 561 historical invoices keep their stored `vat` verbatim on the
 port — nothing is recomputed, per the rounding note above.
+
+### One thing to settle with the client
+
+Invoice payment is offered ("Zahlung per TWINT, Kreditkarte oder Rechnung"), and
+licence fulfilment is a human forwarding a key. **Does VIAK order from the
+reseller before or after the money arrives?** On a course this does not arise —
+the customer attends weeks later. On a licence paid by invoice, dispatching first
+means handing over a key that may never be paid for, and dispatching second means
+a customer waits on an invoice cycle for something the site implied was quick.
+Worth asking; it decides whether fulfilment hangs off *paid* or off *ordered*.

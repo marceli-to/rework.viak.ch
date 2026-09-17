@@ -160,14 +160,25 @@ Carried from the chunk docs so they are in one place:
 - ~~May a non-student buy a licence?~~ — **answered 2026-09-17: yes, anyone.**
   A licence-only order has no booking, so `invoices.booking_id` goes. A
   polymorphic `invoiceable` is enough for that on its own.
-- **One checkout: one invoice or several?** *Open, and chunk 03 needs it before
-  the schema is written.* Legacy issues **one invoice per item** — 35 multi-item
-  baskets, each booking invoiced separately, and a rental billed apart from its
-  course. Keeping that rule means a polymorphic `invoiceable`, a single `vat`
-  column and a 1:1 port; changing it means Order/OrderItem and VAT per line, but
-  a customer buying a course and a licence gets one bill instead of two.
-  Recommendation and trade-off table in `03-invoices.md`. A business call about
-  how customers pay, not a modelling preference.
+- ~~One checkout: one invoice or several?~~ — **answered 2026-09-17: several,
+  and it is not negotiable.** Invoices are raised when a course is **confirmed**,
+  not at checkout, because a booking does not mean the course will run. Measured:
+  430 of 539 invoices are dated after their booking, mean lag 27.7 days, max 209;
+  one customer booked two courses the same day and was invoiced 27 days apart. A
+  combined invoice would have to be credited when one course is cancelled. A
+  licence has no confirmation step and bills at purchase, so a mixed basket
+  produces two invoices on two different days by construction.
+- **Should an invoice have line items anyway?** *Open, chunk 03, judgement call.*
+  Not to combine a checkout — that is ruled out — but for the two things that do
+  become billable at the same instant: a course and its laptop rental (today two
+  invoices and two QR bills for one booking, split only because a scalar `vat`
+  column cannot hold two treatments), and several licences in one checkout. Lines
+  mean VAT per line; the alternative is a plain polymorphic `invoiceable` that
+  reproduces today's behaviour exactly. Both defensible — see `03-invoices.md`.
+- **Licence dispatch: before or after payment?** Invoice payment is offered and
+  fulfilment is a human forwarding a key. Dispatch first risks handing over a key
+  that is never paid for; dispatch second makes the customer wait an invoice cycle.
+  Decides whether fulfilment hangs off *paid* or off *ordered*. Client question.
 - ~~What a licence actually is~~ — **answered 2026-09-17.** Products have
   **variants** (Einzelplatz / Netzwerk / Studierende) at their own prices; some
   software is **not directly purchasable** — "Preis auf Anfrage" is real and is

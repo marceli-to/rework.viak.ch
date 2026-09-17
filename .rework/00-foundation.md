@@ -183,12 +183,16 @@ is settled; the one licence question still open — whether the Bildung tier's
    **manual, no API.** The customer orders and pays, VIAK gets an email, a human
    orders from the reseller and sends the licence on. No integration to build.
 9. ~~May a non-student buy a licence?~~ — **2026-09-17**: **yes, anyone.** So
-   `invoices.booking_id` goes. It does *not* by itself force Order/OrderItem —
-   see the granularity question in `03-invoices.md`.
+   `invoices.booking_id` goes — a polymorphic `invoiceable` carries it.
 10. ~~What a licence *is*~~ — **2026-09-17**: products have **variants**; some
     software is **not directly purchasable** ("Preis auf Anfrage") and renders as
     an enquiry; and *Meine Lizenzen* is **purchase history only** — no validity,
     no expiry, no renewal, and we never hold a licence key. See `05-licences.md`.
+11. ~~One checkout, one invoice or several?~~ — **2026-09-17**: **several.**
+    Invoices are raised when a course is **confirmed**, not at checkout, because a
+    booking does not mean the course will run (mean lag 27.7 days in the live
+    data). A licence has no confirmation step and bills at purchase. See
+    `03-invoices.md`.
 
 ## Working data (updated 2026-09-11)
 
