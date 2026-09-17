@@ -114,11 +114,11 @@ Full write-up in `03-invoices.md`.
 
 ### What the migration has to decide
 
-1. **The column itself.** In the rework, declare `due_at` explicitly nullable so
-   the implicit rule never applies, plus a test that updating an unrelated
-   invoice column leaves `due_at` alone. Cheap, and it should just be part of
-   building chunk 03 — but it has to be verified on the cutover database, not
-   only in tests.
+1. ~~**The column itself.**~~ **Done 2026-09-17, in chunk 03.** `due_at` is a
+   nullable `date`: MySQL's implicit rule only attaches to TIMESTAMP and
+   DATETIME columns, so the bug is unrepresentable rather than merely fixed, and
+   `tests/Feature/Invoices/InvoiceTest.php` pins it. **Still to verify on the
+   cutover database**, which is the half a test cannot do.
 2. **The 541 lost deadlines.** Not recoverable from the `invoices` table. The
    question is whether they matter — for dunning, for the accounting export, for
    a reprinted PDF. If they do, they may be reconstructible from the invoice PDFs
@@ -126,9 +126,15 @@ Full write-up in `03-invoices.md`.
    reconstruction is migration work and has to happen against the dump we
    actually cut over, so it needs deciding before the port is frozen.
 3. **The open and overdue ones.** These are live money. Whatever `due_at` they
-   carry at cutover is today's date, which is wrong for all of them. Either
-   recompute from the booking's event start (the rule the legacy branch was
-   reaching for) or carry them over knowingly wrong. Pick one, in the port.
+   carry at cutover is the day the row was last touched, which is wrong for all
+   of them. Either recompute from the booking's event start (the rule the legacy
+   branch was reaching for) or carry them over knowingly wrong. Pick one, in the
+   port.
+
+   `port:invoices` carries them verbatim today and reports both halves as
+   findings on every run — 541 paid deadlines lost, 12 open/overdue with a
+   deadline equal to their last write, oldest 000419 dated 2025-05-26 and still
+   OPEN. It will keep saying so until somebody decides, which is the point.
 
 ### Available earlier, independently
 
@@ -214,6 +220,31 @@ items that are ours rather than the client's.
 - **Legacy quick win:** `head.blade.php` loads Typekit kit `kcs4ept`
   (neuzeit-grotesk), which no stylesheet references — a dead render-blocking
   request on every page. Safe to delete from the live site.
+- **Legacy bug: the app cannot run `config:cache`.** 53 runtime `env()` calls in
+  `app/` and `routes/`. Every one of the 24 mailables does
+  `->from(env('MAIL_FROM_ADDRESS'), env('APP_NAME'))`; `Tasks/Job`,
+  `Tasks/ObserveEventState` and `Facades/ParticipantsChange` read `env('MAIL_TO')`
+  for the admin recipient; `Facades/NewsletterSubscriber` reads
+  `env('MAILCHIMP_TAGS')`. Cache the config on the live site and mail goes out
+  from a null address, to a null admin. Nothing to fix urgently — it works because
+  the config is never cached — but nobody should "optimise" that deploy without
+  moving these to `config()` first. The rework bans `env()` outside `config/`; see
+  `00-foundation.md`.
+- **Legacy bug: the cancel-or-confirm reminder misses a day whenever the
+  scheduler does.** `Tasks/ObserveEventState` matches
+  `where('date', now()->addDays(10))` — an exact day. One missed minute-run on the
+  wrong day and those events never get their reminder, because nothing asks
+  whether the threshold has been passed. Same shape in
+  `Facades/ParticipantsChange`, which notifies only on `== $max` / `== $min` /
+  `== $min - 1`, so two bookings in one cycle step over the count and the
+  notification is lost. The rework compares with `>=` / `<=` and guards with a
+  flag. See **Notify on crossing, not on equality** in `00-foundation.md`.
+- **Legacy oddity worth a look:** `Providers/EventServiceProvider` maps
+  `Registered::class` in `$listen` without importing it, so it resolves to
+  `App\Providers\Registered` — a class that does not exist, making the
+  `SendEmailVerificationNotification` mapping dead. Auto-discovery of
+  `App\Listeners` covers everything else, so nothing visibly broke; worth
+  checking whether email verification on registration was ever meant to work.
 - **Production PHP version** — the rework is pinned to 8.3. Raise it if production
   runs 8.4.
 - ~~English on the public site~~ — **answered 2026-09-16: not in this rework.**

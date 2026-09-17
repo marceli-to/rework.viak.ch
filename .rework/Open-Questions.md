@@ -5,22 +5,25 @@ holds up. Answered questions are **not** kept here — they move into the chunk 
 they belong to, and `Todo.md` keeps the struck-through record of how each was
 settled.
 
-**Nothing on this list blocks starting chunk 03.** Updated 2026-09-17.
+**Nothing on this list blocks anything that is being built.** Chunk 03 is built
+and none of these held it up. Updated 2026-09-17.
 
 | # | Question | Owner | Blocks |
 |---|---|---|---|
 | 1 | Is the Bildung licence tier real? | Client | Chunk 05, partly |
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
-| 3 | Discount codes and student pricing on licences? | Client | Nothing yet |
+| 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | 4 | Which of the six Vorhaben are real? | Client | Chunk 04 page count |
 | 5 | What does "image handling (frontend output)" mean? | Client | Chunk 04 media field |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
-| 7 | Do the historical invoice due dates matter? | Client | Cutover |
+| 7 | Do the historical invoice due dates matter? | Client | Cutover — `port:invoices` reports it every run |
 | 8 | Event 213 — what was it meant to be? | Client | Cutover |
 | 9 | The other 13 two-digit-year events: drop or restore? | Marcel | Cutover |
 | 10 | `due_at` in the port: the 541 lost, and the open/overdue | Marcel | Cutover |
 | 11 | What PHP does production run? | Marcel | Deploy |
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
+| 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
+| 14 | How does the queue worker run in production? | Marcel | Deploy |
 
 ---
 
@@ -59,7 +62,9 @@ No pricing rules yet as of 2026-09-17. 102 discount codes exist today and all 79
 uses resolve to course bookings.
 
 **Decides:** nothing immediately — it can be answered once the catalogue exists.
-Worth asking in the same conversation as 1 and 2.
+Worth asking in the same conversation as 1 and 2. Chunk 03 settled where the
+answer would land: `invoice_items.discount` is per line, so a licence discount
+needs no schema change whichever way this goes.
 
 ### 4. Which of the six Vorhaben are real, and are there more coming?
 
@@ -105,6 +110,17 @@ be recovered from the data.
 **Decides:** restore it with a corrected date, or drop it. None of the 14 ever
 took a booking or appeared on the site.
 
+### 13. Is the Mailchimp newsletter sync still in scope?
+
+Legacy syncs to Mailchimp on every profile save — `Facades/NewsletterSubscriber`
+subscribes or unsubscribes `users.subscribe_newsletter` and tags the member
+`Deutsch` plus whatever `env('MAILCHIMP_TAGS')` holds. Nothing in the rework
+brief mentions it; chunk 04 treats "Newsletter" only as footer *copy*. So it is
+either a live integration nobody has listed, or a feature that quietly lapsed.
+
+**Decides:** whether the rework carries a Mailchimp dependency, an API key and a
+sync at all, or whether `subscribe_newsletter` is just a flag the admin can read.
+
 ---
 
 ## For Marcel
@@ -139,6 +155,17 @@ A `text` column on 35 rows holding what looks like structured data. The mockups
 want quote + name + role + featured, which is a `Testimonial` model rather than a
 column — but the proposed shape needs confirming against what those rows hold.
 Ours to answer by looking, not a client question.
+
+### 14. How does the queue worker run in production?
+
+The rework puts mail, PDFs and accounting posts on the database queue, replacing
+legacy's two-emails-a-minute scheduler task. That leaves the worker's lifecycle
+open: `queue:work` under a supervisor, or — if the host gives only a crontab —
+`schedule:run` each minute driving `queue:work --stop-when-empty --max-time=55`.
+The second is fine and still far better than what legacy does.
+
+**Decides:** deployment, not code. Same conversation as 11, and worth settling in
+the same breath.
 
 ---
 

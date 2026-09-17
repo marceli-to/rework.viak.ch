@@ -94,6 +94,10 @@ Carried over from `rework.projects.nightnurse.ch`, which these apply to unchange
 - **No fat models.** Relations, casts, scopes, trivial accessors. Nothing else.
   (Legacy `Event` is 448 LOC with 14 `$appends`; that is the anti-pattern.)
 - `declare(strict_types=1);` at the top of every PHP file.
+- **Never `env()` outside `config/`.** Legacy has 53 runtime calls in `app/` and
+  `routes/` — every one of its 24 mailables does
+  `->from(env('MAIL_FROM_ADDRESS'), env('APP_NAME'))` — which means it cannot
+  safely run `config:cache`. See `Todo.md`.
 - Tabs, per `.editorconfig`. Pint, configured in `pint.json` with its five
   indentation fixers (`indentation_type`, `statement_indentation`,
   `array_indentation`, `method_chaining_indentation`, `heredoc_indentation`)
@@ -101,6 +105,127 @@ Carried over from `rework.projects.nightnurse.ch`, which these apply to unchange
   to four spaces. With them off it leaves indentation alone and fixes everything
   else. Indentation is therefore the editor's job via `.editorconfig`, not the
   formatter's.
+
+## Application structure
+
+Legacy `app/` has 18 top-level directories, most of them not Laravel's. They are a
+2020 house style, and the rework carries almost none of it over. Recorded here so
+the question is not reopened once per chunk.
+
+| Legacy | Size | Rework |
+|---|---|---|
+| `Facades/` | 16 files, 1,204 LOC | `Actions/` — see below |
+| `Providers/` | 11 | One. Eight existed only to bind a facade; `Auth`, `Route` and `Broadcast` are Laravel 10 scaffolding that Laravel 11 folded into `bootstrap/app.php` |
+| `Helpers/` | 5 | `Support/`. Business logic wearing a helper's name — `PenaltyHelper` — goes to an Action instead |
+| `Stores/` | 4 | Pinia on the client. `CourseFilterStore` is client state and disappears; the basket is posted to a FormRequest at checkout and **priced server-side**, never from what the client sent |
+| `Tasks/` | 5 | `Jobs/` for work, artisan commands for schedules — see below |
+| `Traits/` | 4, all `*Scopes` | `Models/Concerns/` |
+| `Services/` | 3 | `Support/`, or the Action that needs it |
+| `Events/` + `Listeners/` | 11 + 11 | Kept, under the rule below |
+
+`Support/` is the only home for stateless shared logic. No `Helpers/`, no global
+functions, no second bag.
+
+### The facade layer is not facades
+
+`App\Facades\Booking` is a 243-line class of `public static` methods.
+`BookingFacade` beside it is the real Laravel facade, whose accessor returns
+`'booking'`. `BookingServiceProvider` binds that string to a hardcoded
+`new Booking()`. Three files per domain, eight domains.
+
+Both entry points are used interchangeably, sometimes inside one method:
+`Booking::create()` calls `BookingFacade::can($event, $user)` — a container
+round-trip to reach a static method on the class already executing.
+
+It buys nothing that either half of a facade is for. The binding is not swappable:
+it constructs one concrete class and nothing reads a contract. The static methods
+cannot be mocked, so tests get the real thing regardless. What is left is 1,204
+lines of business logic filed under a name for an indirection that is not
+happening.
+
+All of it becomes Actions. The conventions above already implied that; this says
+which:
+
+| Legacy facade | LOC | Rework |
+|---|---|---|
+| `Invoice` | 294 | `Actions/Invoices/*`, `Support/InvoiceNumber`, `Support/Vat` — **built**, chunk 03 |
+| `Booking` | 243 | `Actions/Bookings/` — not yet built |
+| `RentalInvoice` | 208 | Nothing of its own — see below |
+| `Discount` | 165 | `Actions/Discounts/`, with code generation in `Support/` |
+| `Bookmark` | 82 | `Actions/Bookmarks/`, or model methods; it is five one-liners over a pivot |
+| `ParticipantsChange` | 59 | A listener. It is pure notification |
+| `NewsletterSubscriber` | 41 | Open — is the Mailchimp sync still in scope? |
+| `Message` | 32 | Folded into the booking Action |
+
+**`RentalInvoice` is a copy of `Invoice`.** The same nine methods —
+`findFromBooking`, `findOrCreateFromBooking`, `createFromBooking`, `cancel`,
+`delete`, `getGrandTotal`, `getNumber`, `pad`, `getVat` — differing mainly in
+which fee they bill and that one sets `is_rental`. 502 lines for one idea. The
+line-items decision in `03-invoices.md` removes the reason for the split: a
+course and its rental are two lines on one invoice, so there is one set of
+Actions. The *port* still keeps the 29 historical rental invoices as separate
+documents — that is about not rewriting what customers already hold, not about
+the code.
+
+One thing the split hid: `Booking::getNumber()`, `Invoice::getNumber()` and
+`RentalInvoice::getNumber()` are the same racy full-table load
+(`withTrashed()->get()->last()->number + 1`). `Support/InvoiceNumber` fixes it
+for invoices and documents why; bookings still need the same treatment when
+their Action is built.
+
+### Notify on crossing, not on equality
+
+Legacy's notifications fire on `==` and nothing else:
+
+- `ParticipantsChange::handle()` — `$bookingsCount == $max`, `== $min`,
+  `== $min - 1` (and the last of the three governs an unbraced statement, which
+  is correct today and one edit from not being).
+- `ObserveEventState` — `where('date', now()->addDays(10))`, an exact day.
+
+Any step that skips the value loses the notification for good: two bookings in
+one cycle jump the count past `$max`, a missed scheduler run skips the day, and
+nothing catches up because nothing asks whether the threshold has been *passed*.
+The rework compares with `>=` / `<=` and guards with a flag, so a late run still
+does the right thing and a repeated one does nothing.
+
+### An event, or a direct call
+
+Events are for *other things may want to react* — above all notifications, which
+is what all 11 legacy pairs actually do. Anything that must happen, or money is
+lost, is called directly from the Action.
+
+`EventConfirmed → RaiseInvoicesOnConfirmation` sits on that line deliberately:
+more than one thing hangs off a confirmation — invoices now, the confirmation
+mail and its PDF later — and `SetEventState` should not have to know the list. It
+is safe because there is exactly one dispatcher. The risk it accepts, and the
+reason not to make a habit of it: a listener that silently fails to register is
+an invoice that silently is not raised.
+
+### Queue and schedule
+
+Two different things, which legacy conflates into `Tasks/`.
+
+**Work** — mail, PDFs, accounting posts — goes on the database queue. What that
+replaces: `$schedule->call(new Job)->everyMinute()` taking `splice(0, 2)` off an
+`App\Models\Job` table. Two emails a minute, a hard ceiling; one confirmed
+twelve-seat course backs the mailer up for half an hour. On `Throwable` it logs,
+writes the exception into an `error` column and sets `processed = 1` — **no
+retry**, so a transient SMTP failure loses that mail permanently. Nothing prunes
+it: 4,523 rows. Laravel's queue gives retries, backoff and `failed_jobs` for less
+code.
+
+**Schedules** — the reminder sweep, the invoice batch — are artisan commands
+registered in `routes/console.php`, each with `withoutOverlapping()`. Legacy uses
+`$schedule->call(new Invokable)`, which runs the work *inside the scheduler
+process*: a slow send delays everything queued behind it, and
+`RunInvoiceBatchProcess` runs `everyMinute()` with nothing stopping it
+overlapping itself mid-batch.
+
+**Open, and it is a deployment question:** how the worker runs — `queue:work`
+under a supervisor, or, with only a crontab, `schedule:run` each minute driving
+`queue:work --stop-when-empty --max-time=55`. The second is the honest choice on
+shared hosting and is still strictly better than what legacy does. Same
+conversation as the production PHP version.
 
 ## Directory shape
 
@@ -165,6 +290,9 @@ every page of the live site and is not carried over; worth deleting there too.
 **Blocking the build:**
 
 1. Production PHP version (pin above). Only bites at deploy time.
+2. How the queue worker runs in production — supervisor, or cron driving
+   `queue:work --stop-when-empty`. Also a deploy-time question; see
+   **Queue and schedule** above.
 
 Nothing else blocks the build. Chunk 03 is buildable today and chunk 05's shape
 is settled; the one licence question still open — whether the Bildung tier's
