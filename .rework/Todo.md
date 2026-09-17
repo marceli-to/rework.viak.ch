@@ -142,7 +142,10 @@ or not the migration is close.
 
 ## Other open questions
 
-Carried from the chunk docs so they are in one place:
+**Live questions now live in `Open-Questions.md`** — what is still unanswered,
+who owes each answer, and what it holds up. What follows is the record of how
+things were settled, kept so that no answer has to be re-derived, plus the few
+items that are ours rather than the client's.
 
 - ~~VAT on software licences~~ — **answered 2026-09-14**: 8.1 % added to the net
   price, **rounded to the centime** (not the legacy 0.05), and it posts to Run My
