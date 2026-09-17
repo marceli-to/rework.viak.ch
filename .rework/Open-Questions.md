@@ -8,10 +8,11 @@ settled.
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-17.
 
-Questions 16–18 come from `06-bookings.md`, a chunk scoped on 2026-09-17 after
-the legacy facade map showed five facades with nowhere to land. Its biggest
-question, whether the cancellation penalty is enforced automatically, was
-answered the same day — **it is** — and has moved into the chunk doc.
+Questions 17 and 18 come from `06-bookings.md`, a chunk scoped on 2026-09-17
+after the legacy facade map showed five facades with nowhere to land. Its two
+big questions were both answered the same day — the cancellation penalty **is**
+raised automatically, and a discount code discounts the **order** — and have
+moved into the chunk doc.
 
 | # | Question | Owner | Blocks |
 |---|---|---|---|
@@ -29,7 +30,6 @@ answered the same day — **it is** — and has moved into the chunk doc.
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
 | 14 | How does the queue worker run in production? | Marcel | Deploy |
-| 16 | Is a fixed-amount discount per basket or per booking? | Client | Chunk 06 — one test either way |
 | 17 | A paid booking cancelled late: credit note, or nothing? | Client | Chunk 06 |
 | 18 | Are bookmarks worth porting? 17 rows in three years | Client | Nothing — it is five one-liners |
 
@@ -128,25 +128,6 @@ either a live integration nobody has listed, or a feature that quietly lapsed.
 
 **Decides:** whether the rework carries a Mailchimp dependency, an API key and a
 sync at all, or whether `subscribe_newsletter` is just a flag the admin can read.
-
-### 16. Is a fixed-amount discount per basket or per booking?
-
-Legacy shows one and charges the other. A real basket — user 123, two SketchUp
-courses at CHF 949 and CHF 499, one **fixed CHF 50** code:
-
-- The basket screen took CHF 50 off the **total** and showed **1398.00**.
-- `Booking::create()` took CHF 50 off **each course** and billed **1348.00**.
-
-Percentage codes are unaffected — 10 % of each fee sums to 10 % of the total —
-which is why nobody noticed for three years. It has happened three times, CHF 80
-in total.
-
-**Decides:** one line in the checkout pricing, and a test. It matters more than
-the money because chunk 03 raises an invoice per **confirmed course**, weeks
-apart: a basket-wide discount has to be split across those invoices at checkout
-and frozen, and a share stranded on a course that never runs has nowhere to go.
-Per booking avoids all of that. See `06-bookings.md` for both options worked
-through.
 
 ### 17. What happens when a student who has already paid cancels late?
 

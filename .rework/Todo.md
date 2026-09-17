@@ -193,6 +193,18 @@ items that are ours rather than the client's.
   as `status = CANCELLED` with a **null** `cancel_reason`, so the rework adds a
   third `CancellationReason` for a deliberate waiver. See `06-bookings.md`.
 
+- ~~Does a discount code discount the order, or each course in it?~~ —
+  **answered 2026-09-17: the order.** Legacy promised one and charged the other:
+  the basket screen took a fixed CHF 50 off the total, `Booking::create()` took
+  CHF 50 off each course. Three baskets, CHF 80 given away. Two consequences, both
+  in `06-bookings.md`: a completed checkout becomes a **row** so the discount has
+  something to be level with (not an invoicing entity — chunk 03's rejection of
+  Order/OrderItem stands), and the discount is **drawn down** by each invoice as
+  it is raised, capped at that invoice's net, rather than split proportionally at
+  checkout. Draw-down strands nothing on a course that never runs, never edits a
+  raised invoice, and makes the −149.00 invoice unrepresentable. Percentage codes
+  are unaffected.
+
 - **Licence dispatch: before or after payment?** Invoice payment is offered and
   fulfilment is a human forwarding a key. Dispatch first risks handing over a key
   that is never paid for; dispatch second makes the customer wait an invoice cycle.

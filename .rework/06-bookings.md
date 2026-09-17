@@ -20,6 +20,13 @@ no route, no controller, no Action.
 cancelled — are implicit in legacy, hold real money, and one of them breaks
 outright on the Carbon version the rework runs.
 
+**The one schema consequence, decided 2026-09-17:** a discount code discounts the
+**order**, so a completed checkout becomes a row that bookings and licence lines
+point at. It is not an invoicing entity and does not reopen chunk 03's rejection
+of Order/OrderItem — invoices are still raised by the confirmation trigger. It is
+the record of what was agreed at the till, so that a discount has something to be
+level with.
+
 ## What legacy does
 
 `Booking::create($basket)` walks the session basket and, per item, creates a
@@ -177,32 +184,60 @@ A real basket, user 123 on 2023-12-23, code `VIAK-2GDV-2HUE` — **fixed CHF 50*
 The customer agreed to 1398 and was billed 1348. Same shape for user 67 with a
 CHF 30 code across two courses — shown 30, given 60. With a **10 %** code (user
 216) both readings give 150, because 10 % of each fee sums to 10 % of the total.
+Three baskets, CHF 80 given away; the point is the undefined rule, not the money.
 
-So the question is which of the two is the rule. Both are defensible:
+#### One code discounts the order — decided 2026-09-17
 
-- **Per booking** — what the code already does. Simple, survives one course being
-  cancelled, and the basket display just has to say "CHF 50 off each course".
-- **Per basket** — what the screen promises. Now harder than it was in legacy,
-  because chunk 03 raises an invoice **per confirmed course**, weeks apart. A
-  basket-wide CHF 50 has to be split across those invoices at checkout and
-  frozen — 949/1448 × 50 = 32.77 and 499/1448 × 50 = 17.23 — and if one course is
-  never confirmed, its share is either lost or has to be moved onto an invoice
-  that may already be paid.
+**Marcel, 2026-09-17: it should be the order.** The screen was right and the code
+was wrong. A CHF 50 code takes CHF 50 off the checkout, once, however many
+courses are in it.
 
-The recommendation is **per booking**, with the basket copy corrected to match:
-it is what happens today, it needs no allocation, and it cannot strand a share of
-a discount on a course that never runs. But it gives more away than the screen
-implies, so it is the client's call, not ours.
+That is the harder of the two readings, because chunk 03 raises an invoice **per
+confirmed course, weeks apart**. Two things follow.
 
-It has happened three times:
+**1. A checkout has to become a record.** Legacy's basket lives in the session
+and evaporates; each booking keeps its own copy of the code and amount, and
+nothing knows they were one purchase. An order-level discount needs the thing it
+is level with. So: **one row per completed checkout**, carrying the buyer, the
+code, and the discount computed against the whole basket. Bookings and licence
+lines point at it.
 
-| Customer | Code | Type | Bookings | Shown | Given |
-|---|---|---|---:|---:|---:|
-| 67 | `VIAK-VNTV-RJD6` | fixed 30 | 2 | 30 | **60** |
-| 123 | `VIAK-2GDV-2HUE` | fixed 50 | 2 | 50 | **100** |
-| 216 | `VIAK-27C9-MMP7` | 10 % | 2 | 150 | 150 ✓ |
+This does **not** reopen chunk 03's rejection of Order/OrderItem. That decision
+was about what invoices hang off, and it stands — invoices are still raised by
+the confirmation trigger, never from a checkout. This row is a record of what was
+agreed at the till. Nothing is invoiced *from* it; it is read *by* whatever is
+being invoiced.
 
-CHF 80 given away in total — the point is the undefined rule, not the money.
+**2. The discount is drawn down, not split.** The obvious move is a proportional
+split frozen at checkout — 949/1448 × 50 = 32.77 and 499/1448 × 50 = 17.23 — and
+it is the wrong one. It needs largest-remainder rounding to sum back to 50, and
+if the second course is never confirmed its 17.23 is stranded on an invoice that
+does not exist, so the customer gets 32.77 of the 50 they were promised.
+
+Instead, **each invoice consumes what is left of the checkout's discount, capped
+at that invoice's net**, and the remainder carries to the next invoice raised
+from the same checkout:
+
+| Raised | Net before | Discount available | Applied | Invoice | Left |
+|---|---:|---:|---:|---:|---:|
+| Interior Design confirmed | 949.00 | 50.00 | 50.00 | **899.00** | 0.00 |
+| Visualisieren confirmed later | 499.00 | 0.00 | 0.00 | **499.00** | 0.00 |
+
+Total paid 1398.00 — exactly what the basket promised. The properties that matter:
+
+- The customer receives the full amount as soon as **anything** in the checkout
+  is invoiced, so nothing is stranded on a course that never runs.
+- **No raised invoice is ever edited.** Each one asks how much is left at the
+  moment it is raised, which is chunk 03's doctrine that an invoice is a document
+  rather than a mutable row.
+- No split means no rounding rule to get wrong.
+- A mixed basket behaves sensibly: a licence bills at purchase and a course at
+  confirmation, so the licence invoice draws the discount first and the customer
+  sees it immediately.
+
+**Percentage codes need none of this.** A rate applies to each line and the lines
+sum correctly by construction, which is exactly why the bug was invisible for
+three years. Only fixed-amount codes draw down.
 
 **Nothing clamps the discount to the fee.** Booking 000512 took a fixed CHF 648
 code against a CHF 499 course and produced **invoice 000419 with a grand total of
@@ -210,6 +245,12 @@ code against a CHF 499 course and produced **invoice 000419 with a grand total o
 same booking also carries `has_rental = 1` with no rental invoice, so that CHF 80
 laptop was never billed either. It is the only booking of the 710 where the
 discount exceeds the fee, and the only unbilled rental on a course that ran.
+
+The draw-down rule above makes this **unrepresentable** rather than merely
+guarded against: an invoice consumes at most its own net, so a CHF 648 code
+against a CHF 499 course takes 499, the invoice lands at 0.00, and the unusable
+149 stays behind in the checkout instead of being printed on a document. A
+customer cannot be owed money by a course they bought.
 
 **An expired code fails silently.** `Discount::apply()` returns `FALSE` when
 validation fails, and `Booking::create()` writes that straight into
@@ -320,9 +361,10 @@ not on equality** there.
    yes, automatically.** It keeps firing on cancellation; if VIAK then cancels
    the invoice, that is their call. See above — and note that the rework owes a
    third `CancellationReason` so a waiver is recorded rather than left null.
-2. **Is a fixed-amount code per basket or per booking?** Legacy displays one and
-   charges the other. Two customers were given double. *Client question, cheap to
-   answer, and the answer belongs in a test.*
+2. ~~Is a fixed-amount code per basket or per booking?~~ — **answered 2026-09-17:
+   the order.** A CHF 50 code takes CHF 50 off the checkout, once. It needs a
+   checkout record for the discount to be level with, and a draw-down rather than
+   a proportional split; see above. Percentage codes are unaffected.
 3. **What happens when a student who has already paid cancels inside the 50 %
    window?** `createFromBookingWithPenalty()` returns the paid invoice untouched:
    no credit note, no refund, no record. **It has never happened** — all four
