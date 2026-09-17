@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Schema;
  * `order` exists only to float Switzerland to the top of the dropdown — 545 of
  * 578 users are Swiss.
  */
-return new class () extends Migration {
+return new class extends Migration
+{
 	public function up(): void
 	{
 		Schema::create('countries', function (Blueprint $table) {

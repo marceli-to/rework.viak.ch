@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable([
@@ -41,8 +43,8 @@ class User extends Authenticatable
 	use Notifiable;
 	use SoftDeletes;
 
-	/** @var \Illuminate\Support\Collection<int, Role>|null */
-	private ?\Illuminate\Support\Collection $roleNames = null;
+	/** @var Collection<int, Role>|null */
+	private ?Collection $roleNames = null;
 
 	/** @return array<string, string> */
 	protected function casts(): array
@@ -51,7 +53,7 @@ class User extends Authenticatable
 			'email_verified_at' => 'datetime',
 			'password' => 'hashed',
 			'gender' => Gender::class,
-			'operating_systems' => AsEnumCollection::class . ':' . OperatingSystem::class,
+			'operating_systems' => AsEnumCollection::class.':'.OperatingSystem::class,
 			'subscribe_newsletter' => 'boolean',
 		];
 	}
@@ -60,11 +62,11 @@ class User extends Authenticatable
 	 * Roles held, as a pivot. Cached per request because authorisation asks
 	 * repeatedly and these never change mid-request.
 	 *
-	 * @return \Illuminate\Support\Collection<int, Role>
+	 * @return Collection<int, Role>
 	 */
-	public function roles(): \Illuminate\Support\Collection
+	public function roles(): Collection
 	{
-		return $this->roleNames ??= \Illuminate\Support\Facades\DB::table('role_user')
+		return $this->roleNames ??= DB::table('role_user')
 			->where('user_id', $this->getKey())
 			->pluck('role')
 			->map(fn (string $role) => Role::from($role));

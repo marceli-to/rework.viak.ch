@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Port;
 
+use App\Enums\DiscountType;
 use App\Enums\Gender;
 use App\Enums\OperatingSystem;
 use App\Enums\Role;
@@ -374,11 +375,11 @@ class PortUsers extends Command
 		return $systems ?: null;
 	}
 
-	private function discountType(object $row): ?\App\Enums\DiscountType
+	private function discountType(object $row): ?DiscountType
 	{
 		return match (true) {
-			(bool) $row->fix && ! (bool) $row->percent => \App\Enums\DiscountType::Fixed,
-			(bool) $row->percent && ! (bool) $row->fix => \App\Enums\DiscountType::Percent,
+			(bool) $row->fix && ! (bool) $row->percent => DiscountType::Fixed,
+			(bool) $row->percent && ! (bool) $row->fix => DiscountType::Percent,
 			default => null,
 		};
 	}

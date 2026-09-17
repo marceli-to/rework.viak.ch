@@ -19,8 +19,7 @@ class CreateCourse
 {
 	public function __construct(
 		private readonly CourseNumber $numbers,
-	) {
-	}
+	) {}
 
 	/** @param array<string, mixed> $attributes */
 	public function execute(array $attributes): Course

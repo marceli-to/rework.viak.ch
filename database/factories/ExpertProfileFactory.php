@@ -19,7 +19,7 @@ class ExpertProfileFactory extends Factory
 		return [
 			'user_id' => User::factory()->expert(),
 			'title' => fake()->sentence(3),
-			'description' => '<p>' . fake()->paragraph() . '</p>',
+			'description' => '<p>'.fake()->paragraph().'</p>',
 			'order' => fake()->numberBetween(1, 20),
 			'publish' => true,
 			'visible' => true,

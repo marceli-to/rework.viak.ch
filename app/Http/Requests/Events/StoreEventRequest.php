@@ -7,6 +7,7 @@ namespace App\Http\Requests\Events;
 use App\Enums\Role;
 use App\Models\Course;
 use App\Models\Event;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -80,7 +81,7 @@ class StoreEventRequest extends FormRequest
 		$attributes = $this->safe()->except(['course_uuid', 'location_uuid', 'dates', 'expert_uuids']);
 
 		if ($this->filled('location_uuid')) {
-			$attributes['location_id'] = \App\Models\Location::where('uuid', $this->string('location_uuid'))->value('id');
+			$attributes['location_id'] = Location::where('uuid', $this->string('location_uuid'))->value('id');
 		}
 
 		return $attributes;

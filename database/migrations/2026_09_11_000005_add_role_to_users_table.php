@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Schema;
  * The legacy `roles` lookup table is dropped: three fixed values belong in an
  * enum, not in a table someone can edit.
  */
-return new class () extends Migration {
+return new class extends Migration
+{
 	public function up(): void
 	{
 		Schema::table('users', function (Blueprint $table) {

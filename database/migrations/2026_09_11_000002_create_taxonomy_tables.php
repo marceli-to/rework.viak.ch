@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Schema;
  * tool a course teaches, and it is the natural anchor for the licence
  * catalogue in [[05-licences]].
  */
-return new class () extends Migration {
+return new class extends Migration
+{
 	private const TABLES = ['categories', 'levels', 'languages', 'software', 'tags'];
 
 	public function up(): void

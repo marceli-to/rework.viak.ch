@@ -94,7 +94,13 @@ Carried over from `rework.projects.nightnurse.ch`, which these apply to unchange
 - **No fat models.** Relations, casts, scopes, trivial accessors. Nothing else.
   (Legacy `Event` is 448 LOC with 14 `$appends`; that is the anti-pattern.)
 - `declare(strict_types=1);` at the top of every PHP file.
-- Tabs, per `.editorconfig`. PHP-CS-Fixer rather than Pint, which hardcodes spaces.
+- Tabs, per `.editorconfig`. Pint, configured in `pint.json` with its five
+  indentation fixers (`indentation_type`, `statement_indentation`,
+  `array_indentation`, `method_chaining_indentation`, `heredoc_indentation`)
+  switched off — Pint exposes no tab setting, so with those on it rewrites tabs
+  to four spaces. With them off it leaves indentation alone and fixes everything
+  else. Indentation is therefore the editor's job via `.editorconfig`, not the
+  formatter's.
 
 ## Directory shape
 
@@ -152,7 +158,7 @@ every page of the live site and is not carried over; worth deleting there too.
 | `composer setup` | install, key, migrate, build |
 | `composer dev` | serve + queue listener + pail + vite |
 | `composer test` | Pest |
-| `composer format` / `format:check` | PHP-CS-Fixer |
+| `composer format` / `format:check` | Pint |
 
 ## Open questions carried forward
 

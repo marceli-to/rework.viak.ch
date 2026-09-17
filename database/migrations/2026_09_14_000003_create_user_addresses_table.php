@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
  * a staff member's course. A user's own address lives on `users`; this table
  * is only the "send the bill somewhere else" case.
  */
-return new class () extends Migration {
+return new class extends Migration
+{
 	public function up(): void
 	{
 		Schema::create('user_addresses', function (Blueprint $table) {

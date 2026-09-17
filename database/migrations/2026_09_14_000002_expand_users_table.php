@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Schema;
  * `name` splits into first/last, `gender_id` and `country_id` become the value
  * they pointed at, and the expert profile moves to its own table.
  */
-return new class () extends Migration {
+return new class extends Migration
+{
 	public function up(): void
 	{
 		Schema::table('users', function (Blueprint $table) {
