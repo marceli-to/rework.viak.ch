@@ -349,6 +349,7 @@ lets a Vorhaben page pull courses *and* licences for one tool from one relation.
    `<x-media.image>` `<picture>` component with AVIF/WebP/JPEG and an 8-step
    srcset, and a Vue crop/upload UI already written in these conventions. It is
    the client's "image handling (frontend output)" requirement answered
-   directly. The legacy crop coordinates port across unchanged — they are
+   directly. **Built 2026-09-18** in chunk 08, along with the port — so
+   `Field::image()` picks from media that already exists. The legacy crop coordinates port across unchanged — they are
    already pixels in Glide's `w,h,x,y` order. Details, and the one trap that
    would silently move 28 crops, are in `08-accounts.md`.

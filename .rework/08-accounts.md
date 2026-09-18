@@ -11,13 +11,44 @@ documents that history produces.
 
 ## Status
 
-Not built, not previously scoped. Found on 2026-09-18 by the same method that
-found chunk 06: mapping the legacy surface onto the rework and looking for what
-has nowhere to land.
+**Partly built, 2026-09-18.** 223 tests green, Pint clean. Scoped the same day
+by the method that found chunk 06: mapping the legacy surface onto the rework and
+looking for what has nowhere to land.
 
-**Read the security section first.** Scoping this chunk turned up a live
+| Part | |
+|---|---|
+| **Media** | Built — `media` table, Glide renderer, `<x-media.image>`, six Actions, `port:media` |
+| **Documents** | Built — private disk, policy-gated download, `port:documents` |
+| **Messages** | Built — schema, `PostMessage`, `MessagePolicy`, HTTP, `port:messages` |
+| **Accounts** | Built — one profile controller for all three roles, addresses, `MustVerifyEmail` |
+| **The two portals** | **Not built** — the screens themselves are parity frontend work |
+| **Admin user management** | **Not built** |
+
+All three ports ran clean against the production snapshot:
+
+| | |
+|---|---:|
+| `port:media` | 306 rows, 263 with a crop, 25 rescaled, **0 crops outside their image** |
+| `port:documents` | 1,005 rows from 1,162, **271 paths repaired**, 157 duplicates collapsed, 0 missing |
+| `port:messages` | 251 messages, 1,105 recipients, 33 attachments, 0 skipped |
+
+**Read the security section.** Scoping this chunk turned up a live
 account-takeover path on the production site. It is not a rework question and it
-should not wait for this chunk.
+should not wait for this chunk — the two profile defects below are now fixed
+*here*, but `/expert/finish` still needs fixing *there*.
+
+### What is left
+
+- **The portal screens.** *Meine Kurse*, *Meine Dokumente* and the expert's
+  course view are Blade + Alpine, and belong to the parity frontend phase
+  (`00-foundation.md`). Every endpoint they need now exists.
+- **Admin user and expert management.** The dashboard CRUD, which is Vue and
+  wants the field kit from chunk 04 rather than ten hand-rolled forms.
+- **Fortify's own routes and views** — login, registration, password reset.
+  `User` now implements `MustVerifyEmail` and the profile flows are correct;
+  wiring the screens is frontend work.
+- **Open question 16** — is a user with financial history ever deleted, or only
+  deactivated? Still Marcel's, and it blocks only the admin screens above.
 
 ## Why it exists
 
