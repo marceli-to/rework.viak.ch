@@ -48,3 +48,21 @@ it('renders a course page through the layout', function () {
 		->assertSee('Rhino Einstiegskurs')
 		->assertSee('rel="canonical"', false);
 });
+
+/**
+ * The `facts` repeater holds editor HTML, like the description fields. Escaped
+ * with `{{ }}` it renders literal `<strong>` tags on the page — which is what
+ * the ported rows contain, and what the browser showed.
+ */
+it('renders the facts block as HTML, not as escaped tags', function () {
+	Course::factory()->create([
+		'slug' => ['de' => 'mit-fakten'],
+		'publish' => true,
+		'facts' => [['de' => '<strong>Voraussetzung:</strong> keine']],
+	]);
+
+	$this->get('/de/kurs/mit-fakten')
+		->assertOk()
+		->assertSee('<strong>Voraussetzung:</strong>', false)
+		->assertDontSee('&lt;strong&gt;', false);
+});

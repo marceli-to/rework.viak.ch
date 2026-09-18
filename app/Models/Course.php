@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,7 @@ use Spatie\Translatable\HasTranslations;
 class Course extends Model
 {
 	use HasFactory;
+	use HasMedia;
 	use HasTranslations;
 	use HasUuid;
 	use SoftDeletes;

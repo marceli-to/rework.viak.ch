@@ -2,9 +2,20 @@
 @php($next = $course->events->first())
 <a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', app()->getLocale())) }}"
    class="group flex flex-col border border-line bg-white transition hover:border-teal">
-	<div class="flex aspect-16/9 items-center justify-center bg-teal-tint text-3xl text-teal">
-		{{ mb_substr($course->getTranslation('title', app()->getLocale()), 0, 1) }}
-	</div>
+	{{-- The ported image where there is one; 306 came across with their crops.
+	     The initial is the fallback, not the design ([[08-accounts]]). --}}
+	@if ($image = $course->teaser())
+		<x-media.image
+			:media="$image"
+			sizes="(min-width: 1132px) 360px, (min-width: 700px) 50vw, 100vw"
+			:max-width="768"
+			class="aspect-16/9 w-full object-cover"
+		/>
+	@else
+		<div class="flex aspect-16/9 items-center justify-center bg-teal-tint text-3xl text-teal">
+			{{ mb_substr($course->getTranslation('title', app()->getLocale()), 0, 1) }}
+		</div>
+	@endif
 
 	<div class="flex flex-1 flex-col gap-2 p-5">
 		<div class="flex flex-wrap gap-1.5">

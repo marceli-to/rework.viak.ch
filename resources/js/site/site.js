@@ -10,13 +10,17 @@
 import Alpine from 'alpinejs';
 
 import basket from './stores/basket';
-import courseFilter from './components/course-filter';
 import menu from './components/menu';
 
 Alpine.store('basket', basket);
 
+/*
+ * No course filter here. It was written and then deleted: the server-side
+ * version already filters by query string, which makes a filtered view
+ * linkable and needs no JavaScript at all. Two mechanisms for one job is how
+ * legacy ended up with a Vuex store for a list of a few dozen courses.
+ */
 Alpine.data('menu', menu);
-Alpine.data('courseFilter', courseFilter);
 
 window.Alpine = Alpine;
 Alpine.start();

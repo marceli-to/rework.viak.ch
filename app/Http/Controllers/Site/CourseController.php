@@ -26,6 +26,8 @@ class CourseController extends Controller
 			->published()
 			->with([
 				'software',
+				// Eager-loaded, or the grid asks for an image per card.
+				'media',
 				'events' => fn ($query) => $query->published()->active()->upcoming(),
 			])
 			->when($activeSoftware, fn ($query, $uuid) => $query->whereHas(
@@ -56,7 +58,7 @@ class CourseController extends Controller
 			->published()
 			->where('slug->'.app()->getLocale(), $slug)
 			->with([
-				'software', 'categories', 'levels',
+				'software', 'categories', 'levels', 'media',
 				'events' => fn ($query) => $query->published()->active()->upcoming()->with(['dates', 'location']),
 			])
 			->firstOrFail();

@@ -1,12 +1,11 @@
 <x-layout.site :title="$course->getTranslation('title', app()->getLocale()).' – Visualisierungs-Akademie'">
-	<x-site.header />
 	<x-site.breadcrumb :items="[
-		'Home' => '/',
+		'Home' => \App\Support\SiteUrl::home(),
 		'Kurse' => \App\Support\SiteUrl::courses(),
 		$course->getTranslation('title', app()->getLocale()) => null,
 	]" />
 
-	<main class="mx-auto max-w-[1140px] px-5 pb-20 md:px-10">
+	<div class="mx-auto max-w-(--container-site) px-4 pb-20 sm:px-8">
 		<div class="border-b border-line py-10">
 			<h1 class="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-ink">
 				{{ $course->getTranslation('title', app()->getLocale()) }}
@@ -35,8 +34,11 @@
 						@foreach ($course->facts as $fact)
 							@php($text = is_array($fact) ? ($fact[app()->getLocale()] ?? reset($fact)) : $fact)
 							@if (filled($text))
-								<div class="border-l-2 border-teal pl-3 text-xs leading-relaxed text-text">
-									{{ $text }}
+								{{-- Editor HTML, like the description fields above it. Escaped
+								     with `{{ }}` it renders as literal <strong> tags, which is
+								     what the ported rows actually contain. --}}
+								<div class="course-copy border-l-2 border-teal pl-3 text-xs leading-relaxed text-text">
+									{!! \App\Support\RichText::render($text) !!}
 								</div>
 							@endif
 						@endforeach
@@ -82,5 +84,5 @@
 				</div>
 			</aside>
 		</div>
-	</main>
+	</div>
 </x-layout.site>

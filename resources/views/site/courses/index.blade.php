@@ -1,8 +1,10 @@
-<x-layout.site title="Kurse – Visualisierungs-Akademie">
-	<x-site.header />
-	<x-site.breadcrumb :items="['Home' => '/', 'Kurse' => null]" />
+<x-layout.site
+	title="Kurse"
+	description="Kurse für digitales Gestalten — Modellieren, Visualisieren, Animieren, Editieren."
+>
+	<x-site.breadcrumb :items="['Home' => \App\Support\SiteUrl::home(), 'Kurse' => null]" />
 
-	<main class="mx-auto max-w-[1140px] px-5 pb-20 md:px-10">
+	<div class="mx-auto max-w-(--container-site) px-4 pb-20 sm:px-8">
 		<div class="border-b border-line py-10">
 			<h1 class="text-4xl font-semibold tracking-tight text-ink">Kurse</h1>
 			<p class="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
@@ -42,5 +44,5 @@
 				@endif
 			</div>
 		</div>
-	</main>
+	</div>
 </x-layout.site>
