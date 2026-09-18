@@ -159,11 +159,13 @@ settled as *on the invoice line* — in `03-invoices.md`.
 
 ## Open questions
 
-1. `user_documents` — where do 1,162 generated PDFs live, and are the historical
-   ones worth carrying at all? **Owner found 2026-09-18: `08-accounts.md`**,
-   which also records that the files are currently world-readable under
-   `public/storage`, so the storage decision is now a fix rather than a
-   preference.
+1. ~~`user_documents` — where do 1,162 generated PDFs live?~~ — **answered
+   2026-09-18.** Owner is `08-accounts.md`; the files are all present in
+   production (1,005 distinct files behind 1,162 rows) and currently
+   **world-readable** under `public/storage`, so the storage decision is a fix
+   rather than a preference. Whether the historical ones are *carried* is still
+   open, but it is now a policy question rather than a rescue — and the 2023
+   participation confirmations need repairing either way (`Todo.md`).
 2. The 14 two-digit-year events remain skipped by `port:courses`, and their
    bookings with them. All 14 have zero bookings, so nothing is lost today — but
    restoring them later means re-running `port:users` too. See `Todo.md`.

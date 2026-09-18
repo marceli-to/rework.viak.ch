@@ -378,9 +378,204 @@ that carry a crop.
 
 `media` wants `width`, `height`, `mime_type` and `alt`; legacy's `images` table
 has none of them — only `orientation` as `l`/`p`, which the new model derives
-from the dimensions anyway. **Width and height have to be read from the files**,
-which is the second reason the storage download below matters: without the files
-there is no way to populate them, and no way to detect the 28.
+from the dimensions anyway. **Width and height have to be read from the files.**
+
+Measured against the production snapshot on 2026-09-18, and the news is good:
+
+| | |
+|---|---:|
+| `images` rows | 492 |
+| — live, **file present** | **333** (100 % of live rows) |
+| — soft-deleted, file gone | 159 |
+| Live rows carrying a crop | 289 |
+| Live rows with `0,0,0,0` | 44 |
+| **Crops falling outside the image** | **0** |
+| Sources over 3200 px — the normalise trap | **29** |
+| `orientation` column disagreeing with the file | **49** |
+| Files in `uploads/` referenced by no row | 5 of 371 |
+
+Every live image has its file and every crop is geometrically valid, so the port
+can run. Deleting an image removes its file, which is why the 159 absent ones are
+exactly the soft-deleted rows — correct behaviour, not data loss.
+
+Two things the measurement changed. The normalise trap is **29** rows, not the 28
+estimated from `max(w+x, h+y)`. And the legacy **`orientation` column is wrong on
+49 of 333 rows** — it is stale, so the new model deriving orientation from
+width and height is a fix rather than a like-for-like port. Do not carry the
+column across.
+
+`alt` has no legacy source at all. It stays null and becomes an editorial task —
+worth saying out loud, because an accessible site needs it and nobody has it.
+
+#### One thing to add when porting
+
+`/img/{path}` is **unsigned** in `forrerzimmermann.ch`, with `where('path','.*')`
+and arbitrary `w`/`h` from the query string. On a small brochure site that is
+fine. On a public site with VIAK's traffic it lets anyone generate unbounded
+cache entries by varying the parameters. Glide ships `setSignKey` for this;
+alternatively clamp `w`/`h` to the `WIDTHS` list the component already uses. Not
+a flaw in what Marcel built — a different threat surface.
+
+Note also that images attach to `Course`, `User`, `Hero` and `News` — two belong
+to chunk 04 and one to this chunk, which is why this decision could not be taken
+twice.
+
+### Documents: nothing is lost — 2023 is broken instead
+
+**Resolved 2026-09-18** against a production `storage/app/public` snapshot pulled
+that day (paired with the 2026-09-11 dump; provenance in the snapshot's
+`PROVENANCE.md`). The earlier reconciliation against an incomplete local copy is
+superseded.
+
+**All 1,162 documents exist. Zero are genuinely missing.** So question 4 is no
+longer about feasibility — every invoice and every participation confirmation a
+customer holds is still on disk, and carrying them across is a policy choice, not
+a rescue operation.
+
+What the 271 "missing" actually were is a **malformed `uri`**:
+
+```
+stored     /storage/filesf962c8c4-aa6c-4d20-9afd-3641823834fc/viak-teilnahme…pdf
+on disk    /storage/files/f962c8c4-aa6c-4d20-9afd-3641823834fc/viak-teilnahme…pdf
+                         ^ the separator
+```
+
+Put the slash back and **all 271 resolve**. `EventParticipationConfirmation`
+builds the path as `"/app/public/files/{$userUuid}"`, which is correct today, so
+this is an older defect whose rows were never repaired.
+
+It is confined exactly: **271 rows, every one a 2023 `PARTICIPATION_CONFIRMATION`,
+affecting 95 students.** 2024, 2025 and 2026 are clean, and all 568 `INVOICE`
+rows are clean.
+
+#### The same cohort is also duplicated
+
+1,162 rows resolve to **1,005 distinct files** — 17 paths are shared by more than
+one row, for **157 surplus rows**, again all 2023 participation confirmations.
+Each group is one booking and one user, so it is the same confirmation written
+repeatedly: 37 rows for one, then 19, 19, 18, 12. The 272 rows of 2023 sit on
+**115 actual files**.
+
+The likely cause is the legacy `Job` mail queue re-processing `EventClosedStudent`,
+whose constructor generates the PDF and inserts the row as a side effect — the
+anti-pattern already recorded further down. Each pass wrote a new row and
+overwrote the one file.
+
+**So a student who took a course in 2023 opens *Meine Dokumente* and sees up to 37
+identical entries, every one of which 404s.** That is live today.
+
+#### What this means for the port
+
+Three rules, all cheap:
+
+1. **Normalise the `uri`** on the way in — insert the separator — rather than
+   porting a path that does not resolve.
+2. **Deduplicate on the file**, not on the row. 1,005 documents, not 1,162.
+3. **Do not trust `created_at` as the document date.** The duplicates share a
+   file but not a timestamp.
+
+Worth fixing in the legacy tree too, since it is two `UPDATE`s and it is customer
+facing — see `Todo.md`.
+
+#### Orphans, for completeness
+
+- **9** PDFs inside user directories with no row at all.
+- **294** loose `viak-teilnehmerliste-*.pdf` participant lists directly in
+  `files/`, up from 239 in the older copy — they accumulate and nothing deletes
+  them. Orphans by construction; the controller that writes them writes no row.
+
+### Media: port `forrerzimmermann.ch` — decided 2026-09-18
+
+**Marcel's call, and it replaces the functionality rather than migrating it.**
+The media subsystem in `github.com/marceli-to/forrerzimmermann.ch` is the target,
+and it settles both question 15 here and question 5 in `04-content.md`: neither
+`spatie/laravel-medialibrary` nor `marceli-to/image-cache`.
+
+It fits because it is already the rework's stack and conventions — Laravel 13,
+PHP 8.3, Actions / FormRequests / Resources, Vue 3 — so it is a port between two
+codebases that agree, not an adaptation.
+
+| Piece | |
+|---|---:|
+| `Actions/Media/` — Upload, Attach, Crop, Delete, Normalize, Reorder, SetOg, SetTeaser, Update | 298 LOC |
+| Vue — `MediaGrid`, `MediaCrop`, `MediaUploader`, `MediaCard`, `MediaEdit`, `views/media/Index` | 722 LOC |
+| `ImageController` + `Support/ImageSupport` + `<x-media.image>` | ~250 LOC |
+| `NormalizeImages`, `ClearImageCache` commands | 132 LOC |
+
+What it does that legacy does not: **`league/glide` on Imagick** behind
+`/img/{path}?w=&h=&fit=crop&crop=w,h,x,y&fm=&q=`, a `<picture>` element with
+AVIF → WebP → JPEG negotiated against what Imagick actually supports, an 8-step
+`srcset`, explicit `width`/`height` to stop layout shift, and an art-directed
+**mobile variant** (a second `media` row with `variant = mobile` carrying its own
+crop). One `media` table with a `nullableMorphs('mediable')` and a **`crop` JSON
+column**, replacing legacy's `images` + `files` + `fileables`.
+
+#### The coords port is a straight copy — the crop format already matches
+
+This was the open worry, and the data says it is not one. Legacy stores
+`coords_w/h/x/y` as `double(16,12)`, which reads like normalised fractions but is
+not: **the values are pixels.** Verified twice — the range runs to 4608×3124,
+and `MarceliTo\ImageCache\Templates\Crop` parses them as
+`width,height,x,y` and hands them straight to `Intervention::crop()`.
+
+Glide's `crop` parameter takes `w,h,x,y` in pixels, in that same order. So:
+
+```
+coords_w, coords_h, coords_x, coords_y   →   crop = {"w":…, "h":…, "x":…, "y":…}
+```
+
+No unit conversion, no reinterpretation.
+
+**Correcting an earlier note in this doc:** "all 492 images carry crop
+coordinates" was true but misleading. Only **407 are actually cropped**; the
+other **85 hold `0,0,0,0`**, which is legacy's way of saying *no crop* — the
+legacy template special-cases the string `'0,0,0,0'` precisely to avoid producing
+a 1×1 pixel image. Those 85 port to `crop = NULL`, and porting them as zeros
+would produce 85 broken images. No row is half-zero, so the test is clean.
+
+#### The trap: normalising the source invalidates the crop
+
+`NormalizeAction` downsizes any source whose longest edge exceeds **3200 px**,
+in place, on upload. The legacy crops are in **source pixels**, and **28 of the
+407 cropped images come from sources wider than 3200** (measured as
+`max(w+x, h+y) > 3200`; 52 exceed 2400).
+
+Run the normaliser over the legacy files during the port and those 28 crops
+silently point at the wrong region — the image still renders, just cropped
+somewhere else, which is exactly the kind of failure nobody notices. The action
+already **returns the scale factor** it applied, so the fix is to multiply the
+four coordinates by it. The port must do that, or skip normalisation for rows
+that carry a crop.
+
+#### What the port needs that legacy does not store
+
+`media` wants `width`, `height`, `mime_type` and `alt`; legacy's `images` table
+has none of them — only `orientation` as `l`/`p`, which the new model derives
+from the dimensions anyway. **Width and height have to be read from the files.**
+
+Measured against the production snapshot on 2026-09-18, and the news is good:
+
+| | |
+|---|---:|
+| `images` rows | 492 |
+| — live, **file present** | **333** (100 % of live rows) |
+| — soft-deleted, file gone | 159 |
+| Live rows carrying a crop | 289 |
+| Live rows with `0,0,0,0` | 44 |
+| **Crops falling outside the image** | **0** |
+| Sources over 3200 px — the normalise trap | **29** |
+| `orientation` column disagreeing with the file | **49** |
+| Files in `uploads/` referenced by no row | 5 of 371 |
+
+Every live image has its file and every crop is geometrically valid, so the port
+can run. Deleting an image removes its file, which is why the 159 absent ones are
+exactly the soft-deleted rows — correct behaviour, not data loss.
+
+Two things the measurement changed. The normalise trap is **29** rows, not the 28
+estimated from `max(w+x, h+y)`. And the legacy **`orientation` column is wrong on
+49 of 333 rows** — it is stale, so the new model deriving orientation from
+width and height is a fix rather than a like-for-like port. Do not carry the
+column across.
 
 `alt` has no legacy source at all. It stays null and becomes an editorial task —
 worth saying out loud, because an accessible site needs it and nobody has it.
@@ -439,11 +634,12 @@ orphans by construction, not by drift.
    **answered 2026-09-18: neither. Port the media subsystem from
    `forrerzimmermann.ch`.** See above; it also answers `04-content.md`
    question 6 and Open-Questions 5.
-4. **Are the 1,162 historical PDFs worth carrying?** Inherited from
-   `01-schema.md` question 1. The default is yes — they are customer-held
-   documents referenced from invoices — but **how many still exist is unknown
-   until the reconciliation is redone against production storage**; see above.
-   Ask the client only after that measurement, or the question is unanswerable.
+4. **Are the historical PDFs worth carrying?** Inherited from `01-schema.md`
+   question 1, and now a clean question: **all of them exist** — 1,005 distinct
+   files behind 1,162 rows. Since they are customer-held documents referenced
+   from invoices, the default is yes. Worth asking the client only whether the
+   **2023 participation confirmations** should be repaired and carried or quietly
+   dropped, given 95 students have been looking at broken links for two years.
 5. **Is a user with financial history ever deleted**, or only deactivated?
 6. ~~Does the message thread stay?~~ — **answered 2026-09-18 by the data: yes,
    built properly.** 251 messages across 122 events, steady over four years. See

@@ -177,6 +177,34 @@ PDFs**, 27 MB of names and contact details, written by
 and served publicly through the `public/storage` symlink. They can be removed
 without touching anything that references them, because nothing does.
 
+## Repair the 2023 participation confirmations — two UPDATEs, customer facing
+
+**Found 2026-09-18** reconciling `user_documents` against a production storage
+snapshot. Both bugs are confined to 2023 `PARTICIPATION_CONFIRMATION` rows;
+invoices and every later year are clean. **No files are lost** — all 1,162
+documents exist on disk.
+
+1. **271 rows have a malformed `uri`** — the separator between `files` and the
+   user uuid is missing, so `/storage/filesf962c8c4-…/x.pdf` instead of
+   `/storage/files/f962c8c4-…/x.pdf`. Every one resolves once the slash is put
+   back. **95 students** currently have at least one download link that 404s, and
+   have had since 2023.
+2. **157 surplus duplicate rows** — 17 file paths carry more than one row, up to
+   **37 rows for a single booking**. The 272 rows of 2023 sit on 115 real files.
+
+Together: a student who took a course in 2023 opens *Meine Dokumente* and sees up
+to 37 identical entries, none of which download.
+
+`EventParticipationConfirmation` builds the path correctly today, so (1) is an
+old defect nobody repaired the rows for. (2) is most likely the legacy `Job`
+queue re-running `EventClosedStudent`, whose constructor generates the PDF and
+inserts the row as a side effect.
+
+The rework's port normalises the uri and deduplicates on the file rather than the
+row (`08-accounts.md`), so this is fixed at cutover regardless — but it is two
+statements and two years of broken links, so it is worth doing in the legacy tree
+now.
+
 ## SEO: redirects, canonical, sitemap
 
 **Blocks the cutover, not the build.** Raised by Marcel on 2026-09-18 — the legacy
