@@ -133,7 +133,16 @@ both.
 `storage/app/public/files/{user_uuid}/` and stores the public path in
 `user_documents.uri`. `public/storage` is symlinked, so **every invoice and
 participation confirmation is fetchable without authenticating** — 1,162
-documents, 579 user directories, 129 MB, protected only by the uuid in the path.
+document rows across 340 user directories, protected only by the uuid in the
+path.
+
+**And 239 participant lists are loose in the same public directory.**
+`DocumentController::participantsList` writes
+`viak-teilnehmerliste-{date}-{random}.pdf` straight into
+`storage/app/public/files/`, writes no database row, and nothing ever deletes
+them. 27 MB of participant names and contact details, world-readable, referenced
+by nothing — so nobody would notice if they were read. Combined with finding 5,
+any expert can also *generate* a fresh one for any event.
 
 In the rework these are served by an authenticated route with a policy, and the
 files live outside the public root. That is the storage decision `01-schema.md`
@@ -260,24 +269,91 @@ it.
   registration and from every profile update, so this chunk touches it, but
   whether it survives is the open question `00-foundation.md` already carries.
 
-## Measurements still owed
+## What the data says
 
-MySQL was not running when this was scoped (DBngin, 8.0.40 on :3307), so the
-following are from the source and from `01-schema.md` rather than from a query.
-Everything above stands without them; these sharpen the estimate.
+Measured against `viak_legacy` at the 2026-09-11 dump, 2026-09-18.
 
-| | Known | Still to measure |
-|---|---|---|
-| `user_documents` | 1,162 (568 invoice, 594 participation) | how many belong to deleted users |
-| Files on disk | 579 dirs, 129 MB | orphans in either direction |
-| `messages` / `message_user` | — | rows, and how many events ever used them |
-| `files` / `images` | — | rows, and which `fileable_type`s occur |
-| Users | 578, 17 with an expert bio | role distribution, soft-deleted count |
-| Addresses | 126 bookings (18 %) with a non-default invoice address | distinct addresses per user |
+| | |
+|---|---:|
+| Users | 578 (5 soft-deleted, 16 never verified) |
+| — Student only | 555 |
+| — Expert only | 15 |
+| — Admin only | 4 |
+| — Admin + Expert + Student | 3 |
+| — Admin + Student | 1 |
+| `user_addresses` | 125, held by **107 users** (93 with one, 10 with two, 4 with three) |
+| `user_documents` | 1,162 — 568 `INVOICE`, 594 `PARTICIPATION_CONFIRMATION` (23 soft-deleted) |
+| `messages` | **251**, across 122 events, 10 authors, none soft-deleted |
+| `message_user` | 1,105 |
+| `files` / `fileables` | 44 / 33 — 13 on events, 20 on messages, **11 attached to nothing** |
+| `images` | 492, **all 492 carrying crop coordinates** — 382 Course, 75 User, 28 Hero, 7 News (159 soft-deleted) |
 
-The one that could change the shape of the chunk is **messages**: if the thread
-feature was used a handful of times in four years, it gets the bookmark
-treatment — built small, no module — rather than a 336-LOC port.
+### The message thread stays, and it is staff-only in practice
+
+251 messages over four years, and the rate is steady rather than trailing off —
+51 in 2023, 98 in 2024, 64 in 2025, 38 so far in 2026. That settles the question
+this scope opened with: it is **not** a bookmark-sized feature and does not get
+the bookmark treatment. It is built properly.
+
+**Every author holds Admin or Expert. Zero messages come from a student-only
+account** — so finding 4 above, where any student may post to any event, has
+apparently never been used. It is still open.
+
+The distribution is lopsided in a way worth knowing before designing the screen:
+one user (2, Admin + Expert + Student) wrote 129 of the 251, and user 401 (Admin)
+wrote 60. Seven experts wrote 39 between them. This is mostly an admin tool with
+an expert-facing corner, not a per-course conversation.
+
+### The file attachment feature is barely used
+
+44 files, 33 attachments, 11 files attached to nothing at all — against 492
+images. Whatever the media decision turns out to be, `files`/`fileables` does not
+justify its own module; it is an attachment on a message or an event and can be
+built as one.
+
+### Every image is cropped, which constrains the media decision
+
+All 492 image rows carry `coords_w/h/x/y`. Crop coordinates are therefore not an
+optional extra that can be dropped in a migration to `spatie/laravel-medialibrary`
+— they are on every row, and the public site renders through them via
+`marceli-to/image-cache`'s URL templates. Whichever pipeline wins (question 15),
+**the crop data has to survive the move**, and that is the real cost of the
+choice rather than the upload handling.
+
+Note also that images attach to `Course`, `User`, `Hero` and `News` — two of
+those belong to chunk 04 and one to this chunk, which is the second reason the
+media decision cannot be made twice.
+
+### Documents: the two copies do not line up, and that needs production to settle
+
+Of the 1,162 document rows, **667 have a file in the local storage copy and 495
+do not**. In the other direction, 120 PDFs sit inside user directories with no
+row, plus the 239 loose participant lists.
+
+The missing ones do **not** fall on a clean date cutoff:
+
+| Year | Rows | Missing | |
+|---|---:|---:|---:|
+| 2023 | 414 | 271 | 65 % |
+| 2024 | 379 | 0 | 0 % |
+| 2025 | 242 | 97 | 40 % |
+| 2026 | 127 | 127 | 100 % |
+
+2026 at 100 % says the local storage copy is older than the 2026-09-11 database
+dump. But 2024 at 0 % sitting between 2023 at 65 % and 2025 at 40 % is not
+explained by a stale copy, and **this cannot be resolved from here** — a row with
+no file locally may be fine in production.
+
+So this is not a finding, it is a **cutover measurement**: the reconciliation has
+to be redone against production, with a storage snapshot taken **at the same
+moment as the database dump**. `Todo.md` already requires a fresh dump for the
+rehearsal; it now also requires a storage snapshot to go with it. Until then the
+honest answer to "are the 1,162 historical PDFs worth carrying" (question 4) is
+that we do not yet know how many of them still exist.
+
+One part is certain regardless: the **239 loose participant lists can never have
+had a row**, because the controller that writes them writes no row. They are
+orphans by construction, not by drift.
 
 ## Open questions
 
@@ -288,8 +364,11 @@ treatment — built small, no module — rather than a 336-LOC port.
 3. **Medialibrary or `marceli-to/image-cache`** for the media pipeline — one
    decision shared with `04-content.md` question 6.
 4. **Are the 1,162 historical PDFs worth carrying?** Inherited from
-   `01-schema.md` question 1, and now answerable: they are customer-held
-   documents referenced from invoices, so the default is yes, but 129 MB and a
-   storage move is the cost.
+   `01-schema.md` question 1. The default is yes — they are customer-held
+   documents referenced from invoices — but **how many still exist is unknown
+   until the reconciliation is redone against production storage**; see above.
+   Ask the client only after that measurement, or the question is unanswerable.
 5. **Is a user with financial history ever deleted**, or only deactivated?
-6. **Does the message thread stay?** Depends on the row count above.
+6. ~~Does the message thread stay?~~ — **answered 2026-09-18 by the data: yes,
+   built properly.** 251 messages across 122 events, steady over four years. See
+   above.

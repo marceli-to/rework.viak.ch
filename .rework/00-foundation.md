@@ -438,7 +438,13 @@ is settled; the one licence question still open — whether the Bildung tier's
 4. `invoices.due_at` rewrites itself on every UPDATE. The column fix belongs in
    chunk 03; what the port does with the 541 lost and the open/overdue deadlines
    is cutover work.
-5. A fresh production dump before the cutover rehearsal.
+5. A fresh production dump before the cutover rehearsal — **and a storage
+   snapshot taken at the same moment.** Added 2026-09-18: reconciling
+   `user_documents` against the local storage copy gives 667 rows with a file and
+   495 without, and the gap does not fall on a date cutoff (2023 is 65 % missing,
+   2024 is 0 %, 2026 is 100 %). The two local copies are from different moments,
+   so "how many of the 1,162 historical PDFs still exist" is unanswerable until
+   the database and the files are captured together. See `08-accounts.md`.
 
 **Answered:**
 

@@ -170,6 +170,13 @@ Four related authorization gaps, none as urgent, are recorded in
 generated PDFs, any student reading or posting to any event's message thread, and
 any expert downloading any participant list.
 
+**One of those is worth doing at the same time as the fix above**, because it
+needs no code: `storage/app/public/files/` holds **239 loose participant-list
+PDFs**, 27 MB of names and contact details, written by
+`DocumentController::participantsList`, recorded in no table, deleted by nothing,
+and served publicly through the `public/storage` symlink. They can be removed
+without touching anything that references them, because nothing does.
+
 ## SEO: redirects, canonical, sitemap
 
 **Blocks the cutover, not the build.** Raised by Marcel on 2026-09-18 — the legacy
