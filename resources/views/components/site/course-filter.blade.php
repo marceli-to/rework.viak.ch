@@ -3,21 +3,42 @@
 @php($locale = app()->getLocale())
 
 {{--
-	`components/_filter.scss`. Legacy offers categories as links and then Ort,
-	Software, Level, Sprache, Experte and Tags as selects. Only Software is
-	wired in the rework so far — the other taxonomies exist but nothing filters
-	on them yet — so the rest are not drawn rather than drawn dead.
---}}
-<div class="mt-32 sm:mt-0">
-	<h2 class="mb-16 text-lg sm:text-xl lg:text-3xl">Filter</h2>
+	`components/_filter.scss`.
 
-	<ul>
+	On a phone this is a **full-screen white panel**, opened from the icon beside
+	the page title and closed from the cross at its top right. `padding-top: 88px`
+	is legacy's own arithmetic — 48px of header, 24px of header margin and 16px of
+	body padding — so the panel's first line lands where the page's would.
+
+	From 700px it is simply the right-hand column and always visible.
+
+	Only Software is wired so far. Legacy also filters by category and by Ort,
+	Level, Sprache, Experte and Tags; those taxonomies exist but nothing filters
+	on them yet, so they are left out rather than drawn dead.
+--}}
+{{-- The breakpoint is CSS, not JavaScript: `max-sm:hidden` when closed, nothing
+     when open, and from `sm` the panel is a static column regardless. Binding
+     `x-show` to a media query instead would not survive a resize, and would hide
+     the desktop column until Alpine had started. --}}
+<div
+	:class="open ? '' : 'max-sm:hidden'"
+	class="fixed inset-0 z-[100] h-full w-full overflow-y-auto bg-white px-16 pt-88 pb-48 sm:static sm:z-auto sm:block sm:h-auto sm:overflow-visible sm:p-0"
+>
+	<div class="flex justify-end sm:hidden">
+		<button type="button" @click="close()" aria-label="Filter schliessen">
+			<x-icon.cross size="large" />
+		</button>
+	</div>
+
+	<h2 class="mb-32 text-lg font-bold">Filter</h2>
+
+	<ul class="border-t border-gray-400">
 		@foreach ($software as $item)
-			<li class="border-b border-gray-400">
+			<li class="flex min-h-40 items-center border-b border-gray-400">
 				<a href="{{ request()->fullUrlWithQuery(['software' => $item->uuid === $active ? null : $item->uuid]) }}"
 					@class([
-						'block py-8 text-md hover:text-teal lg:text-lg',
-						'text-teal' => $item->uuid === $active,
+						'block w-full text-lg hover:text-teal',
+						'font-bold text-gray-400' => $item->uuid === $active,
 					])>
 					{{ $item->getTranslation('title', $locale) }}
 				</a>
@@ -25,12 +46,15 @@
 		@endforeach
 	</ul>
 
-	@if ($active)
-		<a href="{{ request()->fullUrlWithQuery(['software' => null]) }}"
-			class="mt-24 block border border-teal py-8 text-center text-md text-teal hover:bg-teal hover:text-white lg:text-lg">
-			Zurücksetzen
-		</a>
-	@endif
+	<div class="mt-32 flex flex-col items-center gap-16 sm:items-start">
+		<x-site.button class="w-full sm:hidden" @click="close()">Anzeigen</x-site.button>
+
+		@if ($active)
+			<x-site.button variant="outline" class="w-full" :href="request()->fullUrlWithQuery(['software' => null])">
+				Zurücksetzen
+			</x-site.button>
+		@endif
+	</div>
 
 	{{-- `.card-teaser-training` — the teal promo box under the filter. --}}
 	<div class="mt-32 block bg-teal p-12 text-white">

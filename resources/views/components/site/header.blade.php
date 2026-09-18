@@ -27,7 +27,7 @@
 
 <header class="mb-24 min-h-48 pt-16 sm:min-h-64 sm:pt-28 lg:mb-28 lg:min-h-80" x-data="menu">
 	<div class="grid min-h-[inherit] grid-cols-12 gap-x-16 sm:border-b sm:border-black lg:gap-x-40">
-		<div class="col-span-12 flex items-start justify-between sm:col-span-4 sm:block">
+		<div class="col-span-12 sm:col-span-4">
 			<a href="{{ \App\Support\SiteUrl::home() }}"
 				title="Home | {{ config('app.name') }}"
 				@class(['text-black', 'max-sm:hidden' => ! $isHome])>
@@ -35,16 +35,14 @@
 			</a>
 
 			{{-- Mobile: on an inner page the title takes the logo's place, exactly
-			     as `site-header__title` does. --}}
+			     as `site-header__title` does. A page can put a control beside it —
+			     the course list puts its filter trigger there. --}}
 			@if (! $isHome && $heading)
-				<div class="flex min-h-48 w-full items-end border-b border-black pb-12 sm:hidden">
+				<div class="flex min-h-48 w-full items-end justify-between border-b border-black pb-12 sm:hidden">
 					<h1 class="text-3xl leading-none">{{ $heading }}</h1>
+					{{ $slot }}
 				</div>
 			@endif
-
-			<button type="button" class="p-8 sm:hidden" @click="toggle()" :aria-expanded="open" aria-label="Menü">
-				<x-icon.burger />
-			</button>
 		</div>
 
 		{{--
@@ -96,29 +94,47 @@
 	</div>
 
 	{{--
-		Mobile: a full-screen teal panel with an 8px white border, links
-		right-aligned over black rules — `menu/_site.scss` under `bp-xs`.
+		`menu/_site.scss` under `bp-xs`: a teal panel behind an 8px white frame
+		that stops short of the bottom, links right-aligned over black rules, and
+		a white bar carrying the social links and the close control.
+
+		`Profil` joins the list here — on mobile legacy shows it as a word rather
+		than the icon it uses on desktop.
 	--}}
 	<div x-show="open" x-cloak
 		class="fixed inset-0 z-[201] flex flex-col border-8 border-b-0 border-white bg-teal sm:hidden"
 		@keydown.escape.window="close()">
-		<div class="flex flex-1 flex-col p-8">
+		<div class="flex-1 p-8">
 			<ul class="mt-72">
-				@foreach ($nav as $item)
+				@foreach ([...$nav, ['label' => 'Profil', 'href' => '/dashboard', 'match' => 'dashboard']] as $item)
 					<li>
 						<a href="{{ $item['href'] }}"
-							class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold">
+							class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
 							{{ $item['label'] }}
 						</a>
 					</li>
 				@endforeach
 			</ul>
-
-			<div class="mt-auto flex justify-end p-8">
-				<button type="button" @click="close()" aria-label="Menü schliessen">
-					<x-icon.cross size="large" />
-				</button>
-			</div>
 		</div>
+
+		<footer class="flex h-64 items-center justify-between bg-white px-8">
+			<div class="flex items-center gap-16">
+				<a href="mailto:hallo@visualisierungs-akademie.ch" title="Kontakt"><x-icon.mail /></a>
+				<a href="https://www.instagram.com/viak.ch/" target="_blank" rel="noopener" title="Instagram"><x-icon.instagram /></a>
+				<a href="https://www.facebook.com/ViAkSchweiz" target="_blank" rel="noopener" title="Facebook"><x-icon.facebook /></a>
+			</div>
+			<button type="button" @click="close()" aria-label="Menü schliessen" class="mr-12">
+				<x-icon.cross size="large" />
+			</button>
+		</footer>
 	</div>
+
+	{{-- `icons/_menu.scss`: the burger is **fixed at the bottom right**, 32×24,
+	     not in the header bar. --}}
+	<button type="button" x-show="! open"
+		class="fixed right-20 bottom-20 z-[99] h-24 w-32 sm:hidden"
+		@click="toggle()" :aria-expanded="open" aria-label="Menü">
+		<x-icon.burger class="w-full!" />
+	</button>
+
 </header>
