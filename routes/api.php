@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\BookmarkController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\MessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +46,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
 	Route::get('bookings/{booking}', [BookingController::class, 'show']);
 	Route::patch('bookings/{booking}/cancel', [BookingController::class, 'cancel']);
 	Route::patch('bookings/{booking}/rental', [BookingController::class, 'setRental']);
+
+	/*
+	 * Course notes ([[08-accounts]]). Authorised against the event, which is
+	 * the check legacy's role-only gate skipped.
+	 */
+	Route::get('events/{event}/messages', [MessageController::class, 'index']);
+	Route::post('events/{event}/messages', [MessageController::class, 'store']);
+	Route::delete('messages/{message}', [MessageController::class, 'destroy']);
 
 	Route::get('bookmarks', [BookmarkController::class, 'index']);
 	Route::put('bookmarks/{event}', [BookmarkController::class, 'store']);

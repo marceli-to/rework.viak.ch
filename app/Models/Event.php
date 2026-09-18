@@ -69,6 +69,12 @@ class Event extends Model
 		return $this->hasMany(EventDate::class)->orderBy('date');
 	}
 
+	/** Notes posted to this course and mailed to everyone on it. */
+	public function messages(): HasMany
+	{
+		return $this->hasMany(Message::class);
+	}
+
 	public function bookings(): HasMany
 	{
 		return $this->hasMany(Booking::class);
