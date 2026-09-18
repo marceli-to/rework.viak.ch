@@ -23,38 +23,76 @@
 @props([
 	'title' => null,
 	'description' => null,
+	'keywords' => null,
+	'image' => null,
 	'canonical' => null,
 ])
 
+@php
+	$locale = app()->getLocale();
+
+	/*
+	 * The path without its locale prefix, so an alternate can swap the locale
+	 * rather than gain a second one. `getPathInfo()` already starts `/de`, and
+	 * prepending the locale again produced `/de/de` on every page.
+	 */
+	$path = \Illuminate\Support\Str::of(request()->getPathInfo())
+		->after('/'.$locale)
+		->start('/')
+		->rtrim('/')
+		->value();
+
+	$seo = [
+		'title' => $title ? $title.' • '.config('app.name') : config('app.name'),
+		'description' => $description ?? config('site.seo.description'),
+		'keywords' => $keywords ?? config('site.seo.keywords'),
+		'image' => \App\Support\SiteUrl::canonical($image ?? config('site.seo.image')),
+		'url' => \App\Support\SiteUrl::canonical($canonical ?? request()->getPathInfo()),
+	];
+@endphp
+
 <!DOCTYPE html>
-{{-- `overflow-y-scroll`: the scrollbar is always there, so a short page and
-     a long one put the content column in the same place. Without it the page
-     shifts sideways as you navigate. --}}
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-y-scroll">
+<html lang="{{ str_replace('_', '-', $locale) }}" class="overflow-y-scroll">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
-	<title>{{ $title ? $title.' • '.config('app.name') : config('app.name') }}</title>
-	<meta name="description" content="{{ $description }}">
+	{{-- `page • Visualisierungs-Akademie`, as legacy composes it from
+	     `config('seo.title')` — which is the short name, not the legal entity in
+	     `APP_NAME`. Here they are the same string. --}}
+	<title>{{ $seo['title'] }}</title>
+	<meta name="description" content="{{ $seo['description'] }}">
+	<meta name="keywords" content="{{ $seo['keywords'] }}">
 
-	<link rel="canonical" href="{{ \App\Support\SiteUrl::canonical($canonical ?? request()->getPathInfo()) }}">
-	@foreach (config('site.locales') as $locale)
-		<link rel="alternate" hreflang="{{ $locale }}" href="{{ \App\Support\SiteUrl::canonical('/'.$locale.request()->getPathInfo()) }}">
+	{{-- Neither of these exists on the live site. Legacy has no canonical
+	     anywhere and serves `/` and `/de` with an identical title, which is
+	     duplicate content ([[00-foundation]]). --}}
+	<link rel="canonical" href="{{ $seo['url'] }}">
+	@foreach (config('site.locales') as $alternate)
+		<link rel="alternate" hreflang="{{ $alternate }}" href="{{ \App\Support\SiteUrl::canonical('/'.$alternate.$path) }}">
 	@endforeach
 
-	<meta property="og:title" content="{{ $title ?? config('app.name') }}">
-	<meta property="og:description" content="{{ $description }}">
-	<meta property="og:url" content="{{ \App\Support\SiteUrl::canonical(request()->getPathInfo()) }}">
+	{{-- The full title, as legacy composes it — `og:title` and `<title>` carry
+	     the same string there. --}}
+	<meta property="og:title" content="{{ $seo['title'] }}">
+	<meta property="og:description" content="{{ $seo['description'] }}">
+	<meta property="og:url" content="{{ $seo['url'] }}">
+	<meta property="og:image" content="{{ $seo['image'] }}">
 	<meta property="og:site_name" content="{{ config('app.name') }}">
 
 	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<meta name="apple-mobile-web-app-title" content="Visualisierungs-Akademie">
+	<meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
 	<link rel="manifest" href="/site.webmanifest">
+
+	<meta name="theme-color" content="#ffffff">
+	<meta name="msapplication-TileColor" content="#ffffff">
+
+	{{-- Stops iOS turning course numbers like `07-120326` into phone links. --}}
+	<meta name="format-detection" content="telephone=no">
 
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
 </head>

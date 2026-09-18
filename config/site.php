@@ -64,4 +64,26 @@ return [
 		],
 	],
 
+	/*
+	 * Defaults for the head, from legacy's `config/seo.php` verbatim.
+	 *
+	 * Note that the site's name for SEO is **not** `APP_NAME`. Legacy keeps the
+	 * legal entity — "Visualisierungs-Akademie Schweiz GmbH" — in `APP_NAME` for
+	 * mail, and uses the short form in titles. The rework's `APP_NAME` is the
+	 * short form, so the two agree; this stays as the single place a page title's
+	 * suffix comes from.
+	 */
+	'seo' => [
+		'description' => 'Visualisierungs-Akademie Schweiz GmbH - Seminare, Workshops und Individualschulungen',
+
+		/*
+		 * Carried across verbatim. Google has ignored `meta keywords` since 2009
+		 * and it does nothing — but removing something the live site sends is a
+		 * decision, not a port, so it comes across and can go deliberately later.
+		 */
+		'keywords' => 'Visualisierungs-Akademie Schweiz: Seminare, Kurse, Schulung, Weiterbildung, Workshops, Graphic Recording und Visualisierungen in Strategie, Change, Innovation, Vision, 3D-Software, Zeichnen',
+
+		'image' => '/assets/img/viak-og.jpg',
+	],
+
 ];

@@ -1,7 +1,5 @@
-<x-layout.site
-	title="Visualisierungs-Akademie"
-	description="Kurse in Visualisierung, Architekturvisualisierung und 3D für die Praxis."
->
+{{-- "Home • Visualisierungs-Akademie", as the live site titles it. --}}
+<x-layout.site title="Home">
 	{{--
 		**Not built.** The live homepage is a stack of sections — hero, the
 		"Was möchtest du machen?" tiles, next dates, the Firmenschulung teaser,

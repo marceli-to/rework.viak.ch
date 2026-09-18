@@ -1,4 +1,10 @@
-<x-layout.site :title="$course->getTranslation('title', app()->getLocale()).' – Visualisierungs-Akademie'">
+{{-- The layout appends " • Visualisierungs-Akademie"; the course carries its
+     own SEO copy where an editor has written it ([[04-content]]). --}}
+<x-layout.site
+	:title="$course->getTranslation('title', app()->getLocale())"
+	:description="$course->getTranslation('seo_description', app()->getLocale(), false) ?: null"
+	:keywords="$course->getTranslation('seo_tags', app()->getLocale(), false) ?: null"
+>
 	<x-site.breadcrumb :items="[
 		'Home' => \App\Support\SiteUrl::home(),
 		'Kurse' => \App\Support\SiteUrl::courses(),

@@ -1,7 +1,4 @@
-<x-layout.site
-	title="Kurse"
-	description="Kurse für digitales Gestalten — Modellieren, Visualisieren, Animieren, Editieren."
->
+<x-layout.site title="Kurse">
 	{{--
 		Rebuilt 1:1 from legacy's `frontend/filter/Index.vue`: an outer
 		12-column grid, the cards in `span-8` as their own 12-column grid of
