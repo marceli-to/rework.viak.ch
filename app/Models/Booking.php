@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\BookingCancellationReason;
 use App\Enums\InvoiceStatus;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,9 +31,9 @@ class Booking extends Model
 	use SoftDeletes;
 
 	protected $fillable = [
-		'number', 'event_id', 'user_id', 'course_fee',
+		'number', 'event_id', 'user_id', 'checkout_id', 'course_fee',
 		'discount_code_id', 'discount_amount', 'has_rental', 'rental_fee',
-		'invoice_address', 'booked_at', 'cancelled_at',
+		'invoice_address', 'booked_at', 'cancelled_at', 'cancellation_reason',
 	];
 
 	protected function casts(): array
@@ -45,6 +46,7 @@ class Booking extends Model
 			'invoice_address' => 'array',
 			'booked_at' => 'datetime',
 			'cancelled_at' => 'datetime',
+			'cancellation_reason' => BookingCancellationReason::class,
 		];
 	}
 
@@ -63,9 +65,36 @@ class Booking extends Model
 		return $this->belongsTo(DiscountCode::class);
 	}
 
+	/**
+	 * The till this seat was sold at, where one exists.
+	 *
+	 * Null for all 710 ported bookings — legacy's basket lived in the session
+	 * and left nothing behind — and null for a booking an admin creates by
+	 * hand. Both are correct: neither went through a checkout, so neither has
+	 * an order-level discount to draw on ([[06-bookings]]).
+	 */
+	public function checkout(): BelongsTo
+	{
+		return $this->belongsTo(Checkout::class);
+	}
+
 	public function isCancelled(): bool
 	{
 		return $this->cancelled_at !== null;
+	}
+
+	/**
+	 * Is this seat still changeable without money being involved?
+	 *
+	 * The rental can be added or dropped for free right up until the invoice is
+	 * raised, and not afterwards — which is the whole window legacy's
+	 * `addRental`/`cancelRental` operated in without ever saying so. Once
+	 * invoices are raised on confirmation, the reach into the invoice layer that
+	 * legacy's version needed simply disappears.
+	 */
+	public function isEditable(): bool
+	{
+		return ! $this->isCancelled() && ! $this->isInvoiced();
 	}
 
 	/**

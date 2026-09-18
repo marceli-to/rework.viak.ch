@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Events;
 
+use App\Actions\Bookings\CancelBookingsForEvent;
 use App\Enums\EventState;
 use App\Events\EventConfirmed;
 use App\Models\Event;
@@ -27,6 +28,8 @@ use RuntimeException;
  */
 class SetEventState
 {
+	public function __construct(private readonly CancelBookingsForEvent $cancelBookings) {}
+
 	public function execute(Event $event, EventState $state): Event
 	{
 		if ($event->state === EventState::Cancelled && $state !== EventState::Cancelled) {
@@ -54,6 +57,15 @@ class SetEventState
 		// from the other side ([[RaiseInvoiceForBooking]]).
 		if ($state === EventState::Confirmed && ! $wasConfirmed) {
 			EventConfirmed::dispatch($event);
+		}
+
+		// Called directly, never dispatched. Students holding seats on a course
+		// that is not happening — and invoices for it — is the consequence of
+		// cancelling, not a reaction to it. Legacy made this a listener; a
+		// listener that silently fails to register is 143 bookings left live
+		// ([[CancelBookingsForEvent]]).
+		if ($state === EventState::Cancelled) {
+			$this->cancelBookings->execute($event);
 		}
 
 		return $event;

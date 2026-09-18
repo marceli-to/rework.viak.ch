@@ -109,6 +109,37 @@ class User extends Authenticatable
 		return $this->hasOne(ExpertProfile::class);
 	}
 
+	public function checkouts(): HasMany
+	{
+		return $this->hasMany(Checkout::class);
+	}
+
+	/**
+	 * Saved courses. 17 rows in three years across the whole site, which sets
+	 * the budget rather than the question: a pivot, two methods and a star on
+	 * a course card — no facade, no Action layer, no dashboard screen
+	 * ([[06-bookings]]).
+	 */
+	public function bookmarks(): BelongsToMany
+	{
+		return $this->belongsToMany(Event::class, 'bookmarks')->withTimestamps();
+	}
+
+	public function hasBookmarked(Event $event): bool
+	{
+		return $this->bookmarks()->whereKey($event->getKey())->exists();
+	}
+
+	/**
+	 * Saving an event you have already booked is noise, so booking clears it.
+	 * Legacy did the same thing from inside `Booking::create()`; this keeps the
+	 * behaviour and gives it a name.
+	 */
+	public function forgetBookmark(Event $event): void
+	{
+		$this->bookmarks()->detach($event->getKey());
+	}
+
 	/** Course dates this user teaches. Only experts and admins have any. */
 	public function eventsAsExpert(): BelongsToMany
 	{

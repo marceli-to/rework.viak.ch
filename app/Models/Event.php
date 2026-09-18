@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\EventState;
+use App\Enums\ParticipantThreshold;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +30,7 @@ class Event extends Model
 
 	protected $fillable = [
 		'date', 'registration_until',
-		'min_participants', 'max_participants',
+		'min_participants', 'max_participants', 'participant_threshold',
 		'state', 'confirmed_at', 'cancelled_at', 'closed_at',
 		'rentals_available', 'online', 'free_of_charge', 'publish',
 		'fee', 'course_id', 'location_id',
@@ -44,6 +45,7 @@ class Event extends Model
 			'cancelled_at' => 'datetime',
 			'closed_at' => 'datetime',
 			'state' => EventState::class,
+			'participant_threshold' => ParticipantThreshold::class,
 			'rentals_available' => 'boolean',
 			'online' => 'boolean',
 			'free_of_charge' => 'boolean',
@@ -88,6 +90,73 @@ class Event extends Model
 		}
 
 		return (string) ($this->fee ?? $this->course->fee);
+	}
+
+	/**
+	 * Seats taken. Cancelled bookings are not among them — 183 of 710 are
+	 * cancelled, so counting them would report every course a quarter fuller
+	 * than it is and turn people away from free seats.
+	 */
+	public function seatsTaken(): int
+	{
+		return $this->bookings()->active()->count();
+	}
+
+	public function isFull(): bool
+	{
+		return $this->max_participants !== null
+			&& $this->seatsTaken() >= $this->max_participants;
+	}
+
+	/**
+	 * May a seat still be sold?
+	 *
+	 * Published, not cancelled or closed, and not in the past. Legacy asked none
+	 * of this at checkout — `Booking::can()` only looked for a duplicate — so a
+	 * basket left open while a course was called off still sold a seat on it.
+	 */
+	public function isBookable(): bool
+	{
+		return $this->publish
+			&& ! in_array($this->state, [EventState::Cancelled, EventState::Closed], true)
+			&& $this->date->endOfDay()->isFuture();
+	}
+
+	/**
+	 * Has the course reached the headcount it needs to run?
+	 *
+	 * Compared with `>=`, never `==`. Legacy's `ParticipantsChange::handle()`
+	 * fired on equality alone, so two bookings landing in one cycle stepped over
+	 * the threshold and the notification was lost for good, with nothing to
+	 * catch up ([[00-foundation]]).
+	 */
+	public function hasMinimumParticipants(): bool
+	{
+		return $this->min_participants !== null
+			&& $this->seatsTaken() >= $this->min_participants;
+	}
+
+	/**
+	 * Which participant band the event is in **right now**.
+	 *
+	 * All three comparisons are inclusive inequalities, never `==`. That is the
+	 * whole fix: a count that jumps from one below the minimum to one above it
+	 * still changes band, where legacy's equality test simply missed
+	 * ([[ParticipantThreshold]]).
+	 */
+	public function currentThreshold(): ParticipantThreshold
+	{
+		$taken = $this->seatsTaken();
+
+		if ($this->max_participants !== null && $taken >= $this->max_participants) {
+			return ParticipantThreshold::Full;
+		}
+
+		if ($this->min_participants !== null && $taken >= $this->min_participants) {
+			return ParticipantThreshold::Viable;
+		}
+
+		return ParticipantThreshold::BelowMinimum;
 	}
 
 	/**

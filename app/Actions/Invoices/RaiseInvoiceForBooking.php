@@ -33,16 +33,16 @@ use RuntimeException;
  *
  * ## Where the discount comes from, and where it will come from
  *
- * Today: the amount frozen on the booking, clamped at the fee.
+ * **Built in chunk 06, 2026-09-18.** A code discounts the *order*, not each
+ * course: a completed checkout carries the amount computed against the whole
+ * basket, and each invoice raised from it consumes what is left, capped at its
+ * own course fee, with the remainder carrying to the next one. This action asks
+ * the checkout how much is left rather than reading the booking's frozen copy.
  *
- * Chunk 06 decided on 2026-09-17 — after this was built — that **a code
- * discounts the order, not each course**: a completed checkout becomes a row
- * carrying the code and the amount computed against the whole basket, and each
- * invoice raised from that checkout **consumes what is left, capped at its own
- * net**, with the remainder carrying to the next one. Once that row exists,
- * this action asks it how much is left instead of reading the booking's frozen
- * copy; nothing else here changes, because a per-line `discount` with a cap at
- * the line's net is exactly what a draw-down needs ([[06-bookings]]).
+ * Nothing else here had to change, which was the point of the shape chunk 03
+ * chose: a per-line `discount` clamped at the line's net is exactly what a
+ * draw-down needs. Bookings with no checkout — the 710 ported ones — still read
+ * their frozen amount ([[06-bookings]]).
  */
 class RaiseInvoiceForBooking
 {
@@ -123,21 +123,37 @@ class RaiseInvoiceForBooking
 	/**
 	 * The discount this line may take, never more than the line is worth.
 	 *
-	 * Legacy clamped nothing, and it shows: booking 000512 spent a fixed CHF
-	 * 648 code on a CHF 499 course and produced **invoice 000419 with a grand
-	 * total of −149.00, still OPEN in the live books** — a course that owes the
-	 * customer money. It is the only one of 710 bookings where the discount
-	 * exceeds the fee.
+	 * Two sources, and which one applies says where the booking came from.
 	 *
-	 * Capping here makes that unrepresentable rather than guarded against: the
-	 * invoice lands at 0.00 and the unusable remainder stays behind, which is
-	 * also precisely how chunk 06's draw-down behaves when a checkout's
-	 * discount is larger than the first invoice raised from it.
+	 * **A booking with a checkout** draws its discount down from the order.
+	 * Built in chunk 06: a code discounts the checkout, once, and each invoice
+	 * raised from it consumes what is left, capped at its own course fee, with
+	 * the remainder carrying to the next invoice. The properties that matter:
+	 * the customer gets the full amount as soon as *anything* in the checkout is
+	 * invoiced, so nothing is stranded on a course that never runs; **no raised
+	 * invoice is ever edited**, because each one asks how much is left at the
+	 * moment it is raised; and there is no split, so there is no rounding rule
+	 * to get wrong ([[Checkout]]).
+	 *
+	 * **A booking without one** — all 710 ported rows, and anything an admin
+	 * creates by hand — falls back to the amount frozen on the booking, which is
+	 * what legacy recorded and what the port carries across verbatim.
+	 *
+	 * Either way it is clamped. Legacy clamped nothing, and it shows: booking
+	 * 000512 spent a fixed CHF 648 code on a CHF 499 course and produced
+	 * **invoice 000419 with a grand total of −149.00, still OPEN in the live
+	 * books**. Capping makes that unrepresentable rather than guarded against —
+	 * the invoice lands at 0.00 and the unusable remainder stays behind in the
+	 * checkout instead of being printed on a document. A customer cannot be owed
+	 * money by a course they bought.
 	 */
 	private function discountFor(Booking $booking): string
 	{
 		$fee = (string) $booking->course_fee;
-		$discount = (string) $booking->discount_amount;
+
+		$discount = $booking->checkout_id !== null
+			? $booking->checkout->remainingDiscount()
+			: (string) $booking->discount_amount;
 
 		return bccomp($discount, $fee, 2) > 0 ? $fee : $discount;
 	}

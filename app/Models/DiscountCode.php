@@ -18,13 +18,14 @@ class DiscountCode extends Model
 	use HasUuid;
 	use SoftDeletes;
 
-	protected $fillable = ['code', 'type', 'amount', 'valid_from', 'valid_to', 'remarks'];
+	protected $fillable = ['code', 'type', 'amount', 'usage_limit', 'valid_from', 'valid_to', 'remarks'];
 
 	protected function casts(): array
 	{
 		return [
 			'type' => DiscountType::class,
 			'amount' => 'decimal:2',
+			'usage_limit' => 'integer',
 			'valid_from' => 'date',
 			'valid_to' => 'date',
 		];
@@ -33,6 +34,52 @@ class DiscountCode extends Model
 	public function bookings(): HasMany
 	{
 		return $this->hasMany(Booking::class);
+	}
+
+	public function checkouts(): HasMany
+	{
+		return $this->hasMany(Checkout::class);
+	}
+
+	/**
+	 * How many times this code has been spent.
+	 *
+	 * A checkout is one use however many courses it covered — that is what
+	 * "the code discounts the order" means. Ported bookings have no checkout,
+	 * so they are counted directly; cancelled ones still count, because the
+	 * code was spent when it was accepted.
+	 */
+	public function timesUsed(): int
+	{
+		return $this->checkouts()->count()
+			+ $this->bookings()->whereNull('checkout_id')->count();
+	}
+
+	/**
+	 * Is the code valid *and* still available, on a given day?
+	 *
+	 * Two questions legacy could not ask separately. `isSingle()` returned true
+	 * exactly when a code had no validity window, so the usage limit and the
+	 * date range were the same two columns — and `isValid()` only checked the
+	 * window when **both** dates were set, meaning a code with one date would
+	 * have been valid forever. No row has one date, which is luck rather than
+	 * design, and the rework does not rely on it.
+	 */
+	public function isRedeemableOn(\DateTimeInterface $date): bool
+	{
+		if ($this->trashed()) {
+			return false;
+		}
+
+		if ($this->valid_from !== null && $this->valid_from->greaterThan($date)) {
+			return false;
+		}
+
+		if ($this->valid_to !== null && $this->valid_to->lessThan($date)) {
+			return false;
+		}
+
+		return $this->usage_limit === null || $this->timesUsed() < $this->usage_limit;
 	}
 
 	/**

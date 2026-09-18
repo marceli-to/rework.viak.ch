@@ -37,4 +37,19 @@ return [
 	 */
 	'rental_fee' => 80.00,
 
+	/*
+	 * Late-cancellation penalty ([[06-bookings]]).
+	 *
+	 * Days counted from today to the event: inside `penalty_full_days` the
+	 * student owes the whole fee, inside `penalty_half_days` half of it, and
+	 * earlier than that nothing. The legacy numbers, unchanged — the production
+	 * data confirms the rule fired at the right rate all fourteen times it
+	 * applied, so this is not a place to improve anything.
+	 *
+	 * The boundaries are worth real money and the failure is silent, so both are
+	 * pinned by tests ([[CancellationPenalty]]).
+	 */
+	'penalty_full_days' => 11,
+	'penalty_half_days' => 20,
+
 ];
