@@ -439,7 +439,13 @@ is settled; the one licence question still open — whether the Bildung tier's
    chunk 03; what the port does with the 541 lost and the open/overdue deadlines
    is cutover work.
 5. A fresh production dump before the cutover rehearsal — **and a storage
-   snapshot taken at the same moment.** Added 2026-09-18: reconciling
+   snapshot taken at the same moment.** A storage copy pulled *now*, against the
+   2026-09-11 dump, is still worth having and Marcel has offered one: generated
+   documents are only ever written, so a file that exists today for a 2023 row
+   means that row is fine and the local copy was simply incomplete. It also
+   supplies the image dimensions the media port needs, which cannot be derived
+   from the database at all (`08-accounts.md`). The matched pair is still
+   required for the rehearsal itself; this one answers the open questions early. Added 2026-09-18: reconciling
    `user_documents` against the local storage copy gives 667 rows with a file and
    495 without, and the gap does not fall on a date cutoff (2023 is 65 % missing,
    2024 is 0 %, 2026 is 100 %). The two local copies are from different moments,

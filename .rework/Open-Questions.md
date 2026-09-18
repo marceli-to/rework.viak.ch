@@ -24,7 +24,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | 4 | Which of the six Vorhaben are real? | Client | Chunk 04 page count |
-| 5 | What does "image handling (frontend output)" mean? | Client | Chunk 04 media field |
+| ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
 | 7 | Do the historical invoice due dates matter? | Client | Cutover — `port:invoices` reports it every run |
 | 8 | Event 213 — what was it meant to be? | Client | Cutover |
@@ -34,12 +34,14 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
 | 14 | Should an admin cancelling for a student charge the penalty? | Marcel | Chunk 06's fourth `CancellationReason` — the enum needs the case either way |
-| 15 | Medialibrary, or `marceli-to/image-cache` for the media pipeline? | Marcel | Chunks 04 **and** 08 — one decision, two callers |
+| ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08 |
 | 17 | Are the 1,162 historical PDFs carried across? | Client | Chunk 08, cutover storage |
 
-Questions 14–17 arrived with `08-accounts.md` on 2026-09-18. Question 5 is now
-the same decision as 15 and should be answered once.
+Questions 14–17 arrived with `08-accounts.md` on 2026-09-18. **5 and 15 were
+answered the same day** — the media pipeline is a port of Marcel's
+`forrerzimmermann.ch` subsystem, which is also the client's "image handling
+(frontend output)" requirement met. 14, 16 and 17 remain.
 | 14 | How does the queue worker run in production? | Marcel | Deploy |
 
 ---

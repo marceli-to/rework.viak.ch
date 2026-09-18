@@ -204,10 +204,11 @@ rot.
 ### What the kit does not buy
 
 Named plainly, because these are the things Statamic has and this will not:
-live preview, revisions, and an asset *manager*. Media needs
-`spatie/laravel-medialibrary` behind the image field — that is a separate
-decision, and the one place a package is clearly worth it. Note that
-"image handling (frontend output)" is on the client's own requirements list.
+live preview and revisions. **An asset manager it does get** — decided
+2026-09-18, the media subsystem is ported from `forrerzimmermann.ch` rather
+than taken from a package, and it brings a grid, an uploader and a crop UI with
+it. So `Field::image()` is genuinely the thin part: it picks from media that
+already exists, and the pipeline behind it is settled. See `08-accounts.md`.
 
 ### Build it from two forms, not zero
 
@@ -341,6 +342,13 @@ lets a Vorhaben page pull courses *and* licences for one tool from one relation.
    confirming against what those 35 rows actually hold.
 5. **Which of the six Vorhaben are real**, and are there more coming? The
    template is cheap; six is assumed from the mockups.
-6. **Media**: `spatie/laravel-medialibrary` assumed. Confirm against the
-   "image handling (frontend output)" requirement before building the image
-   field, since the field is the thin part and the pipeline is the thick one.
+6. ~~Media: `spatie/laravel-medialibrary` assumed.~~ — **answered 2026-09-18:
+   no package. Port the media subsystem from
+   `github.com/marceli-to/forrerzimmermann.ch`** — `league/glide` on Imagick,
+   one `media` table with a `crop` JSON column and a mobile `variant`, an
+   `<x-media.image>` `<picture>` component with AVIF/WebP/JPEG and an 8-step
+   srcset, and a Vue crop/upload UI already written in these conventions. It is
+   the client's "image handling (frontend output)" requirement answered
+   directly. The legacy crop coordinates port across unchanged — they are
+   already pixels in Glide's `w,h,x,y` order. Details, and the one trap that
+   would silently move 28 crops, are in `08-accounts.md`.

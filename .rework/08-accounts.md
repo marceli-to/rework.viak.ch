@@ -311,18 +311,92 @@ images. Whatever the media decision turns out to be, `files`/`fileables` does no
 justify its own module; it is an attachment on a message or an event and can be
 built as one.
 
-### Every image is cropped, which constrains the media decision
+### Media: port `forrerzimmermann.ch` — decided 2026-09-18
 
-All 492 image rows carry `coords_w/h/x/y`. Crop coordinates are therefore not an
-optional extra that can be dropped in a migration to `spatie/laravel-medialibrary`
-— they are on every row, and the public site renders through them via
-`marceli-to/image-cache`'s URL templates. Whichever pipeline wins (question 15),
-**the crop data has to survive the move**, and that is the real cost of the
-choice rather than the upload handling.
+**Marcel's call, and it replaces the functionality rather than migrating it.**
+The media subsystem in `github.com/marceli-to/forrerzimmermann.ch` is the target,
+and it settles both question 15 here and question 5 in `04-content.md`: neither
+`spatie/laravel-medialibrary` nor `marceli-to/image-cache`.
 
-Note also that images attach to `Course`, `User`, `Hero` and `News` — two of
-those belong to chunk 04 and one to this chunk, which is the second reason the
-media decision cannot be made twice.
+It fits because it is already the rework's stack and conventions — Laravel 13,
+PHP 8.3, Actions / FormRequests / Resources, Vue 3 — so it is a port between two
+codebases that agree, not an adaptation.
+
+| Piece | |
+|---|---:|
+| `Actions/Media/` — Upload, Attach, Crop, Delete, Normalize, Reorder, SetOg, SetTeaser, Update | 298 LOC |
+| Vue — `MediaGrid`, `MediaCrop`, `MediaUploader`, `MediaCard`, `MediaEdit`, `views/media/Index` | 722 LOC |
+| `ImageController` + `Support/ImageSupport` + `<x-media.image>` | ~250 LOC |
+| `NormalizeImages`, `ClearImageCache` commands | 132 LOC |
+
+What it does that legacy does not: **`league/glide` on Imagick** behind
+`/img/{path}?w=&h=&fit=crop&crop=w,h,x,y&fm=&q=`, a `<picture>` element with
+AVIF → WebP → JPEG negotiated against what Imagick actually supports, an 8-step
+`srcset`, explicit `width`/`height` to stop layout shift, and an art-directed
+**mobile variant** (a second `media` row with `variant = mobile` carrying its own
+crop). One `media` table with a `nullableMorphs('mediable')` and a **`crop` JSON
+column**, replacing legacy's `images` + `files` + `fileables`.
+
+#### The coords port is a straight copy — the crop format already matches
+
+This was the open worry, and the data says it is not one. Legacy stores
+`coords_w/h/x/y` as `double(16,12)`, which reads like normalised fractions but is
+not: **the values are pixels.** Verified twice — the range runs to 4608×3124,
+and `MarceliTo\ImageCache\Templates\Crop` parses them as
+`width,height,x,y` and hands them straight to `Intervention::crop()`.
+
+Glide's `crop` parameter takes `w,h,x,y` in pixels, in that same order. So:
+
+```
+coords_w, coords_h, coords_x, coords_y   →   crop = {"w":…, "h":…, "x":…, "y":…}
+```
+
+No unit conversion, no reinterpretation.
+
+**Correcting an earlier note in this doc:** "all 492 images carry crop
+coordinates" was true but misleading. Only **407 are actually cropped**; the
+other **85 hold `0,0,0,0`**, which is legacy's way of saying *no crop* — the
+legacy template special-cases the string `'0,0,0,0'` precisely to avoid producing
+a 1×1 pixel image. Those 85 port to `crop = NULL`, and porting them as zeros
+would produce 85 broken images. No row is half-zero, so the test is clean.
+
+#### The trap: normalising the source invalidates the crop
+
+`NormalizeAction` downsizes any source whose longest edge exceeds **3200 px**,
+in place, on upload. The legacy crops are in **source pixels**, and **28 of the
+407 cropped images come from sources wider than 3200** (measured as
+`max(w+x, h+y) > 3200`; 52 exceed 2400).
+
+Run the normaliser over the legacy files during the port and those 28 crops
+silently point at the wrong region — the image still renders, just cropped
+somewhere else, which is exactly the kind of failure nobody notices. The action
+already **returns the scale factor** it applied, so the fix is to multiply the
+four coordinates by it. The port must do that, or skip normalisation for rows
+that carry a crop.
+
+#### What the port needs that legacy does not store
+
+`media` wants `width`, `height`, `mime_type` and `alt`; legacy's `images` table
+has none of them — only `orientation` as `l`/`p`, which the new model derives
+from the dimensions anyway. **Width and height have to be read from the files**,
+which is the second reason the storage download below matters: without the files
+there is no way to populate them, and no way to detect the 28.
+
+`alt` has no legacy source at all. It stays null and becomes an editorial task —
+worth saying out loud, because an accessible site needs it and nobody has it.
+
+#### One thing to add when porting
+
+`/img/{path}` is **unsigned** in `forrerzimmermann.ch`, with `where('path','.*')`
+and arbitrary `w`/`h` from the query string. On a small brochure site that is
+fine. On a public site with VIAK's traffic it lets anyone generate unbounded
+cache entries by varying the parameters. Glide ships `setSignKey` for this;
+alternatively clamp `w`/`h` to the `WIDTHS` list the component already uses. Not
+a flaw in what Marcel built — a different threat surface.
+
+Note also that images attach to `Course`, `User`, `Hero` and `News` — two belong
+to chunk 04 and one to this chunk, which is why this decision could not be taken
+twice.
 
 ### Documents: the two copies do not line up, and that needs production to settle
 
@@ -361,8 +435,10 @@ orphans by construction, not by drift.
    independently of this chunk. Ours to raise, not a client decision.
 2. **Should an admin-initiated cancellation charge the penalty?** Chunk 06 needs
    a fourth `CancellationReason` either way. For Marcel.
-3. **Medialibrary or `marceli-to/image-cache`** for the media pipeline — one
-   decision shared with `04-content.md` question 6.
+3. ~~Medialibrary or `marceli-to/image-cache` for the media pipeline?~~ —
+   **answered 2026-09-18: neither. Port the media subsystem from
+   `forrerzimmermann.ch`.** See above; it also answers `04-content.md`
+   question 6 and Open-Questions 5.
 4. **Are the 1,162 historical PDFs worth carrying?** Inherited from
    `01-schema.md` question 1. The default is yes — they are customer-held
    documents referenced from invoices — but **how many still exist is unknown
