@@ -158,10 +158,16 @@ inconsistent:
 
 - **`fill="currentColor"`.** Legacy hardcodes `#1E1E1E`, `#000000` and `#46baba`
   in places, which defeats `text-*`.
-- **`width`/`height` kept as defaults in the attribute bag**, not removed. Most of
-  this set is not square — the right arrow is 24×14 — so dropping them and sizing
-  with `size-*` squashes the artwork. Pass a class to override; CSS wins over the
-  attributes.
+- **No `width`/`height` attributes.** Size comes from a class, like everything
+  else. Each icon carries its legacy width as a default — `w-26` on the basket,
+  `w-24` on the small right arrow — and **the height is left to the `viewBox`**.
+  That matters: most of this set is not square, so `size-*` would squash it,
+  while a width alone lets the browser derive the height from the intrinsic
+  ratio exactly. `w-30` on a 29.924×18 box renders 30×18.
+
+To use a different size, pass a width and let the height follow: `class="w-32!"`.
+The `!` is needed because the component's own `w-26` is still in the class list
+and CSS order would otherwise decide which wins.
 
 The `viewBox` and every path are untouched. Adding an icon means adding a file;
 there is no package and no generator.

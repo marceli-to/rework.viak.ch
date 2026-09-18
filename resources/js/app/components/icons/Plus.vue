@@ -1,6 +1,6 @@
 <template>
 	<div>
-  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" v-if="$props.size == 'lg'">
+  <svg aria-hidden="true" class="w-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" v-if="$props.size == 'lg'">
     <path fill="currentColor" d="M20 9h-9V0H9v9H0v2h9v9h2v-9h9z"/>
   </svg>
   <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" v-else-if="$props.size == 'tiny'">

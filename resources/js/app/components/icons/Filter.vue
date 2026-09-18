@@ -1,5 +1,5 @@
 <template>
-	<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+	<svg aria-hidden="true" class="w-22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
     <g v-if="!$props.active">
       <path fill="currentColor" d="M0 0l8.556 9.778V22h4.889V9.777L22.001 0z"/>
     </g>
