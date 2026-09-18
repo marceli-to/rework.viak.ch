@@ -9,6 +9,7 @@ use App\Enums\OperatingSystem;
 use App\Enums\Role;
 use App\Models\Concerns\HasUuid;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,13 +27,21 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Implements `MustVerifyEmail` deliberately ([[08-accounts]]).
+ *
+ * Legacy carried the column and the trait but never the contract, so nothing
+ * enforced it — and `StudentController::update` changed an address without
+ * clearing `email_verified_at`, meaning a brand-new address inherited verified
+ * status without ever being proven. 16 of the 578 users are unverified today.
+ */
 #[Fillable([
 	'first_name', 'last_name', 'company', 'email', 'password',
 	'street', 'street_no', 'zip', 'city', 'country_code', 'phone',
 	'gender', 'operating_systems', 'subscribe_newsletter',
 ])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
 	use HasApiTokens;
 
@@ -107,6 +116,12 @@ class User extends Authenticatable
 	public function expertProfile(): HasOne
 	{
 		return $this->hasOne(ExpertProfile::class);
+	}
+
+	/** Generated PDFs — invoices and participation confirmations. */
+	public function documents(): HasMany
+	{
+		return $this->hasMany(UserDocument::class);
 	}
 
 	public function checkouts(): HasMany

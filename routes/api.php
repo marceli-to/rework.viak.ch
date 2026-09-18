@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\BasketController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\BookmarkController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,6 +56,20 @@ Route::middleware('auth:sanctum')->group(function (): void {
 	Route::get('events/{event}/messages', [MessageController::class, 'index']);
 	Route::post('events/{event}/messages', [MessageController::class, 'store']);
 	Route::delete('messages/{message}', [MessageController::class, 'destroy']);
+
+	/*
+	 * The account, for all three roles ([[08-accounts]]). Legacy had three
+	 * controllers differing only in which fields they validated, each with its
+	 * own copy of the same unconfirmed email change.
+	 */
+	Route::get('profile', [ProfileController::class, 'show']);
+	Route::put('profile', [ProfileController::class, 'update']);
+	Route::get('profile/documents', [ProfileController::class, 'documents']);
+
+	Route::get('addresses', [AddressController::class, 'index']);
+	Route::post('addresses', [AddressController::class, 'store']);
+	Route::put('addresses/{address}', [AddressController::class, 'update']);
+	Route::delete('addresses/{address}', [AddressController::class, 'destroy']);
 
 	Route::get('bookmarks', [BookmarkController::class, 'index']);
 	Route::put('bookmarks/{event}', [BookmarkController::class, 'store']);
