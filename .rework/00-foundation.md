@@ -327,6 +327,48 @@ judgement. Where the rework legitimately differs it is because the *data* or an
 earlier decision forces it (an image now renders through Glide rather than
 `marceli-to/image-cache`), never because the design was improved.
 
+### Frontend conventions — settled 2026-09-18
+
+Five, and each replaced something invented on the first pass.
+
+**Spacing is 1 unit = 1px**, in `resources/css/partials/spacing.css` — the same
+generated partial `forrerzimmermann.ch` uses, so both codebases read alike. So
+`p-16` is 16px and a number in a class is a number of pixels. Tailwind's default
+4px unit forces every value into a multiple of four, and the legacy stylesheet is
+full of values that are not: a 70px card header, a 13px label.
+
+**Type is a named scale** in `partials/type.css`, with `md` where Tailwind's
+`base` would be. The nine sizes are the ones the legacy stylesheet actually uses,
+found by counting `fs-Nx` extends: 10, 12, 13, 14, 16, 18, 20, 24, 28. Line
+heights stay out of it — legacy sets them per component.
+
+**Colours are legacy's and only legacy's**, from `config/_colors.scss`, keeping
+its names so a rule maps across without a translation table. The first pass
+invented `teal-dark`, `teal-tint`, `line`, `paper` and a #333 body colour; none
+exists in the design. More get added when a new page needs one, deliberately.
+
+**Breakpoints are Tailwind's defaults.** Legacy's were 700/1132/1240; those are
+gone. Its `sm` maps to Tailwind's `sm` and its `md` to `lg`, which moves two
+column changes by a few dozen pixels — Marcel's call, and worth it to keep the
+stack standard.
+
+**Layout is written inline, not behind classes.** There is no `.inner-block` or
+`.grid-12` in the CSS; the container is on `body` and grids use Tailwind's own
+`grid-cols-12`, so a new grid does not need a new class first.
+
+**Icons are Phosphor, regular weight**, for both halves: `@phosphor-icons/vue` in
+the dashboard, and in Blade the handful the site uses, vendored into
+`resources/views/components/icon/` by `php artisan icons:sync`. Copied rather
+than depended on — the set is 1,512 icons per weight and the site uses five, so a
+Composer package meant two dependencies and 9,072 SVG files to render an arrow.
+`@phosphor-icons/core` is a devDependency, needed by nobody at runtime. Legacy
+hand-drew its icons into `web/partials/icons/`, so needing a new one meant
+drawing it.
+
+**The site has no footer.** The live one has none on any page but the homepage,
+where it is a newsletter form and an address block — homepage content, not site
+chrome. An earlier pass put one on every page; it was invented.
+
 ## Phasing: parity first, then the new pages — decided 2026-09-18
 
 The frontend is rebuilt **as the current site is**, on the new stack, before any

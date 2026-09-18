@@ -1,4 +1,4 @@
-@props(['course'])
+@props(['course', 'eager' => false])
 
 @php
 	$locale = app()->getLocale();
@@ -16,37 +16,40 @@
 	The overlay is desktop only — legacy hides it below 700px, where there is no
 	hover to reveal it with.
 --}}
-<article {{ $attributes->class(['border border-teal p-2 md:p-4']) }}>
-	<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}" class="group block text-ink">
-		<header class="min-h-[70px] sm:min-h-[90px] md:min-h-[130px]">
+<article {{ $attributes->class(['border border-secondary p-8 lg:p-16']) }}>
+	<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}" class="group block text-primary">
+		<header class="min-h-70 sm:min-h-90 lg:min-h-130">
 			@if ($category)
-				<div class="mb-1 text-[10px] leading-none font-medium text-muted sm:text-[13px] md:text-[16px]">
+				<div class="mb-4 text-xxs leading-none font-medium text-quaternary sm:text-sm lg:text-lg">
 					{{ $category->getTranslation('title', $locale) }}
 				</div>
 			@endif
 
-			<h2 class="text-[16px] leading-[1.2] break-words text-teal sm:text-[20px] md:text-[28px]">
+			<h2 class="text-lg leading-[1.2] break-words text-secondary sm:text-2xl lg:text-4xl">
 				{{ $course->getTranslation('title', $locale) }}
 			</h2>
 		</header>
 
-		<figure class="relative mt-2 block">
+		<figure class="relative mt-8 block">
 			{{-- The hover overlay, above the image in the source exactly as
 			     legacy has it. --}}
-			<div class="absolute hidden h-full w-full bg-teal p-2 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-[14px] md:p-4 md:text-[18px]">
-				<h3 class="mb-2">Übersicht:</h3>
-				<ul class="mb-4 sm:mb-6">
+			<div class="absolute hidden h-full w-full bg-secondary p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
+				<h3 class="mb-8">Übersicht:</h3>
+				<ul class="mb-16 sm:mb-24">
 					@if ($expert)
-						<li class="py-1">Experte: {{ $expert->first_name }} {{ $expert->last_name }}</li>
+						<li class="py-4">Experte: {{ $expert->first_name }} {{ $expert->last_name }}</li>
 					@endif
 					@if ($next)
-						<li class="py-1">ab {{ $next->date->translatedFormat('j. F Y') }}</li>
+						<li class="py-4">ab {{ $next->date->translatedFormat('j. F Y') }}</li>
 					@endif
 					@unless ($next?->free_of_charge)
-						<li class="py-1">CHF {{ number_format((float) $course->fee, 2, '.', "'") }}</li>
+						<li class="py-4">CHF {{ number_format((float) $course->fee, 2, '.', "'") }}</li>
 					@endunless
 				</ul>
-				<div>Weitere Informationen →</div>
+				<div class="flex items-center gap-8">
+					Weitere Informationen
+					<x-icon.arrow-right class="size-16 shrink-0" />
+				</div>
 			</div>
 
 			@if ($image = $course->teaser())
@@ -56,6 +59,9 @@
 					ratio="1/1"
 					sizes="(min-width: 1132px) 350px, (min-width: 700px) 45vw, 100vw"
 					:max-width="1024"
+					{{-- The first cards are the largest thing above the fold, so
+					     lazy-loading them delays the metric they set. --}}
+					:loading="$eager ? 'eager' : 'lazy'"
 					class="block w-full"
 				/>
 			@else

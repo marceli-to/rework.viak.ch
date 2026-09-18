@@ -12,14 +12,18 @@
 		the filter is links carrying a query string — so a filtered view is
 		linkable, which legacy's was not, and the page works without JavaScript.
 	--}}
-	<div class="grid-12">
+	<div class="grid grid-cols-12 gap-x-16 gap-y-16 lg:gap-x-40">
 		<div class="col-span-12 sm:col-span-8">
 			@if ($courses->isEmpty())
 				<div>Leider keine Kurse gefunden.</div>
 			@else
-				<div class="grid-12">
+				<div class="grid grid-cols-12 gap-x-16 gap-y-16 lg:gap-x-40">
 					@foreach ($courses as $course)
-						<x-site.course-card :course="$course" class="col-span-12 sm:col-span-6" />
+						<x-site.course-card
+							:course="$course"
+							:eager="$loop->index < 2"
+							class="col-span-12 sm:col-span-6"
+						/>
 					@endforeach
 				</div>
 			@endif

@@ -1,13 +1,18 @@
 {{--
 	The public site's shell ([[00-foundation]]).
 
-	**The current design, rebuilt on the new stack.** Blade and Alpine instead of
-	Blade and Vue, Tailwind instead of 6.5k lines of SCSS — and the same page.
-	New pages and new features come after parity, so nothing here is an
-	improvement on the design; where a value looks arbitrary it is legacy's.
+	**The current design, rebuilt on the new stack** — Blade and Alpine instead
+	of Blade and Vue, Tailwind instead of 6.5k lines of SCSS, and the same page.
+	Where a value looks arbitrary it is legacy's, and the source file it came
+	from is named in a comment.
 
 	`body` carries the container, exactly as `layout/_base.scss` does, so the
 	whole document is one column and sections do not each re-centre themselves.
+
+	**There is no footer.** The live site has none on any page except the
+	homepage, where `web/partials/footer.blade.php` renders a newsletter form
+	and an address block — and that is homepage content, not a site chrome
+	element. An earlier pass added one to every page; it was invented.
 
 	Three things legacy's `head.blade.php` does not have, all measured against
 	production on 2026-09-18: a **canonical** tag (it has none anywhere, and
@@ -43,15 +48,14 @@
 
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
 </head>
-{{-- `layout/_base.scss`: p-4, sm:pt-7 (overridden to 0), 16/18/24px, 1.3, 0.01em --}}
-<body class="inner-block relative min-h-screen p-4 pt-0 text-base leading-[1.3] tracking-[0.01em] text-ink antialiased sm:text-lg md:text-2xl">
+{{-- `components/_blocks.scss` (the container) and `layout/_base.scss` (padding,
+     type, colour) written out rather than hidden behind a class. --}}
+<body class="relative mx-auto min-h-screen max-w-[calc(100%-16px)] p-16 pt-0 text-lg leading-[1.3] tracking-[0.01em] text-primary antialiased sm:max-w-[calc(100%-32px)] sm:text-xl lg:max-w-[1100px] lg:text-3xl">
 	<x-site.header :heading="$title" />
 
-	{{-- `layout/_main.scss`: pb-6, sm:pb-8 --}}
-	<main role="main" class="pb-6 sm:pb-8">
+	{{-- `layout/_main.scss` --}}
+	<main role="main" class="pb-24 sm:pb-32">
 		{{ $slot }}
 	</main>
-
-	<x-site.footer />
 </body>
 </html>

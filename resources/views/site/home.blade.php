@@ -2,17 +2,28 @@
 	title="Visualisierungs-Akademie"
 	description="Kurse in Visualisierung, Architekturvisualisierung und 3D für die Praxis."
 >
-	<section class="mx-auto max-w-(--container-site) px-4 py-16 sm:px-8">
-		<h1 class="max-w-3xl text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">
-			Visualisierungs-Akademie
-		</h1>
-		<p class="mt-4 max-w-2xl text-lg text-muted">
-			Kurse in Visualisierung, Architekturvisualisierung und 3D — von Leuten,
-			die damit arbeiten.
+	{{--
+		**Not built.** The live homepage is a stack of sections — hero, the
+		"Was möchtest du machen?" tiles, next dates, the Firmenschulung teaser,
+		experts, testimonials, Aktuelles, newsletter — and almost all of it is
+		content that chunk 04 owns ([[04-content]]). `04-content.md` also says to
+		build it **last**, after the partials it is assembled from exist, so that
+		each one is designed against more than a single caller.
+
+		So this is a stub rather than an invented design. It links to the one
+		page that is finished.
+	--}}
+	<section>
+		<h1 class="text-3xl leading-[1.2] text-secondary">Visualisierungs-Akademie</h1>
+
+		<p class="mt-16 max-w-[40em]">
+			Kurse für digitales Gestalten — Modellieren, Visualisieren, Animieren,
+			Editieren. Unterrichtet von Leuten, die damit täglich arbeiten.
 		</p>
-		<a href="{{ \App\Support\SiteUrl::courses() }}"
-			class="mt-8 inline-block bg-teal px-5 py-2.5 font-medium text-white hover:bg-teal-dark">
+
+		<a href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 inline-flex items-center gap-8 text-secondary hover:underline">
 			Kurse ansehen
+			<x-icon.arrow-right class="size-20" />
 		</a>
 	</section>
 </x-layout.site>

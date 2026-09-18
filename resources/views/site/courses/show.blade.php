@@ -6,38 +6,38 @@
 	]" />
 
 	<div class="mx-auto max-w-(--container-site) px-4 pb-20 sm:px-8">
-		<div class="border-b border-line py-10">
-			<h1 class="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-ink">
+		<div class="border-b border-tertiary py-10">
+			<h1 class="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-primary">
 				{{ $course->getTranslation('title', app()->getLocale()) }}
 			</h1>
 			@if ($subtitle = $course->getTranslation('subtitle', app()->getLocale(), false))
-				<p class="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{{ $subtitle }}</p>
+				<p class="mt-3 max-w-2xl text-[15px] leading-relaxed text-quaternary">{{ $subtitle }}</p>
 			@endif
 		</div>
 
 		<div class="grid gap-12 py-10 lg:grid-cols-[1fr_320px]">
 			<div class="space-y-6">
 				@if ($summary = $course->getTranslation('summary', app()->getLocale(), false))
-					<p class="text-base leading-relaxed text-text">{{ strip_tags($summary) }}</p>
+					<p class="text-base leading-relaxed text-primary">{{ strip_tags($summary) }}</p>
 				@endif
 
 				@foreach (['short_description', 'full_description', 'information_content'] as $field)
 					@if ($html = $course->getTranslation($field, app()->getLocale(), false))
-						<div class="course-copy text-[15px] leading-relaxed text-muted">
+						<div class="course-copy text-[15px] leading-relaxed text-quaternary">
 							{!! \App\Support\RichText::render($html) !!}
 						</div>
 					@endif
 				@endforeach
 
 				@if ($course->facts)
-					<div class="grid gap-4 border-t border-line pt-6 sm:grid-cols-3">
+					<div class="grid gap-4 border-t border-tertiary pt-6 sm:grid-cols-3">
 						@foreach ($course->facts as $fact)
 							@php($text = is_array($fact) ? ($fact[app()->getLocale()] ?? reset($fact)) : $fact)
 							@if (filled($text))
 								{{-- Editor HTML, like the description fields above it. Escaped
 								     with `{{ }}` it renders as literal <strong> tags, which is
 								     what the ported rows actually contain. --}}
-								<div class="course-copy border-l-2 border-teal pl-3 text-xs leading-relaxed text-text">
+								<div class="course-copy border-l-2 border-secondary pl-3 text-xs leading-relaxed text-primary">
 									{!! \App\Support\RichText::render($text) !!}
 								</div>
 							@endif
@@ -47,37 +47,37 @@
 			</div>
 
 			<aside class="space-y-4">
-				<div class="border border-line p-5">
-					<div class="text-2xl font-semibold text-ink">
+				<div class="border border-tertiary p-5">
+					<div class="text-2xl font-semibold text-primary">
 						CHF {{ number_format((float) $course->fee, 0, '.', "'") }}.–
 					</div>
-					<p class="mt-1 text-xs text-faint">pro Person, inkl. Kursunterlagen</p>
+					<p class="mt-1 text-xs text-tertiary">pro Person, inkl. Kursunterlagen</p>
 				</div>
 
-				<div class="border border-line">
-					<h2 class="border-b border-line px-5 py-3 text-xs font-semibold uppercase tracking-wider text-faint">
+				<div class="border border-tertiary">
+					<h2 class="border-b border-tertiary px-5 py-3 text-xs font-semibold uppercase tracking-wider text-tertiary">
 						Termine
 					</h2>
 
 					@forelse ($course->events as $event)
-						<div class="flex items-start justify-between gap-3 border-b border-line px-5 py-4 last:border-b-0">
+						<div class="flex items-start justify-between gap-3 border-b border-tertiary px-5 py-4 last:border-b-0">
 							<div>
-								<div class="text-sm font-semibold text-teal-dark">
+								<div class="text-sm font-semibold text-secondary">
 									{{ $event->dates->map(fn ($d) => $d->date->format('d.m.'))->implode(' · ') }}{{ $event->date->format('Y') }}
 								</div>
-								<div class="mt-0.5 text-xs text-faint">
+								<div class="mt-0.5 text-xs text-tertiary">
 									{{ $event->location?->getTranslation('description', app()->getLocale()) ?? 'Ort folgt' }}
 									@if ($event->state === \App\Enums\EventState::Confirmed)
 										<span class="ml-1 text-success">· durchführungsgarantiert</span>
 									@endif
 								</div>
 							</div>
-							<span class="shrink-0 text-xs font-semibold text-ink">
+							<span class="shrink-0 text-xs font-semibold text-primary">
 								CHF {{ number_format((float) $event->fee(), 0, '.', "'") }}.–
 							</span>
 						</div>
 					@empty
-						<p class="px-5 py-4 text-xs text-muted">
+						<p class="px-5 py-4 text-xs text-quaternary">
 							Zurzeit keine Termine ausgeschrieben. Wir informieren gerne über die nächsten Daten.
 						</p>
 					@endforelse
