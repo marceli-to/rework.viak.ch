@@ -48,6 +48,25 @@ return [
 		],
 
 		/*
+		 * Generated PDFs — invoices and participation confirmations
+		 * ([[08-accounts]]).
+		 *
+		 * Deliberately **not** under `storage/app/public`, which is symlinked
+		 * into the web root. Legacy put them there and stored the public path on
+		 * the row, so all 1,162 documents are fetchable without authenticating,
+		 * protected only by the uuid in the path being unguessable. Here they
+		 * are served by a route with a policy behind it, and the disk cannot be
+		 * reached any other way.
+		 */
+		'documents' => [
+			'driver' => 'local',
+			'root' => storage_path('app/documents'),
+			'serve' => false,
+			'throw' => false,
+			'report' => false,
+		],
+
+		/*
 		 * Read-only snapshot of the legacy site's `storage/app/public`, used by
 		 * the port commands the way the `legacy` database connection is. Never
 		 * written to.
