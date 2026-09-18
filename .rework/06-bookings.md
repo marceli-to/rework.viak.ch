@@ -4,34 +4,49 @@ How a seat is sold, discounted, cancelled and charged for.
 
 ## Status
 
-Not built. Scoped 2026-09-17, and **every client question it raised was answered
-the same day** — the cancellation penalty stays automatic, a discount code
-discounts the order, a paid booking cancelled late is VIAK's to correct by hand,
-and bookmarks are kept. Nothing here waits on anyone; one item (question 6) is
-ours to settle by reading the legacy dashboard.
+**Built 2026-09-18.** 184 tests green, Pint clean, Vite builds. Scoped
+2026-09-17, and every client question it raised was answered the same day.
 
-The chunk was found by mapping the
-legacy facade layer onto the rework in `00-foundation.md`: five of the eight
-facades — `Booking` (243 LOC), `Discount` (165), `Bookmark` (82),
-`ParticipantsChange` (59), `Message` (32) — had no chunk to land in. 581 lines of
-behaviour with nowhere to go is not a refactoring question, it is a missing
-chunk.
+The chunk was found by mapping the legacy facade layer onto the rework in
+`00-foundation.md`: five of the eight facades — `Booking` (243 LOC), `Discount`
+(165), `Bookmark` (82), `ParticipantsChange` (59), `Message` (32) — had no chunk
+to land in. 581 lines of behaviour with nowhere to go is not a refactoring
+question, it is a missing chunk. `Models/Booking` existed, chunk 01's port filled
+it and chunk 03's `RaiseInvoiceForBooking` read it; nothing in the rework had
+ever *created* one.
 
-`Models/Booking` exists, chunk 01's port fills it and chunk 03's
-`RaiseInvoiceForBooking` reads it. Nothing in the rework has ever *created* one:
-no route, no controller, no Action.
-
-**The short version:** the money rules are the work, not the CRUD. Three of them
+**The short version:** the money rules were the work, not the CRUD. Three of them
 — the cancellation penalty, how a discount is applied across a basket, and who
-cancelled — are implicit in legacy, hold real money, and one of them breaks
-outright on the Carbon version the rework runs.
+cancelled — were implicit in legacy, hold real money, and one broke outright on
+the Carbon version the rework runs.
 
-**The one schema consequence, decided 2026-09-17:** a discount code discounts the
-**order**, so a completed checkout becomes a row that bookings and licence lines
-point at. It is not an invoicing entity and does not reopen chunk 03's rejection
-of Order/OrderItem — invoices are still raised by the confirmation trigger. It is
-the record of what was agreed at the till, so that a discount has something to be
-level with.
+### What was built
+
+| | |
+|---|---|
+| Schema | `checkouts`, `bookmarks`, `bookings.checkout_id`, `bookings.cancellation_reason`, `discount_codes.usage_limit`, `events.participant_threshold` |
+| Enums | `BookingCancellationReason`, `ParticipantThreshold`, `CancellationReason::Waived` |
+| Support | `CancellationPenalty`, `Basket` + `BasketItem`, `BookingNumber`, `SequentialNumber` |
+| Actions | `PriceBasket`, `CompleteCheckout`, `CancelBooking`, `CancelBookingsForEvent`, `SetRental`, `CreateBookingForUser`, `RaiseCancellationPenalty`, `CancelInvoice` |
+| Events | `BookingMade`, `BookingCancelled`, `ParticipantThresholdCrossed` |
+| HTTP | `BasketController`, `BookingController`, `BookmarkController`, four FormRequests, three Resources, `BookingPolicy` |
+| Port | `usage_limit` reconstructed — no dates becomes 1, dates become unlimited |
+
+`InvoiceNumber` was refactored onto the shared `SequentialNumber` rather than
+copied, because legacy had that bug three times over and fixing it once per
+caller is how it comes back.
+
+### Deferred, and why
+
+- **The Alpine checkout UI.** Parity frontend work, and it belongs to the phase
+  the 2026-09-18 decision put after the backend (`00-foundation.md`). The
+  server-driven shape is settled: a POST per step with the state in the session,
+  which falls out of the server being the pricing authority.
+- **Notification copy.** `ParticipantThresholdCrossed` carries the direction and
+  fires correctly; the mail templates land with the notifications chunk. The
+  *detection* — the part legacy got wrong — is built and tested.
+- **The admin booking-on-behalf route.** The Action exists and is tested;
+  the dashboard surface it belongs on is chunk 08.
 
 ## What legacy does
 

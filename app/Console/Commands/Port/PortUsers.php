@@ -267,6 +267,20 @@ class PortUsers extends Command
 				'code' => $row->code,
 				'type' => $type,
 				'amount' => $row->amount,
+
+				// Reconstructed, because legacy could not state it. Its
+				// `isSingle()` returned true exactly when a code had *no
+				// validity window*, so "how often may this be used" and "when is
+				// it valid" were the same two columns and neither could be set
+				// on its own. The 107 codes split precisely along that line —
+				// 35 with no dates, 72 with both, **none with one** — which is
+				// what a rule looks like when it is really an accident.
+				//
+				// So: no dates becomes a limit of 1, dates become unlimited.
+				// Mechanical, and it reproduces legacy's behaviour exactly while
+				// making the two settable apart from here on ([[06-bookings]]).
+				'usage_limit' => ($row->valid_from && $row->valid_to) ? null : 1,
+
 				'valid_from' => $row->valid_from,
 				'valid_to' => $row->valid_to,
 				'remarks' => $row->remarks,

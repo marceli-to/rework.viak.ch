@@ -33,7 +33,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 11 | What PHP does production run? | Marcel | Deploy |
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
-| 14 | Should an admin cancelling for a student charge the penalty? | Marcel | Chunk 06's fourth `CancellationReason` — the enum needs the case either way |
+| 14 | Should an admin cancelling for a student charge the penalty? | Marcel | **Nothing** — chunk 06 is built. `BookingCancellationReason::Administrator` exists and currently charges, as legacy did. Flipping it is one line in `chargesPenalty()`, and the reason is now recorded either way |
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08 |
 | 17 | Are the 1,162 historical PDFs carried across? | Client | Chunk 08, cutover storage |

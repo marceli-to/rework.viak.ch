@@ -150,11 +150,11 @@ which:
 | Legacy facade | LOC | Rework |
 |---|---|---|
 | `Invoice` | 294 | `Actions/Invoices/*`, `Support/InvoiceNumber`, `Support/Vat` — **built**, chunk 03 |
-| `Booking` | 243 | `Actions/Bookings/` — **chunk 06** |
+| `Booking` | 243 | `Actions/Bookings/*` — **built**, chunk 06 |
 | `RentalInvoice` | 208 | Nothing of its own — see below |
-| `Discount` | 165 | `Actions/Discounts/`, with code generation in `Support/` — **chunk 06** |
-| `Bookmark` | 82 | Model methods on `User`; 17 rows in three years — **chunk 06** |
-| `ParticipantsChange` | 59 | A listener. It is pure notification — **chunk 06** |
+| `Discount` | 165 | `Actions/Bookings/PriceBasket`, `Support/Basket` — **built**, chunk 06 |
+| `Bookmark` | 82 | Model methods on `User`; 17 rows in three years — **built**, chunk 06 |
+| `ParticipantsChange` | 59 | `NotifyParticipantThreshold`, a listener — **built**, chunk 06 |
 | `NewsletterSubscriber` | 41 | Open — is the Mailchimp sync still in scope? Called from registration and every profile update — **chunk 08** |
 | `Message` | 32 | Folded into the booking Action — **chunk 06**. The message *thread and its screens* are **chunk 08** |
 
