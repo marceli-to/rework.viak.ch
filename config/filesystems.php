@@ -47,6 +47,27 @@ return [
 			'report' => false,
 		],
 
+		/*
+		 * Read-only snapshot of the legacy site's `storage/app/public`, used by
+		 * the port commands the way the `legacy` database connection is. Never
+		 * written to.
+		 *
+		 * It holds `files/` (generated invoice and participation PDFs, plus the
+		 * loose participant lists) and `uploads/` (the images and file uploads).
+		 * The image port cannot run without it: `media` needs width and height,
+		 * and legacy's `images` table never stored them. See [[08-accounts]].
+		 *
+		 * Date the snapshot directory. Reconciling documents against a copy taken
+		 * at a different moment from the database dump is what produced the
+		 * unexplainable 495 in the first place.
+		 */
+		'legacy' => [
+			'driver' => 'local',
+			'root' => env('LEGACY_STORAGE_PATH', base_path('../viak-legacy-storage/current')),
+			'throw' => false,
+			'report' => false,
+		],
+
 		's3' => [
 			'driver' => 's3',
 			'key' => env('AWS_ACCESS_KEY_ID'),
