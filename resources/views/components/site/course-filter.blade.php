@@ -13,11 +13,11 @@
 
 	<ul>
 		@foreach ($software as $item)
-			<li class="border-b border-tertiary">
+			<li class="border-b border-gray-400">
 				<a href="{{ request()->fullUrlWithQuery(['software' => $item->uuid === $active ? null : $item->uuid]) }}"
 					@class([
-						'block py-8 text-md hover:text-secondary lg:text-lg',
-						'text-secondary' => $item->uuid === $active,
+						'block py-8 text-md hover:text-teal lg:text-lg',
+						'text-teal' => $item->uuid === $active,
 					])>
 					{{ $item->getTranslation('title', $locale) }}
 				</a>
@@ -27,13 +27,13 @@
 
 	@if ($active)
 		<a href="{{ request()->fullUrlWithQuery(['software' => null]) }}"
-			class="mt-24 block border border-secondary py-8 text-center text-md text-secondary hover:bg-secondary hover:text-white lg:text-lg">
+			class="mt-24 block border border-teal py-8 text-center text-md text-teal hover:bg-teal hover:text-white lg:text-lg">
 			Zurücksetzen
 		</a>
 	@endif
 
 	{{-- `.card-teaser-training` — the teal promo box under the filter. --}}
-	<div class="mt-32 block bg-secondary p-12 text-white">
+	<div class="mt-32 block bg-teal p-12 text-white">
 		<p class="text-lg leading-[1.4] font-bold break-words text-white lg:text-xl">
 			Wünschen Sie eine massgeschneiderte Individualschulung für Einzelpersonen oder Ihre Firma?
 		</p>

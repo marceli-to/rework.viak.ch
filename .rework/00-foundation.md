@@ -342,10 +342,29 @@ full of values that are not: a 70px card header, a 13px label.
 found by counting `fs-Nx` extends: 10, 12, 13, 14, 16, 18, 20, 24, 28. Line
 heights stay out of it — legacy sets them per component.
 
-**Colours are legacy's and only legacy's**, from `config/_colors.scss`, keeping
-its names so a rule maps across without a translation table. The first pass
-invented `teal-dark`, `teal-tint`, `line`, `paper` and a #333 body colour; none
-exists in the design. More get added when a new page needs one, deliberately.
+**Colour values are legacy's and only legacy's**, from `config/_colors.scss` —
+the first pass invented `teal-dark`, `teal-tint`, `line`, `paper` and a #333 body
+colour, none of which exists in the design. More get added when a new page needs
+one, deliberately.
+
+The **names** are not legacy's. Its scheme was ordinal and misleading:
+`$color-primary` is black while `$color-secondary` is the brand teal, which is
+backwards from how anyone reads it, and `tertiary`/`quaternary` are two greys
+whose names do not say which is lighter. Ordinals also leave no room — the next
+grey would be "quinary". So:
+
+| Legacy | | Rework |
+|---|---|---|
+| `$color-primary` | `#000000` | `black` |
+| `$color-secondary` | `#46baba` | `teal` |
+| `$color-tertiary` | `#969696` | `gray-400` |
+| `$color-quaternary` | `#505050` | `gray-600` |
+| `$color-light` | `#eeeeee` | `gray-200` |
+
+Teal is named for what it is rather than for a role, because it is the stable
+thing on the page: unchanged since 2020, and it survived the redesign proposal
+that offered Poppins and was declined. The greys are numbered light-to-dark, with
+gaps, so a glance at the number says which is which.
 
 **Breakpoints are Tailwind's defaults.** Legacy's were 700/1132/1240; those are
 gone. Its `sm` maps to Tailwind's `sm` and its `md` to `lg`, which moves two

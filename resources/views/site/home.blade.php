@@ -14,14 +14,14 @@
 		page that is finished.
 	--}}
 	<section>
-		<h1 class="text-3xl leading-[1.2] text-secondary">Visualisierungs-Akademie</h1>
+		<h1 class="text-3xl leading-[1.2] text-teal">Visualisierungs-Akademie</h1>
 
 		<p class="mt-16 max-w-[40em]">
 			Kurse für digitales Gestalten — Modellieren, Visualisieren, Animieren,
 			Editieren. Unterrichtet von Leuten, die damit täglich arbeiten.
 		</p>
 
-		<a href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 inline-flex items-center gap-8 text-secondary hover:underline">
+		<a href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 inline-flex items-center gap-8 text-teal hover:underline">
 			Kurse ansehen
 			<x-icon.arrow-right class="size-20" />
 		</a>

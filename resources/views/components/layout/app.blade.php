@@ -6,7 +6,7 @@
 	<title>{{ config('app.name') }}</title>
 	@vite(['resources/css/app.css', 'resources/js/app/app.js'])
 </head>
-<body class="bg-light font-sans text-primary antialiased">
+<body class="bg-gray-200 font-sans text-black antialiased">
 	<div id="app"></div>
 </body>
 </html>

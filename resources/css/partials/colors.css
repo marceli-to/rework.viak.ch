@@ -1,24 +1,39 @@
 @theme {
-	/* Legacy's palette, exactly ([[00-foundation]]).
+	/* Legacy's palette, renamed ([[00-foundation]]).
 	 *
-	 * `resources/sass/config/_colors.scss` and nothing else. An earlier pass
-	 * added `teal-dark`, `teal-tint`, `line`, `paper` and a #333 body colour —
-	 * all invented, none in the design. If the new pages need more tones they
-	 * get added then, deliberately.
+	 * The **values** are `resources/sass/config/_colors.scss` exactly, and
+	 * nothing has been added. The **names** are not legacy's, because legacy's
+	 * were ordinal and misleading: `$color-primary` is black while
+	 * `$color-secondary` is the brand teal, which is backwards from how anyone
+	 * reads it, and `tertiary`/`quaternary` are two greys whose names do not say
+	 * which is lighter. Ordinals also leave no room — the next grey would be
+	 * "quinary".
 	 *
-	 * The names are legacy's too, so a rule in the old stylesheet maps onto a
-	 * class here without a translation table: `$color-secondary` is the brand
-	 * teal, and `border-tertiary` is the hairline the filter uses.
+	 * The mapping, for reading the old stylesheet against this one:
+	 *
+	 *   $color-primary     #000000  ->  black
+	 *   $color-secondary   #46baba  ->  teal
+	 *   $color-tertiary    #969696  ->  gray-400
+	 *   $color-quaternary  #505050  ->  gray-600
+	 *   $color-light       #eeeeee  ->  gray-200
+	 *
+	 * Teal is named for what it is rather than for a role. It has been #46baba
+	 * since 2020 and survived a redesign proposal — the mockup offered Poppins
+	 * and the client kept Effra and the colour — so it is the stable thing on
+	 * the page, and `text-teal` says more at a call site than `text-primary`
+	 * ever did.
 	 */
 	--color-black: #000000;
 	--color-white: #ffffff;
 
-	--color-primary: #000000;
-	--color-secondary: #46baba;
-	--color-tertiary: #969696;
-	--color-quaternary: #505050;
+	--color-teal: #46baba;
 
-	--color-light: #eeeeee;
+	/* Ordered light to dark, so a glance at the number tells you which is which.
+	   Numbered like Tailwind's own greys, with gaps left for tones the new pages
+	   turn out to need. */
+	--color-gray-200: #eeeeee;
+	--color-gray-400: #969696;
+	--color-gray-600: #505050;
 
 	--color-danger: #ff2800;
 	--color-warning: #ff944f;

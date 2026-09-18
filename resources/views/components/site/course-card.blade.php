@@ -16,16 +16,16 @@
 	The overlay is desktop only — legacy hides it below 700px, where there is no
 	hover to reveal it with.
 --}}
-<article {{ $attributes->class(['border border-secondary p-8 lg:p-16']) }}>
-	<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}" class="group block text-primary">
+<article {{ $attributes->class(['border border-teal p-8 lg:p-16']) }}>
+	<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}" class="group block text-black">
 		<header class="min-h-70 sm:min-h-90 lg:min-h-130">
 			@if ($category)
-				<div class="mb-4 text-xxs leading-none font-medium text-quaternary sm:text-sm lg:text-lg">
+				<div class="mb-4 text-xxs leading-none font-medium text-gray-600 sm:text-sm lg:text-lg">
 					{{ $category->getTranslation('title', $locale) }}
 				</div>
 			@endif
 
-			<h2 class="text-lg leading-[1.2] break-words text-secondary sm:text-2xl lg:text-4xl">
+			<h2 class="text-lg leading-[1.2] break-words text-teal sm:text-2xl lg:text-4xl">
 				{{ $course->getTranslation('title', $locale) }}
 			</h2>
 		</header>
@@ -33,7 +33,7 @@
 		<figure class="relative mt-8 block">
 			{{-- The hover overlay, above the image in the source exactly as
 			     legacy has it. --}}
-			<div class="absolute hidden h-full w-full bg-secondary p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
+			<div class="absolute hidden h-full w-full bg-teal p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
 				<h3 class="mb-8">Übersicht:</h3>
 				<ul class="mb-16 sm:mb-24">
 					@if ($expert)
@@ -65,7 +65,7 @@
 					class="block w-full"
 				/>
 			@else
-				<div class="aspect-square w-full bg-light"></div>
+				<div class="aspect-square w-full bg-gray-200"></div>
 			@endif
 		</figure>
 	</a>

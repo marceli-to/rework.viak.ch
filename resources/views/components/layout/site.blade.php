@@ -50,7 +50,7 @@
 </head>
 {{-- `components/_blocks.scss` (the container) and `layout/_base.scss` (padding,
      type, colour) written out rather than hidden behind a class. --}}
-<body class="relative mx-auto min-h-screen max-w-[calc(100%-16px)] p-16 pt-0 text-lg leading-[1.3] tracking-[0.01em] text-primary antialiased sm:max-w-[calc(100%-32px)] sm:text-xl lg:max-w-[1100px] lg:text-3xl">
+<body class="relative mx-auto min-h-screen max-w-[calc(100%-16px)] p-16 pt-0 text-lg leading-[1.3] tracking-[0.01em] text-black antialiased sm:max-w-[calc(100%-32px)] sm:text-xl lg:max-w-[1100px] lg:text-3xl">
 	<x-site.header :heading="$title" />
 
 	{{-- `layout/_main.scss` --}}
