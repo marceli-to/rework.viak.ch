@@ -48,9 +48,14 @@
 
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
 </head>
-{{-- `components/_blocks.scss` (the container) and `layout/_base.scss` (padding,
-     type, colour) written out rather than hidden behind a class. --}}
-<body class="relative mx-auto min-h-screen max-w-[calc(100%-16px)] p-16 pt-0 text-lg leading-[1.3] tracking-[0.01em] text-black antialiased sm:max-w-[calc(100%-32px)] sm:text-xl lg:max-w-[1100px] lg:text-3xl">
+{{-- The container and the body type, from `components/_blocks.scss` and
+     `layout/_base.scss`.
+
+     `max-w-[1132px]` is the 1100px column plus its two 16px gutters, so the
+     content measures exactly 1100px on desktop and the gutter holds at every
+     width. Legacy expressed the same thing as a max-width of `calc(100% - 16px)`
+     *plus* padding, which needs three breakpoints to say once. --}}
+<body class="mx-auto min-h-screen w-full max-w-[1132px] px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:text-xl lg:text-3xl">
 	<x-site.header :heading="$title" />
 
 	{{-- `layout/_main.scss` --}}
