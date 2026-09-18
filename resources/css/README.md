@@ -10,6 +10,24 @@ wrong**. That is the reason this file exists.
 
 ---
 
+## 0. Where a style goes
+
+In this order. Drop a rung only when the one above genuinely cannot express it.
+
+1. **Utilities on the element**, in the Blade template or Vue component.
+   Including descendants — `[&_p]:mb-12` styles paragraphs the editor produced,
+   which is the case that usually sends people to a stylesheet.
+2. **`@apply`, in a CSS partial.** For selectors that have no element to hang a
+   class on: `[x-cloak]`, `::-webkit-scrollbar`.
+3. **Vanilla CSS.** Last resort. There is currently none.
+
+The whole of `app.css` is now imports plus one `@apply` rule, and every partial
+is `@theme` tokens. If you are about to write a declaration, check rung 1 first —
+arbitrary variants and arbitrary values (`bg-[#f9f9f9]`) cover most of what looks
+like it needs a stylesheet.
+
+---
+
 ## 1. Spacing: 1 unit = 1px
 
 `partials/spacing.css`. The number in a class is the number of pixels.
@@ -93,15 +111,23 @@ The only one of the four that needs no translation.
 
 ---
 
+## Rich text from the editor
+
+`<x-site.rich-text :html="$html" />`. Course descriptions come out of a WYSIWYG
+field, so there is no element to put a class on — the component styles the tags
+from its wrapper with arbitrary variants, and the values are legacy's
+(`typo/_helpers.scss`, `components/lists/_global.scss`, `layout/_article.scss`).
+
 ## The scrollbar
 
 Styled, in `partials/scrollbar.css` — 7px, `#f9f9f9` track, `#bbb` thumb, from
-legacy's `scrollbar(7px, #bbb)` mixin. Those two colours are **not** palette
+legacy's `scrollbar(7px, #bbb)` mixin, written with `@apply`. Those two colours are **not** palette
 entries and should not become any: they are arguments to that mixin and appear
 nowhere else.
 
-`html { overflow-y: scroll }` goes with it, so a short page and a long one put
-the content column in the same place.
+`overflow-y-scroll` goes with it and lives on `<html>` in the layouts, not in the
+stylesheet — so a short page and a long one put the content column in the same
+place.
 
 **Do not add `scrollbar-color`.** Chrome 121+ honours it in preference to
 `::-webkit-scrollbar`, so setting both silently replaces the design with the

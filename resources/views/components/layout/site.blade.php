@@ -27,7 +27,10 @@
 ])
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+{{-- `overflow-y-scroll`: the scrollbar is always there, so a short page and
+     a long one put the content column in the same place. Without it the page
+     shifts sideways as you navigate. --}}
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-y-scroll">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">

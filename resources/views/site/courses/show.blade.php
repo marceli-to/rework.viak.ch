@@ -23,9 +23,7 @@
 
 				@foreach (['short_description', 'full_description', 'information_content'] as $field)
 					@if ($html = $course->getTranslation($field, app()->getLocale(), false))
-						<div class="course-copy text-[15px] leading-relaxed text-gray-600">
-							{!! \App\Support\RichText::render($html) !!}
-						</div>
+						<x-site.rich-text :html="$html" class="leading-relaxed text-gray-600" />
 					@endif
 				@endforeach
 
@@ -37,9 +35,7 @@
 								{{-- Editor HTML, like the description fields above it. Escaped
 								     with `{{ }}` it renders as literal <strong> tags, which is
 								     what the ported rows actually contain. --}}
-								<div class="course-copy border-l-2 border-teal pl-3 text-xs leading-relaxed text-black">
-									{!! \App\Support\RichText::render($text) !!}
-								</div>
+								<x-site.rich-text :html="$text" class="border-l-2 border-teal pl-12 text-xs leading-relaxed" />
 							@endif
 						@endforeach
 					</div>
