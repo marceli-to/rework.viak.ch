@@ -1,0 +1,58 @@
+/* The styled scrollbar, from `helpers/_mixins.scss` — `@include scrollbar(7px, #bbb)`,
+ * called at the bottom of `layout/_base.scss`.
+ *
+ * ## Why the two colours are literals
+ *
+ * `#f9f9f9` and `#bbb` are not in `config/_colors.scss` — they are arguments to
+ * the mixin and appear nowhere else in the design. Putting them in the palette
+ * would suggest they are brand colours; they are scrollbar chrome. So they stay
+ * local to the one rule that uses them, as custom properties so they are named
+ * rather than repeated.
+ *
+ * ## Why `scrollbar-color` is deliberately not set
+ *
+ * The standard properties (`scrollbar-width`, `scrollbar-color`) would be the
+ * modern way to write this, and adding them would be a mistake: **Chrome 121+
+ * honours `scrollbar-color` in preference to `::-webkit-scrollbar`**, so setting
+ * both would silently replace the design with the browser's own — no rounded
+ * thumb, a different track. The webkit rules alone reproduce what the live site
+ * shows in Chrome and Safari.
+ *
+ * Firefox has therefore never had the styling, on the live site or here. Giving
+ * it the standard properties on their own is possible, but it would make Firefox
+ * and Chrome differ *by design* rather than by omission — a decision for whoever
+ * wants it, not part of a port.
+ */
+@layer base {
+	:root {
+		--scrollbar-size: 7px;
+		--scrollbar-track: #f9f9f9;
+		--scrollbar-thumb: #bbb;
+	}
+
+	/* `layout/_base.scss`. The scrollbar is always there, so a short page and a
+	   long one put the content column in the same place — without it the page
+	   shifts sideways as you navigate. */
+	html {
+		overflow-y: scroll;
+	}
+
+	::-webkit-scrollbar {
+		width: var(--scrollbar-size);
+		height: var(--scrollbar-size);
+	}
+
+	::-webkit-scrollbar-track {
+		background-color: var(--scrollbar-track);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: var(--scrollbar-thumb);
+		border-radius: var(--scrollbar-size);
+		opacity: 0.5;
+	}
+
+	::-webkit-scrollbar-thumb:window-inactive {
+		background-color: var(--scrollbar-thumb);
+	}
+}

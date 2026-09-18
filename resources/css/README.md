@@ -93,6 +93,20 @@ The only one of the four that needs no translation.
 
 ---
 
+## The scrollbar
+
+Styled, in `partials/scrollbar.css` — 7px, `#f9f9f9` track, `#bbb` thumb, from
+legacy's `scrollbar(7px, #bbb)` mixin. Those two colours are **not** palette
+entries and should not become any: they are arguments to that mixin and appear
+nowhere else.
+
+`html { overflow-y: scroll }` goes with it, so a short page and a long one put
+the content column in the same place.
+
+**Do not add `scrollbar-color`.** Chrome 121+ honours it in preference to
+`::-webkit-scrollbar`, so setting both silently replaces the design with the
+browser's own. Firefox has never had the styling, on the live site or here.
+
 ## Layout
 
 Written inline. There is no `.inner-block` or `.grid-12` helper class — the

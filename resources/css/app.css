@@ -6,6 +6,7 @@
 @import './partials/colors.css';
 @import './partials/spacing.css';
 @import './partials/type.css';
+@import './partials/scrollbar.css';
 
 @source '../../resources/views';
 @source '../../resources/js';
