@@ -9,6 +9,14 @@ twelve modules repeat them.
 Built. 37 tests green. 214 of 227 live events ported, 13 skipped with reasons.
 Public pages at `/kurse` and `/kurse/{slug}`, dashboard at `/dashboard/termine`.
 
+**The public routes need changing — 2026-09-18.** Marcel raised SEO, and the
+legacy URLs are prefixed and singular: `/de/kurse` for the list,
+`/de/kurs/{slug}/{uuid}` for the detail. What is built here matches neither. The
+decision and the reasoning are in `00-foundation.md` under *Public URLs and
+locale*; the work is `/de/kurse` + `/de/kurs/{slug}`, with a 301 from the uuid
+form. The slug *strings* already match — `PortCourses` carries `courses.slug`
+across verbatim — so this is routing, not data.
+
 ## Why this domain first
 
 Courses and events are the heaviest part of the legacy model (`Event` 448 LOC,

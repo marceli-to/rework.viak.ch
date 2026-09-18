@@ -23,7 +23,8 @@ Built. `rework.viak.ch.test` serves, `php artisan test` green, `npm run build` c
 | PHP | 8.2 | 8.3 (platform-pinned) |
 | Laravel | 11 | 13.31 |
 | MySQL | 5.7 (:3306) | 8.0.40 (:3307) |
-| Frontend | Vue 2.7, Vuex 3, vue-router 3 | Vue 3.5, Pinia 4, vue-router 5 |
+| Frontend (admin) | Vue 2.7, Vuex 3, vue-router 3 | Vue 3.5, Pinia 4, vue-router 5 |
+| Frontend (public site) | Vue 2.7 islands, 1,570 LOC | **Alpine 3** — decided 2026-09-18, below |
 | Build | Laravel Mix 5 (webpack) | Vite 8 + laravel-vite-plugin 3 |
 | Styling | SCSS, 106 files / 6.8k LOC | Tailwind 4 |
 | Tests | PHPUnit/Pest, 24 files | Pest 4 |
@@ -254,7 +255,7 @@ resources/
   js/
     app/              # the dashboard SPA (Vue 3 + Pinia + router)
       components/fields/  # the field kit — see 04-content.md
-    site/             # public-site Vue islands (basket, filter, checkout)
+    site/             # public-site Alpine behaviours (basket, filter, checkout)
   views/
     components/layout/{app,site}.blade.php
     site/             # public marketing pages, Blade + Tailwind
@@ -264,8 +265,126 @@ resources/
 
 Legacy ships three separate Mix bundles — `dashboard` (72 components), `expert` (5),
 `student` (7) — over 62 shared components. These collapse into one Vue 3 SPA under
-`resources/js/app/` with role-gated routes. The public site stays Blade with Vue
-islands, which is effectively what it already is.
+`resources/js/app/` with role-gated routes.
+
+### The public site is Blade + Alpine, not Vue — decided 2026-09-18
+
+This replaces the earlier line that the public site would keep Vue islands. What
+changed is a measurement: legacy's Vue splits very unevenly between the two
+surfaces.
+
+| | Components | LOC | Rework |
+|---|---:|---:|---|
+| Public site | 13 | **1,570** | Blade + Alpine |
+| Dashboard + portals | 72 | **10,047** | Vue 3 SPA |
+| Shared UI | 74 | 2,807 | mostly absorbed by the field kit |
+
+The public site is 11 % of the Vue, and most of it is trivial without a
+framework — filter (395 LOC), register (207), newsletter (96), basket and
+bookmark (75). Only the checkout (797) is substantial.
+
+**The checkout is the case that decides it, and it decides it for Alpine.**
+`Stores/` above already says the basket is priced server-side and the client
+never supplies a price; `06-bookings.md` adds that a checkout whose price moved
+is *refused*. Once the server is the pricing authority, the natural shape is a
+POST per step with the state in the session — which is Blade's shape, not a
+client-held wizard's. Legacy's four-view SPA wizard is not the thing to port.
+
+Two consequences worth stating:
+
+- **Each surface gets exactly one paradigm.** The earlier plan had Vue on both.
+  Now Vue appears only under `/dashboard`, and the marketing pages ship no
+  framework at all.
+- `resources/js/site/` holds Alpine behaviours, not Vue islands. The basket
+  count shared between the header and the page body is an `Alpine.store()`.
+
+**The field kit is unaffected.** It is admin-only and stays Vue 3 — see
+`04-content.md`.
+
+## Phasing: parity first, then the new pages — decided 2026-09-18
+
+The frontend is rebuilt **as the current site is**, on the new stack, before any
+of the mockups' new pages are built. Marcel's call, and the reason is cutover:
+parity work depends on nothing that is still undecided, while the new pages
+depend on filler copy, an unconfirmed Vorhaben count and the EN question. Phasing
+them apart means **the cutover stops waiting on design decisions nobody has
+made**.
+
+| Phase | What | Depends on |
+|---|---|---|
+| **Parity** | chunk 06; the Tailwind + Alpine rebuild of today's public pages; the admin and portal screens that replace the legacy dashboard | nothing open |
+| **New** | chunk 05 (licences), chunk 04's new content pages and templates | designs, copy, the open questions in `Open-Questions.md` |
+
+Note that **chunk 05 is not parity.** Licences are a new feature with no legacy
+equivalent, so they need new templates however the work is cut.
+
+### Two things that must *not* be built "as is"
+
+Like-for-like is right for the public page layout, the filter, newsletter,
+bookmark, register, both portals and the static pages. It is wrong for exactly
+two, because a decision already made rewrites them:
+
+1. **The checkout.** A basket must hold **courses and licences** (`05-licences.md`),
+   billed on different triggers and producing two invoices on different days.
+   Built course-only now, the most expensive public component gets written twice.
+   The cheap avoidance is to make the basket **polymorphic from day one**, while
+   licence products still do not exist.
+2. **The admin forms.** `04-content.md` puts break-even on the field kit at about
+   form four, and legacy has eleven screen groups. A parity admin hand-rolled per
+   legacy is precisely the ten-inconsistent-forms failure mode that chunk's field
+   kit exists to prevent, and the kit would arrive to rewrite all of it.
+
+One smaller thing to expect rather than discover: `software` is still one of five
+identical taxonomy tables and chunk 05 turns it into an entity with variants and a
+manufacturer. The course pages already render it, so a page built at parity gets a
+data-shape change underneath it later. Small, but real.
+
+## Public URLs and locale — decided 2026-09-18
+
+The legacy URLs are indexed and **must survive**, so this is a constraint rather
+than a preference.
+
+Legacy runs `chinleung/laravel-multilingual-routes` with
+`MULTILINGUAL_ROUTES_PREFIX_DEFAULT=true` and `PREFIX_DEFAULT_HOME=true`, so the
+German URLs are **prefixed**, and the course detail route carries a slug *and* a
+uuid:
+
+| | Legacy (indexed) | Rework |
+|---|---|---|
+| Home | `/de` — and `/` | `/de`, with `/` canonical to it |
+| Course list | `/de/kurse` | unchanged |
+| Course detail | `/de/kurs/{slug}/{uuid}` | **`/de/kurs/{slug}`**, 301 from the uuid form |
+| Experts | `/de/experten`, `/de/experte/{slug}/{uuid}` | same treatment |
+| Contact | `/de/kontakt` | unchanged |
+| Firmenschulung | `/de/individualschulungen` | unchanged |
+
+**Chunk 02 as built does not match this** — it serves `/kurse` and
+`/kurse/{slug}`, with neither the prefix nor the singular `kurs`. The
+`Site/CourseController` docblock explains the slug choice, which was defensible
+before SEO was raised. It now needs changing; the slug *strings* already match,
+because `PortCourses` carries `courses.slug` across verbatim.
+
+**Why the prefix stays even though EN is out of scope.** It costs nothing, it
+preserves every indexed URL, and it leaves `/en/` free for later — exactly the
+property `04-content.md` wants, where turning EN on is a config change and not a
+rebuild. A single-language site carrying a locale prefix looks odd only until you
+remember the alternative is moving every URL twice.
+
+**Why the uuid goes.** It is decorative — the uuid resolves the route and the slug
+is ignored, so `/de/kurs/anything/{uuid}` renders the course today. A 301 to the
+slug form passes essentially full ranking, and the redirect map is about **60
+URLs** (41 courses, ~17 experts, a handful of pages), not thousands.
+
+### Three SEO gaps legacy has that the rework should not
+
+Found while checking the above. None is expensive:
+
+- **No canonical tag anywhere.** `/` and `/de` both serve the homepage with
+  nothing distinguishing them — duplicate content on the live site right now.
+- **No `hreflang`**, which matters only once EN ships, but is free to emit.
+- **No sitemap.** `robots.txt` is `Disallow:` with nothing else in it.
+
+See `Todo.md` for the cutover items these produce.
 
 ## Design tokens
 

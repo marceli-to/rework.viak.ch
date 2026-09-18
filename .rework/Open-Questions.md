@@ -93,6 +93,13 @@ but the data model stays translatable so the decision can be reversed cheaply.
 translatable columns and the `{de, en}` Resource maps away, so it is worth asking
 rather than carrying the option forever.
 
+**Marcel, 2026-09-18: ignore EN for now, but keep the URL structure.** Which makes
+this cheaper to leave open than it was. The `/de/` prefix is retained for SEO
+(see `00-foundation.md`, *Public URLs and locale*), so `/en/` stays free and
+turning EN on remains a config change plus content entry. The question is now
+worth asking only for the simplification it would unlock, never for the option it
+preserves — the option is preserved either way.
+
 ### 7. Do the historical invoice due dates matter?
 
 `invoices.due_at` has been overwriting itself on every UPDATE since 2023, so the

@@ -6,6 +6,13 @@ The marketing site the mockups describe, and the admin surface that edits it.
 
 Not built. Scoped 2026-09-16 against the 24 mockups in `history/mockup/`.
 
+**Split by the 2026-09-18 phasing decision** (`00-foundation.md`): the **field
+kit** is parity work — it is what the admin screens replacing the legacy
+dashboard are built with, and deferring it behind a hand-rolled parity admin is
+the failure mode this chunk exists to prevent. The **new pages and templates** —
+Vorhaben, the software templates, Aktuelles, the homepage — are phase two, and
+wait on designs and copy. The two halves of this chunk no longer land together.
+
 ## The mockups are 24 files but about nine templates
 
 Counting the mockup directory as pages badly overstates the work, and counting it
@@ -240,8 +247,9 @@ anyway:
 - `x-site.article-list` → Aktuelles
 - `x-site.callback-band`, `x-site.newsletter`, `x-site.footer` → everywhere
 
-Vue islands only in the header (basket, search) and on the filter chips. The
-homepage body needs none.
+Alpine only in the header (basket, search) and on the filter chips — not Vue; see
+*The public site is Blade + Alpine* in `00-foundation.md`. The homepage body needs
+neither.
 
 **So build the homepage last.** After Vorhaben, Aktuelles and the software
 templates it is five existing partials, one controller and a five-field schema.

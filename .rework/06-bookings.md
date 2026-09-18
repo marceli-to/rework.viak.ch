@@ -364,6 +364,27 @@ dropped below min — which makes it the case the event/listener rule in
 in one cycle step over `max` and the notice is lost; see **Notify on crossing,
 not on equality** there.
 
+## The basket is polymorphic from day one — decided 2026-09-18
+
+A consequence of the phasing decision in `00-foundation.md`, recorded here
+because this chunk is where it gets built.
+
+The public checkout is 797 LOC in legacy and the most expensive component on the
+site. `05-licences.md` already establishes that a basket holds **courses and
+licences**, billed on different triggers and producing two invoices on different
+days. So even though licence products do not exist yet, the basket line is
+polymorphic when it is first written — one extra column now against rewriting the
+checkout when chunk 05 lands.
+
+The same applies to the checkout record this chunk introduces for the order-level
+discount: bookings *and* licence lines point at it, so it is not a bookings-only
+row even while bookings are the only thing pointing at it.
+
+**The checkout is Blade + Alpine, server-driven** — a POST per step with the state
+in the session, not legacy's four-view client wizard. That falls out of the rule
+this chunk already sets: the server prices the basket and refuses a checkout whose
+price moved. Reasoning in `00-foundation.md`.
+
 ## Open questions
 
 1. ~~Is the cancellation penalty actually enforced?~~ — **answered 2026-09-17:

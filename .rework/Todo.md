@@ -146,6 +146,49 @@ or not the migration is close.
 
 ---
 
+## SEO: redirects, canonical, sitemap
+
+**Blocks the cutover, not the build.** Raised by Marcel on 2026-09-18 — the legacy
+URLs are indexed and must survive. The route decision itself is in
+`00-foundation.md` under *Public URLs and locale*; what follows is the cutover
+work it produces.
+
+### The redirect map
+
+About **60 URLs**, which is the good news — 41 courses, ~17 experts with bios, and
+a handful of fixed pages. Not thousands.
+
+| From (legacy, indexed) | To |
+|---|---|
+| `/de/kurs/{slug}/{uuid}` | `/de/kurs/{slug}` — 301 |
+| `/de/experte/{slug}/{uuid}` | `/de/experte/{slug}` — 301 |
+| `/` | `/de` — canonical, not a redirect |
+
+Everything else (`/de/kurse`, `/de/kontakt`, `/de/experten`,
+`/de/individualschulungen`) is preserved as-is and needs nothing.
+
+The uuid form must keep resolving after cutover, so the redirect reads the uuid
+and looks up the current slug rather than pattern-matching. Note the legacy quirk
+it retires: the uuid resolves and the slug is *ignored*, so
+`/de/kurs/anything/{uuid}` renders the course today.
+
+### Three gaps legacy has and the rework should not
+
+Measured on the legacy tree 2026-09-18. None is expensive, and all three are
+easier to do while the templates are being rebuilt than afterwards.
+
+1. **No canonical tag anywhere** in `resources/views/web/partials/head.blade.php`.
+   `/` and `/de` both serve the homepage with nothing distinguishing them —
+   duplicate content on the live site right now.
+2. **No `hreflang`.** Costs nothing to emit and matters the day EN ships.
+3. **No sitemap.** `public/robots.txt` is `User-agent: *` + `Disallow:` and
+   nothing else.
+
+One unrelated thing worth doing at the same time, already noted in
+`00-foundation.md`: `head.blade.php` loads a second Typekit kit, `kcs4ept`
+(*neuzeit-grotesk*), referenced by no stylesheet. It is a dead render-blocking
+request on every page of the live site.
+
 ## Other open questions
 
 **Live questions now live in `Open-Questions.md`** — what is still unanswered,
