@@ -8,28 +8,28 @@ const nav = [
 </script>
 
 <template>
-	<div class="min-h-screen bg-paper">
-		<header class="border-b border-line bg-white">
-			<div class="mx-auto flex max-w-[1280px] items-center gap-8 px-6 py-3">
-				<span class="text-base font-semibold tracking-tight text-ink">VIAK</span>
+	<div class="min-h-screen bg-gray-200">
+		<header class="border-b border-gray-400 bg-white">
+			<div class="mx-auto flex max-w-[1280px] items-center gap-32 px-24 py-12">
+				<span class="text-lg font-semibold tracking-tight text-black">VIAK</span>
 
-				<nav class="flex gap-5 text-sm">
+				<nav class="flex gap-20 text-md">
 					<RouterLink
 						v-for="item in nav"
 						:key="item.name"
 						:to="{ name: item.name }"
-						class="text-muted transition hover:text-teal-dark"
-						active-class="font-semibold text-teal-dark"
+						class="text-gray-600 transition hover:text-teal"
+						active-class="font-semibold text-teal"
 					>
 						{{ item.label }}
 					</RouterLink>
 				</nav>
 
-				<a href="/" class="ml-auto text-xs text-faint hover:text-teal-dark">Zur Website &rarr;</a>
+				<a href="/" class="ml-auto text-xs text-gray-400 hover:text-teal">Zur Website &rarr;</a>
 			</div>
 		</header>
 
-		<main class="mx-auto max-w-[1280px] px-6 py-8">
+		<main class="mx-auto max-w-[1280px] px-24 py-32">
 			<RouterView />
 		</main>
 	</div>

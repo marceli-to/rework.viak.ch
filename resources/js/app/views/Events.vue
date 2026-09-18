@@ -23,49 +23,49 @@ const transitionsFor = (event) =>
 
 <template>
 	<section>
-		<header class="mb-6 flex items-center justify-between">
+		<header class="mb-24 flex items-center justify-between">
 			<div>
-				<h1 class="text-2xl font-semibold tracking-tight text-ink">Kursdaten</h1>
-				<p class="mt-1 text-sm text-muted">{{ store.items.length }} Termine</p>
+				<h1 class="text-3xl font-semibold tracking-tight text-black">Kursdaten</h1>
+				<p class="mt-4 text-md text-gray-600">{{ store.items.length }} Termine</p>
 			</div>
 
 			<button
 				type="button"
-				class="border border-line px-3 py-1.5 text-sm text-muted transition hover:border-teal hover:text-teal-dark"
+				class="border border-gray-400 px-12 py-6 text-md text-gray-600 transition hover:border-teal hover:text-teal"
 				@click="store.togglePast()"
 			>
 				{{ store.showPast ? 'Kommende zeigen' : 'Vergangene zeigen' }}
 			</button>
 		</header>
 
-		<p v-if="store.error" class="mb-4 bg-danger/10 px-4 py-2 text-sm text-danger">{{ store.error }}</p>
-		<p v-if="store.loading" class="text-sm text-muted">Wird geladen …</p>
+		<p v-if="store.error" class="mb-16 bg-danger/10 px-16 py-8 text-md text-danger">{{ store.error }}</p>
+		<p v-if="store.loading" class="text-md text-gray-600">Wird geladen …</p>
 
-		<table v-else-if="store.items.length" class="w-full border-collapse text-sm">
+		<table v-else-if="store.items.length" class="w-full border-collapse text-md">
 			<thead>
-				<tr class="border-b border-line text-left text-xs uppercase tracking-wider text-faint">
-					<th class="py-2 pr-4 font-semibold">Datum</th>
-					<th class="py-2 pr-4 font-semibold">Kurs</th>
-					<th class="py-2 pr-4 font-semibold">Plätze</th>
-					<th class="py-2 pr-4 font-semibold">Status</th>
-					<th class="py-2 font-semibold"></th>
+				<tr class="border-b border-gray-400 text-left text-xs uppercase tracking-wider text-gray-400">
+					<th class="py-8 pr-16 font-semibold">Datum</th>
+					<th class="py-8 pr-16 font-semibold">Kurs</th>
+					<th class="py-8 pr-16 font-semibold">Plätze</th>
+					<th class="py-8 pr-16 font-semibold">Status</th>
+					<th class="py-8 font-semibold"></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="event in store.items" :key="event.uuid" class="border-b border-line/70 align-top">
-					<td class="py-3 pr-4 whitespace-nowrap text-muted">{{ formatDate(event.date) }}</td>
-					<td class="py-3 pr-4">
-						<span class="font-medium text-ink">{{ event.course?.title?.de ?? '—' }}</span>
-						<span v-if="event.free_of_charge" class="ml-2 text-xs text-faint">kostenlos</span>
+				<tr v-for="event in store.items" :key="event.uuid" class="border-b border-gray-400/70 align-top">
+					<td class="py-12 pr-16 whitespace-nowrap text-gray-600">{{ formatDate(event.date) }}</td>
+					<td class="py-12 pr-16">
+						<span class="font-medium text-black">{{ event.course?.title?.de ?? '—' }}</span>
+						<span v-if="event.free_of_charge" class="ml-8 text-xs text-gray-400">kostenlos</span>
 					</td>
-					<td class="py-3 pr-4 text-muted">{{ event.min_participants }}–{{ event.max_participants }}</td>
-					<td class="py-3 pr-4"><StateBadge :state="event.state" /></td>
-					<td class="py-3 text-right whitespace-nowrap">
+					<td class="py-12 pr-16 text-gray-600">{{ event.min_participants }}–{{ event.max_participants }}</td>
+					<td class="py-12 pr-16"><StateBadge :state="event.state" /></td>
+					<td class="py-12 text-right whitespace-nowrap">
 						<button
 							v-for="option in transitionsFor(event)"
 							:key="option.state"
 							type="button"
-							class="ml-2 text-xs font-semibold text-teal-dark hover:underline"
+							class="ml-8 text-xs font-semibold text-teal hover:underline"
 							@click="store.changeState(event.uuid, option.state)"
 						>
 							{{ option.label }}
@@ -75,6 +75,6 @@ const transitionsFor = (event) =>
 			</tbody>
 		</table>
 
-		<p v-else class="text-sm text-muted">Keine Termine gefunden.</p>
+		<p v-else class="text-md text-gray-600">Keine Termine gefunden.</p>
 	</section>
 </template>

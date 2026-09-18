@@ -329,7 +329,14 @@ earlier decision forces it (an image now renders through Glide rather than
 
 ### Frontend conventions — settled 2026-09-18
 
-Five, and each replaced something invented on the first pass.
+**The working reference is `resources/css/README.md`**, which covers both halves
+of the app. What follows is the reasoning; that file is what to read before
+writing a class.
+
+Six, and each replaced something invented on the first pass. Three of them
+differ from stock Tailwind, which means **a class copied from the documentation
+compiles and is silently wrong** — the reason the reference exists at all rather
+than living only here.
 
 **Spacing is 1 unit = 1px**, in `resources/css/partials/spacing.css` — the same
 generated partial `forrerzimmermann.ch` uses, so both codebases read alike. So
