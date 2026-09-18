@@ -176,4 +176,16 @@ class User extends Authenticatable
 	{
 		return $this->hasRole(Role::Expert);
 	}
+
+	/**
+	 * Books courses. 555 of 578 users hold this and nothing else.
+	 *
+	 * Note that Admin does *not* imply Student. Chunk 02 settled that roles are
+	 * capabilities rather than a rank — three people hold all three — so an admin
+	 * who wants to book a course for themselves holds the Student role too.
+	 */
+	public function isStudent(): bool
+	{
+		return $this->hasRole(Role::Student);
+	}
 }

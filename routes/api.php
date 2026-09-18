@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\BasketController;
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\BookmarkController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\EventController;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +29,24 @@ Route::middleware('auth:sanctum')->group(function (): void {
 	Route::put('events/{event}', [EventController::class, 'update']);
 	Route::patch('events/{event}/state', [EventController::class, 'setState']);
 	Route::delete('events/{event}', [EventController::class, 'destroy']);
+
+	/*
+	 * Basket and checkout ([[06-bookings]]).
+	 *
+	 * `basket/price` is a POST because it sends the whole selection and gets a
+	 * priced answer — it reads as a query but it is not addressable, and there
+	 * is no basket on the server to GET. Legacy kept one in the session, which
+	 * is why a completed checkout left nothing behind.
+	 */
+	Route::post('basket/price', [BasketController::class, 'price']);
+	Route::post('checkout', [BasketController::class, 'store']);
+
+	Route::get('bookings', [BookingController::class, 'index']);
+	Route::get('bookings/{booking}', [BookingController::class, 'show']);
+	Route::patch('bookings/{booking}/cancel', [BookingController::class, 'cancel']);
+	Route::patch('bookings/{booking}/rental', [BookingController::class, 'setRental']);
+
+	Route::get('bookmarks', [BookmarkController::class, 'index']);
+	Route::put('bookmarks/{event}', [BookmarkController::class, 'store']);
+	Route::delete('bookmarks/{event}', [BookmarkController::class, 'destroy']);
 });
