@@ -310,6 +310,23 @@ Two consequences worth stating:
 **The field kit is unaffected.** It is admin-only and stays Vue 3 — see
 `04-content.md`.
 
+## Parity means the current design, not a new one — restated 2026-09-18
+
+Worth saying plainly, because the first attempt at the public site got it wrong
+and produced a *new-looking* page on the new stack. That is not what parity
+means here.
+
+**The public site is rebuilt 1:1: the same design, on Blade + Alpine + Tailwind
+instead of Blade + Vue + SCSS.** New pages, new features and anything the
+mockups propose come *after*. So when a value in the new CSS looks arbitrary —
+a 70px header min-height, a 10px category label, breakpoints at 700/1132/1240 —
+it is legacy's value, and the source file it came from is named in a comment.
+
+The reference is the live site plus `resources/sass/` in the legacy tree, not
+judgement. Where the rework legitimately differs it is because the *data* or an
+earlier decision forces it (an image now renders through Glide rather than
+`marceli-to/image-cache`), never because the design was improved.
+
 ## Phasing: parity first, then the new pages — decided 2026-09-18
 
 The frontend is rebuilt **as the current site is**, on the new stack, before any

@@ -93,3 +93,25 @@ it('ignores a width it would never have generated', function () {
 
 	@unlink($source);
 });
+
+/**
+ * Legacy's course card requests `/img/crop/{file}/{width}/{coords}/1x1`,
+ * squaring every image however the editor cropped it so a grid lines up. Without
+ * the override a 16:9 crop and a square crop sit side by side at different
+ * heights.
+ */
+it('forces a requested aspect ratio over the one the crop implies', function () {
+	$wide = Media::factory()->cropped(w: 2000, h: 1125)->create();
+
+	$html = render($wide, ['ratio' => '1/1', 'maxWidth' => 640]);
+
+	expect($html)->toContain('width="640"')->toContain('height="640"');
+});
+
+it('still follows the crop when no ratio is asked for', function () {
+	$wide = Media::factory()->cropped(w: 2000, h: 1125)->create();
+
+	$html = render($wide, ['maxWidth' => 640]);
+
+	expect($html)->toContain('width="640"')->toContain('height="360"');
+});

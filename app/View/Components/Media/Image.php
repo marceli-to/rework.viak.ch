@@ -59,6 +59,20 @@ class Image extends Component
 		public int $quality = 82,
 		public string $class = '',
 		public string $loading = 'lazy',
+		/**
+		 * Force an aspect ratio, as `'1/1'` or `'16/9'`, overriding the one the
+		 * stored crop implies.
+		 *
+		 * The legacy templates do exactly this — its course card requests
+		 * `/img/crop/{file}/{width}/{coords}/1x1`, squaring every image however
+		 * the editor cropped it, so a grid of cards lines up. Without it a 16:9
+		 * crop and a square crop sit side by side at different heights.
+		 *
+		 * Glide applies it in the right order for free: `crop` selects the
+		 * region the editor chose, then `w`/`h`/`fit=crop` fits that region to
+		 * the requested shape.
+		 */
+		public ?string $ratio = null,
 	) {
 		[$this->desktop, $this->mobile] = $this->variantsOf($media);
 
@@ -71,9 +85,7 @@ class Image extends Component
 		$widths = array_values(array_filter(ImageFormats::WIDTHS, fn (int $w) => $w <= $maxWidth));
 		$this->widths = $widths === [] ? [ImageFormats::WIDTHS[0]] : $widths;
 
-		$this->aspectRatio = $this->fit === 'crop'
-			? $this->desktop->aspectRatio()
-			: ($this->desktop->height ?: 1) / ($this->desktop->width ?: 1);
+		$this->aspectRatio = $this->ratioOf($this->desktop);
 
 		// `end()` takes its argument by reference, and `$widths` is readonly —
 		// so read the last element without moving an internal pointer.
@@ -168,11 +180,25 @@ class Image extends Component
 		));
 	}
 
-	private function url(Media $media, string $format, int $width): string
+	/** The forced ratio, else the crop's, else the file's own. */
+	private function ratioOf(Media $media): float
 	{
-		$ratio = $this->fit === 'crop'
+		if ($this->ratio !== null && str_contains($this->ratio, '/')) {
+			[$w, $h] = array_map('floatval', explode('/', $this->ratio, 2));
+
+			if ($w > 0 && $h > 0) {
+				return $h / $w;
+			}
+		}
+
+		return $this->fit === 'crop'
 			? $media->aspectRatio()
 			: ($media->height ?: 1) / ($media->width ?: 1);
+	}
+
+	private function url(Media $media, string $format, int $width): string
+	{
+		$ratio = $this->ratioOf($media);
 
 		$params = [
 			'w' => $width,

@@ -4,6 +4,7 @@
 
 @import './partials/fonts.css';
 @import './partials/colors.css';
+@import './partials/layout.css';
 
 @source '../../resources/views';
 @source '../../resources/js';

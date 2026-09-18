@@ -1,0 +1,66 @@
+/* Layout, carried over 1:1 from the legacy SCSS.
+ *
+ * The goal for the public site is the **current design, rebuilt on the new
+ * stack** — not a new design. So these are legacy's own numbers rather than
+ * Tailwind's defaults, and where a value looks arbitrary it is because it is
+ * the value the live site uses.
+ *
+ * Sources: config/_global.scss, helpers/_spaces.scss, components/_blocks.scss,
+ * components/_grid.scss.
+ */
+@theme {
+	/* config/_global.scss. Not Tailwind's 640/768/1024 — the design's column
+	   changes happen at these widths. */
+	--breakpoint-sm: 700px;
+	--breakpoint-md: 1132px;
+	--breakpoint-lg: 1240px;
+
+	/* helpers/_spaces.scss: $step is 4px, which is already Tailwind's spacing
+	   unit — so legacy's `%p-2x` is `p-2`, `%mb-6x` is `mb-6`, and so on. No
+	   translation table needed. */
+
+	/* components/_blocks.scss — the site column. */
+	--container-site: 1100px;
+
+	/* config/_global.scss */
+	--spacing-header-xs: 48px;
+	--spacing-header-sm: 64px;
+	--spacing-header-md: 80px;
+}
+
+/* `%inner-block` — the container every page sits in. Legacy puts this on
+   `body` itself rather than on a wrapper per section, so the whole document is
+   one column and sections do not each re-centre themselves. */
+.inner-block {
+	margin-inline: auto;
+	max-width: calc(100% - 16px);
+	padding-inline: 8px;
+	position: relative;
+}
+
+@media (min-width: 700px) {
+	.inner-block {
+		max-width: calc(100% - 32px);
+		padding-inline: 16px;
+	}
+}
+
+@media (min-width: 1132px) {
+	.inner-block {
+		max-width: var(--container-site);
+	}
+}
+
+/* `%grid-column-gap` — 16px, widening to 40px on desktop. */
+.grid-12 {
+	display: grid;
+	grid-template-columns: repeat(12, minmax(0, 1fr));
+	column-gap: 16px;
+	row-gap: 16px;
+}
+
+@media (min-width: 1132px) {
+	.grid-12 {
+		column-gap: 40px;
+	}
+}

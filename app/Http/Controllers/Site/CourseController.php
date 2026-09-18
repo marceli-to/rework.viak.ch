@@ -26,9 +26,11 @@ class CourseController extends Controller
 			->published()
 			->with([
 				'software',
-				// Eager-loaded, or the grid asks for an image per card.
+				// The card shows a category, the next date, the expert teaching
+				// it and the fee — all eager-loaded, or the grid asks per card.
+				'categories',
 				'media',
-				'events' => fn ($query) => $query->published()->active()->upcoming(),
+				'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
 			])
 			->when($activeSoftware, fn ($query, $uuid) => $query->whereHas(
 				'software',
