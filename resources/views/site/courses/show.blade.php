@@ -2,7 +2,7 @@
 	<x-site.header />
 	<x-site.breadcrumb :items="[
 		'Home' => '/',
-		'Kurse' => route('courses.index'),
+		'Kurse' => \App\Support\SiteUrl::courses(),
 		$course->getTranslation('title', app()->getLocale()) => null,
 	]" />
 

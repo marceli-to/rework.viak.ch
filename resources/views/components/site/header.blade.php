@@ -1,5 +1,5 @@
 @php($nav = [
-	'Kurse' => route('courses.index'),
+	'Kurse' => \App\Support\SiteUrl::courses(),
 	'Software' => '#',
 	'Firmenschulung' => '#',
 	'Über uns' => '#',

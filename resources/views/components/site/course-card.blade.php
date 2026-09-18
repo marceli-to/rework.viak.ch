@@ -1,6 +1,6 @@
 @props(['course'])
 @php($next = $course->events->first())
-<a href="{{ route('courses.show', $course->getTranslation('slug', app()->getLocale())) }}"
+<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', app()->getLocale())) }}"
    class="group flex flex-col border border-line bg-white transition hover:border-teal">
 	<div class="flex aspect-16/9 items-center justify-center bg-teal-tint text-3xl text-teal">
 		{{ mb_substr($course->getTranslation('title', app()->getLocale()), 0, 1) }}
