@@ -21,7 +21,7 @@
 
 		<a href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 inline-flex items-center gap-8 text-teal hover:underline">
 			Kurse ansehen
-			<x-icon.arrow-right class="size-20" />
+			<x-icon.arrow-right />
 		</a>
 	</section>
 </x-layout.site>

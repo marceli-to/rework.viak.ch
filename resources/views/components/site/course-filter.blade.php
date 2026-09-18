@@ -37,6 +37,6 @@
 		<p class="text-lg leading-[1.4] font-bold break-words text-white lg:text-xl">
 			Wünschen Sie eine massgeschneiderte Individualschulung für Einzelpersonen oder Ihre Firma?
 		</p>
-		<x-icon.arrow-right class="mt-16 size-24" />
+		<x-icon.arrow-right class="mt-16" />
 	</div>
 </div>

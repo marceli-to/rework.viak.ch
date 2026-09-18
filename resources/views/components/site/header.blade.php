@@ -43,7 +43,7 @@
 			@endif
 
 			<button type="button" class="p-8 sm:hidden" @click="toggle()" :aria-expanded="open" aria-label="Menü">
-				<x-icon.list class="size-24" />
+				<x-icon.burger />
 			</button>
 		</div>
 
@@ -77,7 +77,7 @@
 					     usually shows only the account icon. --}}
 					<li class="flex items-center" x-cloak x-show="$store.basket.count > 0">
 						<a href="#" class="relative block h-16 w-[19px] hover:text-teal" title="Warenkorb">
-							<x-icon.shopping-cart class="block size-full" />
+							<x-icon.basket class="block" />
 							{{-- `icons/_basket.scss`: a 16px black disc, offset -12/-12. --}}
 							<em class="absolute -top-12 -right-12 flex size-16 items-center justify-center rounded-full bg-black text-xs leading-none font-normal text-white not-italic lg:text-sm"
 								x-text="$store.basket.count"></em>
@@ -86,7 +86,7 @@
 					<li class="flex items-center sm:ml-16 lg:ml-32">
 						<a href="/dashboard" class="block hover:text-teal" title="Profil">
 							{{-- 16×20 on production, flush with the column's right edge. --}}
-							<x-icon.user class="h-20 w-16" />
+							<x-icon.profile />
 						</a>
 					</li>
 				</ul>
@@ -115,7 +115,7 @@
 
 			<div class="mt-auto flex justify-end p-8">
 				<button type="button" @click="close()" aria-label="Menü schliessen">
-					<x-icon.x class="size-32" />
+					<x-icon.cross size="large" />
 				</button>
 			</div>
 		</div>

@@ -141,16 +141,37 @@ a grid does not mean adding a class first.
 
 ## Icons
 
-Phosphor, regular weight, both halves:
+The legacy set, ported from both of legacy's own — `web/partials/icons/` for
+Blade and `shared/components/ui/icons/` for Vue.
 
-- **Blade** — `<x-icon.arrow-right class="size-20" />`. The icons the app uses
-  are vendored into `resources/views/components/icon/`. To add one, put its name
-  in `App\Console\Commands\SyncIcons::ICONS` and run `php artisan icons:sync`.
-- **Vue** — `@phosphor-icons/vue`, e.g. `<PhArrowRight :size="20" />`.
+- **Blade** — `<x-icon.arrow-right />`, in `resources/views/components/icon/`
+- **Vue** — `<ArrowRight />`, in `resources/js/app/components/icons/`
 
-Both draw from the same set, so an icon looks the same on either side. Copied
-rather than depended on in PHP: the set is 1,512 icons per weight and the site
-uses five.
+**Deliberately duplicated.** An SFC and a Blade component cannot be one file, and
+a build step to generate both would cost more than a dozen small duplicates. The
+two sets are not identical: Blade has `basket`, `burger`, `facebook`, `instagram`
+and `mail`, which only the public site needs; Vue has `Download`, `Edit`, `Plus`
+and `Trash`, which only the dashboard does.
+
+Two normalisations were applied when porting, because legacy's set is
+inconsistent:
+
+- **`fill="currentColor"`.** Legacy hardcodes `#1E1E1E`, `#000000` and `#46baba`
+  in places, which defeats `text-*`.
+- **`width`/`height` kept as defaults in the attribute bag**, not removed. Most of
+  this set is not square — the right arrow is 24×14 — so dropping them and sizing
+  with `size-*` squashes the artwork. Pass a class to override; CSS wins over the
+  attributes.
+
+The `viewBox` and every path are untouched. Adding an icon means adding a file;
+there is no package and no generator.
+
+Two carry legacy behaviour worth knowing about. `<x-icon.arrow-right />` is a
+**pair** of SVGs with different artwork for small and large screens, shown by
+media query. `<x-icon.profile />` draws a different figure for a signed-in
+visitor — filled rather than outlined — which is the one place the header says
+whether you are logged in. `<x-icon.cross size="large" />` takes legacy's size
+argument.
 
 ## Which half am I in?
 

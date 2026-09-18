@@ -48,7 +48,7 @@
 				</ul>
 				<div class="flex items-center gap-8">
 					Weitere Informationen
-					<x-icon.arrow-right class="size-16 shrink-0" />
+					<x-icon.arrow-right class="shrink-0" />
 				</div>
 			</div>
 
