@@ -323,7 +323,16 @@ a 70px header min-height, a 10px category label, breakpoints at 700/1132/1240 â€
 it is legacy's value, and the source file it came from is named in a comment.
 
 The reference is the live site plus `resources/sass/` in the legacy tree, not
-judgement. Where the rework legitimately differs it is because the *data* or an
+judgement â€” and for layout, **measure it rather than read it**. Reading the SCSS
+got the header's structure right and its vertical placement wrong, because
+`align-items` is never stated and the nav turns out to sit at the top of an 80px
+row rather than centred in it. Reading `max-width: 1100px` alongside `padding:
+16px` also invites treating the 1100 as the content width; it is the outer one,
+and the content is 1068.
+
+Both were settled in a minute with `getBoundingClientRect` over the live page.
+Every box in the rework's header now matches production's to the pixel, which is
+a claim worth being able to make rather than eyeball. Where the rework legitimately differs it is because the *data* or an
 earlier decision forces it (an image now renders through Glide rather than
 `marceli-to/image-cache`), never because the design was improved.
 

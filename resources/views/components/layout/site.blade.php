@@ -46,16 +46,25 @@
 	<meta property="og:url" content="{{ \App\Support\SiteUrl::canonical(request()->getPathInfo()) }}">
 	<meta property="og:site_name" content="{{ config('app.name') }}">
 
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<meta name="apple-mobile-web-app-title" content="Visualisierungs-Akademie">
+	<link rel="manifest" href="/site.webmanifest">
+
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
 </head>
 {{-- The container and the body type, from `components/_blocks.scss` and
      `layout/_base.scss`.
 
-     `max-w-[1132px]` is the 1100px column plus its two 16px gutters, so the
-     content measures exactly 1100px on desktop and the gutter holds at every
-     width. Legacy expressed the same thing as a max-width of `calc(100% - 16px)`
-     *plus* padding, which needs three breakpoints to say once. --}}
-<body class="mx-auto min-h-screen w-full max-w-[1132px] px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:text-xl lg:text-3xl">
+     Measured against production: the body box is **1100px including its 16px
+     padding**, so the content column is 1068px. An earlier pass read the 1100 as
+     the content width and made the page 32px too wide.
+
+     Legacy expressed the same thing as a max-width of `calc(100% - 16px)` at two
+     breakpoints *plus* padding; one max-width and one padding says it once. --}}
+<body class="mx-auto min-h-screen w-full max-w-[1100px] px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:text-xl lg:text-3xl">
 	<x-site.header :heading="$title" />
 
 	{{-- `layout/_main.scss` --}}

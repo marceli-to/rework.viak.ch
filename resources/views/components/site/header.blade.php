@@ -47,13 +47,22 @@
 			</button>
 		</div>
 
-		{{-- `.site-menu__main` --}}
+		{{--
+			`.site-menu__main` — a 12-column grid of two `span-6` lists.
+
+			**Top-aligned, not centred.** Measured on production: the menu sits at
+			the very top of the 80px header row (its box is 28→54px, the row is
+			28→108px) while the logo has a 4px top margin and hangs below it. An
+			earlier pass centred it, which is what put the items in the wrong place.
+		--}}
 		<div class="col-span-12 hidden sm:col-span-8 sm:block">
-			<nav class="grid h-full grid-cols-12 gap-x-16 lg:gap-x-40" aria-label="Hauptnavigation">
-				{{-- `menu/_site.scss`: bold, 24px, 16px at sm, 20px at lg. --}}
-				<ul class="col-span-6 flex items-center justify-between text-3xl font-bold sm:text-lg lg:text-2xl">
+			<nav class="grid grid-cols-12 gap-x-16 lg:gap-x-40" aria-label="Hauptnavigation">
+				{{-- `menu/_site.scss`: bold, 24px, 16px at sm, 20px at lg. The three
+				     links fill the full `span-6` — on production Kurse begins at the
+				     column's left edge and Kontakt ends exactly at its right. --}}
+				<ul class="col-span-6 flex justify-between text-3xl font-bold sm:text-lg lg:text-2xl">
 					@foreach ($nav as $item)
-						<li>
+						<li class="flex items-center">
 							<a href="{{ $item['href'] }}"
 								@class(['hover:text-teal', 'text-teal' => request()->is($locale.'/'.$item['match'].'*')])>
 								{{ $item['label'] }}
@@ -62,10 +71,11 @@
 					@endforeach
 				</ul>
 
-				<ul class="col-span-6 flex items-center justify-end gap-24">
+				<ul class="col-span-6 flex justify-end">
 					{{-- Hidden while the basket is empty, as legacy hides it with
-					     `!hide` when the count is zero. --}}
-					<li x-cloak x-show="$store.basket.count > 0">
+					     `!hide` at a count of zero — which is why the live header
+					     usually shows only the account icon. --}}
+					<li class="flex items-center" x-cloak x-show="$store.basket.count > 0">
 						<a href="#" class="relative block h-16 w-[19px] hover:text-teal" title="Warenkorb">
 							<x-icon.shopping-cart class="block size-full" />
 							{{-- `icons/_basket.scss`: a 16px black disc, offset -12/-12. --}}
@@ -73,9 +83,10 @@
 								x-text="$store.basket.count"></em>
 						</a>
 					</li>
-					<li>
-						<a href="/dashboard" class="block hover:text-teal" title="Konto">
-							<x-icon.user class="size-20" />
+					<li class="flex items-center sm:ml-16 lg:ml-32">
+						<a href="/dashboard" class="block hover:text-teal" title="Profil">
+							{{-- 16×20 on production, flush with the column's right edge. --}}
+							<x-icon.user class="h-20 w-16" />
 						</a>
 					</li>
 				</ul>
