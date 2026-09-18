@@ -155,8 +155,8 @@ which:
 | `Discount` | 165 | `Actions/Discounts/`, with code generation in `Support/` — **chunk 06** |
 | `Bookmark` | 82 | Model methods on `User`; 17 rows in three years — **chunk 06** |
 | `ParticipantsChange` | 59 | A listener. It is pure notification — **chunk 06** |
-| `NewsletterSubscriber` | 41 | Open — is the Mailchimp sync still in scope? |
-| `Message` | 32 | Folded into the booking Action — **chunk 06** |
+| `NewsletterSubscriber` | 41 | Open — is the Mailchimp sync still in scope? Called from registration and every profile update — **chunk 08** |
+| `Message` | 32 | Folded into the booking Action — **chunk 06**. The message *thread and its screens* are **chunk 08** |
 
 **`RentalInvoice` is a copy of `Invoice`.** The same nine methods —
 `findFromBooking`, `findOrCreateFromBooking`, `createFromBooking`, `cancel`,
@@ -178,6 +178,15 @@ Mapping the eight also turned up the gap that `06-bookings.md` now fills: five o
 them — `Booking`, `Discount`, `Bookmark`, `ParticipantsChange`, `Message`, 581
 lines between them — had no chunk to land in. The rework could raise an invoice
 from a booking before it could make one.
+
+**The same method, run over the dashboard on 2026-09-18, found a second gap** —
+now `08-accounts.md`. Legacy's eleven admin screen groups map onto six chunks;
+the student and expert portals, admin user management, the own-profile screens
+and the files/messages modules mapped onto none. That is 4,047 LOC of Vue and
+1,556 LOC across 17 controllers, all of it parity work. It is worth noting that
+both gaps were found by mapping a *legacy inventory* onto the chunk list rather
+than by reading the chunk list — the chunks describe what was decided, so they
+cannot show what was never considered.
 
 ### Notify on crossing, not on equality
 

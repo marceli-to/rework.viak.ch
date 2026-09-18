@@ -414,8 +414,23 @@ price moved. Reasoning in `00-foundation.md`.
    but it does not retro-fix this row.
 5. ~~Are bookmarks worth porting?~~ — **answered 2026-09-17: yes, keep them.**
    17 rows, built small. See above.
-6. **Does an admin cancel a booking on a student's behalf, and through which
-   path?** Not needed for the penalty rule any more, but it decides whether the
-   cancellation reason needs a fourth case and whether such a cancellation should
-   skip the penalty the way a VIAK-cancelled course does. *Ours to answer by
-   reading the legacy dashboard, not a client question.*
+6. ~~Does an admin cancel a booking on a student's behalf, and through which
+   path?~~ — **answered 2026-09-18 by reading the legacy dashboard, in
+   `08-accounts.md`: yes, through the student's own path.**
+   `PUT /api/booking/cancel/{booking}` carries `role:admin,student`, calls the
+   same `BookingFacade::cancel()`, and `BookingPolicy::cancel` allows
+   `$user->id === $booking->user_id || isAdmin()`. So an admin cancellation is
+   indistinguishable from a student's and **the penalty fires**.
+
+   Two things follow. **The reason enum needs a fourth case** — cancelled by an
+   admin on the student's behalf — distinct from a student cancelling and from
+   VIAK calling off the course, because today the rework cannot tell them apart
+   either. **Whether that case charges the penalty is Marcel's call**, not
+   something to infer from legacy, where it fires only because the two paths
+   happen to be one.
+
+   Creating is where the asymmetry is: admins have a **separate** booking path
+   (`Api/Dashboard/BookingController`) that resurrects cancelled and soft-deleted
+   bookings — keeping the old number and a `course_fee` frozen years earlier, and
+   leaving the penalty invoice from the cancellation untouched. The rework does
+   not resurrect; see `08-accounts.md`.

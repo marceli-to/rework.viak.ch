@@ -160,7 +160,10 @@ settled as *on the invoice line* — in `03-invoices.md`.
 ## Open questions
 
 1. `user_documents` — where do 1,162 generated PDFs live, and are the historical
-   ones worth carrying at all?
+   ones worth carrying at all? **Owner found 2026-09-18: `08-accounts.md`**,
+   which also records that the files are currently world-readable under
+   `public/storage`, so the storage decision is now a fix rather than a
+   preference.
 2. The 14 two-digit-year events remain skipped by `port:courses`, and their
    bookings with them. All 14 have zero bookings, so nothing is lost today — but
    restoring them later means re-running `port:users` too. See `Todo.md`.

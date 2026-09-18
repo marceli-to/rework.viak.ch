@@ -6,7 +6,12 @@ they belong to, and `Todo.md` keeps the struck-through record of how each was
 settled.
 
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
-and none of these held it up. Updated 2026-09-17.
+and none of these held it up. Updated 2026-09-18.
+
+**One item is not a question and is not waiting on anyone:** the
+`/expert/finish` account-takeover path on the live site, found 2026-09-18 while
+scoping `08-accounts.md`. It is written up in `Todo.md` and needs fixing in the
+legacy tree now.
 
 `06-bookings.md` was scoped on 2026-09-17, after the legacy facade map showed
 five facades with nowhere to land. It raised four client questions and **all four
@@ -28,6 +33,13 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 11 | What PHP does production run? | Marcel | Deploy |
 | 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
+| 14 | Should an admin cancelling for a student charge the penalty? | Marcel | Chunk 06's fourth `CancellationReason` — the enum needs the case either way |
+| 15 | Medialibrary, or `marceli-to/image-cache` for the media pipeline? | Marcel | Chunks 04 **and** 08 — one decision, two callers |
+| 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08 |
+| 17 | Are the 1,162 historical PDFs carried across? | Client | Chunk 08, cutover storage |
+
+Questions 14–17 arrived with `08-accounts.md` on 2026-09-18. Question 5 is now
+the same decision as 15 and should be answered once.
 | 14 | How does the queue worker run in production? | Marcel | Deploy |
 
 ---

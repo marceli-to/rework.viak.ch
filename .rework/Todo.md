@@ -146,12 +146,54 @@ or not the migration is close.
 
 ---
 
+## Fix `/expert/finish` on the live site — do not wait for the rework
+
+**Found 2026-09-18 while scoping `08-accounts.md`, and confirmed against
+production.** `POST /expert/finish` is unauthenticated, takes a **user uuid from
+the request body**, and sets that user's password and `email_verified_at`. The
+confirmation token is checked only on the GET that renders the form, never on the
+POST, and the uuid is not validated at all — no signature, no expiry, no rate
+limit.
+
+User uuids are **public**: `/de/experte/{slug}/{user:uuid}` is a public route and
+the experts index links to every one of them. At least one exposed account holds
+an admin role (`02-courses-events.md`, users 501 and 2).
+
+The fix is small and belongs in the legacy tree now: resolve the user **from the
+token** rather than from the request body, expire the token, and drop the uuid
+from the payload. Laravel's signed URLs or Fortify's reset flow both do this
+correctly — which is what the rework uses, so this is not work that gets thrown
+away.
+
+Four related authorization gaps, none as urgent, are recorded in
+`08-accounts.md`: unconfirmed email and password changes, world-readable
+generated PDFs, any student reading or posting to any event's message thread, and
+any expert downloading any participant list.
+
 ## SEO: redirects, canonical, sitemap
 
 **Blocks the cutover, not the build.** Raised by Marcel on 2026-09-18 — the legacy
 URLs are indexed and must survive. The route decision itself is in
 `00-foundation.md` under *Public URLs and locale*; what follows is the cutover
 work it produces.
+
+### The live domain is `visualisierungs-akademie.ch`
+
+Checked 2026-09-18, because the repository name is misleading. **`viak.ch` 301s to
+`visualisierungs-akademie.ch`**, which is the canonical host and the one that is
+indexed. Every redirect, canonical tag and sitemap entry below targets that host,
+and the `viak.ch` 301 has to keep working.
+
+Three things confirmed on production at the same time:
+
+- `/` and `/de` **both return 200** with an identical `<title>` and no canonical
+  tag — the duplicate content is live, not theoretical.
+- `/kurse` (unprefixed) returns **404**, so the `/de/` prefix is not optional.
+- `/de/kurs/{slug}/{uuid}` is the real detail URL, as linked from `/de/kurse`.
+
+One thing that makes the redirect cheap, from `01-schema.md`: **legacy uuids are
+carried across rather than regenerated**, so the 301 can resolve the old URL by
+its uuid and look up the current slug.
 
 ### The redirect map
 
