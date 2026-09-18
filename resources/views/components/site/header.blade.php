@@ -76,8 +76,8 @@
 					     `!hide` at a count of zero — which is why the live header
 					     usually shows only the account icon. --}}
 					<li class="flex items-center" x-cloak x-show="$store.basket.count > 0">
-						<a href="#" class="relative block h-16 w-[19px] hover:text-teal" title="Warenkorb">
-							<x-icon.basket class="block" />
+						<a href="#" class="relative block h-16 w-19 hover:text-teal" title="Warenkorb">
+							<x-icon.basket class="block w-full!" />
 							{{-- `icons/_basket.scss`: a 16px black disc, offset -12/-12. --}}
 							<em class="absolute -top-12 -right-12 flex size-16 items-center justify-center rounded-full bg-black text-xs leading-none font-normal text-white not-italic lg:text-sm"
 								x-text="$store.basket.count"></em>
@@ -85,8 +85,9 @@
 					</li>
 					<li class="flex items-center sm:ml-16 lg:ml-32">
 						<a href="/dashboard" class="block hover:text-teal" title="Profil">
-							{{-- 16×20 on production, flush with the column's right edge. --}}
-							<x-icon.profile />
+							{{-- `icons/_profile.scss` sizes this by **height** — 16px, 20px from
+							     the desktop breakpoint — and lets the width follow. --}}
+							<x-icon.profile class="h-16 w-auto! lg:h-20" />
 						</a>
 					</li>
 				</ul>

@@ -25,7 +25,7 @@
 				</div>
 			@endif
 
-			<h2 class="text-lg leading-[1.2] break-words text-teal sm:text-2xl lg:text-4xl">
+			<h2 class="text-lg leading-[1.2] break-words hyphens-auto text-teal sm:text-2xl lg:text-4xl">
 				{{ $course->getTranslation('title', $locale) }}
 			</h2>
 		</header>

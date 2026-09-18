@@ -119,3 +119,29 @@ it('lets a course override the description and keywords', function () {
 		->assertSee('name="description" content="Eigene Beschreibung."', false)
 		->assertSee('name="keywords" content="eigene, stichworte"', false);
 });
+
+/**
+ * Legacy's `%word-break` is `word-break` **plus `hyphens: auto`**. Without the
+ * hyphens a long German compound breaks mid-word with no hyphen —
+ * "Architekturvisualisierun|g" instead of "Architekturvisualisie-rung".
+ */
+it('hyphenates long words in a card heading', function () {
+	Course::factory()->create([
+		'title' => ['de' => 'Geheimnisse der Architekturvisualisierung'],
+		'slug' => ['de' => 'lang'],
+		'publish' => true,
+	]);
+
+	$this->get('/de/kurse')->assertSee('hyphens-auto', false);
+});
+
+/**
+ * The gutter steps: 16px on phones, 32px from 700px, then a centred 1100px
+ * column whose 1068px of content sits inside its own padding.
+ */
+it('steps the container gutter the way the design does', function () {
+	$this->get('/de')
+		->assertSee('px-16', false)
+		->assertSee('sm:px-32', false)
+		->assertSee('lg:max-w-[1100px]', false);
+});

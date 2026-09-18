@@ -99,13 +99,15 @@
 {{-- The container and the body type, from `components/_blocks.scss` and
      `layout/_base.scss`.
 
-     Measured against production: the body box is **1100px including its 16px
-     padding**, so the content column is 1068px. An earlier pass read the 1100 as
-     the content width and made the page 32px too wide.
+     The gutter is **16px on phones and 32px from 700px up**, then a centred
+     1100px column. Legacy says the same thing as a max-width of
+     `calc(100% - 16px)` *plus* 8px of padding, which nets to the same inset by a
+     longer route. An earlier pass collapsed it to a single 16px gutter and lost
+     the tablet step.
 
-     Legacy expressed the same thing as a max-width of `calc(100% - 16px)` at two
-     breakpoints *plus* padding; one max-width and one padding says it once. --}}
-<body class="mx-auto min-h-screen w-full max-w-[1100px] px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:text-xl lg:text-3xl">
+     At desktop the body is 1100 **including** its padding, so the content
+     measures 1068. --}}
+<body class="mx-auto min-h-screen w-full px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:px-32 sm:text-xl lg:max-w-[1100px] lg:px-16 lg:text-3xl">
 	<x-site.header :heading="$title" />
 
 	{{-- `layout/_main.scss` --}}
