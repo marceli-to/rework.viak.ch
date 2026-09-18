@@ -172,6 +172,15 @@ and CSS order would otherwise decide which wins.
 The `viewBox` and every path are untouched. Adding an icon means adding a file;
 there is no package and no generator.
 
+**Format them like this** — opening tag on one line, each child on its own,
+tabs, no comments:
+
+```blade
+<svg {{ $attributes->merge(['class' => 'w-22', 'aria-hidden' => 'true']) }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+	<path fill="currentColor" d="M20.116 0L11 9.01 1.886 0 0 1.886…"/>
+</svg>
+```
+
 Two carry legacy behaviour worth knowing about. `<x-icon.arrow-right />` is a
 **pair** of SVGs with different artwork for small and large screens, shown by
 media query. `<x-icon.profile />` draws a different figure for a signed-in
