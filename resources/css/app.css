@@ -19,3 +19,7 @@
 .course-copy li { margin-bottom: 0.3rem; }
 .course-copy a { color: var(--color-teal-dark); text-decoration: underline; }
 .course-copy h2, .course-copy h3 { font-weight: 600; color: var(--color-ink); margin-block: 1.25rem 0.5rem; }
+
+/* Alpine sets x-cloak away once it has started; without this the
+   cloaked bits flash their un-initialised state on first paint. */
+[x-cloak] { display: none !important; }
