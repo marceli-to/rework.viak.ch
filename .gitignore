@@ -28,3 +28,5 @@ Thumbs.db
 
 # Rework
 /.rework/history/mockup/assets
+
+storage/app/glide-cache
