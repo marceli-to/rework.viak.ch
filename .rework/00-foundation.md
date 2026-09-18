@@ -415,7 +415,7 @@ made**.
 
 | Phase | What | Depends on |
 |---|---|---|
-| **Parity** | chunk 06; the Tailwind + Alpine rebuild of today's public pages; the admin and portal screens that replace the legacy dashboard | nothing open |
+| **Parity** | chunk 06 (**built**); the Tailwind + Alpine rebuild of today's public pages (**in progress**, `09-public-site.md`); the admin and portal screens that replace the legacy dashboard | nothing open |
 | **New** | chunk 05 (licences), chunk 04's new content pages and templates | designs, copy, the open questions in `Open-Questions.md` |
 
 Note that **chunk 05 is not parity.** Licences are a new feature with no legacy

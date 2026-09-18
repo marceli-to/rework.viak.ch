@@ -177,6 +177,20 @@ PDFs**, 27 MB of names and contact details, written by
 and served publicly through the `public/storage` symlink. They can be removed
 without touching anything that references them, because nothing does.
 
+## Still outstanding on the live site — read first
+
+Two items below need doing in the **legacy** tree, not this one, and neither is
+waiting on the rework:
+
+1. **`/expert/finish`** — an unauthenticated account-takeover path. See below.
+2. **The 2023 participation confirmations** — 95 students with 404ing download
+   links. See below.
+
+A third is housekeeping: **294 loose participant-list PDFs** sit in
+`storage/app/public/files/`, 27 MB of names and contact details served through
+the `public/storage` symlink and referenced by no database row. They can be
+deleted without breaking anything, because nothing points at them.
+
 ## Repair the 2023 participation confirmations — two UPDATEs, customer facing
 
 **Found 2026-09-18** reconciling `user_documents` against a production storage
