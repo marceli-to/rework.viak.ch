@@ -42,7 +42,7 @@
 			     the filter rather than to the header ([[09-public-site]]). --}}
 			@if (! $isHome && $heading)
 				<div class="flex min-h-48 w-full items-end border-b border-black pb-12 sm:hidden">
-					<h1 class="text-3xl leading-none">{{ $heading }}</h1>
+					<h1 class="text-3xl leading-none font-bold">{{ $heading }}</h1>
 				</div>
 			@endif
 		</div>

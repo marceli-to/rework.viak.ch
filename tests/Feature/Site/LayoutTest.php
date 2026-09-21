@@ -162,3 +162,21 @@ it('gives buttons the pointer cursor Tailwind 4 takes away', function () {
 		->toContain("button:not(:disabled),\n\t[role='button']:not(:disabled) {")
 		->toContain('@apply cursor-pointer;');
 });
+
+/**
+ * `layout/_base.scss:10` — legacy paints `<html>` teal on every screen that is
+ * part of signing in or buying, and the white body column sits on top of it.
+ * The checkout and the basket join this list when they are built
+ * ([[09-public-site]]).
+ */
+it('paints the gutters teal on the screens behind a login', function (string $url) {
+	$this->get($url)
+		->assertOk()
+		->assertSee('class="overflow-y-scroll bg-teal"', false);
+})->with(['/login', '/de/registration', '/password/reset']);
+
+it('leaves the public pages white', function () {
+	$this->get('/de')
+		->assertOk()
+		->assertDontSee('class="overflow-y-scroll bg-teal"', false);
+});

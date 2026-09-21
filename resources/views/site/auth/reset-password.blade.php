@@ -1,7 +1,7 @@
-<x-layout.site title="Neues Passwort">
+<x-layout.site title="Neues Passwort" auth>
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden text-3xl leading-[1.3] text-teal sm:block">Neues Passwort</h1>
+			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Neues Passwort</h1>
 		</x-slot:aside>
 
 		@if ($errors->any())

@@ -12,7 +12,7 @@
 		page that is finished.
 	--}}
 	<section>
-		<h1 class="text-3xl leading-[1.2] text-teal">Visualisierungs-Akademie</h1>
+		<h1 class="leading-[1.3] font-bold text-teal">Visualisierungs-Akademie</h1>
 
 		<p class="mt-16 max-w-[40em]">
 			Kurse für digitales Gestalten — Modellieren, Visualisieren, Animieren,

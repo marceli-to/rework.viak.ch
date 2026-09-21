@@ -1,4 +1,4 @@
-<x-layout.site title="Registrieren">
+<x-layout.site title="Registrieren" auth>
 	@php
 		$genders = [
 			\App\Enums\Gender::Female->value => 'Frau',
@@ -23,7 +23,7 @@
 	--}}
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden text-3xl leading-[1.3] text-teal sm:block">Registrieren</h1>
+			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Registrieren</h1>
 
 			<div class="mt-20 lg:mt-40">
 				<a href="{{ route('login') }}" class="inline-flex flex-col items-start hover:text-teal">

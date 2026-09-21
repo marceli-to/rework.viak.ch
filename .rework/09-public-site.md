@@ -57,7 +57,9 @@ Roughly in the order that unblocks the most.
       rental dialog first when the event offers laptops (CHF 80 excl. VAT), then
       adds and shows a toast with a link to the basket. `x-site.toast` exists.
    2. **The basket page** at `/de/checkout/basket` — the first time `PriceBasket`
-      runs in a browser.
+      runs in a browser. It takes `<x-layout.site auth>`, and so does every page
+      after it: legacy paints the whole purchase flow teal, not just the login
+      (see *The teal background*, below).
    3. **The three remaining steps**, then the confirmation.
 
    **One bug to fix on the way:** `POST /api/basket/price` is behind
@@ -350,6 +352,71 @@ in it — written flat, it silently does nothing.
   selects, two colours, both correct.
 - **The chevron is one definition now.** `.select-chevron` in `app.css`, because
   a pseudo-element is not expressible as a utility and two components need it.
+
+### The teal background, and `h1` is bold — 2026-09-21
+
+Three differences Marcel spotted by holding the two login pages side by side,
+all confirmed by measuring production rather than reading the SCSS.
+
+**`<html>` is teal on every screen behind a login.** `layout/_base.scss:10`:
+
+```scss
+html.is-auth { background-color: $color-secondary; }
+```
+
+The body keeps its white and its `min-height: 100vh`, so the teal shows only in
+the gutters either side of the 1100px column, never below it. Legacy sets
+`is-auth` on all eight auth views **and on the whole purchase flow** —
+`checkout/index`, `checkout/confirmation`, the four `payment/` pages — plus the
+two portals (`user/student`, `user/expert`, `students/index`) and the
+maintenance page.
+
+Here it is a prop on the layout: `<x-layout.site title="…" auth>`, which puts
+`bg-teal` on `<html>`. Two things it needed:
+
+- **`bg-white` on `body`**, which was not there. Tailwind's preflight leaves the
+  body transparent, so without it `is-auth` paints the whole page rather than
+  the gutters. Legacy writes it explicitly (`layout/_base.scss:26`).
+- **The basket and the checkout must pass it.** They do not exist yet; this is
+  the note that says so when they are built, and `LayoutTest` asserts the flag
+  on the five screens that do.
+
+**`h1` is bold.** `components/headings/_h1.scss` is three declarations —
+`font-bold`, `color: $color-secondary`, `margin-bottom` — and the rework had the
+colour and not the weight, on all seven headings. Production: 700. Ours was 400.
+
+**The auth headings also carried a `text-3xl` they should not have.** Legacy's
+`h1` sets no font-size at all, so the size comes down from
+`article.content-text` (16/18/24) and that is the body scale. Spelling `text-3xl`
+on the heading made it 24px from `sm` up, a size above its own body copy on a
+tablet. Removed; it inherits now, as legacy's does.
+
+Measured against production at 1481px, both sides now report the heading at
+**24px / 700 / `rgb(70,186,186)` / 31.2px line-height, at x 203 y 136** — the
+same numbers to the pixel.
+
+### A top margin on an inline-block eats 6px
+
+Found while checking the gap above *Passwort vergessen?*, which was 32px here
+and **38px** on production.
+
+`.form-helper` has no margin of its own. The gap is the submit button's
+`.form-group` bottom margin — legacy wraps every control, the button included —
+and that margin collapses through the `<form>`. Below it the helper starts a new
+line box, and the parent's 24px/1.3 strut adds ~6px of half-leading above the
+inline-block. 32 + 6 = 38.
+
+Carrying the same 32px as `margin-top` on the helper instead does **not** give
+38: a top margin on an inline-block raises the top of the line box past the
+strut, so the half-leading is absorbed rather than added. The margin has to sit
+on the form, as a block margin, which is where legacy's ends up. `mb-16
+lg:mb-32` on the `<form>` now, and nothing on the helper.
+
+Two smaller things from the same reading of `form/_layout.scss:150`:
+`.form-helper` **underlines on hover at a 1px offset and stays black** — the
+rework had it turning teal. The teal hover belongs to `.icon-arrow-right:below`
+(`components/icons/_arrow.scss:51`), which is the *Nicht registriert?* link
+beside it, and that one was already right.
 
 ### Two departures, both deliberate
 

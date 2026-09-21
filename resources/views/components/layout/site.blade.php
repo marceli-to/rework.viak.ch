@@ -26,6 +26,7 @@
 	'keywords' => null,
 	'image' => null,
 	'canonical' => null,
+	'auth' => false,
 ])
 
 @php
@@ -52,7 +53,11 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', $locale) }}" class="overflow-y-scroll">
+{{-- `auth` is legacy's `is-auth` on `<html>` (`layout/_base.scss:10`): the
+     teal fills the gutters either side of the white 1100px column on every
+     screen that is part of signing in or buying. The body keeps its white and
+     its `min-h-screen`, so the teal shows at the sides and never below. --}}
+<html lang="{{ str_replace('_', '-', $locale) }}" @class(['overflow-y-scroll', 'bg-teal' => $auth])>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -106,8 +111,13 @@
      the tablet step.
 
      At desktop the body is 1100 **including** its padding, so the content
-     measures 1068. --}}
-<body class="mx-auto min-h-screen w-full px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:px-32 sm:text-xl lg:max-w-[1100px] lg:px-16 lg:text-3xl">
+     measures 1068.
+
+     **`bg-white` is load-bearing.** Legacy paints the body white
+     (`layout/_base.scss:26`) and that is what keeps the teal of an `auth` page
+     in the gutters rather than behind the column — a transparent body would
+     let `is-auth` through the whole page. --}}
+<body class="mx-auto min-h-screen w-full bg-white px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:px-32 sm:text-xl lg:max-w-[1100px] lg:px-16 lg:text-3xl">
 	<x-site.header :heading="$title" />
 
 	{{-- `layout/_main.scss` --}}

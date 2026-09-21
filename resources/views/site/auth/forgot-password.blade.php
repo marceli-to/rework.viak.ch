@@ -1,7 +1,7 @@
-<x-layout.site title="Passwort vergessen">
+<x-layout.site title="Passwort vergessen" auth>
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden text-3xl leading-[1.3] text-teal sm:block">Passwort vergessen</h1>
+			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Passwort vergessen</h1>
 		</x-slot:aside>
 
 		@if (session('status'))
@@ -15,7 +15,7 @@
 			neues Passwort setzen können.
 		</p>
 
-		<form method="POST" action="{{ route('password.email') }}">
+		<form method="POST" action="{{ route('password.email') }}" class="mb-16 lg:mb-32">
 			@csrf
 
 			<x-site.field name="email" type="email" label="E-Mail" required autocomplete="username" />
@@ -24,7 +24,7 @@
 		</form>
 
 		<a href="{{ route('login') }}"
-			class="mt-16 inline-block text-md leading-[1.3] italic hover:text-teal sm:text-lg lg:text-xl">
+			class="inline-block text-md leading-[1.3] italic hover:underline hover:underline-offset-1 sm:text-lg lg:text-xl">
 			Zurück zum Login
 		</a>
 	</x-site.article>
