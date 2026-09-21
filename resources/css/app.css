@@ -20,4 +20,20 @@
 	[x-cloak] {
 		@apply hidden!;
 	}
+
+	/* A button gets the hand back.
+
+	   Legacy's normalize sets `cursor: pointer` on `button` and every
+	   button-ish `input`, and `cursor: default` on the disabled ones
+	   (`helpers/_normalize.scss:305`). **Tailwind 4's preflight does the
+	   opposite** — it gives buttons `cursor: default` outright, which is a
+	   change from 3 and the reason every button here felt inert.
+
+	   One base rule rather than `cursor-pointer` on each call site, because it
+	   is a reset rather than a decision, and because it has to hold for the Vue
+	   dashboard too. An `<a>` needs nothing: it has the hand already. */
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		@apply cursor-pointer;
+	}
 }

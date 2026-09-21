@@ -102,6 +102,27 @@ Mapping for reading the legacy SCSS against this:
 | `$color-quaternary` | `#505050` | `gray-600` |
 | `$color-light` | `#eeeeee` | `gray-200` |
 
+### Tailwind 4 takes the pointer off buttons — found 2026-09-21
+
+Legacy's normalize gives `button` `cursor: pointer` and the disabled ones
+`cursor: default`. **Tailwind 4's preflight does not**, which is a change from 3
+and made every button on the site feel inert.
+
+`app.css` puts it back in `@layer base`, for both surfaces at once:
+
+```css
+button:not(:disabled),
+[role='button']:not(:disabled) {
+	@apply cursor-pointer;
+}
+```
+
+A reset belongs there rather than as `cursor-pointer` on each call site. An `<a>`
+needs nothing — it has the hand already — and a `<select>` says so itself,
+because legacy does (`form/_select.scss:18`).
+
+---
+
 ### The scale says no line heights. Tailwind adds them anyway — found 2026-09-21
 
 Redefining `--text-lg` in `@theme` leaves Tailwind's own

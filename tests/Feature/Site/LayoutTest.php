@@ -145,3 +145,20 @@ it('steps the container gutter the way the design does', function () {
 		->assertSee('sm:px-32', false)
 		->assertSee('lg:max-w-[1100px]', false);
 });
+
+/**
+ * Legacy's normalize gives `button` and every button-ish `input`
+ * `cursor: pointer`, and the disabled ones `cursor: default`
+ * (`helpers/_normalize.scss:305`). **Tailwind 4's preflight does the opposite**,
+ * which is why every button here felt inert until 2026-09-21.
+ *
+ * A base rule rather than `cursor-pointer` per call site: it is a reset, not a
+ * decision, and it has to hold for the Vue dashboard as well.
+ */
+it('gives buttons the pointer cursor Tailwind 4 takes away', function () {
+	$css = file_get_contents(resource_path('css/app.css'));
+
+	expect($css)
+		->toContain("button:not(:disabled),\n\t[role='button']:not(:disabled) {")
+		->toContain('@apply cursor-pointer;');
+});
