@@ -13,6 +13,7 @@ use App\Models\Level;
 use App\Models\Location;
 use App\Models\Software;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -60,7 +61,7 @@ class PortCourses extends Command
 				$taxonomyMap = $this->portTaxonomies($legacy);
 				$locationMap = $this->portLocations($legacy);
 				$courseMap = $this->portCourses($legacy, $taxonomyMap);
-				$this->portEvents($legacy, $courseMap, $locationMap);
+				$this->portEvents($legacy, $courseMap, $locationMap, $this->userMap($legacy));
 			});
 		});
 
@@ -79,6 +80,35 @@ class PortCourses extends Command
 		foreach (['course_taxonomy', 'event_dates', 'event_expert', 'events', 'courses', 'locations', 'categories', 'levels', 'languages', 'software', 'tags'] as $table) {
 			DB::table($table)->delete();
 		}
+	}
+
+	/**
+	 * Legacy user id => new user id, matched on the uuid that `PortUsers`
+	 * carries across. Users are ported by their own command, so this port must
+	 * find them rather than create them; an expert who was never imported is
+	 * dropped and reported rather than failing the run.
+	 *
+	 * @return array<int, int>
+	 */
+	private function userMap($legacy): array
+	{
+		$ids = User::pluck('id', 'uuid');
+		$map = [];
+
+		foreach ($legacy->table('users')->get(['id', 'uuid']) as $row) {
+			if ($id = $ids[$row->uuid] ?? null) {
+				$map[$row->id] = $id;
+			}
+		}
+
+		$missing = $legacy->table('event_user')->distinct()->pluck('user_id')
+			->reject(fn (int $id) => isset($map[$id]));
+
+		if ($missing->isNotEmpty()) {
+			$this->findings[] = 'event_user: '.$missing->count().' expert(s) not found among imported users ('.$missing->implode(', ').'); their events lose the link';
+		}
+
+		return $map;
 	}
 
 	/** @return array<string, array<int, int>> legacy id => new id, per taxonomy */
@@ -194,7 +224,8 @@ class PortCourses extends Command
 	 * @param  array<int, int>  $courseMap
 	 * @param  array<int, int>  $locationMap
 	 */
-	private function portEvents($legacy, array $courseMap, array $locationMap): void
+	/** @param  array<int, int>  $userMap  legacy user id => new user id */
+	private function portEvents($legacy, array $courseMap, array $locationMap, array $userMap): void
 	{
 		// Soft-deleted events come across too, still soft-deleted. 19 of them
 		// exist and 2 carry bookings — including two seats that were paid for
@@ -274,6 +305,21 @@ class PortCourses extends Command
 					'time_start' => $date->time_start,
 					'time_end' => $date->time_end,
 				]);
+			}
+
+			// Legacy calls this pivot `event_user`, which is why it was missed:
+			// `clear()` has always emptied `event_expert` and nothing ever
+			// filled it. The cost was quiet — a course card's hover overlay
+			// simply omitted the expert, and the filter's Experte list came out
+			// empty ([[09-public-site]]).
+			$experts = $legacy->table('event_user')
+				->where('event_id', $row->id)
+				->pluck('user_id')
+				->map(fn (int $id) => $userMap[$id] ?? null)
+				->filter();
+
+			if ($experts->isNotEmpty()) {
+				$event->experts()->sync($experts->all());
 			}
 
 			if ($dates->isNotEmpty() && $row->date !== $dates->first()->date) {

@@ -1,13 +1,13 @@
-@props(['software', 'active' => null, 'matching' => 0])
+@props(['filter', 'matching' => 0])
 
 @php
-	$locale = app()->getLocale();
+	$selected = $filter->selected();
+	$options = $filter->options();
 
 	/*
-	 * The no-JavaScript href for a given selection. `fullUrlWithQuery()` leaves a
-	 * bare `?` behind when the last filter is cleared; this drops it, and keeps
-	 * any other parameter, so the six attributes still to be wired combine
-	 * without each one clobbering the rest.
+	 * The no-JavaScript href for a given change. Keeps every other attribute, so
+	 * the seven combine rather than clobber each other, and drops the bare `?`
+	 * that `fullUrlWithQuery()` leaves behind when the last one is cleared.
 	 */
 	$urlFor = function (array $changes) {
 		$query = array_filter(
@@ -17,10 +17,17 @@
 
 		return request()->url().($query ? '?'.http_build_query($query) : '');
 	};
+
+	/*
+	 * `%icon-chevron-down` — a CSS triangle, not artwork: 5px transparent sides
+	 * under an 8px #505050 top, right-aligned and vertically centred, stepping
+	 * to 6/9 at legacy's `bp-sm`.
+	 */
+	$chevron = "after:absolute after:top-1/2 after:right-0 after:h-0 after:w-0 after:-translate-y-1/2 after:border-x-[5px] after:border-t-[8px] after:border-x-transparent after:border-t-gray-600 after:content-[''] after:pointer-events-none sm:after:border-x-[6px] sm:after:border-t-[9px]";
 @endphp
 
 {{--
-	`components/_filter.scss`.
+	`components/_filter.scss` and `frontend/filter/Index.vue`.
 
 	On a phone this is a **full-screen white panel**, opened from the icon beside
 	the page title and closed from the cross at its top right. `padding-top: 88px`
@@ -29,15 +36,16 @@
 
 	From 700px it is simply the right-hand column and always visible.
 
-	**Every control here works twice.** The `href` is the no-JavaScript path and
-	the one a crawler follows; the `@click.prevent` beside it is what actually
-	runs in a browser, because on a phone following the link would reload the
-	page and close the panel mid-use ([[09-public-site]]). The two produce the
-	same view.
+	**One list of nine items**, as legacy builds it: a single rule on top, a rule
+	under each item, the three categories as links and the other six as selects,
+	with 40px of air before *Ort* — the only thing separating the two halves.
 
-	Only Software is wired so far. Legacy also filters by category and by Ort,
-	Level, Sprache, Experte and Tags; those taxonomies exist but nothing filters
-	on them yet, so they are left out rather than drawn dead.
+	**Every control works twice.** The `href` is the no-JavaScript path and the
+	one a crawler follows; the `@click.prevent` beside it is what actually runs
+	in a browser, because on a phone following the link would reload the page and
+	close the panel mid-use ([[09-public-site]]). A select cannot be a link, so
+	the six of them submit the surrounding form instead — that is what the
+	`sr-only` button is for, and with Alpine running nothing ever submits it.
 --}}
 {{-- The breakpoint is CSS, not JavaScript: `max-sm:hidden` when closed, nothing
      when open, and from `sm` the panel is a static column regardless. Binding
@@ -53,50 +61,93 @@
 		</button>
 	</div>
 
-	<h2 class="mb-32 text-lg font-bold">Filter</h2>
+	{{-- `leading-[1.3]` is the body line-height legacy inherits here. Without
+	     it Tailwind's own `text-lg` pairing (1.556) applies and every row below
+	     sits 4px low — see `resources/css/README.md`. --}}
+	<h2 class="mb-32 text-lg leading-[1.3] font-bold">Filter</h2>
 
-	<ul class="border-t border-gray-400">
-		@foreach ($software as $item)
-			<li class="flex min-h-40 items-center border-b border-gray-400">
-				<a href="{{ $urlFor(['software' => $item->uuid === $active ? null : $item->uuid]) }}"
-					@click.prevent="toggle('software', @js($item->uuid))"
-					:class="{ 'font-bold text-gray-400': selected.software === @js($item->uuid) }"
-					@class([
-						'block w-full text-lg hover:text-teal',
-						'font-bold text-gray-400' => $item->uuid === $active,
-					])>
-					{{ $item->getTranslation('title', $locale) }}
-				</a>
-			</li>
-		@endforeach
-	</ul>
+	<form method="get" action="{{ request()->url() }}" @submit.prevent="apply()">
+		{{-- Category is chosen by link rather than by control, so a submit without
+		     JavaScript would otherwise drop it. --}}
+		<input type="hidden" name="category" value="{{ $selected['category'] }}" :value="selected.category">
 
-	<div class="mt-32 flex flex-col items-center gap-16 sm:items-start">
-		{{-- Legacy's own label: `Anzeigen (12)`, with the count dropped when it
-		     is zero. There is nothing to apply — the list behind the panel is
-		     already filtered — so this only closes the panel. --}}
-		<x-site.button class="w-full sm:hidden" @click="apply()">
-			Anzeigen <span x-text="count ? `(${count})` : ''">{{ $matching ? '('.$matching.')' : '' }}</span>
-		</x-site.button>
+		<ul class="border-t border-gray-400">
+			{{-- The categories, as links. --}}
+			@foreach ($options['category'] as $uuid => $label)
+				<li class="flex min-h-40 items-center border-b border-gray-400">
+					<a href="{{ $urlFor(['category' => $uuid === $selected['category'] ? null : $uuid]) }}"
+						@click.prevent="toggle('category', @js($uuid))"
+						:class="{ 'font-bold text-gray-400': selected.category === @js($uuid) }"
+						@class([
+							'block w-full text-lg leading-[1.3] hover:text-teal',
+							'font-bold text-gray-400' => $uuid === $selected['category'],
+						])>
+						{{ $label }}
+					</a>
+				</li>
+			@endforeach
 
-		{{-- Rendered even with nothing selected, so Alpine has something to
-		     reveal; without JavaScript it is simply never shown. --}}
-		<x-site.button
-			variant="outline"
-			:href="$urlFor(['software' => null])"
-			@click.prevent="reset()"
-			::class="{ hidden: !active }"
-			@class(['w-full', 'hidden' => ! $active])
-		>
-			Zurücksetzen
-		</x-site.button>
-	</div>
+			{{-- The other six, as selects. `Ort` carries the 40px that separates
+			     the halves; the rest follow it with none. --}}
+			@foreach (['location' => 'Ort', 'software' => 'Software', 'level' => 'Level', 'language' => 'Sprache', 'expert' => 'Experte', 'tag' => 'Tags'] as $attribute => $placeholder)
+				<li @class(['flex min-h-40 items-center border-b border-gray-400', 'mt-40' => $loop->first])>
+					{{-- `min-height: inherit` on legacy's `.select-wrapper`: it takes
+					     the item's 40px, so a select row is 40 **plus** its rule
+					     while a category row is 40 including it. That 1px per row
+					     is legacy's, and it is what the live page measures. --}}
+					<div class="relative flex min-h-40 w-full items-center py-8 {{ $chevron }}">
+						<select
+							name="{{ $attribute }}"
+							aria-label="{{ $placeholder }}"
+							class="block w-full cursor-pointer appearance-none bg-transparent pr-16 text-lg leading-[1.3] text-black"
+							x-model="selected.{{ $attribute }}"
+							@change="sync()"
+						>
+							<option value="">{{ $placeholder }}</option>
+							@foreach ($options[$attribute] as $value => $label)
+								<option value="{{ $value }}" @selected($value === $selected[$attribute])>{{ $label }}</option>
+							@endforeach
+						</select>
+					</div>
+				</li>
+			@endforeach
+		</ul>
 
-	{{-- `.card-teaser-training` — the teal promo box under the filter. --}}
-	<div class="mt-32 block bg-teal p-12 text-white">
-		<p class="text-lg leading-[1.4] font-bold break-words hyphens-auto text-white lg:text-xl">
-			Wünschen Sie eine massgeschneiderte Individualschulung für Einzelpersonen oder Ihre Firma?
-		</p>
-		<x-icon.arrow-right class="mt-16" />
-	</div>
+		{{-- What makes the six selects work with JavaScript off. Never seen and
+		     never needed otherwise — legacy has no equivalent because legacy's
+		     filter does not work without JavaScript at all. --}}
+		<button type="submit" class="sr-only">Filter anwenden</button>
+
+		<div class="mt-40 flex flex-col items-center gap-16 sm:mt-16 sm:items-start">
+			{{-- Legacy's own label: `Anzeigen (12)`, with the count dropped when
+			     it is zero. There is nothing to apply — the list behind the panel
+			     is already filtered — so with Alpine this only closes the panel. --}}
+			{{-- Label and count are **one** text node. The button is a flex
+			     container, so `Anzeigen <span>` would make them two flex items
+			     and the space between them would collapse to nothing. --}}
+			<x-site.button type="submit" class="w-full sm:hidden" @click.prevent="apply()">
+				<span x-text="count ? `Anzeigen (${count})` : 'Anzeigen'">Anzeigen{{ $matching ? ' ('.$matching.')' : '' }}</span>
+			</x-site.button>
+
+			{{-- **Always shown**, with nothing chosen as much as with something —
+			     legacy renders it unconditionally and the live page confirms it.
+			     An earlier pass hid it until a filter was set. --}}
+			<x-site.button
+				variant="outline"
+				class="w-full"
+				:href="$urlFor(array_fill_keys(\App\Support\CourseFilter::ATTRIBUTES, null))"
+				@click.prevent="reset()"
+			>
+				Zurücksetzen
+			</x-site.button>
+		</div>
+
+		{{-- `.card-teaser-training` — the teal promo box under the filter. --}}
+		<div class="mt-32 block bg-teal p-12 text-white">
+			<p class="text-lg leading-[1.4] font-bold break-words hyphens-auto text-white lg:text-xl">
+				Wünschen Sie eine massgeschneiderte Individualschulung für Einzelpersonen oder Ihre Firma?
+			</p>
+			<x-icon.arrow-right class="mt-16" />
+		</div>
+	</form>
 </div>

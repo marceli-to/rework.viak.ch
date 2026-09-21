@@ -1,3 +1,8 @@
+{{-- Legacy hard-codes **#8C8C8C** into the artwork itself, not into
+     `_colors.scss` — it is a sixth grey that no stylesheet names and nothing
+     recolours, so it stays in the path rather than becoming a token
+     ([[09-public-site]]). An earlier pass rewrote it to `currentColor`, which
+     rendered these black. --}}
 <svg {{ $attributes->merge(['class' => 'w-34', 'aria-hidden' => 'true']) }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 24">
-	<path fill="currentColor" d="M17 13.1c-.1 0-.1 0-.2-.1L3 1.6h28L17.2 13c-.1.1-.1.1-.2.1m14 9.3H2.6l8.2-6.8c.3-.3.4-.8.1-1.1-.3-.3-.8-.4-1.1-.1l-8.2 6.8V2.5l14.2 11.8c.7.6 1.7.6 2.4 0L32 2.8v18.4l-8.2-6.8c-.3-.3-.8-.2-1.1.1-.3.3-.2.8.1 1.1l8.2 6.8zM2.6 0C1.9 0 1.3.2.8.7.3 1.2 0 1.8 0 2.6v18.9c0 .5.2 1.1.6 1.5.5.6 1.2 1 2 1H31c.8 0 1.5-.3 2-.9.4-.5.6-1 .6-1.6V2.6c0-.6-.2-1.2-.6-1.6-.5-.7-1.2-1-2-1H2.6z"/>
+	<path fill="#8C8C8C" d="M17 13.1c-.1 0-.1 0-.2-.1L3 1.6h28L17.2 13c-.1.1-.1.1-.2.1m14 9.3H2.6l8.2-6.8c.3-.3.4-.8.1-1.1-.3-.3-.8-.4-1.1-.1l-8.2 6.8V2.5l14.2 11.8c.7.6 1.7.6 2.4 0L32 2.8v18.4l-8.2-6.8c-.3-.3-.8-.2-1.1.1-.3.3-.2.8.1 1.1l8.2 6.8zM2.6 0C1.9 0 1.3.2.8.7.3 1.2 0 1.8 0 2.6v18.9c0 .5.2 1.1.6 1.5.5.6 1.2 1 2 1H31c.8 0 1.5-.3 2-.9.4-.5.6-1 .6-1.6V2.6c0-.6-.2-1.2-.6-1.6-.5-.7-1.2-1-2-1H2.6z"/>
 </svg>

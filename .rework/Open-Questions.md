@@ -217,3 +217,16 @@ the same breath.
   but the real copy cannot repeat `Twinmotion-Lizenzen.html`'s "Lieferung sofort
   per E-Mail" (delivery is a human at VIAK) or *Meine Lizenzen*'s validity dates
   (we do not track them).
+- **Null Tailwind's nine paired line-heights, or keep naming `leading-`.**
+  `resources/css/README.md` says the type scale carries no line heights, but
+  redefining `--text-lg` does not remove `--text-lg--line-height`, so every
+  `text-*` emits Tailwind's own ratio instead of legacy's inherited 1.3. The
+  course filter is fixed in place; a global fix moves type on every page, and 12
+  elements under `views/site` rely on the pairing today. Marcel's call whether
+  that is one pass now or left until the remaining pages are built.
+  See `09-public-site.md`.
+- **Count-check the other pivots the ports fill.** `event_expert` was empty for
+  weeks because legacy calls it `event_user` and `PortCourses` only ever cleared
+  it. An unfilled pivot raises nothing — no error, no null, no missing column —
+  it just makes a relation permanently empty. Fixed for this one; the rest have
+  not been checked.

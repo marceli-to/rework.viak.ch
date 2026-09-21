@@ -17,7 +17,11 @@
  * this is wrong — but the query string still works server-side, so the way back
  * is the controller, not a rewrite.
  *
- * One value per attribute, as legacy has it: clicking the active one clears it.
+ * One value per attribute, as legacy has it: choosing the active one clears it.
+ * **Unset is the empty string, never null**, because six of the seven controls
+ * are `<select>`s — a select's own "no choice" value is `''`, and assigning it
+ * `null` leaves it showing nothing at all. `App\Support\CourseFilter` holds the
+ * matching rule on the other side of the same uuids.
  */
 
 /*
@@ -31,7 +35,7 @@ export default (initial = {}) => ({
 	/** Whether the phone panel is showing. Irrelevant from `sm` up, where the filter is a column. */
 	open: false,
 
-	/** attribute → the selected value, or null. Seeded from what the server filtered by. */
+	/** attribute → the chosen value, or `''`. Seeded from what the server filtered by. */
 	selected: initial,
 
 	close() {
@@ -44,7 +48,7 @@ export default (initial = {}) => ({
 	},
 
 	get active() {
-		return Object.values(this.selected).some((value) => value !== null);
+		return Object.values(this.selected).some(Boolean);
 	},
 
 	/** Drives the count on `Anzeigen` and the empty state. */
@@ -52,20 +56,27 @@ export default (initial = {}) => ({
 		return this.cards().filter((card) => this.matches(card)).length;
 	},
 
+	/** The category list: choosing what is already chosen clears it. */
 	toggle(attribute, value) {
-		this.selected[attribute] = this.selected[attribute] === value ? null : value;
+		this.set(attribute, this.selected[attribute] === value ? '' : value);
+	},
+
+	/** The six selects, where the control already carries its own empty choice. */
+	set(attribute, value) {
+		this.selected[attribute] = value || '';
 		this.sync();
 	},
 
 	reset() {
 		for (const attribute of Object.keys(this.selected)) {
-			this.selected[attribute] = null;
+			this.selected[attribute] = '';
 		}
+
 		this.sync();
 	},
 
 	/**
-	 * A card matches when every *set* attribute is among the ones it carries.
+	 * A card matches when every *chosen* attribute is among the ones it carries.
 	 * Reads `selected`, so Alpine re-runs the binding on every card when one
 	 * changes.
 	 */
@@ -73,7 +84,7 @@ export default (initial = {}) => ({
 		const facets = this.facets(card);
 
 		return Object.entries(this.selected).every(
-			([attribute, value]) => value === null || (facets[attribute] ?? []).includes(value),
+			([attribute, value]) => !value || (facets[attribute] ?? []).includes(value),
 		);
 	},
 
@@ -102,10 +113,10 @@ export default (initial = {}) => ({
 		const url = new URL(window.location);
 
 		for (const [attribute, value] of Object.entries(this.selected)) {
-			if (value === null) {
-				url.searchParams.delete(attribute);
-			} else {
+			if (value) {
 				url.searchParams.set(attribute, value);
+			} else {
+				url.searchParams.delete(attribute);
 			}
 		}
 

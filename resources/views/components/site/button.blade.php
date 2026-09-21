@@ -1,4 +1,4 @@
-@props(['variant' => 'primary', 'href' => null])
+@props(['variant' => 'primary', 'href' => null, 'type' => 'button'])
 
 {{--
 	`components/buttons/_global.scss` and `_primary.scss`: 14px, 16px from sm,
@@ -17,6 +17,6 @@
 @endphp
 
 <{{ $href ? 'a' : 'button' }}
-	@if ($href) href="{{ $href }}" @else type="button" @endif
+	@if ($href) href="{{ $href }}" @else type="{{ $type }}" @endif
 	{{ $attributes->class([$base, $style]) }}
 >{{ $slot }}</{{ $href ? 'a' : 'button' }}>

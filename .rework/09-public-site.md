@@ -25,9 +25,9 @@ production; everything else is listed under *What is left*.
   logo, the nav, the basket and profile icons. No footer — the live site has
   none except on the homepage.
 - **Course list and card.** The outer grid, the card with its hover overlay, the
-  software filter, the teal promo box. The filter hides and shows cards rather
-  than reloading the page — *The filter renders everything and hides the rest*,
-  below.
+  teal promo box, and **the whole filter** — all seven of legacy's attributes,
+  hiding and showing cards rather than reloading the page. See *The filter
+  renders everything and hides the rest*, below.
 - **Mobile chrome.** The teal menu panel, the bottom-right burger, the
   full-screen filter panel.
 - **Media.** 306 ported images rendering through Glide as AVIF/WebP with a JPEG
@@ -50,11 +50,8 @@ Roughly in the order that unblocks the most.
    `views/` in the legacy SCSS the way the list has.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The
    nav lists Experten and Kontakt pointing at `#` until they exist.
-6. **The rest of the filter.** Only Software is wired. Legacy also filters by
-   category and by Ort, Level, Sprache, Experte and Tags; the taxonomies exist,
-   nothing filters on them. The mechanism now takes any number of them — each
-   one is a key in `selected` and in `data-facets` — but legacy draws the other
-   six as `<select>`s, and that is a design port to measure, not to guess.
+6. ~~The rest of the filter.~~ **Done 2026-09-21** — all seven attributes, the
+   three categories as links and the other six as selects.
 
 ## The filter renders everything and hides the rest — decided 2026-09-21
 
@@ -96,6 +93,74 @@ Three things to know before extending it:
 **This is a 32-course list with no pagination.** Paginate it and hiding rows the
 server did not send is wrong — but the query string still filters server-side,
 so the way back is `index()`, not a rewrite.
+
+## Four layout fixes from comparing against production — 2026-09-21
+
+Marcel sent four screenshots of the live page. Everything below was measured on
+it with `getBoundingClientRect`, which is the method this chunk already argues
+for, and every number now matches.
+
+**The card grid is two columns on a phone.** `frontend/filter/Index.vue` writes
+`class="card-teaser span-6"` with **no breakpoint prefix**, so it is 6-of-12 at
+every width. The rebuild read it as `col-span-12 sm:col-span-6`.
+
+**The grid gap grows on both axes.** `grid-gap: $space-4x`, `$space-10x` from
+`bp-md` — 16/16 then 40/40. The rebuild grew only the column gap. The *header*
+is different and was right: legacy gives it `grid-column-gap`, column only.
+
+**The mobile menu opens with the logo.** `menu.blade.php` puts the link before
+`.site-menu__main`, inside the panel's 8px padding, and the 72px below it is the
+`ul`'s own margin. The rebuild kept the margin and dropped the logo.
+
+**The social icons are `#8C8C8C`**, hard-coded into the artwork rather than
+named in `_colors.scss`. Porting them to `currentColor` — which is right for
+every other icon here — turned them black. A sixth grey nothing recolours is
+better left in the path than made a token.
+
+Two more the screenshots settled, neither of them asked about:
+
+- **`Zurücksetzen` is always shown**, with nothing chosen as much as with
+  something. Legacy renders it unconditionally; the rebuild hid it.
+- **`Anzeigen (32)` lost its space.** The button is a flex container, so
+  `Anzeigen <span>` is two flex items and the whitespace between them collapses.
+  Label and count have to be one text node.
+
+### The trap worth the most: Tailwind pairs a line-height with every size
+
+`resources/css/README.md` says the type scale deliberately carries no line
+heights, because legacy sets them per component. **That is the intent, not the
+behaviour.** Redefining `--text-lg` in `@theme` does not remove Tailwind's own
+`--text-lg--line-height`, so `text-lg` was emitting **1.556** where legacy
+inherits the body's **1.3**.
+
+It is invisible wherever a box has a `min-height` — which is most of this page,
+and why it went unnoticed — and visible the moment one does not: the six select
+rows were each a pixel short, and the whole list sat 4px low under a heading
+whose line box was 4px too big.
+
+Fixed here by naming `leading-[1.3]` on the three places in the filter that
+depend on it. **Not fixed globally**, because nulling the nine pairings moves
+type on every page and wants its own pass — `grep`ping `text-` against
+`leading-` across `views/site` finds 12 elements relying on the pairing today.
+
+## The event-expert link was never ported — found 2026-09-21
+
+`event_expert` was **empty**. `PortCourses::clear()` has always emptied it and
+nothing ever filled it, because legacy calls the table `event_user` and the port
+looks for it under the new name. 341 rows, 14 experts.
+
+It failed quietly in two places: a course card's hover overlay simply omitted
+*Experte*, and the filter's new Experte list came out with nothing in it. Both
+degrade to "this course has no expert", which looks like data rather than a bug.
+
+`portEvents()` now fills it, resolving legacy user ids through the uuid
+`PortUsers` carries across, and reports any expert it cannot find. The dev
+database was backfilled in place rather than re-ported: 325 of 341 rows, the 16
+being events the port skips for their own reasons.
+
+**Worth generalising:** a pivot that is emptied and never filled leaves no
+error, no null and no missing column — just a relation that is always empty. The
+other pivots deserve a count check.
 
 ## Measure the page, do not read the stylesheet
 

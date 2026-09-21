@@ -102,6 +102,21 @@ Mapping for reading the legacy SCSS against this:
 | `$color-quaternary` | `#505050` | `gray-600` |
 | `$color-light` | `#eeeeee` | `gray-200` |
 
+### The scale says no line heights. Tailwind adds them anyway — found 2026-09-21
+
+Redefining `--text-lg` in `@theme` leaves Tailwind's own
+`--text-lg--line-height` in place, so **`text-lg` emits `line-height: 1.556`**
+where legacy inherits the body's `1.3`. The same goes for every other size.
+
+It hides wherever a box has a `min-height`, and shows the moment one does not —
+it cost the course filter a pixel per select row and put the whole list 4px low
+under its heading ([[09-public-site]]).
+
+**Until the pairings are nulled, say the line height you mean.** `leading-[1.3]`
+is the body value; a card heading is `1.2` and a lead paragraph `1.44`.
+
+---
+
 ## 4. Breakpoints: stock Tailwind
 
 `sm` 640, `md` 768, `lg` 1024, `xl` 1280. Legacy's 700/1132/1240 are gone

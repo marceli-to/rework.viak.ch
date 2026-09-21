@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\Software;
+use App\Support\CourseFilter;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,36 +36,25 @@ class CourseController extends Controller
 	 */
 	public function index(Request $request): View
 	{
-		$activeSoftware = $request->string('software')->value() ?: null;
-
 		$courses = Course::query()
 			->published()
 			->with([
-				'software',
 				// The card shows a category, the next date, the expert teaching
 				// it and the fee — all eager-loaded, or the grid asks per card.
 				'categories',
 				'media',
 				'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
+				// The rest are what the filter offers and matches on; loading
+				// them here is also what lets the panel offer only the terms
+				// some course on the page actually carries.
+				'software', 'levels', 'languages', 'tags',
 			])
 			->ordered()
 			->get();
 
-		// One definition of a match, because the server and the browser have to
-		// agree on it — `course-filter.js` applies the same rule to the same
-		// uuids, read off `data-facets`.
-		$matching = $courses
-			->when($activeSoftware, fn ($all, $uuid) => $all->filter(
-				fn (Course $course) => $course->software->contains('uuid', $uuid)
-			))
-			->pluck('uuid')
-			->all();
-
 		return view('site.courses.index', [
 			'courses' => $courses,
-			'matching' => $matching,
-			'software' => Software::published()->ordered()->get(),
-			'activeSoftware' => $activeSoftware,
+			'filter' => CourseFilter::for($courses, $request->query()),
 		]);
 	}
 

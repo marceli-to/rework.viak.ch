@@ -8,27 +8,36 @@
 		</button>
 	</x-slot:actions>
 
+	@php
+		$facets = $filter->facets();
+		$matching = $filter->matching();
+	@endphp
+
 	{{--
 		Rebuilt 1:1 from legacy's `frontend/filter/Index.vue`: an outer
-		12-column grid, the cards in `span-8` as their own 12-column grid of
-		`span-6` pairs, and the filter in `span-4`.
+		12-column grid, the cards in `span-8` as their own 12-column grid, and
+		the filter in `span-4`.
+
+		**The cards are `span-6` at every width**, so a phone gets two columns
+		too — legacy writes it without a breakpoint prefix and an earlier pass
+		read it as one column below `sm`.
+
+		The gap is legacy's `grid-gap`: 16px on both axes, 40px on both from
+		`bp-md`, which is this project's `lg` (`resources/css/README.md`). The
+		row gap used to be left at 16.
 
 		Legacy rendered all of it through a Vue island that POSTed to
 		`/api/course/filter` on every click, with the card markup living a second
-		time in `filter/components/Card.vue`. Here the page is server-rendered:
-		the filter is links carrying a query string, so it works with no
-		JavaScript and is indexable — and Alpine then hides and shows the cards
-		already on the page, so changing a filter is not a navigation
-		([[09-public-site]]).
+		time in `filter/components/Card.vue`. Here the page is server-rendered
+		and Alpine hides and shows the cards already on it, so changing a filter
+		is not a navigation ([[09-public-site]]).
 
 		`courseFilter` holds one value per attribute, seeded from what the server
-		filtered by so the two agree on the first paint. Only Software is wired;
-		the attribute is named in every place that handles it, so the rest of
-		legacy's seven arrive as data rather than as code.
+		filtered by so the two agree on the first paint.
 	--}}
 	<div
-		class="grid grid-cols-12 gap-x-16 gap-y-16 lg:gap-x-40"
-		x-data="courseFilter({ software: @js($activeSoftware) })"
+		class="grid grid-cols-12 gap-16 lg:gap-40"
+		x-data="courseFilter({{ json_encode($filter->seed()) }})"
 		@open-filter.window="open = true"
 	>
 		<div class="col-span-12 sm:col-span-8">
@@ -38,7 +47,7 @@
 				Leider keine Kurse gefunden.
 			</div>
 
-			<div class="grid grid-cols-12 gap-x-16 gap-y-16 lg:gap-x-40">
+			<div class="grid grid-cols-12 gap-16 lg:gap-40">
 				@foreach ($courses as $course)
 					{{-- `data-facets` is the card's own copy of what it can be
 					     filtered by, so the browser needs no second payload and
@@ -48,10 +57,10 @@
 					<x-site.course-card
 						:course="$course"
 						:eager="$loop->index < 2"
-						data-facets="{{ json_encode(['software' => $course->software->pluck('uuid')->all()]) }}"
+						data-facets="{{ json_encode($facets[$course->uuid]) }}"
 						::class="{ hidden: !matches($el) }"
 						@class([
-							'col-span-12 sm:col-span-6',
+							'col-span-6',
 							'hidden' => ! in_array($course->uuid, $matching, true),
 						])
 					/>
@@ -60,7 +69,7 @@
 		</div>
 
 		<div class="col-span-12 sm:col-span-4">
-			<x-site.course-filter :software="$software" :active="$activeSoftware" :matching="count($matching)" />
+			<x-site.course-filter :filter="$filter" :matching="count($matching)" />
 		</div>
 	</div>
 </x-layout.site>

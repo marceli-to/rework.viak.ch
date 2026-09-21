@@ -105,6 +105,17 @@
 		class="fixed inset-0 z-[201] flex flex-col border-8 border-b-0 border-white bg-teal sm:hidden"
 		@keydown.escape.window="close()">
 		<div class="flex-1 p-8">
+			{{-- The logo heads the panel, as `menu.blade.php` has it: the link
+			     comes before `.site-menu__main`, inside the 8px padding, and the
+			     72px below is the `ul`'s own margin rather than a gap between
+			     them. An earlier pass kept the margin and dropped the logo. --}}
+			<a href="{{ \App\Support\SiteUrl::home() }}"
+				title="Home | {{ config('app.name') }}"
+				class="block text-black"
+				@click="close()">
+				<x-site.icons.logo />
+			</a>
+
 			<ul class="mt-72">
 				@foreach ([...$nav, ['label' => 'Profil', 'href' => '/dashboard', 'match' => 'dashboard']] as $item)
 					<li>
