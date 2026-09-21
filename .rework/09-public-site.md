@@ -25,7 +25,9 @@ production; everything else is listed under *What is left*.
   logo, the nav, the basket and profile icons. No footer — the live site has
   none except on the homepage.
 - **Course list and card.** The outer grid, the card with its hover overlay, the
-  software filter, the teal promo box.
+  software filter, the teal promo box. The filter hides and shows cards rather
+  than reloading the page — *The filter renders everything and hides the rest*,
+  below.
 - **Mobile chrome.** The teal menu panel, the bottom-right burger, the
   full-screen filter panel.
 - **Media.** 306 ported images rendering through Glide as AVIF/WebP with a JPEG
@@ -50,7 +52,50 @@ Roughly in the order that unblocks the most.
    nav lists Experten and Kontakt pointing at `#` until they exist.
 6. **The rest of the filter.** Only Software is wired. Legacy also filters by
    category and by Ort, Level, Sprache, Experte and Tags; the taxonomies exist,
-   nothing filters on them.
+   nothing filters on them. The mechanism now takes any number of them — each
+   one is a key in `selected` and in `data-facets` — but legacy draws the other
+   six as `<select>`s, and that is a design port to measure, not to guess.
+
+## The filter renders everything and hides the rest — decided 2026-09-21
+
+The listing used to filter in SQL, so every change of filter was a navigation.
+On a phone that is the bug: the filter is a *full-screen panel*, and the
+navigation closes the panel you are still using, one attribute at a time.
+
+Legacy solved it with the Vue island (`frontend/filter/Index.vue`, 395 LOC,
+POSTing `/api/course/filter` per click, the card markup living a second time in
+`filter/components/Card.vue`). The stack here already answers it: **the
+controller renders all 32 courses and the query string decides which carry
+`hidden`**, and Alpine then owns that same class. Nothing new was installed —
+Livewire would have meant a round trip per click to filter rows already in the
+browser, plus its own copy of Alpine on top of the dashboard's Vue.
+
+What it keeps, which is the whole reason the query string was there:
+
+- **No JavaScript still filters.** The `href` is a real link to the view it
+  selects; the `@click.prevent` beside it is what a browser runs.
+- **A filtered view is still linkable** — Alpine writes the query string back
+  with `replaceState`, and a cold load of that URL renders the same page.
+- **A crawler now sees the whole catalogue** on `/de/kurse` rather than a slice.
+
+And it gives desktop legacy's immediacy back: clicking a filter there had also
+become a page load, which legacy's never was.
+
+Three things to know before extending it:
+
+- **One definition of a match, twice.** `CourseController::index()` decides it
+  in PHP and `course-filter.js` decides it in the browser, over the same uuids —
+  the card carries them in `data-facets`. Change one rule and change the other.
+- **`::class` on a component tag.** Blade reads a single leading colon as a PHP
+  expression, so the Alpine binding on `<x-site.course-card>` needs two.
+- **Alpine's `:class` object form removes a class the server put there**; the
+  string form only manages what Alpine itself added. The first is why
+  `{ hidden: … }` can undo a server-rendered `hidden` and `open ? '' : '…'`
+  could not.
+
+**This is a 32-course list with no pagination.** Paginate it and hiding rows the
+server did not send is wrong — but the query string still filters server-side,
+so the way back is `index()`, not a rewrite.
 
 ## Measure the page, do not read the stylesheet
 
@@ -101,5 +146,8 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
   title format needs it. Legacy keeps the legal entity —
   "Visualisierungs-Akademie Schweiz GmbH" — in `APP_NAME` for **mail**. If
   outgoing mail should say the legal name, that needs its own config key.
-- **The phone layout has not been seen in a browser.** The rules are asserted in
-  tests; the viewport would not resize in this session. Worth eyeballing.
+- **The phone layout has been seen in a browser** for the course list, at 500px
+  on 2026-09-21: the panel opens, two filters in a row leave it open, `Anzeigen
+  (4)` counts and closes it, and the console is clean. `resize_window` does work
+  — it clamps to a 500px minimum, which is under the 700px breakpoint. The rest
+  of the site still has not been eyeballed.

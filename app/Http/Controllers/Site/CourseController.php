@@ -18,6 +18,22 @@ use Illuminate\View\View;
  */
 class CourseController extends Controller
 {
+	/**
+	 * **The whole catalogue is rendered; the query string decides what is
+	 * hidden.** It used to be a `whereHas` that dropped the rows, which meant
+	 * every change of filter was a navigation — and on a phone, where the filter
+	 * is a full-screen panel, a navigation closes the panel you are still using.
+	 *
+	 * So the filtering moved one step later: the server says which courses match
+	 * and the view marks the rest `hidden`, which Alpine then takes over
+	 * ([[09-public-site]]). The page is still filtered without JavaScript, a
+	 * shared link still lands on the same view, and a crawler now sees all of
+	 * `/de/kurse` instead of a slice of it.
+	 *
+	 * The cost is loading 32 rows where a filtered request loaded fewer — which
+	 * is what the unfiltered page, by far the common one, already did. It stops
+	 * being the right trade the day this list needs pagination.
+	 */
 	public function index(Request $request): View
 	{
 		$activeSoftware = $request->string('software')->value() ?: null;
@@ -32,15 +48,22 @@ class CourseController extends Controller
 				'media',
 				'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
 			])
-			->when($activeSoftware, fn ($query, $uuid) => $query->whereHas(
-				'software',
-				fn ($software) => $software->where('uuid', $uuid)
-			))
 			->ordered()
 			->get();
 
+		// One definition of a match, because the server and the browser have to
+		// agree on it — `course-filter.js` applies the same rule to the same
+		// uuids, read off `data-facets`.
+		$matching = $courses
+			->when($activeSoftware, fn ($all, $uuid) => $all->filter(
+				fn (Course $course) => $course->software->contains('uuid', $uuid)
+			))
+			->pluck('uuid')
+			->all();
+
 		return view('site.courses.index', [
 			'courses' => $courses,
+			'matching' => $matching,
 			'software' => Software::published()->ordered()->get(),
 			'activeSoftware' => $activeSoftware,
 		]);

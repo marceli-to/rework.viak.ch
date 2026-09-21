@@ -10,16 +10,19 @@
 import Alpine from 'alpinejs';
 
 import basket from './stores/basket';
+import courseFilter from './components/course-filter';
 import menu from './components/menu';
 
 Alpine.store('basket', basket);
 
 /*
- * No course filter here. It was written and then deleted: the server-side
- * version already filters by query string, which makes a filtered view
- * linkable and needs no JavaScript at all. Two mechanisms for one job is how
- * legacy ended up with a Vuex store for a list of a few dozen courses.
+ * The course filter is *one* mechanism, not two. The server still filters by
+ * query string — that is what a shared link, a crawler and a browser without
+ * JavaScript get — and this only decides which of the already-rendered cards
+ * are hidden, so the phone's full-screen panel survives a selection instead of
+ * being closed by the navigation. See `components/course-filter.js`.
  */
+Alpine.data('courseFilter', courseFilter);
 Alpine.data('menu', menu);
 
 window.Alpine = Alpine;
