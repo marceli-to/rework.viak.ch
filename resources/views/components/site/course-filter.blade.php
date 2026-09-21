@@ -18,12 +18,6 @@
 		return request()->url().($query ? '?'.http_build_query($query) : '');
 	};
 
-	/*
-	 * `%icon-chevron-down` — a CSS triangle, not artwork: 5px transparent sides
-	 * under an 8px #505050 top, right-aligned and vertically centred, stepping
-	 * to 6/9 at legacy's `bp-sm`.
-	 */
-	$chevron = "after:absolute after:top-1/2 after:right-0 after:h-0 after:w-0 after:-translate-y-1/2 after:border-x-[5px] after:border-t-[8px] after:border-x-transparent after:border-t-gray-600 after:content-[''] after:pointer-events-none sm:after:border-x-[6px] sm:after:border-t-[9px]";
 @endphp
 
 {{--
@@ -116,7 +110,7 @@
 					     the item's 40px, so a select row is 40 **plus** its rule
 					     while a category row is 40 including it. That 1px per row
 					     is legacy's, and it is what the live page measures. --}}
-					<div class="relative flex min-h-40 w-full items-center py-8 {{ $chevron }}">
+					<div class="relative flex min-h-40 w-full items-center py-8 select-chevron">
 						{{-- A chosen value goes bold, the same way an active category
 						     does — `.filter__item.is-active select` — and stays black,
 						     because the select carries its own colour. `outline-hidden`

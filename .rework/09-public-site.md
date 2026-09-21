@@ -42,8 +42,8 @@ Roughly in the order that unblocks the most.
    is decided: **a POST per step with the state in the session**, because the
    server is the pricing authority (`06-bookings.md`). This is what tests the
    Alpine decision.
-2. **Register, login, password reset.** Fortify is installed and `User`
-   implements `MustVerifyEmail`; the screens are not built.
+2. ~~Register, login, password reset.~~ **Built 2026-09-21** — see *Fortify had
+   no views at all*, below.
 3. **The two portals** — *Meine Kurse*, *Meine Dokumente*, the expert's course
    view. Every endpoint exists (`08-accounts.md`); only the screens are missing.
 4. **The course detail page**, which renders but has not been measured against
@@ -219,6 +219,55 @@ being events the port skips for their own reasons.
 **Worth generalising:** a pivot that is emptied and never filled leaves no
 error, no null and no missing column — just a relation that is always empty. The
 other pivots deserve a count check.
+
+## Fortify had no views at all — 2026-09-21
+
+`GET /login` was a **500**. Fortify was installed with chunk 08 and every route
+it registers was live, but the package ships no views: until something calls
+`Fortify::loginView()`, the controller has nothing to return. There was no
+`config/fortify.php` and no service provider either. The checkout sits behind
+`auth`, so this was the thing in front of it.
+
+Built: login, registration, forgot- and reset-password, verify-email — all Blade
+on the public layout, because that is where they are on the live site. Legacy's
+registration was a 207-line Vue island posting JSON and painting its own errors;
+the same seventeen fields as a form let Laravel do both.
+
+Four pieces came out of it that the checkout needs next:
+
+| Component | From |
+|---|---|
+| `x-site.article` | `layout/_article.scss:116` — the aside/column text page |
+| `x-site.field` | `.form-group` + label + input + error |
+| `x-site.select` | `.select-wrapper`, **teal** where the filter's is black |
+| `x-site.checkbox` | 12×12, 14×14 from `sm`, solid teal when checked, no tick |
+| `x-site.toast` | `.notification.is-toast`, anchored to the container's edge |
+
+And `lang/de/` — legacy's `auth`, `passwords` and `validation` carried across,
+because without them a failed login reads **`auth.failed`**.
+
+### Three things measured rather than assumed
+
+- **An input's line height is `normal`; a select's is 1.3.** Legacy's normalize
+  sets `input { line-height: normal }` — the old Firefox fix at
+  `helpers/_normalize.scss:336` — and says nothing about `select`. 37.5px against
+  39.2 on the login field. The same family as the Tailwind pairing trap above.
+- **A form select is teal.** `.select-wrapper select` is painted
+  `$color-secondary` globally; the course filter overrides it back to black. Two
+  selects, two colours, both correct.
+- **The chevron is one definition now.** `.select-chevron` in `app.css`, because
+  a pseudo-element is not expressible as a utility and two components need it.
+
+### Two departures, both deliberate
+
+- **Login is rate limited**, five a minute per email and IP. Legacy has none at
+  all, and `08-accounts.md` already carries one account-takeover finding. The
+  sixth attempt is a bare **429** rather than legacy's `auth.throttle` message,
+  because Fortify throttles in route middleware and not in the validator — a
+  friendly 429 view is in `Open-Questions.md`.
+- **Two-factor and passkeys are off.** Fortify's stub enables both; neither
+  exists on the live site, and both add account-recovery surface that wants a
+  decision rather than a default.
 
 ## Measure the page, do not read the stylesheet
 

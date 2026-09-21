@@ -37,3 +37,18 @@
 		@apply cursor-pointer;
 	}
 }
+
+@layer components {
+	/* `%icon-chevron-down` (`components/icons/_chevron.scss`), the triangle
+	   legacy puts after every `.select-wrapper` — 5px transparent sides under an
+	   8px #505050 top, right-aligned and vertically centred, stepping to 6/9 at
+	   `bp-sm`. The white background is legacy's too: it masks the option text
+	   behind a long value.
+
+	   A pseudo-element is not expressible as a utility, and two components need
+	   it — the filter's selects and the form's — so it lives here rather than as
+	   a 300-character class string written out twice. */
+	.select-chevron::after {
+		@apply pointer-events-none absolute top-1/2 right-0 h-0 w-0 -translate-y-1/2 border-x-[5px] border-x-transparent border-t-[8px] border-t-gray-600 bg-white content-[''] sm:border-x-[6px] sm:border-t-[9px];
+	}
+}

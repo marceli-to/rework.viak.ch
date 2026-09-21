@@ -1,0 +1,56 @@
+@props([
+	'name',
+	'label' => null,
+	'type' => 'text',
+	'value' => null,
+	'required' => false,
+	'hint' => null,
+])
+
+{{--
+	`form/_layout.scss:7` (`.form-group`), `form/_label.scss`, `form/_global.scss`
+	and `form/_validation.scss:38`, measured on the live login page.
+
+	The input is **bold and black with a single rule under it** — that is the
+	global form rule, not something this field decides
+	(`input, textarea, select, button { color: $color-primary; font-bold;
+	outline: none !important }`), which is also where the missing focus ring
+	comes from ([[09-public-site]]).
+
+	Sizes, all measured: label 14/16/18, input 16/18/24, the group's own margin
+	16 below `lg` and 32 above, and the error 14/16 with 8px above it.
+
+	**`leading-[normal]`, not `1.3`.** Legacy's normalize sets
+	`input { line-height: normal }` — the old Firefox fix at
+	`helpers/_normalize.scss:336` — and says nothing about `select`, which is why
+	a select inherits the body's 1.3 and an input does not. Measured: 37.5px on
+	the live login field against 39.2 for 1.3.
+--}}
+<div class="relative mb-16 lg:mb-32">
+	@if ($label)
+		<label for="{{ $name }}" class="mb-4 block text-md leading-[1.3] sm:text-lg lg:text-xl">
+			{{ $label }}@if ($required) *@endif
+		</label>
+	@endif
+
+	<input
+		id="{{ $name }}"
+		name="{{ $name }}"
+		type="{{ $type }}"
+		value="{{ $type === 'password' ? '' : old($name, $value) }}"
+		@if ($required) required @endif
+		@error($name) aria-invalid="true" aria-describedby="{{ $name }}-error" @enderror
+		{{ $attributes->class([
+			'block w-full border-b border-black bg-transparent py-4 text-lg leading-[normal] font-bold outline-hidden sm:text-xl lg:text-3xl',
+			'border-danger' => $errors->has($name),
+		]) }}
+	>
+
+	@if ($hint)
+		<p class="pt-8 text-md leading-[1.3] lg:text-lg">{{ $hint }}</p>
+	@endif
+
+	@error($name)
+		<div id="{{ $name }}-error" class="pt-8 text-md leading-[1.3] text-danger lg:text-lg">{{ $message }}</div>
+	@enderror
+</div>

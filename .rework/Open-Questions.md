@@ -230,3 +230,8 @@ the same breath.
   it. An unfilled pivot raises nothing — no error, no null, no missing column —
   it just makes a relation permanently empty. Fixed for this one; the rest have
   not been checked.
+- **A friendly 429 for a throttled login.** Fortify throttles through route
+  middleware, so the sixth failed attempt in a minute is Laravel's bare 429 page
+  rather than legacy's "Zu viele Loginversuche. Versuchen Sie es bitte in
+  :seconds Sekunden nochmal." — which is sitting unused in `lang/de/auth.php`.
+  A small view, but it is the page a locked-out customer sees.
