@@ -5,8 +5,9 @@ its reasoning are in `00-foundation.md` under *Parity means the current design*.
 
 ## Status
 
-Started 2026-09-18. The shell and the course pages are built and match
-production; everything else is listed under *What is left*.
+Started 2026-09-18. The shell, the course list with its full filter, and the
+auth screens are built and match production. **The checkout is next and is
+unblocked**; everything else is listed under *What is left*.
 
 | | |
 |---|---|
@@ -32,16 +33,38 @@ production; everything else is listed under *What is left*.
   full-screen filter panel.
 - **Media.** 306 ported images rendering through Glide as AVIF/WebP with a JPEG
   fallback.
+- **Auth.** Login, registration, forgot/reset password and verify-email, on
+  legacy's own URLs — `/login`, `/de/registration`, `/password/reset`.
+- **A form kit for the checkout to use**: `x-site.article`, `field`, `select`,
+  `checkbox`, `toast`, plus `lang/de/`.
 
 ### What is left
 
 Roughly in the order that unblocks the most.
 
-1. **Basket and checkout.** The one with money in it, and the reason this track
-   was chosen — chunk 06 has 251 tests and has never run in a browser. The shape
-   is decided: **a POST per step with the state in the session**, because the
-   server is the pricing authority (`06-bookings.md`). This is what tests the
-   Alpine decision.
+1. **Basket and checkout — started, and this is where to pick it up.** The one
+   with money in it, and the reason this track was chosen: chunk 06 has 251
+   tests and has never run in a browser. Its blocker is gone — the auth screens
+   are built (item 2) — and the flow is mapped in *What the checkout actually
+   is*, below. The shape stays what `06-bookings.md` decided: **a POST per step
+   with the state in the session**, because the server is the pricing authority.
+
+   Next three, in order:
+
+   1. **`Buchen` on the course detail page.** `basket.js` already has
+      `add()`, `remove()`, `has()` and `setRental()`, and **nothing calls any of
+      them** — the header's basket icon still points at `#`. Legacy opens a
+      rental dialog first when the event offers laptops (CHF 80 excl. VAT), then
+      adds and shows a toast with a link to the basket. `x-site.toast` exists.
+   2. **The basket page** at `/de/checkout/basket` — the first time `PriceBasket`
+      runs in a browser.
+   3. **The three remaining steps**, then the confirmation.
+
+   **One bug to fix on the way:** `POST /api/basket/price` is behind
+   `auth:sanctum`, but `basket.js` calls `price()` from `init()` whenever
+   localStorage holds items. A guest with a filled basket therefore gets a 401
+   and `this.error` set on every page load. Invisible today because nothing
+   renders it; it surfaces the moment the basket page does.
 2. ~~Register, login, password reset.~~ **Built 2026-09-21** — see *Fortify had
    no views at all*, below.
 3. **The two portals** — *Meine Kurse*, *Meine Dokumente*, the expert's course
@@ -52,6 +75,43 @@ Roughly in the order that unblocks the most.
    nav lists Experten and Kontakt pointing at `#` until they exist.
 6. ~~The rest of the filter.~~ **Done 2026-09-21** — all seven attributes, the
    three categories as links and the other six as selects.
+
+## What the checkout actually is — mapped 2026-09-21
+
+Read before building it. Legacy's is `frontend/checkout/` — 797 LOC across four
+views and an `AddressForm` — and two things about it change the estimate.
+
+**The payment step takes no payment.** `Payment.vue` is a paragraph of text
+("QR-Einzahlungsschein oder Kreditkarte, Rechnungsstellung sobald die
+Durchführung feststeht") and the **discount-code field**. Nothing else. Invoices
+are raised on `EventConfirmed` (`03-invoices.md`), so **there is no Stripe
+anywhere in this flow** — the `PaymentController` and its checkout session are a
+separate thing, for paying an invoice that already exists.
+
+**The whole flow is behind `role:student`**, including the basket page. An
+anonymous visitor can fill a basket — it is `localStorage`, not a session — and
+is sent to login at the first step.
+
+| Step | URL | What it holds |
+|---|---|---|
+| 1/4 | `/de/checkout/basket` | the items, priced |
+| 2/4 | `/de/checkout/address` | participant address from the profile, plus an invoice address: "entspricht Teilnehmer-Adresse", a saved-address picker, or a new one. Carries the RAV explainer. |
+| 3/4 | `/de/checkout/payment` | the payment-options text and the discount code |
+| 4/4 | `/de/checkout/summary` | confirm |
+| — | `/de/checkout/confirmation` | thank you |
+
+`config/site.php` already has the segments (`basket` → `warenkorb`, `checkout`),
+though legacy's own URLs are `/de/checkout/…` throughout.
+
+### The server side is done and untouched
+
+`BasketController::price()` and `::store()` exist, tested, behind
+`auth:sanctum`. `CompleteCheckoutRequest` takes the selection, the code,
+`total_shown` and an optional `invoice_address`, and **refuses a checkout whose
+total moved**. The Blade steps should call the same `PriceBasket` /
+`CompleteCheckout` Actions rather than the API — `00-foundation.md` settled the
+flow as "Blade's shape, not a client-held wizard's" — and the API endpoints stay
+for the basket's live pricing, which `basket.js` already uses.
 
 ## The filter renders everything and hides the rest — decided 2026-09-21
 
