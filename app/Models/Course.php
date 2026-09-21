@@ -61,6 +61,11 @@ class Course extends Model
 		return $this->hasMany(Event::class);
 	}
 
+	public function videos(): HasMany
+	{
+		return $this->hasMany(CourseVideo::class);
+	}
+
 	public function categories(): MorphToMany
 	{
 		return $this->taxonomy(Category::class);

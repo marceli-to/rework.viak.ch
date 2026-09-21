@@ -262,9 +262,15 @@ and guessed props.
 Neither is homepage-specific, and both are needed elsewhere:
 
 - **`Testimonial`** — quote, name, role, featured. Also `Rhino.html`'s "Was
-  unsere Kund:innen sagen". This is where chunk 02's open question about
-  `courses.reviews` lands: a `text` column holding what looks like structured
-  data, ported as-is, still needing a shape. This is the shape.
+  unsere Kund:innen sagen".
+
+  **It cannot be filled from `courses.reviews`, which was the plan.** Checked on
+  2026-09-21: all 32 non-empty rows are an **Elfsight widget embed**, 23
+  distinct widget ids, so the *Kundenmeinungen* cards on the live course page
+  are Google reviews drawn by a third party in the browser. VIAK owns none of
+  that text. Either this model is filled by hand from real quotes, or the widget
+  is carried across and the model is not built at all — `Open-Questions.md` #18,
+  which replaces the old #12.
 - **`Settings` / globals** — phone, address, footer nav, newsletter copy. One
   schema, one screen. Could also be a config file if the client never edits it;
   see the levers below.
@@ -338,8 +344,9 @@ lets a Vorhaben page pull courses *and* licences for one tool from one relation.
    anything. Still worth asking, because if the answer is a firm never, the
    translatable columns and the `{de, en}` Resource maps become dead weight
    that a later chunk could simplify away.
-4. **`courses.reviews` → `Testimonial`** — the shape proposed above needs
-   confirming against what those 35 rows actually hold.
+4. ~~`courses.reviews` → `Testimonial`~~ — **answered 2026-09-21**: those rows
+   are Elfsight embeds, not data, so there is nothing to reshape. What is left
+   is a decision about the widget, which is `Open-Questions.md` #18.
 5. **Which of the six Vorhaben are real**, and are there more coming? The
    template is cheap; six is assumed from the mockups.
 6. ~~Media: `spatie/laravel-medialibrary` assumed.~~ — **answered 2026-09-18:

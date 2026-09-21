@@ -6,7 +6,7 @@ they belong to, and `Todo.md` keeps the struck-through record of how each was
 settled.
 
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
-and none of these held it up. Updated 2026-09-18.
+and none of these held it up. Updated 2026-09-21.
 
 **One item is not a question and is not waiting on anyone:** the
 `/expert/finish` account-takeover path on the live site, found 2026-09-18 while
@@ -31,13 +31,15 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 9 | The other 13 two-digit-year events: drop or restore? | Marcel | Cutover |
 | 10 | `due_at` in the port: the 541 lost, and the open/overdue | Marcel | Cutover |
 | 11 | What PHP does production run? | Marcel | Deploy |
-| 12 | What is actually in `courses.reviews`? | Us — check the data | Chunk 04 |
+| ~~12~~ | ~~What is actually in `courses.reviews`?~~ — **answered 2026-09-21: an Elfsight widget embed**, on all 32 non-empty rows, 23 distinct widget ids. Not testimonial data at all. Replaced by 18 | — | — |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
 | 14 | Should an admin cancelling for a student charge the penalty? | Marcel | **Nothing** — chunk 06 is built. `BookingCancellationReason::Administrator` exists and currently charges, as legacy did. Flipping it is one line in `chargesPenalty()`, and the reason is now recorded either way |
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08's **admin user screens**, which are not built. Nothing else |
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
+| 18 | Do the Elfsight review widgets come across, get replaced, or go? | Marcel, then the client | The Kundenmeinungen column on the course page, and `04-content.md`'s `Testimonial` plan |
 
+Question 18 arrived with the course-page rebuild on 2026-09-21 and answers 12.
 Questions 14–17 arrived with `08-accounts.md` on 2026-09-18. **5 and 15 were
 answered the same day** — the media pipeline is a port of Marcel's
 `forrerzimmermann.ch` subsystem, which is also the client's "image handling
@@ -175,11 +177,35 @@ knowingly wrong. Pick one, in the port.
 The rework is pinned to 8.3 because Herd serves 8.3 locally. If production runs
 8.4, raise the pin. Only bites at deploy time.
 
-### 12. What is actually in `courses.reviews`?
+### 18. Do the Elfsight review widgets come across, get replaced, or go?
 
-A `text` column on 35 rows holding what looks like structured data. The mockups
-want quote + name + role + featured, which is a `Testimonial` model rather than a
-column — but the proposed shape needs confirming against what those rows hold.
+**Answers and replaces 12**, which asked what `courses.reviews` holds. Checked
+on 2026-09-21 while rebuilding the course page: all 32 non-empty rows are
+
+```html
+<script src="https://apps.elfsight.com/p/platform.js" defer></script>
+<div class="elfsight-app-{uuid}"></div>
+```
+
+across **23 distinct widget ids**. So the *Kundenmeinungen* cards on the live
+course page are Google reviews fetched and drawn by a third party in the
+visitor's browser. VIAK owns none of that text, and there is nothing to port
+into the `Testimonial` model `04-content.md` proposes — that plan rested on the
+column holding structured data, and it does not.
+
+`PortCourses` never carried the column: `maybeJson()` returns null for anything
+that is not JSON, so all 32 were dropped without a word. It now reports one
+finding per row, and the page has the column ready but empty.
+
+**Decides** three things at once: whether every course page loads a third-party
+script (a consent banner question as much as a performance one), whether the
+reviews appear at all in the rework, and whether `04-content.md` keeps a
+`Testimonial` model or drops it. The cheapest honest option is probably to keep
+the widget and declare it; the most work is to ask the client for real quotes.
+
+### ~~12. What is actually in `courses.reviews`?~~
+
+Answered 2026-09-21 — see 18.
 Ours to answer by looking, not a client question.
 
 ### 14. How does the queue worker run in production?

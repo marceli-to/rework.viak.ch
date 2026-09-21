@@ -7,6 +7,7 @@ namespace App\Console\Commands\Port;
 use App\Enums\EventState;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseVideo;
 use App\Models\Event;
 use App\Models\Language;
 use App\Models\Level;
@@ -77,7 +78,7 @@ class PortCourses extends Command
 	 */
 	private function clear(): void
 	{
-		foreach (['course_taxonomy', 'event_dates', 'event_expert', 'events', 'courses', 'locations', 'categories', 'levels', 'languages', 'software', 'tags'] as $table) {
+		foreach (['course_taxonomy', 'course_videos', 'event_dates', 'event_expert', 'events', 'courses', 'locations', 'categories', 'levels', 'languages', 'software', 'tags'] as $table) {
 			DB::table($table)->delete();
 		}
 	}
@@ -189,7 +190,19 @@ class PortCourses extends Command
 					$this->translated($row->facts_column_3),
 				])),
 				'fee' => $row->fee ?? 0,
-				'reviews' => $this->maybeJson($row->reviews),
+					/*
+				 * **Not carried across, deliberately, and reported per row.**
+				 * Legacy's `reviews` is not structured data: all 32 non-empty
+				 * rows are an **Elfsight widget embed** — a `<script>` tag and
+				 * an empty div, 23 distinct widget ids — so the Kundenmeinungen
+				 * cards on the live page are Google reviews painted by a third
+				 * party at runtime. `maybeJson()` returns null for it.
+				 *
+				 * Porting it would put a third-party script on every course
+				 * page, which is a decision rather than a port. See
+				 * `Open-Questions.md` #12, which this answers.
+				 */
+			'reviews' => $this->maybeJson($row->reviews),
 				'seo_description' => $this->translated($row->seo_description),
 				'seo_tags' => $this->translated($row->seo_tags),
 				'online' => (bool) $row->online,
@@ -197,7 +210,13 @@ class PortCourses extends Command
 				'order' => $row->order,
 			]);
 
+			if (filled($row->reviews) && $course->reviews === null) {
+				$this->findings[] = "course {$row->id}: `reviews` held markup rather than JSON and was not carried across";
+			}
+
 			$map[$row->id] = $course->id;
+
+			$this->portVideos($legacy, $row->id, $course);
 
 			foreach ([
 				'category_course' => ['categories', 'category_id'],
@@ -218,6 +237,35 @@ class PortCourses extends Command
 		}
 
 		return $map;
+	}
+
+	/**
+	 * The **Videos** collapsible on the course page ([[09-public-site]]).
+	 *
+	 * Missed by chunk 01 — `course_videos` is in the legacy schema and in no
+	 * `.rework` document — so 19 of 32 courses were quietly losing a section of
+	 * their page. Found on 2026-09-21 by rebuilding the page against production.
+	 */
+	private function portVideos($legacy, int $legacyCourseId, Course $course): void
+	{
+		$rows = $legacy->table('course_videos')
+			->where('course_id', $legacyCourseId)
+			->orderBy('order')
+			->orderBy('id')
+			->get();
+
+		foreach ($rows as $row) {
+			CourseVideo::create([
+				'uuid' => $row->uuid,
+				'course_id' => $course->id,
+				'title' => $this->translated($row->title),
+				'code' => $row->code,
+				// Legacy defaults `order` to -1, which sorts an unordered row
+				// above the ordered ones. Normalised to 0 on the way in.
+				'order' => max(0, (int) $row->order),
+				'publish' => (bool) $row->publish,
+			]);
+		}
 	}
 
 	/**
@@ -379,13 +427,22 @@ class PortCourses extends Command
 			'courses' => Course::class,
 			'events' => Event::class,
 			'locations' => Location::class,
+			// Counted because it was missed entirely until 2026-09-21: the
+			// table exists in legacy, 19 courses have a row, and nothing here
+			// would have said so ([[09-public-site]]).
+			'course_videos' => CourseVideo::class,
 		] as $table => $model) {
 			// Events include the soft-deleted ones on both sides, since those
-			// are ported rather than dropped.
-			$before = $table === 'events'
-				? $legacy->table($table)->count()
-				: $legacy->table($table)->whereNull('deleted_at')->count();
-			$after = $model::withTrashed()->count();
+			// are ported rather than dropped. `course_videos` has no
+			// `deleted_at` on either side.
+			$before = match ($table) {
+				'events' => $legacy->table($table)->count(),
+				'course_videos' => $legacy->table($table)->count(),
+				default => $legacy->table($table)->whereNull('deleted_at')->count(),
+			};
+			$after = $table === 'course_videos'
+				? $model::count()
+				: $model::withTrashed()->count();
 			$skipped = $before - $after;
 			$rows[] = [
 				$table,

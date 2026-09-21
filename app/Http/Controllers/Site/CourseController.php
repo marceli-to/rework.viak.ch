@@ -66,18 +66,73 @@ class CourseController extends Controller
 	 * the course on the live site today. The rework resolves by slug and 301s
 	 * the uuid form; see `redirectLegacy()` below.
 	 */
-	public function show(string $slug): View
+	public function show(Request $request, string $slug): View
 	{
 		$course = Course::query()
 			->published()
 			->where('slug->'.app()->getLocale(), $slug)
 			->with([
 				'software', 'categories', 'levels', 'media',
-				'events' => fn ($query) => $query->published()->active()->upcoming()->with(['dates', 'location']),
+				'videos' => fn ($query) => $query->published()->ordered(),
+				'events' => fn ($query) => $query->published()->active()->upcoming()
+					->with(['dates', 'location', 'experts']),
 			])
 			->firstOrFail();
 
-		return view('site.courses.show', ['course' => $course]);
+		$user = $request->user();
+
+		return view('site.courses.show', [
+			'course' => $course,
+			'browse' => $this->browse($course),
+			/*
+			 * Two flat id lists rather than a query per card. Both are empty for
+			 * a guest, which is the common case and costs nothing.
+			 */
+			'bookmarked' => $user?->bookmarks()->pluck('events.id')->all() ?? [],
+			'booked' => $user?->bookings()->active()->pluck('event_id')->all() ?? [],
+		]);
+	}
+
+	/**
+	 * The previous and next course in the catalogue, for the pair of arrows at
+	 * the foot of the page.
+	 *
+	 * **It wraps.** Legacy's `getBrowse()` sends the first course's *previous*
+	 * to the last one and the last course's *next* to the first, rather than
+	 * hiding an arrow, so the pair is always two links. It returns nothing at
+	 * all when there is only one course to browse.
+	 *
+	 * Ordered by the catalogue's own order, which is the same list `index()`
+	 * renders — so the arrows walk the page the visitor came from.
+	 *
+	 * @return array{prev: Course, next: Course}|null
+	 */
+	private function browse(Course $course): ?array
+	{
+		$ids = Course::query()->published()->ordered()->pluck('id')->all();
+
+		if (count($ids) <= 1) {
+			return null;
+		}
+
+		$at = array_search($course->id, $ids, true);
+
+		if ($at === false) {
+			return null;
+		}
+
+		$courses = Course::query()
+			->whereIn('id', [
+				$ids[$at - 1] ?? end($ids),
+				$ids[$at + 1] ?? $ids[0],
+			])
+			->get()
+			->keyBy('id');
+
+		return [
+			'prev' => $courses[$ids[$at - 1] ?? end($ids)],
+			'next' => $courses[$ids[$at + 1] ?? $ids[0]],
+		];
 	}
 
 	/**

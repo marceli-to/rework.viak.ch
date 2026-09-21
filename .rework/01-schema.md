@@ -10,6 +10,21 @@ Built. `php artisan port:courses && php artisan port:users` reproduces the
 2026-09-11 production data in full: 578 users, 120 addresses, 102 discount codes,
 710 bookings, 0 skipped. 66 tests green.
 
+**Two gaps found later, both while rebuilding the course page on 2026-09-21 and
+both fixed in the ports** ([[09-public-site]]):
+
+- **`course_videos` was never carried across.** The table is in the legacy
+  schema and in none of these documents; 19 of 32 courses have a row, and those
+  courses were losing a section of their page. Now a migration, a `CourseVideo`
+  model and `PortCourses::portVideos()`.
+- **`PortMedia` ignored `images.type`**, hardcoding `is_teaser` and `is_og` to
+  false, so legacy's teaser / visual / open-graph distinction was flattened into
+  one list of 382 course images. The card showed whichever image sorted first
+  and every per-course `og:image` was lost.
+
+Neither was caught by the reconciliation, because both ported the right *number*
+of rows. A count check cannot see a column it does not read.
+
 ## Shape
 
 | Legacy | Rework | Why |

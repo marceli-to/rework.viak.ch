@@ -27,6 +27,7 @@
 	'image' => null,
 	'canonical' => null,
 	'auth' => false,
+	'heading' => null,
 ])
 
 @php
@@ -118,7 +119,11 @@
      in the gutters rather than behind the column — a transparent body would
      let `is-auth` through the whole page. --}}
 <body class="mx-auto min-h-screen w-full bg-white px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:px-32 sm:text-xl lg:max-w-[1100px] lg:px-16 lg:text-3xl">
-	<x-site.header :heading="$title" />
+	{{-- Legacy keeps these apart — `seo_title` and `page_title` are two
+	     sections — and the course page is where they differ: the tab says the
+	     course, the phone's header row says **Kurse**. Everywhere else they are
+	     the same string, so `heading` falls back to the title. --}}
+	<x-site.header :heading="$heading ?? $title" />
 
 	{{-- `layout/_main.scss` --}}
 	<main role="main" class="pb-24 sm:pb-32">

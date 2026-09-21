@@ -10,6 +10,7 @@
 import Alpine from 'alpinejs';
 
 import basket from './stores/basket';
+import bookmark from './components/bookmark';
 import courseFilter from './components/course-filter';
 import menu from './components/menu';
 
@@ -24,6 +25,7 @@ Alpine.store('basket', basket);
  */
 Alpine.data('courseFilter', courseFilter);
 Alpine.data('menu', menu);
+Alpine.data('bookmark', bookmark);
 
 window.Alpine = Alpine;
 Alpine.start();

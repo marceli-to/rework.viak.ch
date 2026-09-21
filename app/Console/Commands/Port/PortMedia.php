@@ -190,8 +190,18 @@ class PortMedia extends Command
 				'height' => $height,
 				'crop' => $crop,
 				'variant' => 'desktop',
-				'is_teaser' => false,
-				'is_og' => false,
+				/*
+				 * Legacy's `images.type` — `teaser`, `visual`, `open-graph` —
+				 * mapped onto the two flags this schema keeps. It was hardcoded
+				 * `false, false` until 2026-09-21, which flattened 382 course
+				 * images into one undifferentiated list: the card showed
+				 * whichever image sorted first rather than the one the editor
+				 * marked, the course page had no way to find its visuals, and
+				 * every per-course `og:image` was lost to the site default.
+				 * Found while rebuilding the course page ([[09-public-site]]).
+				 */
+				'is_teaser' => $row->type === 'teaser',
+				'is_og' => $row->type === 'open-graph',
 				'sort_order' => max(0, (int) $row->order),
 			]);
 

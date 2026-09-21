@@ -5,9 +5,10 @@ its reasoning are in `00-foundation.md` under *Parity means the current design*.
 
 ## Status
 
-Started 2026-09-18. The shell, the course list with its full filter, and the
-auth screens are built and match production. **The checkout is next and is
-unblocked**; everything else is listed under *What is left*.
+Started 2026-09-18. The shell, the course list with its full filter, the auth
+screens and the **course detail page** are built and match production. The
+`Buchen` button is on the page and fills the basket store; **the basket page is
+next**, and everything else is listed under *What is left*.
 
 | | |
 |---|---|
@@ -37,6 +38,10 @@ unblocked**; everything else is listed under *What is left*.
   legacy's own URLs — `/login`, `/de/registration`, `/password/reset`.
 - **A form kit for the checkout to use**: `x-site.article`, `field`, `select`,
   `checkbox`, `toast`, plus `lang/de/`.
+- **Course detail page.** The teal hero, the five collapsibles, the event row
+  with its bookmark and its `Buchen`, and the prev/next pair — every block to
+  the pixel. See *The course detail page*, below, for the three data findings
+  that came out of it.
 
 ### What is left
 
@@ -49,30 +54,31 @@ Roughly in the order that unblocks the most.
    is*, below. The shape stays what `06-bookings.md` decided: **a POST per step
    with the state in the session**, because the server is the pricing authority.
 
-   Next three, in order:
+   Next, in order:
 
-   1. **`Buchen` on the course detail page.** `basket.js` already has
-      `add()`, `remove()`, `has()` and `setRental()`, and **nothing calls any of
-      them** — the header's basket icon still points at `#`. Legacy opens a
-      rental dialog first when the event offers laptops (CHF 80 excl. VAT), then
-      adds and shows a toast with a link to the basket. `x-site.toast` exists.
+   1. ~~`Buchen` on the course detail page.~~ **Built 2026-09-21**, on the
+      rebuilt page — `add()` and `remove()` are wired and the header's basket
+      count answers. What is still owed is the **rental dialog** and the
+      post-add **toast**, both of which need `.notification.is-modal`; they
+      belong with item 2, which needs the same modal.
    2. **The basket page** at `/de/checkout/basket` — the first time `PriceBasket`
       runs in a browser. It takes `<x-layout.site auth>`, and so does every page
       after it: legacy paints the whole purchase flow teal, not just the login
       (see *The teal background*, below).
    3. **The three remaining steps**, then the confirmation.
 
-   **One bug to fix on the way:** `POST /api/basket/price` is behind
-   `auth:sanctum`, but `basket.js` calls `price()` from `init()` whenever
-   localStorage holds items. A guest with a filled basket therefore gets a 401
-   and `this.error` set on every page load. Invisible today because nothing
-   renders it; it surfaces the moment the basket page does.
+   **One bug to fix first, now confirmed firing.** `POST /api/basket/price` is
+   behind `auth:sanctum` while `basket.js` calls `price()` from `add()` and from
+   `init()`. Clicking `Buchen` as a guest on the course page sets
+   `store.basket.error` to `Unauthenticated.` every time — checked in the
+   browser on 2026-09-21, not inferred. It is invisible only because nothing
+   renders the error yet, and the basket page is the thing that will.
 2. ~~Register, login, password reset.~~ **Built 2026-09-21** — see *Fortify had
    no views at all*, below.
 3. **The two portals** — *Meine Kurse*, *Meine Dokumente*, the expert's course
    view. Every endpoint exists (`08-accounts.md`); only the screens are missing.
-4. **The course detail page**, which renders but has not been measured against
-   `views/` in the legacy SCSS the way the list has.
+4. ~~The course detail page.~~ **Built 2026-09-21** — see *The course detail
+   page*, below.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The
    nav lists Experten and Kontakt pointing at `#` until they exist.
 6. ~~The rest of the filter.~~ **Done 2026-09-21** — all seven attributes, the
@@ -428,6 +434,104 @@ beside it, and that one was already right.
 - **Two-factor and passkeys are off.** Fortify's stub enables both; neither
   exists on the live site, and both add account-recovery surface that wants a
   decision rather than a default.
+
+## The course detail page — 2026-09-21
+
+Rebuilt against production, in front of the basket: `Buchen` lives on this page,
+and the page was still the pre-parity stub (`text-4xl font-semibold`, `px-4`,
+`space-y-6`). Building the button first would have meant measuring the page
+twice.
+
+The shape is legacy's: a `content-text-media` hero — one visual, then a `span-4`
+aside of title and expert line against a `span-8` column of short description,
+**all of it teal**, headings and body copy alike — and then a stack of
+collapsibles, with the previous/next pair at the foot.
+
+Every block now measures the same as production at 1697px:
+
+| | production | here |
+|---|---|---|
+| Hero article | 977px | 977 |
+| Aktuelle Kurse | 1177→1536 | 1177→1536 |
+| Videos | 1600→2073 | 1600→2073 |
+| Facts | 2137→2919 | 2137→2919 |
+| Weitere Informationen | starts 2983 | 2983 |
+| An event row | 118px | 118 |
+| Weitere Kurse | 117px | 117 |
+
+### Three things the rebuild found, none of them cosmetic
+
+**`course_videos` was never ported.** The table is in the legacy schema, 19 of
+32 courses have a row, and no `.rework` document mentions it — so those courses
+were quietly losing a whole section of their page. Added: a migration, a
+`CourseVideo` model, a `videos()` relation, and `PortCourses::portVideos()`.
+`code` is an `<iframe>` an editor pasted and prints unescaped, which makes this
+the only table besides the rich-text fields that the site trusts with raw HTML.
+
+**`PortMedia` flattened legacy's three image roles into one.** It wrote
+`is_teaser => false, is_og => false` for every row without ever reading
+`images.type`, so 382 course images arrived undifferentiated. Three consequences,
+all live until today: the course **card** showed whichever image sorted first
+rather than the one the editor marked as the teaser; the course **page** had no
+way to find its visuals; and every per-course **`og:image`** was lost to the site
+default. Fixed in the port, and `HasMedia` grew `openGraph()` and `visuals()` —
+spelled as methods because the schema says what an image is *not*, and
+`->where('is_teaser', false)->where('is_og', false)` reads like a bug wherever it
+appears.
+
+**`courses.reviews` is an Elfsight embed** — which answers `Open-Questions.md`
+#12 and undoes the plan in `04-content.md`. All 32 non-empty rows are a
+`<script src="apps.elfsight.com/p/platform.js">` and an empty div, across 23
+distinct widget ids, so the *Kundenmeinungen* cards on the live page are Google
+reviews painted by a third party at run time. There is no testimonial data to
+port into a `Testimonial` model, because VIAK never had any.
+
+`PortCourses` reported nothing and dropped all 32: `maybeJson()` returns null for
+anything that is not JSON. It now records a finding per row. Carrying the embed
+across would put a third-party script on every course page, which is a decision
+rather than a port — **Marcel's**, and it is back on the open list.
+
+### What is deliberately not there yet
+
+- **The rental dialog.** Legacy asks, before adding an event with
+  `rentals_available`, whether to rent a laptop at CHF 80 excl. VAT — and says
+  in the same breath that you can change it later. `Buchen` adds with no rental,
+  which is that dialog's cheaper answer, so nobody is charged for something they
+  did not ask for; what is missing is the offer. It needs the modal
+  (`.notification.is-modal`) that the basket page needs too, so the two arrive
+  together.
+- **The toast after adding**, for the same reason.
+- **The expert's name is not a link.** There is no expert page until chunk 04,
+  and an anchor to `#` inside a sentence is worse than none. It looks identical:
+  the stacked list gives its links no underline and only a teal hover.
+- **No carousel.** Legacy puts a Swiper in the hero when a course has more than
+  one visual. Not one of the 32 does — 181 visuals, never a second on the same
+  course — so a library and a set of controls would be maintained for a case
+  that does not occur.
+- **The Kundenmeinungen column** renders only when `reviews` is filled, which is
+  never, pending the decision above.
+
+### The Tailwind line-height trap, twice in one page
+
+`resources/css/README.md` warns that redefining `--text-lg` leaves Tailwind's
+`--text-lg--line-height` in place. Both bites here were invisible until measured:
+
+- The collapsible sets its own size (`%content-list-collapsible` is
+  `sm:fs-16x md:fs-18x`, 18px inside a 24px page) and **`text-xl` brought a 1.4
+  line height with it**, which the body's inherited 1.3 cannot override because
+  it lands on the element itself. Facts came out 54px taller than production.
+- The event row's small print is `.text-xsmall` — a size and nothing else, so it
+  inherits the row's 1.5/1.4. Giving it `text-lg` brought 1.556 instead and grew
+  the row from 118px to 119.
+
+**`leading-[inherit]` is not the way out.** It inherits the parent's line height
+as the *used* value, 25.2px, which on 16px text is taller again than the 1.4 it
+came from — 25.88px, and the row still measured 119. The numbers have to be
+written down.
+
+One more of the same family, without Tailwind's help: a `<div>` per event day
+rounds each day's 2 × 25.2px up on its own and made a two-day row a pixel taller.
+Legacy puts all the days in one block separated by `<br>`, and that is why.
 
 ## Measure the page, do not read the stylesheet
 
