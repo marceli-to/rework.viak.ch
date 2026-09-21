@@ -275,14 +275,39 @@ it('combines the attributes rather than replacing one with another', function ()
 		->toContain('software='.$this->rhino->uuid.'&amp;category='.$this->threeD->uuid);
 });
 
-it('marks the active category in the markup and in the binding', function () {
+/**
+ * **Bold and black, not bold and grey.** `.filter__item.is-active` does say
+ * `color: $color-tertiary`, but it sets it on the item while the `a` and the
+ * `select` inside both carry their own colour from the global form rule — so
+ * the grey lands nowhere and the live page shows black.
+ */
+it('marks the active category bold and black, in the markup and in the binding', function () {
 	$html = $this->get("/de/kurse?category={$this->threeD->uuid}")->getContent();
 
 	expect($html)
-		->toContain('class="block w-full text-lg leading-[1.3] hover:text-teal font-bold text-gray-400"')
-		->toContain("{ 'font-bold text-gray-400': selected.category === '{$this->threeD->uuid}' }")
-		// A select marks itself.
-		->toContain('<option value="'.$this->rhino->uuid.'"');
+		->toContain('class="block w-full text-lg leading-[1.3] hover:text-teal font-bold"')
+		->toContain("{ 'font-bold': selected.category === '{$this->threeD->uuid}' }")
+		->not->toContain('text-gray-400"');
+});
+
+/** `.filter__item.is-active select` — a chosen value goes bold the same way. */
+it('marks a chosen select bold, and leaves the untouched ones regular', function () {
+	$html = $this->get("/de/kurse?level={$this->beginner->uuid}")->getContent();
+
+	$classOf = function (string $html, string $name) {
+		preg_match('#<select[^>]*name="'.$name.'"[\s\S]*?class="([^"]*)"#', $html, $matched);
+
+		return $matched[1] ?? 'not found';
+	};
+
+	expect($classOf($html, 'level'))->toContain('font-bold')
+		->and($classOf($html, 'tag'))->not->toContain('font-bold')
+		->and($html)->toContain(":class=\"{ 'font-bold': selected.level }\"");
+});
+
+/** Legacy kills the focus ring on every form control (`outline: none !important`). */
+it('takes the focus ring off the selects', function () {
+	expect($this->get('/de/kurse')->getContent())->toContain('text-black outline-hidden');
 });
 
 it('preselects the option the query string names', function () {

@@ -90,12 +90,18 @@
 			{{-- The categories, as links. --}}
 			@foreach ($options['category'] as $uuid => $label)
 				<li class="flex min-h-40 items-center border-b border-gray-400">
+					{{-- **Bold and black**, not bold and grey. `.filter__item.is-active`
+					     does say `color: $color-tertiary`, but it sets it on the
+					     item and the `a` inside carries its own colour — so the
+					     grey never lands anywhere and the live page shows black.
+					     Reading the rule instead of the page is the trap this
+					     chunk opens with ([[09-public-site]]). --}}
 					<a href="{{ $urlFor(['category' => $uuid === $selected['category'] ? null : $uuid]) }}"
 						@click.prevent="toggle('category', @js($uuid))"
-						:class="{ 'font-bold text-gray-400': selected.category === @js($uuid) }"
+						:class="{ 'font-bold': selected.category === @js($uuid) }"
 						@class([
 							'block w-full text-lg leading-[1.3] hover:text-teal',
-							'font-bold text-gray-400' => $uuid === $selected['category'],
+							'font-bold' => $uuid === $selected['category'],
 						])>
 						{{ $label }}
 					</a>
@@ -111,10 +117,20 @@
 					     while a category row is 40 including it. That 1px per row
 					     is legacy's, and it is what the live page measures. --}}
 					<div class="relative flex min-h-40 w-full items-center py-8 {{ $chevron }}">
+						{{-- A chosen value goes bold, the same way an active category
+						     does — `.filter__item.is-active select` — and stays black,
+						     because the select carries its own colour. `outline-hidden`
+						     is legacy's `outline: none !important` on every form
+						     control; it keeps the outline in forced-colors mode, which
+						     is the one place it still has a job. --}}
 						<select
 							name="{{ $attribute }}"
 							aria-label="{{ $placeholder }}"
-							class="block w-full cursor-pointer appearance-none bg-transparent pr-16 text-lg leading-[1.3] text-black"
+							@class([
+								'block w-full cursor-pointer appearance-none bg-transparent pr-16 text-lg leading-[1.3] text-black outline-hidden',
+								'font-bold' => $selected[$attribute] !== null,
+							])
+							:class="{ 'font-bold': selected.{{ $attribute }} }"
 							x-model="selected.{{ $attribute }}"
 							@change="sync()"
 						>

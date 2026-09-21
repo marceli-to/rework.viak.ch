@@ -158,6 +158,31 @@ calls `getResults()`. Ours says `Anzeigen (32)` from the start. Legacy's own
 template asks for the count; its zero is an artefact of the two rendering paths
 this rebuild collapsed into one. Worth a word if it should read bare instead.
 
+### The active filter is black, and the stylesheet says grey — 2026-09-21
+
+`.filter__item.is-active { color: $color-tertiary; font-bold }` reads as *bold
+and grey*, and that is how it was ported. The live page shows **bold and black**,
+because the rule sets the colour on the *item* while the `a` and the `select`
+inside both carry their own from `form/_global.scss`:
+
+```scss
+input, textarea, select, button {
+  color: $color-primary;        // black, and it wins
+  @include font-bold();
+  outline: none !important;     // no focus ring anywhere
+}
+```
+
+The grey therefore lands on nothing — the link fills the item. The same global
+rule is where the selects' missing focus ring comes from, and why a *chosen*
+select goes bold while an untouched one stays regular
+(`.filter h2, a, select` sets `font-regular` back).
+
+**This is the opening rule of this chunk, failing in the other direction.**
+*Measure the page, do not read the stylesheet* was written about placement; it
+applies just as well to a colour that is declared and then never reaches
+anything.
+
 ### The trap worth the most: Tailwind pairs a line-height with every size
 
 `resources/css/README.md` says the type scale deliberately carries no line
