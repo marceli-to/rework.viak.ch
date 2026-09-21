@@ -106,19 +106,25 @@
      `layout/_base.scss`.
 
      The gutter is **16px on phones and 32px from 700px up**, then a centred
-     1100px column. Legacy says the same thing as a max-width of
-     `calc(100% - 16px)` *plus* 8px of padding, which nets to the same inset by a
-     longer route. An earlier pass collapsed it to a single 16px gutter and lost
-     the tablet step.
+     1100px column — and legacy splits each one **half into a max-width and half
+     into padding**: `calc(100% - 16px)` with 8px of padding, then
+     `calc(100% - 32px)` with 16.
+
+     That split looked like a longer route to the same inset, and an earlier
+     pass wrote it as a full-width body with the whole gutter as padding. It
+     is not the same. The body is painted, so where its **box** ends is
+     visible: legacy's stops 8px short of the window and lets `is-auth` teal
+     through on both sides, while a `w-full` body covered them. Only the phone
+     and tablet steps were wrong — `max-w-[1100px]` was already doing this at
+     desktop, which is why the gutters showed there and nowhere else.
 
      At desktop the body is 1100 **including** its padding, so the content
      measures 1068.
 
-     **`bg-white` is load-bearing.** Legacy paints the body white
-     (`layout/_base.scss:26`) and that is what keeps the teal of an `auth` page
-     in the gutters rather than behind the column — a transparent body would
-     let `is-auth` through the whole page. --}}
-<body class="mx-auto min-h-screen w-full bg-white px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:px-32 sm:text-xl lg:max-w-[1100px] lg:px-16 lg:text-3xl">
+     **`bg-white` is load-bearing** for the same reason. Legacy paints the body
+     white (`layout/_base.scss:26`); a transparent one would let `is-auth`
+     through the whole page rather than only past the column's edges. --}}
+<body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1100px] lg:text-3xl">
 	{{-- Legacy keeps these apart — `seo_title` and `page_title` are two
 	     sections — and the course page is where they differ: the tab says the
 	     course, the phone's header row says **Kurse**. Everywhere else they are

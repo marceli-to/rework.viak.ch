@@ -139,11 +139,35 @@ it('hyphenates long words in a card heading', function () {
  * The gutter steps: 16px on phones, 32px from 700px, then a centred 1100px
  * column whose 1068px of content sits inside its own padding.
  */
+/**
+ * The gutter is 16px on a phone and 32px from `sm`, and legacy splits each one
+ * **half into the body's max-width and half into its padding**
+ * (`components/_blocks.scss`, `%inner-block`).
+ *
+ * This asserted the padding alone and passed against a full-width body, which
+ * is what it was — and that was invisible until the body got a background: the
+ * teal of an `auth` page showed either side of the column at desktop, where
+ * `max-w-[1100px]` was doing the same job, and nowhere else.
+ */
 it('steps the container gutter the way the design does', function () {
 	$this->get('/de')
-		->assertSee('px-16', false)
-		->assertSee('sm:px-32', false)
+		->assertSee('max-w-[calc(100%-16px)]', false)
+		->assertSee('px-8', false)
+		->assertSee('sm:max-w-[calc(100%-32px)]', false)
+		->assertSee('sm:px-16', false)
 		->assertSee('lg:max-w-[1100px]', false);
+});
+
+/**
+ * The body's own box, not its padding: the white column has to stop short of
+ * the window so the teal behind it shows, which is the whole of `is-auth` on a
+ * phone.
+ */
+it('leaves the body narrower than the window so an auth page shows its teal', function () {
+	$this->get('/login')
+		->assertOk()
+		->assertSee('class="overflow-y-scroll bg-teal"', false)
+		->assertDontSee('<body class="mx-auto min-h-screen w-full bg-white', false);
 });
 
 /**
