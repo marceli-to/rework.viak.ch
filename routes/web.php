@@ -81,3 +81,14 @@ Route::get('/dokumente/{document}', [DocumentController::class, 'show'])
 Route::view('/dashboard/{any?}', 'components.layout.app')
 	->where('any', '.*')
 	->name('dashboard');
+
+/*
+ * Legacy's own redirect, kept ([[08-accounts]]).
+ *
+ * `routes/web.php:164` on the live site sends `/register` — the URL
+ * `Auth::routes()` would have claimed — to the prefixed form at
+ * `/de/registration`, which is the one that is linked and indexed. Fortify now
+ * serves the form there directly (`config/fortify.php`, `paths`), so this only
+ * has to catch the unprefixed one.
+ */
+Route::redirect('/register', '/de/registration', 301);

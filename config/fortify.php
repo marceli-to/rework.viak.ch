@@ -121,6 +121,35 @@ return [
     */
 
     /*
+     * **Legacy's URLs, not Fortify's defaults** ([[09-public-site]]).
+     *
+     * The rework keeps the indexed shape of every public URL, and these are
+     * public: the live site registers at `/de/registration` and resets at
+     * `/password/reset`, both of which Fortify would otherwise serve at names
+     * of its own. `RoutePath::for()` exists for exactly this.
+     *
+     * `/login`, `/logout` and `/email/verify` need no entry — Fortify's
+     * defaults and legacy's `Auth::routes()` already agree.
+     *
+     * The two POSTs are separate paths because legacy's are: a reset link is
+     * requested at `/password/email` and consumed at `/password/reset`, which
+     * is how one URL can be a GET form and a POST target without colliding.
+     */
+    'paths' => [
+        'register' => '/de/registration',
+
+        // Nested, not `'password.request' => …`: `RoutePath::for()` reads these
+        // with `config()`, so a dotted key is a path through the array rather
+        // than a key containing a dot.
+        'password' => [
+            'request' => '/password/reset',
+            'reset' => '/password/reset/{token}',
+            'email' => '/password/email',
+            'update' => '/password/reset',
+        ],
+    ],
+
+    /*
      * Only `login`, because only `login` is a feature here. A name left in this
      * list with no `RateLimiter::for()` behind it throws the moment a route
      * uses it — the two below were for features this app turns off.

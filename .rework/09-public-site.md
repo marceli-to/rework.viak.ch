@@ -246,6 +246,39 @@ Four pieces came out of it that the checkout needs next:
 And `lang/de/` — legacy's `auth`, `passwords` and `validation` carried across,
 because without them a failed login reads **`auth.failed`**.
 
+### The URLs are legacy's, and the `guest` middleware is not
+
+Two things found by opening the pages rather than the tests.
+
+**A signed-in visitor to `/login` landed in the admin dashboard.** The `guest`
+middleware does *not* read `config('fortify.home')` — it calls
+`RedirectIfAuthenticated::defaultRedirectUri()`, which hunts for **a route named
+`dashboard`**. This app has one, the SPA shell, so every already-signed-in
+student who opened a login or registration page was bounced into
+`/dashboard/termine`. `App\Support\Home` now answers it by role, and the same
+answer backs `LoginResponse` and `RegisterResponse` — both through
+`intended()`, which is what will carry a guest back to the checkout step that
+bounced them.
+
+**The screens sit on legacy's URLs.** Fortify's defaults are its own, and three
+of them are wrong here:
+
+| | live site | Fortify's default |
+|---|---|---|
+| Register | `/de/registration` | `/register` |
+| Forgot password | `/password/reset` | `/forgot-password` |
+| Reset link | `/password/reset/{token}` | `/reset-password/{token}` |
+| Request a link (POST) | `/password/email` | `/forgot-password` |
+
+`config/fortify.php`'s `paths` moves them, `RoutePath::for()` being there for
+exactly this. `/login`, `/logout` and `/email/verify` needed no entry — Fortify
+and legacy's `Auth::routes()` already agree. `/register` keeps legacy's own 301
+to the prefixed form.
+
+**The keys nest.** `RoutePath::for()` reads them with `config()`, so
+`'password.request' => …` is a path through the array and not a key with a dot
+in it — written flat, it silently does nothing.
+
 ### Three things measured rather than assumed
 
 - **An input's line height is `normal`; a select's is 1.3.** Legacy's normalize

@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Actions\Accounts\RegisterUser;
+use App\Http\Responses\LoginResponse;
+use App\Http\Responses\RegisterResponse;
+use App\Support\Home;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Laravel\Fortify\Fortify;
 
 /**
@@ -33,6 +39,17 @@ class FortifyServiceProvider extends ServiceProvider
 		Fortify::registerView(fn () => view('site.auth.register'));
 
 		Fortify::createUsersUsing(RegisterUser::class);
+
+		$this->app->singleton(LoginResponseContract::class, LoginResponse::class);
+		$this->app->singleton(RegisterResponseContract::class, RegisterResponse::class);
+
+		/*
+		 * **The `guest` middleware ignores `fortify.home`.** It looks for a route
+		 * named `dashboard`, and this app has one — the SPA shell — so an
+		 * already-signed-in student who opened `/login` was redirected into the
+		 * admin dashboard. [[Home]] decides it by role instead.
+		 */
+		RedirectIfAuthenticated::redirectUsing(fn (Request $request) => Home::for($request->user()));
 
 		/*
 		 * Legacy has no rate limiting on login at all. Fortify's default is five

@@ -48,9 +48,22 @@ function registration(array $overrides = []): array
 	];
 }
 
-it('renders every screen Fortify routes to', function (string $url) {
+/**
+ * **At legacy's URLs, not Fortify's.** The live site registers at
+ * `/de/registration` and resets at `/password/reset`; Fortify would serve both
+ * somewhere else, and `config/fortify.php`'s `paths` moves them.
+ */
+it('renders every screen at the URL the live site uses', function (string $url) {
 	$this->get($url)->assertOk();
-})->with(['/login', '/register', '/forgot-password']);
+})->with(['/login', '/de/registration', '/password/reset']);
+
+it('keeps legacy’s redirect from the unprefixed register URL', function () {
+	$this->get('/register')->assertRedirect('/de/registration');
+});
+
+it('does not answer on Fortify’s own paths, which the live site never had', function (string $url) {
+	$this->get($url)->assertNotFound();
+})->with(['/forgot-password', '/reset-password/some-token']);
 
 it('signs an existing student in and sends them home', function () {
 	$user = User::factory()->create(['email' => 'kundin@example.test', 'password' => Hash::make('the-right-password')]);
@@ -76,7 +89,7 @@ it('refuses a wrong password in German, without saying which half was wrong', fu
 });
 
 it('registers a student with every field legacy asks for', function () {
-	$this->post('/register', registration())->assertRedirect('/de');
+	$this->post('/de/registration', registration())->assertRedirect('/de');
 
 	$user = User::firstWhere('email', 'ada@example.test');
 
@@ -97,24 +110,24 @@ it('registers a student with every field legacy asks for', function () {
  * leaving `email_verified_at` null and enforcing nothing.
  */
 it('leaves a new account unverified', function () {
-	$this->post('/register', registration());
+	$this->post('/de/registration', registration());
 
 	expect(User::firstWhere('email', 'ada@example.test')->email_verified_at)->toBeNull();
 });
 
 it('will not take a mistyped email confirmation', function () {
-	$this->from('/register')
-		->post('/register', registration(['email_confirmation' => 'adaa@example.test']))
+	$this->from('/de/registration')
+		->post('/de/registration', registration(['email_confirmation' => 'adaa@example.test']))
 		->assertSessionHasErrors('email');
 
 	expect(User::where('email', 'ada@example.test')->exists())->toBeFalse();
 });
 
 it('requires the terms and at least one operating system', function () {
-	$this->from('/register')->post('/register', registration(['accept_tos' => null]))
+	$this->from('/de/registration')->post('/de/registration', registration(['accept_tos' => null]))
 		->assertSessionHasErrors('accept_tos');
 
-	$this->from('/register')->post('/register', registration(['operating_systems' => []]))
+	$this->from('/de/registration')->post('/de/registration', registration(['operating_systems' => []]))
 		->assertSessionHasErrors('operating_systems');
 
 	expect(User::where('email', 'ada@example.test')->exists())->toBeFalse();
@@ -152,9 +165,56 @@ it('keeps two-factor and passkeys off, as the live site has neither', function (
 });
 
 it('drops a role_user row exactly once per registration', function () {
-	$this->post('/register', registration());
+	$this->post('/de/registration', registration());
 
 	$user = User::firstWhere('email', 'ada@example.test');
 
 	expect(DB::table('role_user')->where('user_id', $user->id)->count())->toBe(1);
+});
+
+/**
+ * **The `guest` middleware ignores `fortify.home`.** It hunts for a route named
+ * `dashboard` (`RedirectIfAuthenticated::defaultRedirectUri()`) and this app has
+ * one — the SPA shell — so a signed-in student who opened `/login` was thrown
+ * into the admin dashboard, which then landed on `/dashboard/termine`.
+ */
+it('sends a signed-in student away from the login page to the public site', function () {
+    $student = User::factory()->create();
+    DB::table('role_user')->insert(['user_id' => $student->id, 'role' => Role::Student->value]);
+
+    $this->actingAs($student)->get('/login')->assertRedirect('/de');
+    $this->actingAs($student)->get('/de/registration')->assertRedirect('/de');
+});
+
+it('sends signed-in staff to the dashboard instead', function () {
+    $admin = User::factory()->create();
+    DB::table('role_user')->insert(['user_id' => $admin->id, 'role' => Role::Admin->value]);
+
+    $this->actingAs($admin)->get('/login')->assertRedirect('/dashboard');
+});
+
+it('lands a student on the public site after logging in, and staff on the dashboard', function () {
+    $student = User::factory()->create(['password' => Hash::make('pw-for-the-student')]);
+    DB::table('role_user')->insert(['user_id' => $student->id, 'role' => Role::Student->value]);
+
+    $this->post('/login', ['email' => $student->email, 'password' => 'pw-for-the-student'])
+        ->assertRedirect('/de');
+
+    auth()->logout();
+
+    $admin = User::factory()->create(['password' => Hash::make('pw-for-the-admin')]);
+    DB::table('role_user')->insert(['user_id' => $admin->id, 'role' => Role::Admin->value]);
+
+    $this->post('/login', ['email' => $admin->email, 'password' => 'pw-for-the-admin'])
+        ->assertRedirect('/dashboard');
+});
+
+/** What carries a guest back to the checkout step that bounced them. */
+it('returns to the page that asked for the login', function () {
+    $student = User::factory()->create(['password' => Hash::make('pw-for-the-student')]);
+    DB::table('role_user')->insert(['user_id' => $student->id, 'role' => Role::Student->value]);
+
+    $this->withSession(['url.intended' => '/de/checkout/basket'])
+        ->post('/login', ['email' => $student->email, 'password' => 'pw-for-the-student'])
+        ->assertRedirect('/de/checkout/basket');
 });
