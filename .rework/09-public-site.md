@@ -125,6 +125,39 @@ Two more the screenshots settled, neither of them asked about:
   `Anzeigen <span>` is two flex items and the whitespace between them collapses.
   Label and count have to be one text node.
 
+### Three more from the same comparison — 2026-09-21
+
+**The filter has one control, not two.** `.icon-filter` is a single **22×22**
+button at `position: fixed; top: 26px; right: 16px; z-index: 101`, and
+`shared/components/ui/icons/Filter.vue` swaps its path on an `active` prop — the
+funnel when the panel is shut, the cross when it is open. At the top of the page
+it lands beside the page title, which is what made an earlier pass read it as
+part of the header: it put a trigger in a header slot and gave the panel a
+second, `large` (31×30) cross of its own. That second cross sat **in the flow**,
+so it also pushed `Filter` from legacy's 88px down to about 118.
+
+Three consequences of getting it right, none of them cosmetic:
+
+- `site-header__title` holds the `h1` and nothing else — no slot, no
+  `justify-between`. `layout/_header.scss:34` is the whole rule.
+- The trigger is `fixed`, so it stays put while the list scrolls. The header
+  version scrolled away.
+- The panel no longer needs a window event to be opened: the control is inside
+  `courseFilter`'s own scope and sets `open` directly.
+
+**The menu footer has no padding of its own.** `.site-menu__footer` is
+`display: flex; justify-content: space-between; height: 64px` and nothing more.
+The 8px on the left is each icon's own `mx-2x`; the 12px on the right is the
+cross's `mr-3x`. Padding the footer `px-8` instead put the cross **20px** from
+the panel edge where legacy has **12**.
+
+**One difference left deliberately.** Legacy's `Anzeigen` shows no count on a
+fresh load — `courses` is empty until something is filtered, because the
+unfiltered list renders through the island's `<slot />` and only a filter click
+calls `getResults()`. Ours says `Anzeigen (32)` from the start. Legacy's own
+template asks for the count; its zero is an artefact of the two rendering paths
+this rebuild collapsed into one. Worth a word if it should read bare instead.
+
 ### The trap worth the most: Tailwind pairs a line-height with every size
 
 `resources/css/README.md` says the type scale deliberately carries no line

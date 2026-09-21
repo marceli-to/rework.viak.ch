@@ -35,12 +35,14 @@
 			</a>
 
 			{{-- Mobile: on an inner page the title takes the logo's place, exactly
-			     as `site-header__title` does. A page can put a control beside it —
-			     the course list puts its filter trigger there. --}}
+			     as `site-header__title` does — which holds the `h1` and **nothing
+			     else**. An earlier pass gave it a slot so the course list could
+			     put its filter trigger beside the title; legacy's trigger is
+			     `position: fixed` and merely overlays that spot, so it belongs to
+			     the filter rather than to the header ([[09-public-site]]). --}}
 			@if (! $isHome && $heading)
-				<div class="flex min-h-48 w-full items-end justify-between border-b border-black pb-12 sm:hidden">
+				<div class="flex min-h-48 w-full items-end border-b border-black pb-12 sm:hidden">
 					<h1 class="text-3xl leading-none">{{ $heading }}</h1>
-					{{ $slot }}
 				</div>
 			@endif
 		</div>
@@ -128,8 +130,11 @@
 			</ul>
 		</div>
 
-		<footer class="flex h-64 items-center justify-between bg-white px-8">
-			<div class="flex items-center gap-16">
+		{{-- `.site-menu__footer` has **no padding of its own**. The 8px on the
+		     left is each icon's `mx-2x`, and the right is the cross's `mr-3x` —
+		     12px, not 20. Padding the footer instead pushed the cross 8px in. --}}
+		<footer class="flex h-64 items-center justify-between bg-white">
+			<div class="ml-8 flex items-center gap-16">
 				<a href="mailto:hallo@visualisierungs-akademie.ch" title="Kontakt"><x-icon.mail /></a>
 				<a href="https://www.instagram.com/viak.ch/" target="_blank" rel="noopener" title="Instagram"><x-icon.instagram /></a>
 				<a href="https://www.facebook.com/ViAkSchweiz" target="_blank" rel="noopener" title="Facebook"><x-icon.facebook /></a>

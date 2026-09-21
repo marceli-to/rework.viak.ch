@@ -47,6 +47,27 @@
 	the six of them submit the surrounding form instead — that is what the
 	`sr-only` button is for, and with Alpine running nothing ever submits it.
 --}}
+{{--
+	`.icon-filter` — **one control, not two.** Legacy renders a single fixed
+	22×22 button that draws the funnel when the panel is closed and the cross
+	when it is open (`shared/components/ui/icons/Filter.vue`, which swaps its
+	path on an `active` prop). `position: fixed; top: 26px; right: 16px` over
+	`z-index: 101` puts it above the panel and, at the top of the page, exactly
+	beside the page title — which is why an earlier pass mistook it for part of
+	the header and gave the panel a second, larger cross of its own. That one sat
+	*in the flow*, so it also pushed `Filter` 30px below legacy's 88.
+--}}
+<button
+	type="button"
+	class="fixed top-26 right-16 z-[101] block h-22 w-22 sm:hidden"
+	@click="open = ! open"
+	:aria-expanded="open"
+	aria-label="Filter"
+>
+	<span :class="{ hidden: open }"><x-icon.filter /></span>
+	<span class="hidden" :class="{ hidden: ! open }"><x-icon.cross /></span>
+</button>
+
 {{-- The breakpoint is CSS, not JavaScript: `max-sm:hidden` when closed, nothing
      when open, and from `sm` the panel is a static column regardless. Binding
      `x-show` to a media query instead would not survive a resize, and would hide
@@ -55,12 +76,6 @@
 	:class="open ? '' : 'max-sm:hidden'"
 	class="fixed inset-0 z-[100] h-full w-full overflow-y-auto bg-white px-16 pt-88 pb-48 sm:static sm:z-auto sm:block sm:h-auto sm:overflow-visible sm:p-0"
 >
-	<div class="flex justify-end sm:hidden">
-		<button type="button" @click="close()" aria-label="Filter schliessen">
-			<x-icon.cross size="large" />
-		</button>
-	</div>
-
 	{{-- `leading-[1.3]` is the body line-height legacy inherits here. Without
 	     it Tailwind's own `text-lg` pairing (1.556) applies and every row below
 	     sits 4px low — see `resources/css/README.md`. --}}

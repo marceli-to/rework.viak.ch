@@ -1,13 +1,4 @@
 <x-layout.site title="Kurse">
-	{{-- The filter trigger sits beside the page title on a phone, as it does on
-	     the live site. It lives outside the filter's own Alpine scope, so it
-	     asks for the panel through an event rather than reaching into it. --}}
-	<x-slot:actions>
-		<button type="button" x-data @click="$dispatch('open-filter')" class="sm:hidden" aria-label="Filter anzeigen">
-			<x-icon.filter />
-		</button>
-	</x-slot:actions>
-
 	@php
 		$facets = $filter->facets();
 		$matching = $filter->matching();
@@ -35,10 +26,12 @@
 		`courseFilter` holds one value per attribute, seeded from what the server
 		filtered by so the two agree on the first paint.
 	--}}
+	{{-- The trigger lives inside this scope now — it is the filter's own control
+	     (`components/site/course-filter.blade.php`), so it sets `open` directly
+	     rather than asking for it through a window event. --}}
 	<div
 		class="grid grid-cols-12 gap-16 lg:gap-40"
 		x-data="courseFilter({{ json_encode($filter->seed()) }})"
-		@open-filter.window="open = true"
 	>
 		<div class="col-span-12 sm:col-span-8">
 			{{-- Covers both an empty catalogue and a filter that matches

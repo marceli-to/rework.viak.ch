@@ -108,7 +108,7 @@
      At desktop the body is 1100 **including** its padding, so the content
      measures 1068. --}}
 <body class="mx-auto min-h-screen w-full px-16 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:px-32 sm:text-xl lg:max-w-[1100px] lg:px-16 lg:text-3xl">
-	<x-site.header :heading="$title">{{ $actions ?? '' }}</x-site.header>
+	<x-site.header :heading="$title" />
 
 	{{-- `layout/_main.scss` --}}
 	<main role="main" class="pb-24 sm:pb-32">

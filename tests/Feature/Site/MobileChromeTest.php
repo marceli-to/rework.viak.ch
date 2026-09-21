@@ -38,12 +38,46 @@ it('adds Profil to the mobile menu', function () {
 		->toContain('facebook.com/ViAkSchweiz');
 });
 
-it('shows a filter trigger beside the page title on a phone', function () {
+/**
+ * `.icon-filter` — **one** control, fixed at 26/16 over z-index 101, drawing the
+ * funnel when the panel is shut and the cross when it is open. It only *looks*
+ * like part of the title row, which is how an earlier pass came to put a trigger
+ * in the header and a second, larger cross inside the panel.
+ */
+it('gives the filter a single fixed control that swaps funnel for cross', function () {
 	Course::factory()->create(['slug' => ['de' => 'x'], 'publish' => true]);
 
-	$this->get('/de/kurse')
-		->assertSee('aria-label="Filter anzeigen"', false)
-		->assertSee("\$dispatch('open-filter')", false);
+	$html = $this->get('/de/kurse')->getContent();
+
+	preg_match('#<button[^>]*aria-label="Filter"[^>]*>[\s\S]*?</button>#', $html, $control);
+
+	expect($html)->toContain('class="fixed top-26 right-16 z-[101] block h-22 w-22 sm:hidden"');
+
+	expect($control[0] ?? 'no control')
+		->toContain('<span :class="{ hidden: open }">')
+		->toContain('<span class="hidden" :class="{ hidden: ! open }">')
+		// Both glyphs are the 22×22 pair. The 31×30 `large` cross belongs to the
+		// menu (`.icon-menu__cross`), and the panel no longer has one of its own.
+		->toContain('viewBox="0 0 22 22"')
+		->not->toContain('viewBox="0 0 31 30"');
+
+	expect(substr_count($control[0] ?? '', 'viewBox="0 0 22 22"'))->toBe(2)
+		->and($html)->not->toContain('aria-label="Filter schliessen"');
+
+	// And the header title row is back to holding only its heading.
+	expect($html)
+		->toContain('flex min-h-48 w-full items-end border-b border-black pb-12 sm:hidden')
+		->not->toContain("\$dispatch('open-filter')");
+});
+
+/** `.site-menu__footer` has no padding: 8px left is the icons' own, 12px right is the cross's. */
+it('sets the menu footer offsets from the icons rather than from the footer', function () {
+	$html = $this->get('/de')->getContent();
+
+	expect($html)
+		->toContain('<footer class="flex h-64 items-center justify-between bg-white">')
+		->toContain('<div class="ml-8 flex items-center gap-16">')
+		->toContain('aria-label="Menü schliessen" class="mr-12"');
 });
 
 /**
