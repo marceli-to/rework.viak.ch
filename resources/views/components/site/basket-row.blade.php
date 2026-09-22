@@ -61,11 +61,30 @@
 			<div x-show="experts(item.event)" x-text="`mit ${experts(item.event)}`"></div>
 		</div>
 
-		{{-- What it costs, and the way out. --}}
+		{{--
+			What it costs, and the way out.
+
+			**Every amount is `CHF n.nn` and right-aligned** (Marcel,
+			2026-09-22). Legacy writes the currency on the laptop line and not
+			on the course line directly above it, in the same column of the same
+			row — an inconsistency this doc used to carry across on parity
+			grounds and no longer does, because the two sit a line apart and
+			read as two different kinds of number.
+
+			Right-aligned for the reason money columns usually are: the decimal
+			points line up, so the eye can add them. It also puts the row fees
+			in the **same column as the totals** on step 4, where there is no
+			*Entfernen* to sit beside and the rest of the column is `text-right`
+			already.
+
+			`grow` is what makes that work — the box has to fill the column
+			before aligning inside it. The gap to the button is legacy's
+			`mr-8x`/`md:mr-12x`, so it only applies where there is a button.
+		--}}
 		<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
-			<div class="sm:mr-32 lg:mr-48">
+			<div @class(['grow sm:text-right', 'sm:mr-32 lg:mr-48' => $removable])>
 				<span x-show="item.event.free_of_charge">kostenlos</span>
-				<span x-show="! item.event.free_of_charge" x-text="item.course_fee"></span>
+				<span x-show="! item.event.free_of_charge" x-text="`CHF ${item.course_fee}`"></span>
 			</div>
 
 			@if ($removable)
@@ -83,18 +102,29 @@
 			twelve columns — which is why CHF 80.00 lines up under the course
 			fee.
 		--}}
+		{{-- 24px above it **below `sm` only**, where the twelve columns have
+		     collapsed into a stack and this heading would otherwise sit flat
+		     against the *Entfernen* of the course above it — making the button
+		     read as the laptop's. Same 24 the action itself uses.
+
+		     Legacy has no margin here, and its phone rendering of this row
+		     cannot be checked: the basket is behind a login on production. A
+		     judgement call, said out loud rather than passed off as
+		     measured. --}}
 		<template x-if="item.rental">
-			<div class="sm:col-span-4"><strong class="font-bold">Mietcomputer</strong></div>
+			<div class="mt-24 sm:col-span-4 sm:mt-0"><strong class="font-bold">Mietcomputer</strong></div>
 		</template>
+		{{-- Legacy's middle column on the laptop row is a literal `&nbsp;`,
+		     there to occupy a grid cell. **Below `sm` there is no grid**, so it
+		     renders as a blank 24px line between *Mietcomputer* and its price —
+		     measured on a 500px window, 2026-09-22. A spacer for a grid that is
+		     not there has nothing to space. --}}
 		<template x-if="item.rental">
-			<div class="sm:col-span-4">&nbsp;</div>
+			<div class="hidden sm:col-span-4 sm:block">&nbsp;</div>
 		</template>
 		<template x-if="item.rental">
 			<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
-				<div class="sm:mr-32 lg:mr-48">
-					{{-- `CHF 80.00` — legacy writes the currency here and
-					     nowhere else in this list, which is its own
-					     inconsistency and not ours. --}}
+				<div @class(['grow sm:text-right', 'sm:mr-32 lg:mr-48' => $removable])>
 					<span x-text="`CHF ${item.rental_fee}`"></span>
 				</div>
 

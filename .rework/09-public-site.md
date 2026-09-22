@@ -662,27 +662,57 @@ row on the page down. The row below it is *not* the same case:
   the only thing `PriceBasket`'s `$for` argument has ever been for — it was
   accepted and unused until now.
 
+### Every amount is `CHF n.nn`, right-aligned — Marcel, 2026-09-22
+
+Legacy writes the currency on the laptop line and **not** on the course line
+directly above it, in the same column of the same row: `499.00` then
+`CHF 80.00`. This doc carried that across on parity grounds until Marcel looked
+at it; the two sit a line apart and read as two different kinds of number, so
+both say `CHF` now.
+
+Right-aligned for the reason money columns usually are — the decimal points
+line up — and because on step 4 it puts the row fees in the **same column as
+the totals**, which were already `text-right` and had nothing to align with.
+`grow` on the amount is what makes that work: the box has to fill the column
+before aligning inside it. The 32/48px gap to *Entfernen* stays where there is
+a button, and goes where there is not.
+
+The course detail page still shows a bare `499.00`, which is what production
+shows — it is `x-site.event-card`, a different component, measured against a
+page anyone can load. Worth a decision if the two reading differently bothers
+anyone.
+
+### The phone layout, seen at last — 2026-09-22
+
+`resize_window` only ever shrinks a window on this machine, which is why the
+checkout was measured at desktop. It left one at 500px, and two things showed
+up in the stack that the twelve-column grid had been hiding:
+
+- **Legacy's middle column on the laptop row is a literal `&nbsp;`**, there to
+  occupy a grid cell. Below `sm` there is no grid, so it rendered as a blank
+  24px line between *Mietcomputer* and its price. Hidden below `sm`: a spacer
+  for a grid that is not there has nothing to space.
+- **The *Entfernen* of the course sat flat against the *Mietcomputer*
+  heading**, 0px between them, so the button read as the laptop's. 24px above
+  the heading below `sm` — the same 24 the action itself uses.
+
+The second is a judgement call rather than a measurement: legacy has no margin
+there, and its phone rendering of this row **cannot be checked**, because the
+basket is behind a login on production. Said out loud rather than passed off as
+measured.
+
 ### There is no total on the basket page
 
 Legacy's `Overview.vue` shows a fee per row and **no sum**; the total first
 appears on the summary step. Matched, because parity, but it is a real gap in a
 screen called a basket and it is on the list for Marcel.
 
-### Two smaller carried-over oddities
-
-- `CHF 80.00` on the laptop row and a bare `499.00` on the course row, in the
-  same list. Legacy's inconsistency, not ours.
-- `\n\n` again: legacy writes the currency in one place and not the other for
-  no reason either file gives.
-
 ### What is not verified
 
-**The phone layout has not been seen.** `resize_window` reports success and
-leaves `innerWidth` unchanged on this machine, so the page has only been
-measured at desktop. Below `sm` the row stacks and the button takes its 24px
-top margin, which is the same arrangement the course page's row was measured
-with — but it has not been looked at, and that is a debt rather than an
-assumption.
+~~**The phone layout has not been seen.**~~ **Seen 2026-09-22**, at 500px, and
+it found two things — see *The phone layout, seen at last*, below.
+`resize_window` on this machine only ever shrinks a window, never widens one,
+so getting back to desktop needs a human at the keyboard.
 
 ## The address step — 2026-09-22
 
@@ -1058,6 +1088,10 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
+- **The course page still shows a bare `499.00`** where the basket now says
+  `CHF 499.00`. The course page is 1:1 with production and anyone can load it;
+  the basket is not and nobody outside a login can. Say if you want them to
+  match and I will change the course card too.
 - **The summary shows a VAT row that legacy does not** — only when a laptop is
   rented, because courses are exempt and legacy hard-zeroed the rest. The
   alternative was quoting a total the customer is not charged. Worth a nod, not
