@@ -77,8 +77,11 @@
 				@endif
 			</div>
 
+			{{-- `hero` is the teal block's own link treatment — a heavier
+			     underline from `sm`. Everything below this article gets the
+			     flat one ([[RichText]]). --}}
 			@if ($html = $course->getTranslation('short_description', $locale, false))
-				<x-site.rich-text :html="$html" class="sm:col-span-8" />
+				<x-site.rich-text :html="$html" hero class="sm:col-span-8" />
 			@else
 				<div class="sm:col-span-8"></div>
 			@endif

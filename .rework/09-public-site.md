@@ -1032,6 +1032,69 @@ against the order rather than twice against the lines — which is the CHF 80 bu
 chunk 06 was built to fix — the rental frozen at 80.00, and the basket empty
 afterwards. The test purchase was then removed from the local database.
 
+## Legacy styles editor links twice, and we ported the wrong one — 2026-09-22
+
+Every link inside *Detailbeschrieb* and *Weitere Informationen* came out **teal
+with a heavy underline** where production has plain black. Marcel spotted it;
+the cause is that legacy has two rules and the comment in `x-site.rich-text`
+named only one of them.
+
+| rule | where it applies | link |
+|---|---|---|
+| `article.content-text-media .text-media__body > div a` | the course page's **teal hero** | teal, 3px/1px → **5px/2px from `bp-sm`** |
+| `.container-course .text-item a` | the **collapsibles** below it | `%link-underline`: 3px offset, 1px thick, **no step**, no colour |
+
+The hero's treatment had been applied to both. Measured on the live page:
+`rgb(0, 0, 0)`, `1px`, `3px` in the collapsibles — and that is **60 links across
+two fields** (`information_booking` 38, `information_content` 22) against the
+hero's four in `short_description`. The heavier one was the rarer one.
+
+**The colour is now not set at all, in either mode.** It does not need to be:
+the hero article is `text-teal` and the collapsibles are black, so a link that
+says nothing inherits the right answer in both places. Legacy states
+`color: $color-secondary` on the hero rule and arrives at the same result the
+long way round. The `hero` prop carries the one thing inheritance cannot — the
+heavier underline.
+
+Verified after, on the two pages that have each kind: `rgb(0,0,0)` 1px/3px in
+the collapsibles, `rgb(70,186,186)` 2px/5px in the hero.
+
+**The lesson is the comment, not the CSS.** The old one said "links teal and
+underlined … from `layout/_article.scss`", which was true of the selector
+somebody read and false of the component it was written on. A source reference
+has to name the *selector*, not the file.
+
+## The checkbox sat high, and `items-start` is why — 2026-09-22
+
+Legacy's checkbox is an inline input with `vertical-align: middle`, so the box
+rides the middle of the line it is on and the 2px of label padding below
+`bp-md` is a nudge on top of that. Ours is a flex row with `items-start`, which
+pins the box to the top of a line box taller than itself.
+
+So the offset is stated now — half the difference between the line and the box
+at each step:
+
+| | line | box | offset |
+|---|---|---|---|
+| base | 14px × 1.3 = 18.2 | 12 | 3 |
+| `sm` | 16px × 1.3 = 20.8 | 14 | 3 |
+| `lg` | 18px × 1.3 = 23.4 | 14 | 5 |
+
+Measured at `lg` after: the box's centre and the label's first-line centre are
+**0.3px apart**.
+
+`items-center` would have been shorter and wrong — it centres against the
+*whole* label, so the registration form's two-line consent would drag the box
+to the middle of both.
+
+### And the RAV passage gets the tablet's size on a phone
+
+`.text-xsmall` is 12/14/16; the phone step is now 14. It is the longest passage
+in the checkout and the only one a customer has to *act* on — it tells a RAV
+client whose address to enter — and a phone is where it is hardest to read.
+24px between it and the checkbox below `sm`, where it sits directly overhead
+rather than in the column beside it.
+
 ## The modal is 600px wide and the stylesheet says 480 — 2026-09-22
 
 `.notification.is-modal` is the dialog legacy asks its questions in, and it is

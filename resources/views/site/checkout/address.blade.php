@@ -77,8 +77,14 @@
 					{{-- `.text-xsmall` is 12/14/16 and sets a size and nothing
 					     else, so it inherits the row's line height — which is
 					     why no `leading-*` belongs here even though the sizes
-					     bring Tailwind's own with them. `mt-4x`. --}}
-					<p class="mt-16 text-xs leading-[inherit] sm:text-md lg:text-lg">
+					     bring Tailwind's own with them. `mt-4x`.
+
+					     **The phone gets the tablet's 14px** rather than 12
+					     (Marcel, 2026-09-22). This is the longest passage on the
+					     checkout and the only one a customer has to act on — it
+					     tells a RAV client whose address to put in — and a
+					     phone is where it is hardest to read. --}}
+					<p class="mt-16 text-md leading-[inherit] lg:text-lg">
 						Sollte Ihre Kursteilnahme vom RAV bezahlt werden, so geben Sie bitte die
 						Adresse des RAVs ein, welche Sie gemeinsam mit dem Entscheid erhalten
 						haben. Sie brauchen die Rechnung weder zu bezahlen noch ans RAV
@@ -95,7 +101,11 @@
 						and most customers never touch it — 126 of 710 bookings
 						use a separate address.
 					--}}
-					<div class="mb-12 flex items-center">
+					{{-- 24px above it on a phone, where the RAV passage is
+					     directly overhead rather than in the column beside it
+					     (Marcel, 2026-09-22). At `sm` the two are in different
+					     columns and there is nothing to be spaced from. --}}
+					<div class="mb-12 max-sm:mt-24">
 						<x-site.checkbox id="same_address" name="same_address"
 							x-bind:checked="! separate"
 							@change="separate = ! separate">
