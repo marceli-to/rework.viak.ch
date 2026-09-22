@@ -50,7 +50,11 @@ class PriceBasket
 	public function execute(array $selections, ?string $code = null, ?User $for = null): Basket
 	{
 		$items = array_map(
-			fn (array $selection) => $this->item($selection['event'], (bool) ($selection['rental'] ?? false)),
+			fn (array $selection) => $this->item(
+				$selection['event'],
+				(bool) ($selection['rental'] ?? false),
+				$for,
+			),
 			array_values($selections),
 		);
 
@@ -64,7 +68,7 @@ class PriceBasket
 		return Basket::of($items, $discountCode, $this->discountFor($discountCode, $basket->courseNet()));
 	}
 
-	private function item(Event $event, bool $rental): BasketItem
+	private function item(Event $event, bool $rental, ?User $for): BasketItem
 	{
 		// Both prices are read now and frozen onto the booking. `rentals_available`
 		// is the event's own switch: a course in a room without machines cannot
@@ -77,7 +81,26 @@ class PriceBasket
 			rental: $wantsRental,
 			courseFee: $event->fee(),
 			rentalFee: $wantsRental ? number_format((float) config('invoice.rental_fee'), 2, '.', '') : '0.00',
+			booked: $this->alreadyBooked($event, $for),
 		);
+	}
+
+	/**
+	 * The one thing `$for` is for.
+	 *
+	 * It changes no price — a duplicate costs exactly what a first booking
+	 * costs — so it does not belong in the sums. It is here because
+	 * [[CompleteCheckout]] refuses the line on exactly this condition, with
+	 * exactly this query, and a customer should meet that at the basket rather
+	 * than at the last step ([[09-public-site]]).
+	 */
+	private function alreadyBooked(Event $event, ?User $for): bool
+	{
+		if ($for === null) {
+			return false;
+		}
+
+		return $event->bookings()->active()->where('user_id', $for->id)->exists();
 	}
 
 	/**

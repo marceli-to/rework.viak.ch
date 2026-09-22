@@ -131,11 +131,21 @@ export default {
 		return this.items.length ? this.price() : this.clearPricing();
 	},
 
+	/**
+	 * The laptop on its own, which the basket page drops without dropping the
+	 * course — legacy's `removeRentalFromBasket`, and it says so too.
+	 */
 	setRental(uuid, rental) {
 		const item = this.items.find((i) => i.event === uuid);
-		if (!item) return;
+		if (!item || item.rental === rental) return;
+
 		item.rental = rental;
 		this.persist();
+
+		if (!rental) {
+			Alpine.store('toast').show('Der Mietcomputer wurde aus dem Warenkorb gelöscht.');
+		}
+
 		return this.price();
 	},
 

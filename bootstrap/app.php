@@ -3,6 +3,7 @@
 use App\Exceptions\BasketPriceChanged;
 use App\Exceptions\DiscountCodeNotRedeemable;
 use App\Exceptions\SeatNotAvailable;
+use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,7 +17,27 @@ return Application::configure(basePath: dirname(__DIR__))
 		health: '/up',
 	)
 	->withMiddleware(function (Middleware $middleware): void {
-		//
+		/*
+		 * **`auth:sanctum` cannot see a session without this.** Found from a
+		 * browser on 2026-09-22, not from the tests ([[09-public-site]]).
+		 *
+		 * Laravel's slim skeleton does not register
+		 * `EnsureFrontendRequestsAreStateful`, so the `api` group never ran it
+		 * and `auth:sanctum` fell through to the **token** guard — which finds
+		 * no bearer token on a browser request and answers 401. Every endpoint
+		 * behind that guard was unreachable from a signed-in page: the basket,
+		 * the bookings, the profile, the whole Vue dashboard.
+		 *
+		 * The tests could not catch it. `actingAs()` sets the guard directly
+		 * and never goes near the middleware, so 251 passing booking tests said
+		 * nothing about whether a browser could reach any of them. The first
+		 * screen to make a real request was the basket.
+		 */
+		$middleware->statefulApi();
+
+		// Legacy's `role:student`, which the whole checkout sits behind
+		// ([[EnsureUserHasRole]]).
+		$middleware->alias(['role' => EnsureUserHasRole::class]);
 	})
 	->withExceptions(function (Exceptions $exceptions): void {
 		$exceptions->shouldRenderJsonWhen(

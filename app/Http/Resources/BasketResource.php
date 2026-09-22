@@ -33,6 +33,10 @@ class BasketResource extends JsonResource
 				'rental' => $item->rental,
 				'course_fee' => $item->courseFee,
 				'rental_fee' => $item->rentalFee,
+
+				// Not a price. The basket page paints the row red on it,
+				// because [[CompleteCheckout]] will refuse the line.
+				'booked' => $item->booked,
 			])->all(),
 
 			'discount_code' => $this->basket->discountCode?->code,

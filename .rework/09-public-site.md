@@ -7,9 +7,10 @@ its reasoning are in `00-foundation.md` under *Parity means the current design*.
 
 Started 2026-09-18. The shell, the course list with its full filter, the auth
 screens and the **course detail page** are built and match production. `Buchen`
-now asks about the laptop and confirms the add, both through the modal the rest
-of the checkout needs; **the basket page is next**, and everything else is
-listed under *What is left*.
+asks about the laptop and confirms the add, and the **basket page** is built and
+measured — step 1 of 4, and the first screen on this site to make a real API
+call from a real session, which is how it found that `auth:sanctum` could not
+see one. **The address step is next**; everything else is under *What is left*.
 
 | | |
 |---|---|
@@ -44,6 +45,10 @@ listed under *What is left*.
   the confirmation that follows an add. `x-site.toast` gained a live mode so a
   removal can say so. See *The modal is 600px wide and the stylesheet says 480*,
   below.
+- **The basket**, at `/de/checkout/basket` — the stacked list with its header,
+  the laptop as its own row, the red already-booked warning, the empty state
+  and *Weiter*. Behind `auth`, `verified` and `role:student`, as legacy's whole
+  checkout is. See *The basket page*, below.
 - **Course detail page.** The teal hero, the five collapsibles, the event row
   with its bookmark and its `Buchen`, and the prev/next pair — every block to
   the pixel. See *The course detail page*, below, for the three data findings
@@ -68,11 +73,12 @@ Roughly in the order that unblocks the most.
       **confirmation** follows it, and a removal raises a toast. The modal they
       all needed is `x-site.modal`; see *The modal is 600px wide and the
       stylesheet says 480*, below.
-   2. **The basket page** at `/de/checkout/basket` — the first time `PriceBasket`
-      runs in a browser. It takes `<x-layout.site auth>`, and so does every page
-      after it: legacy paints the whole purchase flow teal, not just the login
-      (see *The teal background*, below).
-   3. **The three remaining steps**, then the confirmation.
+   2. ~~**The basket page** at `/de/checkout/basket`.~~ **Built 2026-09-22** —
+      the first time `PriceBasket` ran in a browser, and it did not, until
+      `statefulApi()` was registered. See *The basket page*, below.
+   3. **The three remaining steps**, then the confirmation. Address is next.
+      Unlike the basket it has server state to keep, so it is the first one
+      that actually POSTs.
 
    ~~**One bug to fix first, now confirmed firing.**~~ **Fixed 2026-09-22 — and
    the fix was the other way round.** `POST /api/basket/price` is behind
@@ -549,6 +555,122 @@ One more of the same family, without Tailwind's help: a `<div>` per event day
 rounds each day's 2 × 25.2px up on its own and made a two-day row a pixel taller.
 Legacy puts all the days in one block separated by `<br>`, and that is why.
 
+## `auth:sanctum` could not see a session at all — 2026-09-22
+
+The largest thing this chunk has found, and the basket page found it in its
+first second: a signed-in customer opened `/de/checkout/basket` and the page
+said **Unauthenticated.** in red.
+
+Laravel's slim skeleton does not register
+`EnsureFrontendRequestsAreStateful`, and `bootstrap/app.php` never added it. So
+the `api` group never ran it, `auth:sanctum` fell through to the **token**
+guard, found no bearer token on a browser request, and answered 401 —
+**every endpoint behind that guard, for every signed-in page**. The basket, the
+bookings, the bookmarks, the profile, the addresses, the whole Vue dashboard.
+One line fixes it:
+
+```php
+$middleware->statefulApi();
+```
+
+### Why 251 passing tests said nothing
+
+`actingAs()` sets the guard directly. It never goes near the middleware stack,
+so a test can authenticate and reach an endpoint that no browser on earth
+could. Chunk 06 was green and unreachable at the same time, and the doc's own
+note — *"chunk 06 has 251 tests and has never run in a browser"* — turns out to
+have been more literal than it read.
+
+The regression is pinned by asserting the middleware is **on the `api` group**
+rather than by making a request, because a request test would authenticate the
+way the others do and pass either way. Checked by removing the line and
+watching it fail.
+
+**This is the argument for the whole track.** The reason to build the public
+site before anything else was that the money flow had never been seen. Two
+screens in, it has paid for itself twice: this, and the guest pricing error.
+
+## The basket page — 2026-09-22
+
+`/de/checkout/basket`, step 1 of 4, from `frontend/checkout/views/Overview.vue`
+and `shared/components/ui/layout/StackedList*.vue`.
+
+### It is the one screen here rendered in the browser
+
+Everything else on this site is server-rendered Blade. The basket cannot be:
+the selection lives in `localStorage` and the server does not know it until a
+later step posts it. So the page renders a shell, asks `/api/basket/price` —
+the endpoint `00-foundation.md` kept for exactly this — and `<template x-for>`
+draws the rows. The markup stays in the template; only the data is fetched.
+
+**Nothing on the page computes a price.** Every figure is `course_fee`,
+`rental_fee` or `total` as the server returned it.
+
+### Measured against production's own classes
+
+The page is behind a login, so it was measured the same way the modal was: by
+rendering legacy's `.stacked-list-*` markup into a live page and reading
+`getComputedStyle`. Ours against production, at desktop:
+
+| | production | rebuilt |
+|---|---|---|
+| container top margin | 64px | 64px |
+| header | 1068×31, 18px, gap 40 | 1068×31 |
+| header cell | 329×23, 8px below | 329×23 |
+| row | mt 32, pt 16, 1px rule | same |
+| row type | 18px at line height 25.2 | same |
+| row grid gap | 40px | same |
+| *Entfernen* | 140×28 on `#969696` | same |
+| footer | mt 48, 2px `#969696` | same |
+| *Weiter* | 1068×56, 24px, lh 24 | same |
+
+One value was wrong before it was measured: the header came out **25.2px line
+height against production's 23.4**, because `.stacked-list-header` sets a size
+and no line height — so production inherits the body's 1.3 — while saying
+`lg:text-xl` brings Tailwind's own 1.4 along. Two pixels, and they push every
+row on the page down. The row below it is *not* the same case:
+`.stacked-list` states 1.4 itself.
+
+### Four things the page does that the course page's row does not
+
+- **The course title leads the row**, as an `h2` link to the course, above the
+  dates. The course page's own row has no need of it.
+- **No state line.** `is_basket` is the one thing the basket takes *away* —
+  *Kurs offen, wird bestätigt* does not appear here.
+- **The laptop is its own row in the same grid**, not a line inside the
+  course's. Legacy appends three more `.stacked-list__col` divs after the first
+  three, so they wrap onto a second row of the same twelve columns — which is
+  why CHF 80.00 lines up under the course fee. Its *Entfernen* drops the rental
+  and keeps the course.
+- **Red when the course is already booked.** `has-booking` recolours the rule
+  and every text in the row through `*:not([class*=btn-])`, so the buttons keep
+  their grey. [[CompleteCheckout]] refuses that line outright; meeting the
+  refusal at the basket rather than at the last step is the point. This is also
+  the only thing `PriceBasket`'s `$for` argument has ever been for — it was
+  accepted and unused until now.
+
+### There is no total on the basket page
+
+Legacy's `Overview.vue` shows a fee per row and **no sum**; the total first
+appears on the summary step. Matched, because parity, but it is a real gap in a
+screen called a basket and it is on the list for Marcel.
+
+### Two smaller carried-over oddities
+
+- `CHF 80.00` on the laptop row and a bare `499.00` on the course row, in the
+  same list. Legacy's inconsistency, not ours.
+- `\n\n` again: legacy writes the currency in one place and not the other for
+  no reason either file gives.
+
+### What is not verified
+
+**The phone layout has not been seen.** `resize_window` reports success and
+leaves `innerWidth` unchanged on this machine, so the page has only been
+measured at desktop. Below `sm` the row stacks and the button takes its 24px
+top margin, which is the same arrangement the course page's row was measured
+with — but it has not been looked at, and that is a debt rather than an
+assumption.
+
 ## The modal is 600px wide and the stylesheet says 480 — 2026-09-22
 
 `.notification.is-modal` is the dialog legacy asks its questions in, and it is
@@ -693,6 +815,10 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
+- **The basket shows no total.** Legacy's step 1 prints a fee per row and no
+  sum — the total first appears on the summary. Ported as found, but a basket
+  that will not tell you what it costs is a real gap, and the server already
+  computes the number.
 - **The modal's dead hover.** `.btn-primary` and `.btn-secondary` inside a
   notification have no hover on production, because the rule that recoloured
   them outranks their own `:hover`. Ported as found. Giving them the black

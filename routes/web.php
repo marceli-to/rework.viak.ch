@@ -66,6 +66,27 @@ Route::prefix('{locale}')
 			Route::get($segments['course'].'/{slug}/{uuid}', [CourseController::class, 'redirectLegacy'])
 				->whereUuid('uuid')
 				->name("{$locale}.courses.legacy");
+
+			/*
+			 * The checkout, a student's ([[09-public-site]]).
+			 *
+			 * **Legacy's own URLs**, English step names inside a German path —
+			 * `/de/checkout/basket`, not `/de/warenkorb`. `config/site.php`
+			 * carries a `basket` segment nothing has ever used; adopting it
+			 * would be a decision rather than a port, and it waits for one.
+			 *
+			 * The guards are legacy's too: its whole checkout group is
+			 * `auth:sanctum, verified` plus `role:student`. Nothing here is a
+			 * `Route::view` for long — the remaining steps POST — but the
+			 * basket itself needs no server state, because the selection is in
+			 * the browser and the price comes from `/api/basket/price`.
+			 */
+			Route::middleware(['auth', 'verified', 'role:student'])
+				->prefix($segments['checkout'])
+				->group(function () use ($locale): void {
+					Route::view('basket', 'site.checkout.basket')
+						->name("{$locale}.checkout.basket");
+				});
 		}
 	});
 

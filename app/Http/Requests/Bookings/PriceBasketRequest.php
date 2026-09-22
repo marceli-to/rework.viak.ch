@@ -35,13 +35,19 @@ class PriceBasketRequest extends FormRequest
 	/**
 	 * The selections, with each event resolved.
 	 *
+	 * `location` and `experts` join `course` and `dates` because the **basket
+	 * page** draws a full row per item — where it is and with whom — and the
+	 * page has nothing else to ask ([[09-public-site]]). `EventResource` guards
+	 * both with `whenLoaded`, so an endpoint that does not load them still does
+	 * not serialise them.
+	 *
 	 * @return array<int, array{event: Event, rental: bool}>
 	 */
 	public function selections(): array
 	{
 		$events = Event::query()
 			->whereIn('uuid', collect($this->input('items'))->pluck('event'))
-			->with(['course', 'dates'])
+			->with(['course', 'dates', 'location', 'experts'])
 			->get()
 			->keyBy('uuid');
 
