@@ -59,7 +59,20 @@
 				</header>
 			@endif
 
-			{{ $slot }}
+			{{--
+				**24px between the header and the body**, which legacy carries
+				on a wrapper of its own: `<div class="mt-6x lg:mt-12x">` around
+				the whole form. Missing here until Marcel put the two dialogs
+				side by side (2026-09-22).
+
+				The `lg:mt-12x` is dead, and so is every other `lg:` spacing
+				class in that codebase — `helpers/_spaces.scss` generates the
+				unprefixed classes and `%sm\:` / `%md\:` *placeholders*, and
+				nothing ever emits an `lg:` one. Measured on production at
+				1717px: 24px, not 48. Reading the markup would have given the
+				wrong number; the class is there and does nothing.
+			--}}
+			<div @class(['mt-24' => $title])>{{ $slot }}</div>
 		</div>
 	</div>
 </div>

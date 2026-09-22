@@ -1064,6 +1064,42 @@ underlined … from `layout/_article.scss`", which was true of the selector
 somebody read and false of the component it was written on. A source reference
 has to name the *selector*, not the file.
 
+## The *Adresse erfassen* dialog, measured properly — 2026-09-22
+
+Built from the SCSS and only checked for its box dimensions; Marcel put it
+beside production's and three things came apart. Legacy's own markup rendered
+into a live page at 1717px gives the numbers:
+
+| | production | was |
+|---|---|---|
+| header → form | **24px** | 0 |
+| *Speichern* | **566×28**, full width | shrink-wrapped to its label |
+| *Abbrechen* above | **16px** | 24 at `lg` |
+
+**Every `lg:` spacing class in legacy is dead.** `helpers/_spaces.scss`
+generates the unprefixed classes and `%sm\:` / `%md\:` *placeholders* — nothing
+ever emits an `lg:` one. So `class="mt-6x lg:mt-12x"` is 24px flat, not 48, and
+`mt-4x lg:mt-6x` is 16 flat, not 24. Both were ported as the markup reads,
+which is the wrong number twice. Reading the markup is not reading the
+stylesheet, and neither is measuring.
+
+**And `align-items: center` does not stop a `width: 100%` child filling its
+box.** `.btn-primary` extends `%btn-full-width`, so *Speichern* is full width
+inside a centred flex column — it is centred and 100% at the same time, which
+looks like a contradiction and is not. Ours shrink-wrapped because
+`x-site.button` is full width only below `sm`, so the call site passes `w-full`
+the way the auth screens do.
+
+After: widget 626 / pad 24 / border 2px, overflow 0 4px and 90vh, h1 24px on
+31.2 with 12 below, body 24 down, label 18, *Speichern* 566×28, *Abbrechen* 16
+above at 16px — **every value production's.**
+
+### The `.text-xsmall` controls take the tablet's size on a phone
+
+*Adresse erfassen* and *Adressen verwalten* now read 14px rather than 12, the
+same call as the RAV passage above them (Marcel, 2026-09-22): they are the only
+two controls in that block and one of them opens a form.
+
 ## The checkbox sat high, and `items-start` is why — 2026-09-22
 
 Legacy's checkbox is an inline input with `vertical-align: middle`, so the box

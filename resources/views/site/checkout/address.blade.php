@@ -134,15 +134,21 @@
 							{{-- `mt-1x sm:mt-3x`, and `.link-underline` is a
 							     1px underline 3px down that goes away on
 							     hover. --}}
+							{{-- `.text-xsmall` again, and the phone again gets the
+							     tablet's 14px rather than 12 (Marcel,
+							     2026-09-22) — the same call as the RAV passage
+							     above, and for the same reason: these two are
+							     the only controls in the block and one of them
+							     opens a form. --}}
 							<div class="mt-4 flex justify-between sm:mt-12">
 								<button type="button" @click="dialog = true"
-									class="flex items-center text-xs underline decoration-1 underline-offset-[3px] hover:no-underline sm:text-md lg:text-lg">
+									class="flex items-center text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
 									<x-icon.plus size="tiny" class="mt-4 mr-8" />
 									Adresse erfassen
 								</button>
 
 								<a href="{{ route('dashboard') }}"
-									class="text-xs underline decoration-1 underline-offset-[3px] hover:no-underline sm:text-md lg:text-lg">
+									class="text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
 									Adressen verwalten
 								</a>
 							</div>
@@ -217,13 +223,25 @@
 					:options="$countries->mapWithKeys(fn ($country) => [$country->code => $country->name])->all()"
 				/>
 
-				{{-- `form-group` with `flex direction-column items-center`: the
-				     button, then *Abbrechen* 16px under it, 24 from `lg`. --}}
+				{{--
+					`form-group` with `flex direction-column items-center`.
+
+					**Speichern is full width**, measured 566px in a 570px box on
+					production — `.btn-primary` extends `%btn-full-width`, and
+					`align-items: center` does not stop a `width: 100%` child
+					filling its container. Ours shrink-wrapped to its label at
+					desktop, because `x-site.button` is only full width below
+					`sm` (Marcel, 2026-09-22).
+
+					*Abbrechen* sits **16px** under it at every width. The markup
+					says `mt-4x lg:mt-6x`, but no `lg:` spacing class is ever
+					generated in that codebase — measured 16px at 1717px.
+				--}}
 				<div class="mb-16 flex flex-col items-center lg:mb-32">
-					<x-site.button type="submit">Speichern</x-site.button>
+					<x-site.button type="submit" class="w-full">Speichern</x-site.button>
 
 					<button type="button" @click="dialog = false"
-						class="mt-16 text-xs underline decoration-1 underline-offset-[3px] hover:no-underline sm:text-md lg:mt-24 lg:text-lg">
+						class="mt-16 text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
 						Abbrechen
 					</button>
 				</div>
