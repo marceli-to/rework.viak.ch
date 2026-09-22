@@ -23,6 +23,7 @@ cancellation dialog opened with the penalty in it. 378 tests green, Pint clean.
 | Stack | Blade + Alpine + Tailwind, no Vue on these pages |
 | Reference | the live site **plus** `../viak.ch/resources/sass/` |
 | Conventions | `resources/css/README.md` — read before writing a class |
+| Signing in | `Test-Users.md` — one account per role, from `DevUsersSeeder` |
 
 ### Built
 
