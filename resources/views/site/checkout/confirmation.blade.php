@@ -9,7 +9,7 @@
 	--}}
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Buchung abgeschlossen</h1>
+			<h1 class="hidden font-bold text-teal sm:block">Buchung abgeschlossen</h1>
 
 			{{-- `sm:mt-5x md:mt-10x` — 20px, then 40 from `lg`. The label sits
 			     above the arrow, which is legacy's `icon-arrow-right:below`. --}}

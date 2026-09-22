@@ -85,8 +85,14 @@ Tailwind means by them:
 This is the one that bites quietly — `text-sm` compiles either way and is 13px
 here, 14px everywhere else.
 
-**No line heights are attached.** Legacy sets them per component (1.2 on a card
-heading, 1.3 on body, 1.44 on a lead), so set `leading-*` where you need it.
+**No line heights are attached, and since 2026-09-22 that is actually true.** A
+`text-*` class sets a font size and nothing else. Legacy sets line heights per
+component (1.2 on a card heading, 1.3 on body, 1.44 on a lead), so the body's
+`leading-[1.3]` carries down and you say `leading-*` only where a component
+genuinely differs.
+
+`--text-*: initial` in `partials/type.css` is what makes that so — see *The
+scale said no line heights*, below, for why declaring the sizes was not enough.
 
 ## 3. Colour: the palette, and only the palette
 
@@ -143,18 +149,40 @@ because legacy does (`form/_select.scss:18`).
 
 ---
 
-### The scale says no line heights. Tailwind adds them anyway — found 2026-09-21
+### The scale said no line heights. Tailwind added them anyway — fixed 2026-09-22
 
-Redefining `--text-lg` in `@theme` leaves Tailwind's own
-`--text-lg--line-height` in place, so **`text-lg` emits `line-height: 1.556`**
-where legacy inherits the body's `1.3`. The same goes for every other size.
+Declaring `--text-lg` in `@theme` does **not** displace Tailwind's own
+`--text-lg--line-height`, so `text-lg` kept emitting `line-height: 1.556` where
+legacy inherits the body's 1.3 — and the same for every other stock-named size.
 
-It hides wherever a box has a `min-height`, and shows the moment one does not —
-it cost the course filter a pixel per select row and put the whole list 4px low
-under its heading ([[09-public-site]]).
+It hid wherever a box had a `min-height` and showed the moment one did not: a
+pixel per select row on the course filter, the whole list 4px low under its
+heading, and **the header nav two pixels out at every width, on every page**
+([[09-public-site]]).
 
-**Until the pairings are nulled, say the line height you mean.** `leading-[1.3]`
-is the body value; a card heading is `1.2` and a lead paragraph `1.44`.
+The workaround was to restate the line height beside every size, which reached
+**42 places** before somebody asked why. The fix is one line at the top of the
+`@theme`:
+
+```css
+--text-*: initial;   /* then declare the nine */
+```
+
+Wiping the namespace drops the default sizes **and their paired line heights**,
+so the scale now means what this file always claimed. It also retires
+`text-base`, which the table above says does not exist and which was compiling
+anyway.
+
+**Say `leading-*` only where the design differs from the body**, and say why.
+39 of the 42 came out; the two that stayed are both real:
+
+| where | why |
+|---|---|
+| `<body>` | it *is* the 1.3 everything inherits |
+| the checkbox label | sits in a `.stacked-list` row at 1.5 / 1.4 and has to reset |
+
+Verified by diffing every element's computed size and line height across nine
+pages at three widths — 6,825 elements, **zero** unintended changes.
 
 ---
 

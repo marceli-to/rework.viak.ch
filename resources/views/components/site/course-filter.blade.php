@@ -70,10 +70,10 @@
 	:class="open ? '' : 'max-sm:hidden'"
 	class="fixed inset-0 z-[100] h-full w-full overflow-y-auto bg-white px-16 pt-88 pb-48 sm:static sm:z-auto sm:block sm:h-auto sm:overflow-visible sm:p-0"
 >
-	{{-- `leading-[1.3]` is the body line-height legacy inherits here. Without
-	     it Tailwind's own `text-lg` pairing (1.556) applies and every row below
-	     sits 4px low — see `resources/css/README.md`. --}}
-	<h2 class="mb-32 text-lg leading-[1.3] font-bold">Filter</h2>
+	{{-- This carried a `leading-[1.3]` until the type scale stopped pairing a
+	     line height with every size (2026-09-22). It inherits the body's 1.3
+	     now, which is what legacy does — see `resources/css/README.md`. --}}
+	<h2 class="mb-32 text-lg font-bold">Filter</h2>
 
 	<form method="get" action="{{ request()->url() }}" @submit.prevent="apply()">
 		{{-- Category is chosen by link rather than by control, so a submit without
@@ -94,7 +94,7 @@
 						@click.prevent="toggle('category', @js($uuid))"
 						:class="{ 'font-bold': selected.category === @js($uuid) }"
 						@class([
-							'block w-full text-lg leading-[1.3] hover:text-teal',
+							'block w-full text-lg hover:text-teal',
 							'font-bold' => $uuid === $selected['category'],
 						])>
 						{{ $label }}
@@ -121,7 +121,7 @@
 							name="{{ $attribute }}"
 							aria-label="{{ $placeholder }}"
 							@class([
-								'block w-full cursor-pointer appearance-none bg-transparent pr-16 text-lg leading-[1.3] text-black outline-hidden',
+								'block w-full cursor-pointer appearance-none bg-transparent pr-16 text-lg text-black outline-hidden',
 								'font-bold' => $selected[$attribute] !== null,
 							])
 							:class="{ 'font-bold': selected.{{ $attribute }} }"

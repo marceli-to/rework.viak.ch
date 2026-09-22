@@ -28,7 +28,7 @@
 --}}
 <div class="relative mb-16 lg:mb-32">
 	@if ($label)
-		<label for="{{ $name }}" class="mb-4 block text-md leading-[1.3] sm:text-lg lg:text-xl">
+		<label for="{{ $name }}" class="mb-4 block text-md sm:text-lg lg:text-xl">
 			{{ $label }}@if ($required) *@endif
 		</label>
 	@endif
@@ -47,10 +47,10 @@
 	>
 
 	@if ($hint)
-		<p class="pt-8 text-md leading-[1.3] lg:text-lg">{{ $hint }}</p>
+		<p class="pt-8 text-md lg:text-lg">{{ $hint }}</p>
 	@endif
 
 	@error($name)
-		<div id="{{ $name }}-error" class="pt-8 text-md leading-[1.3] text-danger lg:text-lg">{{ $message }}</div>
+		<div id="{{ $name }}-error" class="pt-8 text-md text-danger lg:text-lg">{{ $message }}</div>
 	@enderror
 </div>

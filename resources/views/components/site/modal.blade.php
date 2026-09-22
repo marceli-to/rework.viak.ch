@@ -58,7 +58,7 @@
      appears — silently, because nothing errors. --}}
 <div x-data x-cloak x-show="{{ $show }}"
 	@class([
-		'fixed inset-0 z-[1001] flex cursor-pointer items-center justify-center overflow-y-auto bg-white/90 text-lg leading-[1.3] lg:text-2xl',
+		'fixed inset-0 z-[1001] flex cursor-pointer items-center justify-center overflow-y-auto bg-white/90 text-lg lg:text-2xl',
 		$tone['text'],
 	])
 	@if ($close)
@@ -82,7 +82,7 @@
 		{{-- 16px here whatever the box is doing — `.notification-text` sets its
 		     own size, so the `lg:text-2xl` above stops at the message. --}}
 		@isset($text)
-			<div class="mt-16 text-center text-lg leading-[1.3]">{{ $text }}</div>
+			<div class="mt-16 text-center text-lg">{{ $text }}</div>
 		@endisset
 
 		{{--

@@ -15,7 +15,7 @@
 	--}}
 	<article class="relative">
 		<aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Mein Warenkorb</h1>
+			<h1 class="hidden font-bold text-teal sm:block">Mein Warenkorb</h1>
 		</aside>
 	</article>
 
@@ -42,15 +42,17 @@
 
 					16px from `sm`, 18 from `lg`; 8px under each cell.
 
-					**`leading-[1.3]` has to be said.** `.stacked-list-header`
-					sets a size and no line height, so production inherits the
-					body's 1.3 and measures 23.4px on 18px type. Saying
-					`lg:text-xl` brings Tailwind's own 1.4 with it and made the
-					header 25.2 — two pixels that push every row below it down
-					(`resources/css/README.md`). The row underneath is *not*
-					this: `.stacked-list` states 1.4 itself.
+					`.stacked-list-header` sets a size and no line height, so
+					production inherits the body's 1.3 and measures 23.4px on
+					18px type. This used to have to say so: `lg:text-xl` brought
+					Tailwind's own 1.4 with it and made the header 25.2, two
+					pixels that pushed every row below it down. Since
+					2026-09-22 a size is only a size
+					(`resources/css/README.md`). The row underneath is a
+					different case — `.stacked-list` states 1.4 itself, which is
+					why *that* one is spelled out.
 				--}}
-				<header class="leading-[1.3] sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
+				<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
 					<div class="mb-8 sm:col-span-4"><strong class="font-bold">Schritt 1/4</strong></div>
 					<div class="mb-8 sm:col-span-8"><h2 class="font-bold">Übersicht</h2></div>
 				</header>

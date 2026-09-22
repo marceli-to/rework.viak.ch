@@ -40,6 +40,11 @@
 			'mt-3 size-12 shrink-0 appearance-none border border-black bg-white outline-hidden checked:border-teal checked:bg-teal sm:mt-3 sm:size-14 lg:mt-5',
 		]) }}
 	>
+	{{-- **`leading-[1.3]` stays here**, where 38 others went. It is not
+	     restating the body: this control sits inside a `.stacked-list` row on
+	     the checkout, and that row says 1.5 / 1.4. Without the reset the label
+	     inherits the row and the offsets above — which are half the difference
+	     between a 1.3 line and the box — stop being right. --}}
 	<label for="{{ $id }}" class="ml-8 cursor-pointer text-md leading-[1.3] sm:ml-12 sm:text-lg lg:text-xl">
 		{{ $slot }}
 	</label>

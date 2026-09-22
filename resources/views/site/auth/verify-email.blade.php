@@ -1,7 +1,7 @@
 <x-layout.site title="E-Mail bestätigen" auth>
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">E-Mail bestätigen</h1>
+			<h1 class="hidden font-bold text-teal sm:block">E-Mail bestätigen</h1>
 		</x-slot:aside>
 
 		@if (session('status') === 'verification-link-sent')

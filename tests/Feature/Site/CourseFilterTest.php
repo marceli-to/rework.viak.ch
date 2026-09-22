@@ -285,7 +285,7 @@ it('marks the active category bold and black, in the markup and in the binding',
 	$html = $this->get("/de/kurse?category={$this->threeD->uuid}")->getContent();
 
 	expect($html)
-		->toContain('class="block w-full text-lg leading-[1.3] hover:text-teal font-bold"')
+		->toContain('class="block w-full text-lg hover:text-teal font-bold"')
 		->toContain("{ 'font-bold': selected.category === '{$this->threeD->uuid}' }")
 		->not->toContain('text-gray-400"');
 });
@@ -339,15 +339,41 @@ it('still leaves unpublished courses out entirely', function () {
 /**
  * Tailwind pairs a line-height with every `text-*` size, so `text-lg` was
  * setting 1.556 where legacy inherits the body's 1.3 — six select rows an
- * aggregate 6px too tall, and the whole list 4px low under the heading. The
- * type scale means to carry no line-heights at all; see `resources/css/README.md`.
+ * aggregate 6px too tall, and the whole list 4px low under the heading.
+ *
+ * **This used to pin the `leading-[1.3]` beside each size**, which guarded one
+ * page against one symptom. The pairings are gone at the source since
+ * 2026-09-22, so the invariant is now the scale itself: see the type test
+ * below. What is left here is the filter's own measurement.
  */
-it('pins the filter to legacy’s inherited line height rather than Tailwind’s pairing', function () {
+it('gives the filter’s select rows legacy’s inherited height', function () {
 	$html = $this->get('/de/kurse')->getContent();
 
-	expect($html)
-		->toContain('<h2 class="mb-32 text-lg leading-[1.3] font-bold">Filter</h2>')
-		->toContain('text-lg leading-[1.3] text-black')
-		// `min-height: inherit` on legacy's select wrapper.
-		->toContain('relative flex min-h-40 w-full items-center py-8');
+	// `min-height: inherit` on legacy's select wrapper.
+	expect($html)->toContain('relative flex min-h-40 w-full items-center py-8');
+});
+
+/**
+ * The cause, rather than a symptom of it.
+ *
+ * Declaring `--text-lg` does not displace Tailwind's own
+ * `--text-lg--line-height`, so every stock-named size kept emitting one and 42
+ * places across the views had to restate the body's 1.3 beside it. Wiping the
+ * namespace first drops the defaults *and* their pairings — and retires
+ * `text-base`, which the conventions have always said does not exist and which
+ * was compiling anyway.
+ *
+ * Asserted on the partial rather than on a rendered page: a page proves one
+ * element, this proves the rule ([[09-public-site]]).
+ */
+it('lets a text size set a size and nothing else', function () {
+	$scale = file_get_contents(resource_path('css/partials/type.css'));
+
+	// The prose explains the trap by name, so the declarations are what is
+	// asserted — not the file.
+	$declarations = preg_replace('#/\*.*?\*/#s', '', $scale);
+
+	expect($declarations)->toContain('--text-*: initial;')
+		->and($declarations)->not->toContain('--text-base')
+		->and($declarations)->not->toContain('--line-height');
 });

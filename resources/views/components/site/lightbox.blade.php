@@ -28,7 +28,7 @@
 	`%lightbox`'s own `cursor` says it should.
 --}}
 <div x-data x-cloak x-show="{{ $show }}"
-	class="fixed inset-0 z-[200] flex cursor-pointer items-center justify-center overflow-y-auto bg-white/90 leading-[1.3]"
+	class="fixed inset-0 z-[200] flex cursor-pointer items-center justify-center overflow-y-auto bg-white/90"
 	@if ($close)
 		@click.self="{{ $close }}"
 		@keydown.escape.window="{{ $close }}"

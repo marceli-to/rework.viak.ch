@@ -15,7 +15,7 @@
 	--}}
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Login</h1>
+			<h1 class="hidden font-bold text-teal sm:block">Login</h1>
 
 			<div class="mt-20 lg:mt-40">
 				<a href="{{ route('register') }}" class="inline-flex flex-col items-start hover:text-teal">
@@ -54,7 +54,7 @@
 		     the form's, above. --}}
 		@if (Route::has('password.request'))
 			<a href="{{ route('password.request') }}"
-				class="inline-block text-md leading-[1.3] italic hover:underline hover:underline-offset-1 sm:text-lg lg:text-xl">
+				class="inline-block text-md italic hover:underline hover:underline-offset-1 sm:text-lg lg:text-xl">
 				Passwort vergessen?
 			</a>
 		@endif

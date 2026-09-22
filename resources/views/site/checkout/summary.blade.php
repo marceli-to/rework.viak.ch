@@ -16,7 +16,7 @@
 	--}}
 	<article class="relative">
 		<aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Mein Warenkorb</h1>
+			<h1 class="hidden font-bold text-teal sm:block">Mein Warenkorb</h1>
 		</aside>
 	</article>
 
@@ -29,7 +29,7 @@
 	@endif
 
 	<div class="mt-48 lg:mt-64" x-data="basketList">
-		<header class="leading-[1.3] sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
+		<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
 			<div class="mb-8 sm:col-span-4"><strong class="font-bold">Schritt 4/4</strong></div>
 			<div class="mb-8 sm:col-span-8"><h2 class="font-bold">Zusammenfassung</h2></div>
 		</header>

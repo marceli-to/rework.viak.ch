@@ -71,9 +71,9 @@
 
 		<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 			<div class="mb-12 sm:col-span-4">
-				<h1 class="leading-[1.3] font-bold">{{ $title }}</h1>
+				<h1 class="font-bold">{{ $title }}</h1>
 				@if ($subtitle)
-					<h2 class="leading-[1.3]">{{ $subtitle }}</h2>
+					<h2>{{ $subtitle }}</h2>
 				@endif
 			</div>
 
@@ -182,7 +182,7 @@
 		     and the neighbouring courses pushed to the two edges. Legacy wraps
 		     at the ends of the catalogue rather than hiding an arrow. --}}
 		@if ($browse)
-			<div class="mb-64 border-t border-gray-400 pt-8 leading-[1.3] sm:border-t-2 sm:pt-16 sm:text-lg lg:text-xl">
+			<div class="mb-64 border-t border-gray-400 pt-8 sm:border-t-2 sm:pt-16 sm:text-lg lg:text-xl">
 				<h2 class="mb-4 text-md leading-none font-bold text-gray-400 sm:text-lg lg:text-xl">Weitere Kurse</h2>
 
 				<nav class="mt-32 flex justify-between" aria-label="Weitere Kurse">

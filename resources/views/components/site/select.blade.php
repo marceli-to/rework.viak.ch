@@ -24,7 +24,7 @@
 --}}
 <div class="relative mb-16 lg:mb-32">
 	@if ($label)
-		<label for="{{ $name }}" class="mb-4 block text-md leading-[1.3] sm:text-lg lg:text-xl">
+		<label for="{{ $name }}" class="mb-4 block text-md sm:text-lg lg:text-xl">
 			{{ $label }}@if ($required) *@endif
 		</label>
 	@endif
@@ -38,7 +38,7 @@
 			id="{{ $name }}"
 			name="{{ $name }}"
 			@if ($required) required @endif
-			class="block w-full cursor-pointer appearance-none bg-transparent pr-16 text-md leading-[1.3] font-bold text-teal outline-hidden sm:text-lg lg:text-xl"
+			class="block w-full cursor-pointer appearance-none bg-transparent pr-16 text-md font-bold text-teal outline-hidden sm:text-lg lg:text-xl"
 		>
 			@if ($placeholder)
 				<option value="">{{ $placeholder }}</option>
@@ -50,6 +50,6 @@
 	</div>
 
 	@error($name)
-		<div class="pt-8 text-md leading-[1.3] text-danger lg:text-lg">{{ $message }}</div>
+		<div class="pt-8 text-md text-danger lg:text-lg">{{ $message }}</div>
 	@enderror
 </div>

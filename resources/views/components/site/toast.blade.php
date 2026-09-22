@@ -30,7 +30,7 @@
 	$fill = ['error' => 'bg-danger', 'success' => 'bg-success', 'info' => 'bg-gray-600'];
 	$edge = ['error' => 'border-danger', 'success' => 'border-success', 'info' => 'border-gray-600'];
 
-	$position = 'fixed top-16 left-16 z-[1001] w-[calc(100%-32px)] cursor-pointer text-lg leading-[1.3] text-white sm:top-16 sm:left-auto sm:w-auto sm:max-w-360 sm:right-[calc((100%-1100px)/2+16px)] lg:max-w-480 lg:text-xl';
+	$position = 'fixed top-16 left-16 z-[1001] w-[calc(100%-32px)] cursor-pointer text-lg text-white sm:top-16 sm:left-auto sm:w-auto sm:max-w-360 sm:right-[calc((100%-1100px)/2+16px)] lg:max-w-480 lg:text-xl';
 	$inner = 'flex items-center border p-8 sm:px-16';
 
 	/* The one expression both bindings key off, so the store's variant names

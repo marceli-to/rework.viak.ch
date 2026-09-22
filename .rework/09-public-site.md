@@ -1138,6 +1138,67 @@ client whose address to enter — and a phone is where it is hardest to read.
 24px between it and the checkbox below `sm`, where it sits directly overhead
 rather than in the column beside it.
 
+## A text size is only a size now — 2026-09-22
+
+`leading-[1.3]` had reached **42 places** across the views, restating a value the
+`<body>` already sets, and Marcel asked why. The answer was a workaround that had
+outlived its excuse.
+
+Declaring `--text-lg` in `@theme` does **not** displace Tailwind's own
+`--text-lg--line-height`, so every stock-named size kept emitting one — 1.556 on
+`text-lg`, 1.4 on `text-xl`, 1.2 on `text-3xl` — over a page whose body says 1.3.
+`resources/css/README.md` had said *"until the pairings are nulled, say the line
+height you mean"* since 2026-09-21. Nulling them is one line:
+
+```css
+@theme { --text-*: initial;  /* then declare the nine */ }
+```
+
+Wiping the namespace drops the default sizes **and** their paired line heights.
+It also retires `text-base`, which the conventions have always said does not
+exist and which was compiling anyway.
+
+### It was hiding a real bug
+
+Diffed against the state before, the wipe moved **370 elements** — all of them
+the header nav, which was taking Tailwind's pairing rather than the body's 1.3.
+Measured against production:
+
+| | production | before | after |
+|---|---|---|---|
+| 500px | 24px / 31.2 | 24 / 28.8 | 24 / 31.2 |
+| 800px | 16px / 20.8 | 16 / 24.9 | 16 / 20.8 |
+| 1200px | 20px / 26 | 20 / 28 | 20 / 26 |
+
+Production's nav has no line height of its own and inherits 1.3 at every width.
+Ours had been two pixels out on every page of the site, in the one element that
+appears on all of them — and nobody had noticed, because the header row has a
+`min-height` that absorbed it.
+
+### Then 39 of the 42 came out
+
+Removed wholesale and diffed again. The method: every element's computed
+`font-size` and `line-height` across **nine pages at three widths — 6,825
+elements**, rendered in same-origin iframes so the width is set rather than
+asked for. (Which is also the way round `resize_window`, see above.)
+
+Two rounds of that found the three that are real:
+
+| where | why |
+|---|---|
+| `<body>` | it **is** the 1.3 everything inherits — removing it took the whole site to 1.5 |
+| the checkbox label | sits inside a `.stacked-list` row at 1.5 / 1.4 and has to reset; the box-alignment offsets assume 1.3 |
+| — | nothing else |
+
+Final diff: **zero changes** across all 6,825.
+
+### The test now guards the cause
+
+`CourseFilterTest` had an assertion pinning `leading-[1.3]` into the filter's
+markup — one page, one symptom. It asserts the scale itself instead: that
+`partials/type.css` wipes the namespace, declares no `--text-base`, and declares
+no line height at all. A page proves one element; that proves the rule.
+
 ## The modal is 600px wide and the stylesheet says 480 — 2026-09-22
 
 `.notification.is-modal` is the dialog legacy asks its questions in, and it is

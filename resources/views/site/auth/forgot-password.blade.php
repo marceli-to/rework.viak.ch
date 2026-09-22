@@ -1,7 +1,7 @@
 <x-layout.site title="Passwort vergessen" auth>
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Passwort vergessen</h1>
+			<h1 class="hidden font-bold text-teal sm:block">Passwort vergessen</h1>
 		</x-slot:aside>
 
 		@if (session('status'))
@@ -24,7 +24,7 @@
 		</form>
 
 		<a href="{{ route('login') }}"
-			class="inline-block text-md leading-[1.3] italic hover:underline hover:underline-offset-1 sm:text-lg lg:text-xl">
+			class="inline-block text-md italic hover:underline hover:underline-offset-1 sm:text-lg lg:text-xl">
 			Zurück zum Login
 		</a>
 	</x-site.article>

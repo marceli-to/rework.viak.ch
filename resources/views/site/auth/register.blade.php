@@ -23,7 +23,7 @@
 	--}}
 	<x-site.article>
 		<x-slot:aside>
-			<h1 class="hidden leading-[1.3] font-bold text-teal sm:block">Registrieren</h1>
+			<h1 class="hidden font-bold text-teal sm:block">Registrieren</h1>
 
 			<div class="mt-20 lg:mt-40">
 				<a href="{{ route('login') }}" class="inline-flex flex-col items-start hover:text-teal">
@@ -96,7 +96,7 @@
 			{{-- Which machines the student works on. It is what decides whether a
 			     rented laptop is any use to them. --}}
 			<div class="mb-16 lg:mb-32">
-				<span class="mb-4 block text-md leading-[1.3] sm:text-lg lg:text-xl">Betriebssystem *</span>
+				<span class="mb-4 block text-md sm:text-lg lg:text-xl">Betriebssystem *</span>
 
 				<div class="flex flex-col gap-8">
 					@foreach ($operatingSystems as $value => $label)
@@ -110,7 +110,7 @@
 				</div>
 
 				@error('operating_systems')
-					<div class="pt-8 text-md leading-[1.3] text-danger lg:text-lg">{{ $message }}</div>
+					<div class="pt-8 text-md text-danger lg:text-lg">{{ $message }}</div>
 				@enderror
 			</div>
 
@@ -125,7 +125,7 @@
 			</div>
 
 			@error('accept_tos')
-				<div class="mb-16 text-md leading-[1.3] text-danger lg:text-lg">{{ $message }}</div>
+				<div class="mb-16 text-md text-danger lg:text-lg">{{ $message }}</div>
 			@enderror
 
 			<x-site.button type="submit" class="w-full">Registrieren</x-site.button>
