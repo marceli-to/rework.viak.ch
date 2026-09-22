@@ -1,7 +1,20 @@
 @php
 	$locale = app()->getLocale();
 	$editing = $address !== null;
-	$title = $editing ? 'Rechnungsadresse bearbeiten' : 'Rechnungsadresse erfassen';
+
+	/*
+	 * **Legacy's own words** — `Form.vue`'s `title()` computes *Adresse
+	 * bearbeiten* and *Adresse hinzufügen*, and this said *Rechnungsadresse
+	 * bearbeiten* / *…erfassen*, which was neither. The screen already sits
+	 * under *Rechnungsadressen* and the box at the foot of it says *Adresse
+	 * löschen*, so the longer word was saying it twice and disagreeing with the
+	 * box while it did.
+	 *
+	 * Not the same word as the checkout's *Adresse erfassen* dialog, which is
+	 * also legacy's — there it is a dialog and here it is a page, and they are
+	 * allowed to differ because production does.
+	 */
+	$title = $editing ? 'Adresse bearbeiten' : 'Adresse hinzufügen';
 
 	$countryOptions = $countries->mapWithKeys(fn ($country) => [$country->code => $country->name])->all();
 @endphp
@@ -103,10 +116,22 @@
 
 		@if ($editing)
 			{{--
-				`.form-danger-zone.is-danger`, measured on the live stylesheet on
-				2026-09-22: a 2px `#ff2800` rule **above and below**, everything
-				inside in the same red, and padding that steps 8 → 8/12/12/12 →
-				12/16/16/16. 24px above it on a phone and 48 from `sm`.
+				`.form-danger-zone.is-danger`: **a 2px `#ff2800` box** —
+				`border: 2px solid`, all four sides — with everything inside in
+				the same red and padding that steps 8 → 8/12/12/12 → 12/16/16/16.
+				24px above it on a phone and 48 from `sm`.
+
+				It was `border-y-2` until 2026-09-22, top and bottom only, which
+				is what comes of measuring `borderTopWidth` and
+				`borderBottomWidth` and calling it done. Without the sides there
+				is nothing for the padding to hold the button away from, so
+				*Löschen* read as full-bleed and the block stopped looking like a
+				box at all.
+
+				**And it sets its own type size**, 14/16/18, like every other
+				block on this site that is not the page — left to inherit it read
+				at the page's 24px, which is the same mistake *Abbrechen* made
+				two fixes ago. The heading and the paragraph take it from here.
 
 				A real form rather than legacy's dialog-then-`axios.delete`. The
 				confirmation is the browser's own submit — which is weaker than a
@@ -118,12 +143,12 @@
 				pointing at it ([[StudentAddressController::destroy]]).
 			--}}
 			<form method="POST" action="{{ route($locale.'.student.address.destroy', $address) }}"
-				class="mt-24 border-y-2 border-danger p-8 text-danger sm:mt-48 sm:p-12 sm:pt-8 lg:p-16 lg:pt-12">
+				class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
 				@csrf
 				@method('DELETE')
 
 				<h2 class="mb-8 font-bold sm:mb-16">Adresse löschen</h2>
-				<p class="mb-12 sm:mb-12 lg:mb-16">Mit dieser Aktion wird diese Adresse gelöscht.</p>
+				<p class="mb-12 lg:mb-16">Mit dieser Aktion wird diese Adresse gelöscht.</p>
 
 				<div class="mt-12 sm:mt-24">
 					<x-site.button type="submit" variant="danger" class="w-full">Löschen</x-site.button>

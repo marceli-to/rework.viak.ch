@@ -796,3 +796,68 @@ it('sizes Abbrechen below the button rather than above it', function () {
 		->toContain('inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl')
 		->toContain('<div class="mb-16 lg:mb-32">');
 });
+
+/*
+|--------------------------------------------------------------------------
+| The alert box
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * `.form-danger-zone` is `border: 2px solid` — **all four sides** — and it sets
+ * its own 14/16/18 type. This had `border-y-2` and no size, which is what comes
+ * of reading `borderTopWidth`/`borderBottomWidth` and calling it measured.
+ */
+it('draws the delete box as a box, at its own size', function () {
+	$user = portalStudent();
+	$address = $user->addresses()->create([
+		'first_name' => 'Anna', 'last_name' => 'Muster',
+		'street' => 'Bahnhofstrasse', 'zip' => '8001', 'city' => 'Zürich', 'country_code' => 'ch',
+	]);
+
+	$this->actingAs($user)
+		->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+		->assertOk()
+		->assertSee('border-2 border-danger', escape: false)
+		->assertDontSee('border-y-2', escape: false)
+		->assertSee('text-md text-danger', escape: false);
+});
+
+/** `Form.vue`'s own `title()`, which is neither *Rechnungsadresse* nor *erfassen*. */
+it('titles the address screens the way legacy does', function () {
+	$user = portalStudent();
+	$address = $user->addresses()->create([
+		'first_name' => 'Anna', 'last_name' => 'Muster',
+		'street' => 'Bahnhofstrasse', 'zip' => '8001', 'city' => 'Zürich', 'country_code' => 'ch',
+	]);
+
+	$this->actingAs($user)->get('/de/student/profil/adresse/erstellen')
+		->assertOk()
+		->assertSee('Adresse hinzufügen')
+		->assertDontSee('Rechnungsadresse hinzufügen');
+
+	$this->actingAs($user)->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+		->assertOk()
+		->assertSee('Adresse bearbeiten');
+});
+
+/**
+ * The site addresses the customer informally and **capitalises** it — 90
+ * occurrences in legacy's copy and not one lowercase. This sentence had it both
+ * ways inside itself.
+ */
+it('capitalises Dir and Deine in the verification notice', function () {
+	$user = portalStudent();
+
+	$this->actingAs($user)
+		->post('/de/student/profil/bearbeiten', [
+			'first_name' => 'Antonia',
+			'last_name' => 'Haller',
+			'email' => 'somewhere-else@example.test',
+			'current_password' => 'password',
+		])
+		->assertSessionHas('status', fn (string $status) => str_contains($status, 'Deine neue E-Mail-Adresse')
+			&& str_contains($status, 'wir Dir geschickt')
+			&& ! str_contains($status, 'deine')
+			&& ! str_contains($status, ' dir '));
+});

@@ -163,11 +163,19 @@ class StudentPortalController extends Controller
 		 * that will wonder where they went. The API answers the same fact as
 		 * `email_verification_required`.
 		 */
+		/*
+		 * **`Dir` and `Deine`, capitalised.** The site addresses the customer
+		 * informally and capitalises it throughout — 90 occurrences in legacy's
+		 * own copy and not one lowercase — so *Die Annullation wird Dir per
+		 * E-Mail bestätigt* and *Deine Merkliste ist leer*. This sentence had it
+		 * both ways inside itself, which is the kind of thing that reads as
+		 * sloppiness rather than as a style.
+		 */
 		return redirect(SiteUrl::studentPortal())->with(
 			'status',
 			$user->hasVerifiedEmail()
 				? 'Deine Angaben wurden gespeichert.'
-				: 'Deine Angaben wurden gespeichert. Bitte bestätige deine neue E-Mail-Adresse über den Link, den wir dir geschickt haben.',
+				: 'Deine Angaben wurden gespeichert. Bitte bestätige Deine neue E-Mail-Adresse über den Link, den wir Dir geschickt haben.',
 		);
 	}
 

@@ -110,7 +110,7 @@
 						{{ $address->summary() }}
 
 						<a href="{{ \App\Support\SiteUrl::studentAddressEdit($address->uuid) }}"
-							title="Rechnungsadresse bearbeiten"
+							title="Adresse bearbeiten"
 							class="absolute top-16 right-0 mt-2 block transition-colors hover:text-teal sm:top-16 sm:mt-4">
 							<x-icon.edit class="w-18" />
 						</a>
@@ -122,7 +122,7 @@
 				{{-- `.flex.justify-start.mt-6x` around a 16×16 plus. --}}
 				<div class="mt-24 flex justify-start">
 					<a href="{{ \App\Support\SiteUrl::studentAddressCreate() }}"
-						title="Rechnungsadresse erfassen"
+						title="Adresse hinzufügen"
 						class="block transition-colors hover:text-teal">
 						<x-icon.plus class="w-16" />
 					</a>

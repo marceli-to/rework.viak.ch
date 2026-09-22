@@ -26,3 +26,22 @@ Layout issues rework.viak.ch - Student Portal
    nowhere else; the row now goes with the bookmark, and both verbs raise the
    toast legacy raises. The row hides rather than being removed, so a failed
    request can put it back — legacy's cannot, having thrown the markup away.
+
+5. fix alerts (typo, border, spacing)
+   FIXED 2026-09-22, four things.
+   - Border: `.form-danger-zone` is `border: 2px solid` on **all four sides**.
+     This had `border-y-2` — what comes of reading borderTopWidth and
+     borderBottomWidth and calling it measured. Without the sides the padding
+     had nothing to hold the button away from.
+   - Size: the box sets its own 14/16/18 and was inheriting the page's 24px.
+     Same mistake `Abbrechen` made in issue 1.
+   - Typo: the site capitalises Du/Dir/Deine throughout — 90 occurrences in
+     legacy's copy, none lowercase — and the e-mail verification flash had it
+     both ways inside one sentence.
+   - Wording: `Form.vue`'s own title is *Adresse bearbeiten* / *Adresse
+     hinzufügen*. This said *Rechnungsadresse bearbeiten* / *…erfassen*, which
+     was neither, and disagreed with the *Adresse löschen* box below it.
+
+   Measured against production at all three widths; every value now matches.
+   If the typo you meant was a different one, say which — I fixed the one I
+   could find.

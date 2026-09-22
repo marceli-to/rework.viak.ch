@@ -1712,7 +1712,7 @@ the better wording.
   different screen with a different job — it exists so a customer mid-purchase
   does not lose the basket.
 
-### Four things the screenshots caught — 2026-09-22
+### Five things the screenshots caught — 2026-09-22
 
 Marcel put the rebuilt portal beside the live one and found four. Two are
 **site-wide** rather than the portal's, and both are the same mistake: a value
@@ -1809,3 +1809,50 @@ Which is also why `x-site.event-row` now merges `$attributes` onto its
 `<article>` rather than writing a bare `@class`: the Merkliste needs `x-data`
 and `x-show` on the row itself, because un-hearting has to hide the whole thing
 and the heart is three levels down in the icon slot.
+
+#### The delete box was not a box
+
+`.form-danger-zone` is `border: 2px solid` — **all four sides** — and this had
+`border-y-2`. The earlier measurement read `borderTopWidth` and
+`borderBottomWidth`, found 2px on each, and stopped; the SCSS says `border` in
+one word. Without the sides there is nothing for the 16px padding to hold
+*Löschen* away from, so the button read as full-bleed and the block stopped
+looking like a box at all.
+
+It also **sets its own type size**, 14/16/18, and was inheriting the page's 24px
+— the same mistake *Abbrechen* made above, found in the same pass and not
+generalised at the time. That is now two blocks on this screen that set a size
+legacy states and we inherited instead: worth treating as the default suspicion
+whenever a rebuilt block looks a size too big.
+
+| | production | was | now |
+|---|---|---|---|
+| border | 2px all round | top and bottom | 2px all round |
+| type | 18px / 23.4 | 24px / 31.2 | 18px / 23.4 |
+| padding | 12/16/16/16 | same | same |
+| box / button width | 699 / 663 | — | 699 / 663 |
+
+#### Du, Dir, Deine — capitalised
+
+The site addresses the customer informally and capitalises it throughout:
+**90 occurrences in legacy's copy and not one lowercase**. *Die Annullation wird
+Dir per E-Mail bestätigt*, *Deine Merkliste ist leer*, *Falls Du keinen Laptop
+hast*.
+
+The e-mail verification flash had it both ways inside a single sentence —
+*"Deine Angaben wurden gespeichert. Bitte bestätige deine neue E-Mail-Adresse
+über den Link, den wir dir geschickt haben."* Which reads as sloppiness rather
+than as a style, and is the only rendered string on the site that broke the
+rule.
+
+#### And the address screens are *Adresse*, not *Rechnungsadresse*
+
+`Form.vue`'s `title()` computes **Adresse bearbeiten** and **Adresse
+hinzufügen**. These said *Rechnungsadresse bearbeiten* and *Rechnungsadresse
+erfassen*, which is neither legacy's word nor consistent with the *Adresse
+löschen* box at the foot of the same screen. The screen is already reached from
+a block headed *Rechnungsadressen*, so the longer word was saying it twice.
+
+Not the same word as the checkout's *Adresse erfassen* dialog, which is also
+legacy's — there it is a dialog and here it is a page, and they are allowed to
+differ because production does.
