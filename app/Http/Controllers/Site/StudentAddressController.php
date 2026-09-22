@@ -38,11 +38,20 @@ class StudentAddressController extends Controller
 		]);
 	}
 
+	/**
+	 * Back **into the form**, all three of them.
+	 *
+	 * The *Rechnungsadressen* list lives inside the profile's edit screen, so
+	 * that is where somebody who just added, changed or removed an address
+	 * expects to land — on the list they changed, with the change in it. Sending
+	 * them to the read view would show them a page with no addresses on it at
+	 * all ([[SiteUrl::studentProfileEdit]]).
+	 */
 	public function store(StoreAddressRequest $request): RedirectResponse
 	{
 		$request->user()->addresses()->create($request->validated());
 
-		return redirect(SiteUrl::studentPortal())
+		return redirect(SiteUrl::studentProfileEdit())
 			->with('status', 'Die Rechnungsadresse wurde gespeichert.');
 	}
 
@@ -60,7 +69,7 @@ class StudentAddressController extends Controller
 	{
 		$address->update($request->validated());
 
-		return redirect(SiteUrl::studentPortal())
+		return redirect(SiteUrl::studentProfileEdit())
 			->with('status', 'Die Rechnungsadresse wurde gespeichert.');
 	}
 
@@ -79,7 +88,7 @@ class StudentAddressController extends Controller
 
 		$address->delete();
 
-		return redirect(SiteUrl::studentPortal())
+		return redirect(SiteUrl::studentProfileEdit())
 			->with('status', 'Die Rechnungsadresse wurde gelöscht.');
 	}
 

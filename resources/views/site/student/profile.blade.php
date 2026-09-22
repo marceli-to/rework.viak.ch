@@ -7,14 +7,6 @@
 			->all();
 
 		$countryOptions = $countries->mapWithKeys(fn ($country) => [$country->code => $country->name])->all();
-
-		/*
-		 * The form opens on load when the last POST bounced, so the errors are
-		 * on screen rather than hidden behind a closed panel — the same reason
-		 * the checkout's *Adresse erfassen* dialog reopens itself
-		 * ([[CheckoutController::storeNewAddress]]).
-		 */
-		$openForm = $errors->any();
 	@endphp
 
 	{{--
@@ -28,24 +20,34 @@
 		Four collapsibles under the profile block, in two containers — which is
 		legacy's grouping and not decoration: the three course lists belong
 		together and *Dokumente* is its own subject.
+
+		**`$editing` is a URL, not a toggle** (Marcel, 2026-09-22).
+		`/de/student/profil/bearbeiten` renders the form where the address block
+		otherwise is, and everything below it is unchanged — which is legacy's
+		page, since there the form replaces the same block. What legacy does not
+		have is a way back into it: `isEdit` is component state, and
+		*Rechnungsadressen* lives inside the form with links to screens of their
+		own, so adding an address landed you back on a shut panel with the new
+		address invisible in it ([[SiteUrl::studentProfileEdit]]).
+
+		It also leaves this screen with **no JavaScript of its own**. The pencil
+		is a link, *Abbrechen* is a link, and the browser's back button does what
+		it looks like it should.
 	--}}
-	<div x-data="{ editing: @js($openForm) }">
+	<div>
 		<x-site.article>
 			{{-- `.icon-edit` is `position: absolute; top: 0; right: 0` at 18×18,
 			     and `article.content-text` is the `position: relative` it hangs
 			     off — measured 2026-09-22. It sits outside `.text__body`, so it
 			     is over the aside rather than over the form.
 
-			     A `<button>` where legacy has an `<a href="">`: it toggles a
-			     panel, it takes focus, and `aria-expanded` means something on
-			     it. --}}
-			<button type="button"
+			     A link where legacy has an `<a href="">` that toggles: it goes
+			     to the form, and on the form it comes back. --}}
+			<a href="{{ $editing ? \App\Support\SiteUrl::studentPortal() : \App\Support\SiteUrl::studentProfileEdit() }}"
 				class="absolute top-0 right-0 block transition-colors hover:text-teal"
-				@click="editing = ! editing"
-				:aria-expanded="editing"
-				:title="editing ? 'Bearbeiten abbrechen' : 'Profil bearbeiten'">
+				title="{{ $editing ? 'Bearbeiten abbrechen' : 'Profil bearbeiten' }}">
 				<x-icon.edit class="w-18" />
-			</button>
+			</a>
 
 			<x-slot:aside>
 				{{-- Hidden below `sm` — legacy's `xs:hide` — because the header
@@ -63,25 +65,25 @@
 				<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
 			@endif
 
-			{{-- Reading: the address as a block, then the email. Legacy renders
-			     it into a `<pre>` from a server-built string; the lines are
-			     columns here, so they can be styled and read out. --}}
-			<div x-show="! editing">
+			@unless ($editing)
+				{{-- Reading: the address as a block, then the email. Legacy
+				     renders it into a `<pre>` from a server-built string; the
+				     lines are columns here, so they can be styled and read
+				     out. --}}
 				<div>
-					@if ($user->company){{ $user->company }}<br>@endif
-					{{ $user->name }}<br>
-					{{ $user->street }} {{ $user->street_no }}<br>
-					{{ $user->zip }} {{ $user->city }}
-					@if ($user->country && $user->country_code !== 'ch')<br>{{ $user->country->name }}@endif
+					<div>
+						@if ($user->company){{ $user->company }}<br>@endif
+						{{ $user->name }}<br>
+						{{ $user->street }} {{ $user->street_no }}<br>
+						{{ $user->zip }} {{ $user->city }}
+						@if ($user->country && $user->country_code !== 'ch')<br>{{ $user->country->name }}@endif
+					</div>
+					<div><a href="mailto:{{ $user->email }}" class="hover:text-teal">{{ $user->email }}</a></div>
 				</div>
-				<div><a href="mailto:{{ $user->email }}" class="hover:text-teal">{{ $user->email }}</a></div>
-			</div>
-
-			{{-- Writing. `x-cloak` because this one starts hidden in the common
-			     case and must not flash; the block above does not, and so
-			     renders without JavaScript. --}}
-			<form method="POST" action="{{ route($locale.'.student.profile.update') }}"
-				x-show="editing" @if (! $openForm) x-cloak @endif>
+			@else
+				{{-- Writing. The POST lands on this same URL, so a validation
+				     failure comes back to the form by itself. --}}
+				<form method="POST" action="{{ route($locale.'.student.profile.update') }}">
 				@csrf
 
 				<x-site.select name="gender" label="Geschlecht" :options="$genderOptions"
@@ -201,11 +203,13 @@
 					<x-site.button type="submit" class="w-full">Speichern</x-site.button>
 				</div>
 
-				{{-- `.form-helper`: italic, at the page's own size, and it only
-				     closes the panel — nothing has been posted. --}}
-				<button type="button" class="mt-16 inline-block italic transition-colors hover:text-teal"
-					@click="editing = false">Abbrechen</button>
-			</form>
+				{{-- `.form-helper`: italic, at the page's own size. A link
+				     rather than a button — nothing has been posted, so leaving
+				     the form *is* going back to the screen it came from. --}}
+				<a href="{{ \App\Support\SiteUrl::studentPortal() }}"
+					class="mt-16 inline-block italic transition-colors hover:text-teal">Abbrechen</a>
+				</form>
+			@endunless
 		</x-site.article>
 	</div>
 

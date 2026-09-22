@@ -50,6 +50,31 @@ class StudentPortalController extends Controller
 	 */
 	public function index(Request $request, CancellationPenalty $penalty): View
 	{
+		return $this->page($request, $penalty, editing: false);
+	}
+
+	/**
+	 * The same screen with the **form** in the profile column instead of the
+	 * address block — `/de/student/profil/bearbeiten`.
+	 *
+	 * A URL rather than legacy's in-place toggle, because the toggle is
+	 * component state and *Rechnungsadressen* sits inside it: its links go to
+	 * screens of their own, and coming back from one landed on a shut panel with
+	 * the address you had just added invisible inside it
+	 * ([[SiteUrl::studentProfileEdit]]).
+	 *
+	 * The four collapsibles come with it, as they do in legacy — it is one page
+	 * there, and coming back from an address screen should land on something
+	 * that looks like what you left.
+	 */
+	public function edit(Request $request, CancellationPenalty $penalty): View
+	{
+		return $this->page($request, $penalty, editing: true);
+	}
+
+	/** Everything both of them need. */
+	private function page(Request $request, CancellationPenalty $penalty, bool $editing): View
+	{
 		$user = $request->user()->load('country');
 
 		[$upcoming, $past] = $this->splitBookings($user->bookings()
@@ -76,6 +101,7 @@ class StudentPortalController extends Controller
 			'countries' => Country::query()->orderBy('order')->orderBy('name')->get(),
 			'genders' => Gender::cases(),
 			'penalties' => $this->penalties($upcoming, $penalty),
+			'editing' => $editing,
 		]);
 	}
 
@@ -125,6 +151,8 @@ class StudentPortalController extends Controller
 				currentPassword: $request->string('current_password')->value() ?: null,
 			);
 		} catch (RuntimeException) {
+			// `back()` is the form's own URL now, because the POST lands there
+			// — no redirect target to keep in step with the view.
 			return back()
 				->withInput()
 				->withErrors(['current_password' => 'Das aktuelle Passwort ist nicht korrekt.']);

@@ -81,6 +81,28 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('student', $locale).'/'.self::segment('profile', $locale);
 	}
 
+	/**
+	 * The profile's edit form — `/de/student/profil/bearbeiten`.
+	 *
+	 * **A screen of its own, not a panel** (Marcel, 2026-09-22). Legacy toggles
+	 * the form in place off `isEdit`, which is component state, and that does
+	 * not survive leaving the page — so *Rechnungsadressen* lives inside the
+	 * panel, its links go to screens of their own, and the way out and the way
+	 * back do not line up: add an address, come back, and the list you added it
+	 * to is shut. The address is there and invisible until you click the pencil
+	 * again. Legacy has the same hole and an SPA hides it, because its
+	 * router-links unmount `Index.vue` and it remounts with `isEdit = false`.
+	 *
+	 * Giving the form a URL fixes it at the root rather than papering over it,
+	 * and it takes the last piece of JavaScript off this screen: no toggle, no
+	 * `x-show`, no `x-cloak`. The pencil is a link, *Abbrechen* is a link, and
+	 * the browser's own back button does what it looks like it should.
+	 */
+	public static function studentProfileEdit(?string $locale = null): string
+	{
+		return self::studentPortal($locale).'/'.self::segment('edit', $locale);
+	}
+
 	/** *Meine Dokumente* — `/de/student/profil/dokumente`. */
 	public static function studentDocuments(?string $locale = null): string
 	{

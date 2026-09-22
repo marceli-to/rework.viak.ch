@@ -144,8 +144,22 @@ Route::prefix('{locale}')
 					Route::get('/', [StudentPortalController::class, 'index'])
 						->name("{$locale}.student.profile");
 
-					// The inline edit form, as a real post.
-					Route::post('/', [StudentPortalController::class, 'update'])
+					/*
+					 * **The edit form is a screen, not a panel** (Marcel,
+					 * 2026-09-22). Legacy toggles it in place off component
+					 * state, and that state does not survive leaving the page —
+					 * which the *Rechnungsadressen* block inside it does, every
+					 * time somebody adds an address. See
+					 * [[SiteUrl::studentProfileEdit]].
+					 *
+					 * The POST lands on the same URL, so a validation failure
+					 * comes back to the form by itself rather than needing to be
+					 * sent there.
+					 */
+					Route::get($segments['edit'], [StudentPortalController::class, 'edit'])
+						->name("{$locale}.student.profile.edit");
+
+					Route::post($segments['edit'], [StudentPortalController::class, 'update'])
 						->name("{$locale}.student.profile.update");
 
 					Route::get($segments['documents'], [StudentPortalController::class, 'documents'])

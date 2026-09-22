@@ -223,7 +223,7 @@ it('reports no penalty outside the window', function () {
 		->assertSee('\u0022penalty\u0022:false', escape: false);
 });
 
-it('lists the saved invoice addresses and a way to add one', function () {
+it('lists the saved invoice addresses and a way to add one, on the edit screen', function () {
 	$user = portalStudent();
 	$user->addresses()->create([
 		'first_name' => 'Anna',
@@ -236,11 +236,92 @@ it('lists the saved invoice addresses and a way to add one', function () {
 		'country_code' => 'ch',
 	]);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
 		->assertOk()
 		->assertSee('Rechnungsadressen')
 		->assertSee('Muster AG, Anna Muster, Zürich')
 		->assertSee('/de/student/profil/adresse/erstellen');
+});
+
+/*
+|--------------------------------------------------------------------------
+| The form is a screen, not a panel
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Marcel's call, 2026-09-22. Legacy toggles the form in place off `isEdit` —
+ * component state — and *Rechnungsadressen* lives inside it with links to
+ * screens of their own. So adding an address landed you back on a shut panel
+ * with the new address invisible in it; legacy has the same hole and an SPA
+ * hides it ([[SiteUrl::studentProfileEdit]]).
+ */
+it('shows the address block on the profile and the form on its own URL', function () {
+	$user = portalStudent(['company' => 'Nookla GmbH']);
+
+	$this->actingAs($user)->get('/de/student/profil')
+		->assertOk()
+		->assertSee('Nookla GmbH')
+		->assertSee('/de/student/profil/bearbeiten')
+		->assertDontSee('Rechnungsadressen')
+		->assertDontSee('Zugangsdaten');
+
+	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+		->assertOk()
+		->assertSee('Rechnungsadressen')
+		->assertSee('Zugangsdaten')
+		// The pencil turns round, and *Abbrechen* goes the same way.
+		->assertSee('title="Bearbeiten abbrechen"', escape: false);
+});
+
+it('keeps the four lists on both, because it is one page in legacy', function () {
+	$user = portalStudent();
+	portalSeat($user, 30);
+
+	foreach (['/de/student/profil', '/de/student/profil/bearbeiten'] as $url) {
+		$this->actingAs($user)->get($url)
+			->assertOk()
+			->assertSee('Merkliste')
+			->assertSee('Gebuchte Kurse')
+			->assertSee('Absolvierte Kurse')
+			->assertSee('Dokumente');
+	}
+});
+
+/**
+ * The whole point of giving the form a URL: the way out and the way back line
+ * up, so the address you just added is in a list you can see.
+ */
+it('sends the address screens back into the form, not to the closed profile', function () {
+	$user = portalStudent();
+	$address = $user->addresses()->create([
+		'first_name' => 'Anna',
+		'last_name' => 'Muster',
+		'street' => 'Bahnhofstrasse',
+		'zip' => '8001',
+		'city' => 'Zürich',
+		'country_code' => 'ch',
+	]);
+
+	// The back link on both address screens.
+	$this->actingAs($user)->get('/de/student/profil/adresse/erstellen')
+		->assertOk()
+		->assertSee('href="/de/student/profil/bearbeiten"', escape: false);
+
+	$this->actingAs($user)->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+		->assertOk()
+		->assertSee('href="/de/student/profil/bearbeiten"', escape: false);
+});
+
+it('renders the profile screens without any JavaScript of their own', function () {
+	$user = portalStudent();
+
+	// No toggle, no `x-show`, no `x-cloak` on the profile column — the pencil
+	// and *Abbrechen* are links. What Alpine is left on the page belongs to the
+	// collapsibles, the basket and the cancellation dialogs.
+	$html = $this->actingAs($user)->get('/de/student/profil/bearbeiten')->assertOk()->getContent();
+
+	expect($html)->not->toContain('editing');
 });
 
 /*
@@ -253,7 +334,7 @@ it('saves the account through the same Action the API uses', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil', [
+		->post('/de/student/profil/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller-Meier',
 			'phone' => '079 000 00 00',
@@ -279,7 +360,7 @@ it('will not change an email address without the current password', function () 
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil', [
+		->post('/de/student/profil/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
@@ -293,7 +374,7 @@ it('clears verification when the address changes, and says so', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil', [
+		->post('/de/student/profil/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
@@ -445,7 +526,7 @@ it('keeps a cancelled seat readable but shuts the thread', function () {
 |--------------------------------------------------------------------------
 */
 
-it('creates an invoice address and comes back to the profile', function () {
+it('creates an invoice address and comes back into the form', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
@@ -459,7 +540,9 @@ it('creates an invoice address and comes back to the profile', function () {
 			'city' => 'Zürich',
 			'country_code' => 'ch',
 		])
-		->assertRedirect('/de/student/profil')
+		// Into the form, where the list it belongs to is — not to the read view,
+		// which shows no addresses at all.
+		->assertRedirect('/de/student/profil/bearbeiten')
 		->assertSessionHas('status');
 
 	expect($user->addresses()->count())->toBe(1);
@@ -478,7 +561,7 @@ it('soft-deletes an address rather than losing where an invoice was sent', funct
 
 	$this->actingAs($user)
 		->delete('/de/student/profil/adresse/'.$address->uuid)
-		->assertRedirect('/de/student/profil');
+		->assertRedirect('/de/student/profil/bearbeiten');
 
 	expect($user->addresses()->count())->toBe(0)
 		->and($address->fresh()->trashed())->toBeTrue();
@@ -525,7 +608,7 @@ it('saves with the email resent unchanged, and asks for no password', function (
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil', [
+		->post('/de/student/profil/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'company' => 'Nookla GmbH',
@@ -542,7 +625,7 @@ it('names the field in German when the password is missing', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil', [
+		->post('/de/student/profil/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
@@ -559,7 +642,7 @@ it('accepts an empty current-password box when nothing needs confirming', functi
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil', [
+		->post('/de/student/profil/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'company' => 'Nookla GmbH',

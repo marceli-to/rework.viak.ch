@@ -20,7 +20,11 @@
 	<x-site.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">{{ $title }}</h1>
-			<x-site.back-link :href="\App\Support\SiteUrl::studentPortal()" />
+			{{-- Back **into the form**, not to the profile that shows it shut.
+			     This screen is reached from the *Rechnungsadressen* block inside
+			     it, and landing anywhere else hides the address you just came
+			     here to add ([[SiteUrl::studentProfileEdit]]). --}}
+			<x-site.back-link :href="\App\Support\SiteUrl::studentProfileEdit()" />
 		</x-slot:aside>
 
 		@if ($errors->any())

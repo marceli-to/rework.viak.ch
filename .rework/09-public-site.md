@@ -68,7 +68,7 @@ cancellation dialog opened with the penalty in it. 378 tests green, Pint clean.
   the pixel. See *The course detail page*, below, for the three data findings
   that came out of it.
 - **The student portal**, at `/de/student/profil` — *Mein Profil* with its
-  inline edit form, the four collapsibles (Merkliste, Gebuchte Kurse,
+  edit form on `/bearbeiten`, the four collapsibles (Merkliste, Gebuchte Kurse,
   Absolvierte Kurse, Dokumente), *Meine Dokumente*, one booked seat with its
   notes and materials, and the invoice-address pages. Brings `x-site.event-row`,
   `x-site.document-row`, `x-site.event-state`, `x-site.back-link` and
@@ -1436,6 +1436,46 @@ JavaScript is the Alpine store behind *Annullieren* and the laptop.
 and it still turned up **six defects**, four of them in code that was already
 built and green. That is the pattern the chunk doc already named: *a green suite
 can still be unreachable*.
+
+### The edit form is a screen, not a panel — Marcel, 2026-09-22
+
+Legacy toggles the profile form in place off `isEdit`. Rebuilt that way first,
+as Alpine state, and it is **wrong** — not stylistically, structurally.
+
+*Rechnungsadressen* lives **inside** that form, and its links go to screens of
+their own. So: open the form, click `+`, type an address, save — and you land
+back on a profile whose panel is shut, with the address you just created
+invisible inside it. The *Zurück* link on the address screen does the same. The
+state that says *the form is open* does not survive leaving the page, and the
+form is the only place the list exists.
+
+**Legacy has exactly this hole and an SPA hides it**: its router-links unmount
+`Index.vue` and it remounts with `isEdit = false`. The address is equally
+invisible there; it is just less obvious, because nothing navigated.
+
+So the form gets a URL — `/de/student/profil/bearbeiten`, from the `edit`
+segment already in `config/site.php`, with the POST landing on the same URL so a
+validation failure comes back by itself. One view, one `$editing` flag, the same
+four collapsibles underneath — which is legacy's page, since there the form
+replaces the same block.
+
+What it settles, beyond the bug:
+
+- **The screen has no JavaScript of its own left.** No toggle, no `x-show`, no
+  `x-cloak`. The pencil is a link, *Abbrechen* is a link, and the browser's back
+  button does what it looks like it should. What Alpine remains on the page
+  belongs to the collapsibles, the basket and the cancellation dialogs.
+- **The three address redirects go back into the form**, not to the read view —
+  which would show somebody who just added an address a page with no addresses
+  on it at all.
+- The pencil turns round on the form and points back, which is what legacy's
+  toggle does in one place rather than two.
+
+A query flag (`?bearbeiten`) would have done the same job — the course filter
+already writes its state back that way — and it was the first attempt. A route
+is better for something that is a *screen* rather than a *view of one*: it can
+be linked, it can be the target of a redirect, and it does not need Alpine to
+read it back.
 
 ### The URLs are legacy's two role trees, with the segments in config
 
