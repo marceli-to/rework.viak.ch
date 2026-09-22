@@ -1098,6 +1098,30 @@ live site gives `Architekturvisualisie-rung`.
 **The basket icon is hidden when empty.** `!hide` at a count of zero, which is
 why the live header usually shows only the account icon. It is not missing.
 
+**And it has two sizes, not one** — found 2026-09-22, when Marcel put a devtools
+ruler on it. `icons/_basket.scss` sizes the **anchor**: 19×16 from `bp-sm` and
+**26×22 from `bp-md`**, with the badge stepping 16→18 and its offset −12→−14.
+Only the first step had been ported, so the icon sat a quarter too small on
+every desktop. Both now measure 26×22 and 18×18 against production's 26×22 and
+18×18.
+
+Worth noting *why* it slipped: the profile icon beside it has the same two-step
+shape and was ported correctly, so the header looked deliberate. A single
+measurement of one icon would not have caught it — the icons have to be
+measured against the live page one at a time.
+
+**The mobile menu has a *Warenkorb* entry**, and ours did not. `menu.blade.php`
+is **two `<ul>`s** inside `.site-menu__main` — the three nav links, then basket
+and profile — which on desktop are the two `span-6` lists and on a phone stack
+into one. So *Warenkorb* belongs between Kontakt and Profil, hidden at a count
+of zero like its desktop twin.
+
+Its badge is a different animal: **26×26, `margin-left: 12px`, and teal on
+black** rather than 16px white-on-black hanging off an icon (`bp-xs` in the same
+file). It sits beside a word rather than on a glyph, so it is read rather than
+glanced at. Taken from the compiled stylesheet, not eyeballed — the window was
+wide again by then.
+
 **`arrow-right` is two SVGs**, genuinely different artwork per breakpoint.
 **`profile` draws a different figure when signed in.** **`cross` takes a size
 argument.** All three look like bugs and are not.

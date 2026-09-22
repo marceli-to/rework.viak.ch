@@ -76,10 +76,18 @@
 					     `!hide` at a count of zero — which is why the live header
 					     usually shows only the account icon. --}}
 					<li class="flex items-center" x-cloak x-show="$store.basket.count > 0">
-						<a href="#" class="relative block h-16 w-19 hover:text-teal" title="Warenkorb">
+						{{-- `icons/_basket.scss` sizes the **anchor**, not the svg, and
+						     it has two steps: 19×16 from `bp-sm` and **26×22 from
+						     `bp-md`** — which is our `lg`. Only the first was ported,
+						     so the icon stayed a quarter too small on every desktop
+						     (Marcel, 2026-09-22). The svg is `width: 100%; height:
+						     auto` and follows. --}}
+						<a href="{{ \App\Support\SiteUrl::checkout('basket') }}"
+							class="relative block h-16 w-19 hover:text-teal lg:h-22 lg:w-26" title="Warenkorb">
 							<x-icon.basket class="block w-full!" />
-							{{-- `icons/_basket.scss`: a 16px black disc, offset -12/-12. --}}
-							<em class="absolute -top-12 -right-12 flex size-16 items-center justify-center rounded-full bg-black text-xs leading-none font-normal text-white not-italic lg:text-sm"
+							{{-- The badge steps with it: a 16px black disc at -12/-12,
+							     18px at -14/-14 from `lg`. --}}
+							<em class="absolute -top-12 -right-12 flex size-16 items-center justify-center rounded-full bg-black text-xs leading-none font-normal text-white not-italic lg:-top-14 lg:-right-14 lg:size-18 lg:text-sm"
 								x-text="$store.basket.count"></em>
 						</a>
 					</li>
@@ -118,8 +126,15 @@
 				<x-site.icons.logo />
 			</a>
 
+			{{--
+				`menu.blade.php` is **two `<ul>`s** inside `.site-menu__main` —
+				the three nav links, then basket and profile. On desktop they
+				are the two `span-6` lists above; on a phone they stack into one
+				list, which is why *Warenkorb* belongs here between Kontakt and
+				Profil. It was missing (found 2026-09-22).
+			--}}
 			<ul class="mt-72">
-				@foreach ([...$nav, ['label' => 'Profil', 'href' => '/dashboard', 'match' => 'dashboard']] as $item)
+				@foreach ($nav as $item)
 					<li>
 						<a href="{{ $item['href'] }}"
 							class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
@@ -127,6 +142,31 @@
 						</a>
 					</li>
 				@endforeach
+
+				{{-- The whole item is hidden at a count of zero — legacy's
+				     `!hide` on the `<li>`, the same rule as the desktop icon.
+
+				     **The badge is a different animal down here**: 26×26 rather
+				     than 16, `margin-left: 12px` instead of an offset, and
+				     **teal on black** rather than white on black
+				     (`icons/_basket.scss` under `bp-xs`). It is beside the word
+				     rather than hanging off an icon, so it is read, not
+				     glanced at. --}}
+				<li x-cloak x-show="$store.basket.count > 0">
+					<a href="{{ \App\Support\SiteUrl::checkout('basket') }}"
+						class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
+						Warenkorb
+						<em class="ml-12 flex size-26 items-center justify-center rounded-full bg-black text-lg leading-none font-bold text-teal not-italic"
+							x-text="$store.basket.count"></em>
+					</a>
+				</li>
+
+				<li>
+					<a href="/dashboard"
+						class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
+						Profil
+					</a>
+				</li>
 			</ul>
 		</div>
 
