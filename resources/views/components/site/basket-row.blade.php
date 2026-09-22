@@ -39,13 +39,27 @@
 					class="hover:text-teal"></a>
 			</h2>
 
-			{{-- One block for all the days, broken with `<br>` — a `<div>` per
-			     day rounds each one's line box separately and makes a two-day
-			     row a pixel taller. --}}
+			{{--
+				One block for all the days, broken with `<br>` — a `<div>` per
+				day rounds each one's line box separately and makes a two-day
+				row a pixel taller.
+
+				**On a phone the day and its hours share a line** (Marcel,
+				2026-09-22). Legacy breaks them at every width, which on a
+				three-day course spends six lines on what is really three
+				facts — and the phone is where the row is already tallest. The
+				break is hidden below `sm` and a comma stands in for it; a
+				`<br>` set to `display: none` genuinely stops breaking, which is
+				what makes this one class rather than two renderings.
+
+				`23. November 2026, 08.45 – 17.00 Uhr` is ~270px at 16px, so it
+				still fits a 320px phone's 288px column. Narrower than that it
+				wraps, which is what it did before anyway.
+			--}}
 			<div>
 				<template x-for="(date, i) in item.event.dates" :key="i">
 					<span>
-						<strong class="font-bold" x-text="dateLong(date.date)"></strong><br>
+						<strong class="font-bold" x-text="dateLong(date.date)"></strong><span class="sm:hidden">,</span><br class="max-sm:hidden">
 						<span x-text="`${time(date.time_start)} – ${time(date.time_end)} Uhr`"></span>
 						<template x-if="i < item.event.dates.length - 1"><br></template>
 					</span>

@@ -31,8 +31,25 @@
 	specificity that has been on the live site for years. Ported as found; worth
 	a decision rather than a quiet fix.
 --}}
+{{--
+	**Full width below `sm`, and that is `width: auto` doing its job** — found
+	2026-09-22, measured on the live course page at 500px: legacy's *Entfernen*
+	is **461px** there and ours was 95.
+
+	`%btn` is `display: flex` and never declares a width. On a block-level box
+	`width: auto` fills the parent, so on a phone — where the twelve columns
+	have collapsed into a stack — every button spans its column; at `sm` the
+	same button becomes a flex item in a `justify-between` row and shrinks to
+	its content with the 140px floor. One declaration, two behaviours.
+
+	A `<button>` does not inherit that: form controls size to `fit-content`
+	whatever their `display`, so it shrink-wrapped at every width. `max-sm:`
+	rather than `w-full sm:w-auto` because the auth screens pass `w-full`
+	deliberately and must keep it at desktop — this adds the phone behaviour and
+	touches nothing above it.
+--}}
 @php
-	$base = 'flex min-h-28 items-center justify-center px-24 text-md font-bold transition-colors sm:min-w-140 sm:text-lg';
+	$base = 'flex min-h-28 items-center justify-center px-24 text-md font-bold transition-colors max-sm:w-full sm:min-w-140 sm:text-lg';
 
 	$style = match ($variant) {
 		'outline' => 'border border-teal bg-white font-normal text-teal hover:border-black hover:text-black',

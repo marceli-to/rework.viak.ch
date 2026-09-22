@@ -685,21 +685,44 @@ anyone.
 ### The phone layout, seen at last — 2026-09-22
 
 `resize_window` only ever shrinks a window on this machine, which is why the
-checkout was measured at desktop. It left one at 500px, and two things showed
-up in the stack that the twelve-column grid had been hiding:
+checkout was measured at desktop. It left one at 500px, and Marcel put the
+production basket beside it — the page nobody here can log into. Four things
+came out of that pair.
 
-- **Legacy's middle column on the laptop row is a literal `&nbsp;`**, there to
-  occupy a grid cell. Below `sm` there is no grid, so it rendered as a blank
-  24px line between *Mietcomputer* and its price. Hidden below `sm`: a spacer
-  for a grid that is not there has nothing to space.
-- **The *Entfernen* of the course sat flat against the *Mietcomputer*
-  heading**, 0px between them, so the button read as the laptop's. 24px above
-  the heading below `sm` — the same 24 the action itself uses.
+**Every button on the site was the wrong width on a phone.** Measured: legacy's
+*Entfernen* is **461px** at 500px and ours was 95. `%btn` is `display: flex` and
+never declares a width — so on a block-level box `width: auto` fills the parent,
+and the same button becomes a flex item in a `justify-between` row at `sm` and
+shrinks to its content with the 140px floor. One declaration, two behaviours,
+and it is why every caller in a block context had been passing `w-full` by hand.
 
-The second is a judgement call rather than a measurement: legacy has no margin
-there, and its phone rendering of this row **cannot be checked**, because the
-basket is behind a login on production. Said out loud rather than passed off as
-measured.
+A `<button>` does not inherit that: form controls size to `fit-content` whatever
+their `display`. `max-sm:w-full` on `x-site.button` rather than
+`w-full sm:w-auto`, because the auth screens pass `w-full` deliberately and must
+keep it at desktop. The course page's *Buchen* now measures 461 against
+production's 461.
+
+**Legacy's middle column on the laptop row is a literal `&nbsp;`**, there to
+occupy a grid cell. Below `sm` there is no grid, so it rendered as a blank 24px
+line between *Mietcomputer* and its price. Hidden below `sm`: a spacer for a
+grid that is not there has nothing to space.
+
+**The *Entfernen* of the course sat flat against the *Mietcomputer* heading**,
+0px between them, so the button read as the laptop's. Production does this too —
+Marcel's word was *"wrong on both envs"* — so it is a fix rather than a port.
+24px above the heading below `sm`, the same 24 the action itself uses.
+
+**The day and its hours share a line on a phone** (Marcel, 2026-09-22). Legacy
+breaks them at every width, which on a three-day course spends six lines on what
+is really three facts — and the phone is where the row is already tallest. The
+break is hidden below `sm` and a comma stands in for it; a `<br>` set to
+`display: none` genuinely stops breaking, which is what makes this one class
+rather than two renderings.
+
+`23. November 2026, 08.45 – 17.00 Uhr` is ~270px at 16px, so it still fits a
+320px phone's 288px column; narrower than that it wraps, which is what it did
+before anyway. **Only the basket row** — the course detail page renders its
+dates the same way production does, and anyone can open that page to compare.
 
 ### There is no total on the basket page
 
@@ -1088,6 +1111,10 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
+- **The course detail page still breaks the date and the time onto two lines**
+  on a phone, where the basket now keeps them together. Production breaks them,
+  and that page is one anyone can load and compare — but a three-day course is
+  six lines there too. Say if you want it to match the basket.
 - **The course page still shows a bare `499.00`** where the basket now says
   `CHF 499.00`. The course page is 1:1 with production and anyone can load it;
   the basket is not and nobody outside a login can. Say if you want them to
