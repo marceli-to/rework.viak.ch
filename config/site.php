@@ -63,6 +63,17 @@ return [
 			'address' => 'adresse',
 			'create' => 'erstellen',
 			'edit' => 'bearbeiten',
+
+			/*
+			 * The two screens under an expert's course, and **they are English
+			 * inside the German path** — `/de/experte/profil/kurs/veranstaltung/
+			 * {uuid}/message` and `/file-upload`. Legacy's own spelling, kept
+			 * for the same reason `/de/checkout/basket` is: parity, and nothing
+			 * behind a login is indexed, so it is a small question rather than
+			 * an SEO one ([[SiteUrl::checkout]]).
+			 */
+			'message' => 'message',
+			'upload' => 'file-upload',
 		],
 		'en' => [
 			'courses' => 'courses',
@@ -81,6 +92,8 @@ return [
 			'address' => 'address',
 			'create' => 'create',
 			'edit' => 'edit',
+			'message' => 'message',
+			'upload' => 'file-upload',
 		],
 	],
 

@@ -142,16 +142,67 @@ final class SiteUrl
 	}
 
 	/**
-	 * The expert portal — `/de/experte/profil`.
+	 * The expert portal — `/de/experte/profil` ([[08-accounts]]).
 	 *
-	 * Here so the header can point at it; its screens are the second pass
-	 * ([[09-public-site]]).
+	 * The second of legacy's two role trees, and the reason there are two: what
+	 * an expert sees is the courses they *teach*, with a participant list and a
+	 * message composer on each, where a student sees the courses they bought.
+	 * Four accounts hold both roles and need both screens at once, so the role
+	 * in the path is what separates them ([[SiteUrl::studentPortal]]).
 	 */
 	public static function expertPortal(?string $locale = null): string
 	{
 		$locale ??= app()->getLocale();
 
 		return '/'.$locale.'/'.self::segment('expert', $locale).'/'.self::segment('profile', $locale);
+	}
+
+	/**
+	 * The expert's profile form — `/de/experte/profil/bearbeiten`.
+	 *
+	 * A screen rather than a panel, for the reason the student's is
+	 * ([[SiteUrl::studentProfileEdit]]) — minus the one that forced it. There
+	 * are no invoice addresses inside an expert's form, so nothing here links
+	 * out of it; it is a screen because the two forms should not disagree about
+	 * what they are, and because a toggle is state that the back button cannot
+	 * see.
+	 */
+	public static function expertProfileEdit(?string $locale = null): string
+	{
+		return self::expertPortal($locale).'/'.self::segment('edit', $locale);
+	}
+
+	/**
+	 * One course an expert teaches —
+	 * `/de/experte/profil/kurs/veranstaltung/{uuid}`.
+	 *
+	 * The event's uuid, as on the student's side, and the same path under a
+	 * different root.
+	 */
+	public static function expertEvent(string $uuid, ?string $locale = null): string
+	{
+		return self::expertPortal($locale)
+			.'/'.self::segment('course', $locale)
+			.'/'.self::segment('event', $locale)
+			.'/'.$uuid;
+	}
+
+	/**
+	 * The message composer —
+	 * `/de/experte/profil/kurs/veranstaltung/{uuid}/message`.
+	 *
+	 * **English segment inside the German path**, which is legacy's own and is
+	 * the same wart `/de/checkout/basket` carries ([[SiteUrl::checkout]]).
+	 */
+	public static function expertEventMessage(string $uuid, ?string $locale = null): string
+	{
+		return self::expertEvent($uuid, $locale).'/'.self::segment('message', $locale);
+	}
+
+	/** *Dokumente hochladen* — `…/{uuid}/file-upload`, legacy's spelling. */
+	public static function expertEventUpload(string $uuid, ?string $locale = null): string
+	{
+		return self::expertEvent($uuid, $locale).'/'.self::segment('upload', $locale);
 	}
 
 	/**

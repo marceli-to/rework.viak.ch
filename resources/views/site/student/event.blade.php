@@ -83,28 +83,15 @@
 			route never made, and which let any student post to any event and
 			mail every participant of it (finding 4).
 		--}}
+		{{-- **Was an inline rendering, and that was not legacy's** — found
+		     2026-09-22 while building the expert screen, which needed the same
+		     list. Both portals draw the thread through `messages/Index.vue`, and
+		     what it draws is a row with 35 characters of the body and an
+		     *Anzeigen* that opens the message in a lightbox
+		     ([[x-site.message-row]]). --}}
 		<x-site.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
 			@forelse ($messages as $message)
-				<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
-					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-						<div class="sm:col-span-4">
-							<strong class="font-bold">{{ $message->subject }}</strong><br>
-							{{ $message->created_at->format('d.m.Y') }}
-							@if ($message->author), {{ $message->author->name }}@endif
-						</div>
-
-						<div class="sm:col-span-8">
-							<x-site.rich-text :html="$message->body" />
-
-							@foreach ($message->media as $attachment)
-								<div class="mt-16">
-									<a href="{{ route('media.download', $attachment->uuid) }}"
-										class="hover:text-teal">{{ $attachment->original_name }}</a>
-								</div>
-							@endforeach
-						</div>
-					</div>
-				</article>
+				<x-site.message-row :message="$message" />
 			@empty
 				<p class="mt-16 italic">Es sind keine Nachrichten vorhanden.</p>
 			@endforelse
@@ -122,22 +109,15 @@
 			failure `event_expert` had, where an unfilled or unread morph raises
 			no error, no null and no missing column ([[Event]]).
 		--}}
+		{{-- **Was two columns and a size in parentheses, and that was not
+		     legacy's either** — same finding as the thread above.
+		     `files/components/ListItem.vue` draws four columns: the name, when it
+		     was uploaded, how big it is, and the buttons
+		     ([[x-site.file-row]]). The student passes no `action`, so the column
+		     holds the *Download* alone; the expert's passes a *Löschen*. --}}
 		<x-site.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
 			@forelse ($files as $file)
-				<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
-					<div class="flex items-start justify-between gap-16">
-						<div>
-							{{ $file->original_name }}
-							@if ($file->size)
-								<em class="italic">({{ round($file->size / 1024 / 1024, 1) }} MB)</em>
-							@endif
-						</div>
-						<div>
-							<x-site.button href="{{ route('media.download', $file->uuid) }}"
-								title="{{ $file->original_name }}">Download</x-site.button>
-						</div>
-					</div>
-				</article>
+				<x-site.file-row :file="$file" />
 			@empty
 				<p class="mt-16 italic">Es sind keine Kurs-Dokumente vorhanden.</p>
 			@endforelse

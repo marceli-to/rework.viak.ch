@@ -16,10 +16,23 @@
 	 */
 	$locale = app()->getLocale();
 
+	/*
+	 * **Matched by route name, not by path prefix** — legacy's own
+	 * `request()->routeIs('*.page.course*')`, and the difference is not
+	 * academic: the expert portal is `/de/experte/profil`, which begins with the
+	 * `experte` segment, so a `request()->is('de/experte*')` lit *Experten* on
+	 * every screen of that portal (found 2026-09-22, in the browser — the route
+	 * did not exist when the header was built). Legacy is immune because its
+	 * portal route is named `de.page.expert.profile` and its pattern is
+	 * `page.expert` exactly.
+	 *
+	 * A pattern that matches nothing is simply false, so the two items whose
+	 * pages arrive with chunk 04 need no special case while they point at `#`.
+	 */
 	$nav = [
-		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => \App\Support\SiteUrl::segment('course')],
-		['label' => 'Experten', 'href' => '#', 'match' => \App\Support\SiteUrl::segment('expert')],
-		['label' => 'Kontakt', 'href' => '#', 'match' => \App\Support\SiteUrl::segment('contact')],
+		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
+		['label' => 'Experten', 'href' => '#', 'match' => "{$locale}.experts.*"],
+		['label' => 'Kontakt', 'href' => '#', 'match' => "{$locale}.contact"],
 	];
 
 	$isHome = request()->getPathInfo() === '/'.$locale;
@@ -64,7 +77,7 @@
 					@foreach ($nav as $item)
 						<li class="flex items-center">
 							<a href="{{ $item['href'] }}"
-								@class(['hover:text-teal', 'text-teal' => request()->is($locale.'/'.$item['match'].'*')])>
+								@class(['hover:text-teal', 'text-teal' => request()->routeIs($item['match'])])>
 								{{ $item['label'] }}
 							</a>
 						</li>

@@ -15,8 +15,13 @@ could not see a session at all.
 
 **The student portal is built**, 2026-09-22 — all four screens, driven in a
 browser: the profile saved, a laptop added and given up again, and the
-cancellation dialog opened with the penalty in it. 378 tests green, Pint clean.
-**The expert portal is next**; everything else is under *What is left*.
+cancellation dialog opened with the penalty in it.
+
+**And the expert portal, the same day** — five screens, also driven in a
+browser: a note posted to a course, a document uploaded and deleted again, the
+message lightbox opened. 429 tests green, Pint clean. It settled
+`08-accounts.md`'s finding 5 and turned up three defects in code that was
+already built, one of them site-wide. Everything else is under *What is left*.
 
 | | |
 |---|---|
@@ -126,15 +131,18 @@ Roughly in the order that unblocks the most.
    verwalten* on checkout step 2 and *Zum Profil* on the confirmation. See *The
    student portal*, below.
 
-   **The expert portal is what is left of it** — `/de/experte/profil`, with
-   *Bevorstehende Kurse* and *Vergangene Kurse* over `user.upcoming_events` and
-   `user.past_events`, an event screen carrying the participant list, the files
-   and the message composer, and the same profile block. `SiteUrl::expertPortal()`
-   already exists and the header already points at it for an expert, so the
-   route is the only thing missing. Two things to settle first: **legacy's
-   participant-list PDF has no ownership check at all** (`08-accounts.md`,
-   finding 5) and the message composer is the *write* side of
-   `MessagePolicy::create`, which nothing has exercised in a browser yet.
+   ~~**The expert portal is what is left of it.**~~ **Built 2026-09-22** —
+   five screens at `/de/experte/profil`, and both things it was waiting on are
+   settled: `EventPolicy::viewParticipants` is the ownership check legacy's
+   participant list has nowhere, and the message composer has been driven in a
+   browser. See *The expert portal*, below.
+
+   **One thing is deferred rather than ported**, deliberately and with the
+   policy already in place: legacy's *Teilnehmerliste (PDF)*. Nothing in the
+   rework generates a PDF yet, and chunk 03 deferred the QR bill and the
+   participation confirmation to whichever chunk builds the document pipeline —
+   so adding dompdf here would set the letterhead conventions for all three from
+   the smallest of them (Marcel, 2026-09-22).
 4. ~~The course detail page.~~ **Built 2026-09-21** — see *The course detail
    page*, below.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The
@@ -1856,3 +1864,189 @@ a block headed *Rechnungsadressen*, so the longer word was saying it twice.
 Not the same word as the checkout's *Adresse erfassen* dialog, which is also
 legacy's — there it is a dialog and here it is a page, and they are allowed to
 differ because production does.
+
+## The expert portal — 2026-09-22
+
+`/de/experte/profil` and four screens under it, from `backend/expert/` — four
+Vue views, 578 lines, two API calls to draw a screen whose every value the
+server already had. Server-rendered Blade like the rest of the site; the only
+JavaScript is the message lightbox and the delete confirmation.
+
+The student portal's sibling, and mostly its markup: same article, same
+collapsibles, same row. **Where the two differ is what a course *is* to each of
+them.** A student's course is a seat they bought, so their screen leads with the
+booking and what can still be done to it. An expert's is a room they will stand
+in, so theirs leads with who is coming — and carries the two things only an
+expert does, which are writing to the class and giving it files.
+
+| screen | |
+|---|---|
+| `/de/experte/profil` | the address block, *Bevorstehende* and *Vergangene Kurse* |
+| `…/bearbeiten` | the profile form — the student's minus *Rechnungsadressen* |
+| `…/kurs/veranstaltung/{uuid}` | *Informationen*, *Teilnehmer*, *Nachrichten*, *Kurs-Dokumente* |
+| `…/{uuid}/message` | the composer |
+| `…/{uuid}/file-upload` | the course materials form |
+
+The last two keep legacy's **English segments inside the German path**, which is
+the same wart `/de/checkout/basket` carries and the same reason to keep it:
+nothing behind a login is indexed, so it is a small question rather than an SEO
+one ([[SiteUrl::checkout]]).
+
+### Finding 5, settled — and it is one method
+
+`08-accounts.md`'s finding 5 is that `GET /pdf/teilnehmer-liste/{event}` is
+gated by `role:admin,expert` and nothing else, so **any of the 18 accounts
+holding the Expert role can download the names, towns, phone numbers and email
+addresses of every student on every course in the archive**. It had to be
+settled before this screen was built, because this screen is where the link to
+it goes.
+
+It is not a missing idea, it is an omission on one route: the neighbouring API
+call, `EventController::findExpertEvent`, does `authorize('containsEvent',
+$event)`. So the rework states the neighbour's rule once —
+`EventPolicy::viewParticipants`, *admin or teaches it* — and every caller asks
+it: the screen that draws the list, and whatever serves it as a PDF the day
+there is a PDF.
+
+**A 404 rather than a 403** when it denies, which is the student portal's rule
+for the same reason: a course somebody does not teach and a course that does not
+exist are told apart only by whoever is asking, and answering *forbidden*
+confirms that the uuid is real.
+
+The guard above it is legacy's — `role:admin,expert`, so an admin reaches these
+screens too, and the policy then admits them to every course rather than to the
+ones they teach. That is right: an admin answering a question about a course
+should not have to be added to it as an expert first.
+
+### The PDF is deferred, and that is the only thing that is
+
+Marcel's call, 2026-09-22. Nothing in the rework generates a PDF — no dompdf —
+and `03-invoices.md` deferred the QR bill and the participation confirmation to
+whichever chunk builds the document pipeline. Building one here would set the
+letterhead conventions for all three from the smallest of them.
+
+What is *not* deferred is the check in front of it, which is the half that was a
+rework question. The route arrives already gated.
+
+Worth noting what the PDF holds that the screen does not: **phone numbers and
+email addresses**. Legacy's screen shows name, town and firm and nothing more —
+`EventParticipantsResource` hands the email out only to an admin and the expert
+view never renders it — so the contact details exist on that path alone, which
+is exactly what makes the missing check matter.
+
+### Three defects, all in code that was already built
+
+1. **The nav lit *Experten* on every screen of the expert portal.** The header
+   matched by path prefix — `request()->is('de/experte*')` — and
+   `/de/experte/profil` begins with that segment. Legacy is immune because it
+   matches by **route name**: its pattern is `page.expert` exactly and its
+   portal route is `de.page.expert.profile`. Matched by route name here now,
+   which also means the two items whose pages arrive with chunk 04 need no
+   special case while they point at `#` — a pattern that matches nothing is
+   simply false.
+
+   Found in the browser on the first screen, and it could not have been found
+   before: the route did not exist when the header was built.
+
+2. **The student's course thread was rendered inline, and that is not legacy's
+   design.** Both portals draw the thread through
+   `shared/modules/messages/Index.vue`, and what it draws is a **row** — date,
+   sender, 35 characters of the body — with an *Anzeigen* that opens the message
+   in a lightbox. The student screen printed the subject, the date and the whole
+   body into the collapsible. Readable, and a design nobody chose.
+
+3. **And its course materials the same way.** `files/components/ListItem.vue`
+   draws four columns — name, uploaded at, size, buttons. The student screen
+   drew two and put the size in parentheses, at `round($size / 1024 / 1024, 1)`
+   where legacy's filter is base **1000** with two decimals and the trailing
+   zeros trimmed. 1,536,000 bytes reads *1.54 MB* on production and read *1.5
+   MB* here.
+
+Both of the last two are now one component used by both portals —
+`x-site.message-row` and `x-site.file-row` — which is what legacy has and what
+building the second portal made obvious.
+
+### The lightbox inherits a line height from where it sits, not from what it is
+
+The one measurement worth keeping. `.message__inner` is the **third** box in
+legacy's overlay family and it restates `%lightbox > div` at a higher
+specificity:
+
+| | modal | lightbox | message |
+|---|---|---|---|
+| border | 3px | 2px | 2px |
+| box | 600 flat | 600–900 | **480–700** |
+| padding | 24/16, 32/24 from `lg` | 12, 24 from `sm` | **8, 16 from `sm`** |
+
+Measured against the live stylesheet with legacy's markup rendered into it, and
+confirmed against the rework at the same width: 480px wide, 16px of padding, a
+2px `#505050` border, a header at `mb-24 pb-8` over a 1px rule, `.text-xsmall`
+labels at 16px, and a footer at `mt-24 pt-8` over the same rule.
+
+**And the nesting is load-bearing.** `Item.vue` renders a `<div>` holding the row
+*and* the overlay as siblings — inside the collapsible, which gives the box its
+16/18px type, but **outside** `.stacked-list-item`, which is the only thing on
+the page setting line height to 1.4. Built with the overlay inside the
+`<article>` first and the box came out at 1.4 against production's 1.3: 1.8px on
+every line of a message that can run to a screenful. The wrapper `<div>` looks
+like nothing and is the whole fix.
+
+### The composer is a form, and that is the bigger departure
+
+Legacy's is TinyMCE plus a `vue-dropzone` that posts each file to `/api/file` as
+it is dropped and sends a list of uuids with the message.
+
+- **The body is a `<textarea>`.** There is no editor on the public site and
+  there will not be one before `[[07-editor]]`; blank lines become paragraphs on
+  the way in, escaped first, and `RichText`'s allowlist strips tags on the way
+  out — one belt more than legacy has at either end.
+- **The attachments come with the form.** One multipart POST, so an abandoned
+  draft leaves nothing behind. Legacy's eager upload is why **11 of its 44 files
+  are attached to nothing at all**.
+
+What is lost is the thumbnail strip and the per-file remove. Both matter for the
+dashboard's image field, which is chunk 04's and is Vue; neither matters for two
+PDFs on a course.
+
+**The trap inside it**: `UploadMedia` leaves the file in `temp/` and
+`AttachMedia` is what moves it to `uploads/`. `PostMessage` takes an
+`attachments` array and only *associates* each row — which is right for the API,
+where the files were uploaded by an earlier request and are already in place.
+Handing the form's uploads to it instead writes rows whose files are in the wrong
+directory, and `MediaController` answers 404 for every one. The test pins both
+directories.
+
+### Small things
+
+- **The seat count is `12 / 14 Teilnehmer`, with `&thinsp;` either side of the
+  slash**, and it goes in the same box as the fee rather than beside it —
+  legacy renders a bare `<div>` around both whether or not either is shown.
+  Three flex children in a `justify-between` column would have spaced the count,
+  the fee and the button evenly across it.
+- **No fee and no `mit …` on these rows.** What a course costs is the student's
+  question, and naming the expert on the expert's own screen is noise. Both are
+  props `x-site.event-row` already had.
+- **`Vergangene Kurse` keeps its *Detail* button**, where the student's
+  *Absolvierte Kurse* loses everything but the link. An expert still wants the
+  participant list of a course that has run: it is who was in the room.
+- **A cancelled course shows its cancelled bookings.** Legacy's
+  `$event->isCancelled() ? $event->cancelledBookings : $event->bookings` reads
+  like a trick and is the right answer — calling off a course cancels every seat
+  on it, so the live list would be empty and the expert would lose the list of
+  people they have to apologise to. The rework adds the word *annulliert* beside
+  each, which legacy does not: there, the two states are indistinguishable.
+- **`belongs_to_message` has never hidden anything.** Legacy hides the *Löschen*
+  on a course document that also belongs to a message, and its `fileables` pivot
+  keeps the two sets disjoint — 13 event files, 20 message files, no overlap. In
+  the rework it cannot arise: a `media` row has one owner, and
+  `MediaPolicy::delete` admits only a file whose owner is an Event.
+- **The delete is a form, not a link.** Legacy's *Löschen* opens a
+  `<notification>` and then DELETEs over axios. Here the button opens the same
+  confirmation and the confirmation submits a hidden form — a POST with a token,
+  rather than something a prefetcher can fire. `$store.confirm` holds the id of
+  that form and nothing else, so one dialog serves the page where legacy renders
+  one per row.
+- **The message is recorded but not mailed, and the toast says so.**
+  `PostMessage` writes the recipient rows; there is no Mailable anywhere in the
+  rework yet, on this path or the checkout's. *Die Nachricht wurde erfasst.* is
+  the honest sentence until there is one.

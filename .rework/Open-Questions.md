@@ -39,6 +39,29 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? | Marcel, then the client | The Kundenmeinungen column on the course page, and `04-content.md`'s `Testimonial` plan |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
+| 20 | Which chunk installs dompdf, and what is the letterhead? | Marcel | The expert portal's *Teilnehmerliste (PDF)*, the QR bill and the participation confirmation — three deferred documents waiting on one decision |
+
+### 20. Which chunk installs dompdf, and what is the letterhead?
+
+Raised 2026-09-22, building the expert portal. **Three deferred documents are now
+waiting on one decision**, and they were deferred separately:
+
+| | where it was deferred |
+|---|---|
+| The QR-bill invoice | `03-invoices.md` |
+| The participation confirmation | `03-invoices.md` |
+| The *Teilnehmerliste* | the expert portal, 2026-09-22 |
+
+Nothing in the rework generates a PDF — `00-foundation.md` says dompdf gets
+added by the chunk that needs it, and no chunk has yet. The participant list is
+by far the smallest of the three and building it now would set the page
+furniture — letterhead, margins, fonts, footer — for the two that carry money.
+So it waits for the chunk that owns documents, and the policy in front of it is
+already written (`EventPolicy::viewParticipants`).
+
+**Not urgent, and not a blocker:** the expert's course screen draws the
+participant list itself. The PDF is the printable form of a list that is on the
+screen.
 
 ### 19. The 67 past courses sitting in *Gebuchte Kurse* on the live site
 

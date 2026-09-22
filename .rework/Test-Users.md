@@ -1,26 +1,35 @@
 # Test users
 
-Three accounts, one per role, for clicking the rework through by hand. They are
-built by a seeder rather than kept alive by hand, so they survive a re-port and
-there is no question of what they hold.
+Four accounts — one per role, plus one holding all three — for clicking the
+rework through by hand. They are built by a seeder rather than kept alive by
+hand, so they survive a re-port and there is no question of what they hold.
 
 ```sh
 php artisan db:seed --class=DevUsersSeeder
 ```
 
-Idempotent — re-running resets the password and rebuilds the student's fixtures
-rather than stacking a second set. The usual reasons to run it again are having
-rebuilt the database from `port:*`, or having forgotten the password.
+Idempotent — re-running resets the passwords and rebuilds the fixtures rather
+than stacking a second set. The usual reasons to run it again are having rebuilt
+the database from `port:*`, or having forgotten the password.
+
+**It logs you out**, which is not a bug and is worth expecting: `updateOrCreate`
+re-hashes the password every run, and Laravel's session guard remembers the hash
+it authenticated against. Sign in again after seeding.
 
 ## The accounts
 
 | Role | Email | Lands on |
 |---|---|---|
 | Student | `dev@viak.test` | `/de/student/profil` |
-| Expert | `dev-expert@viak.test` | `/de/experte/profil` — **404, not built yet** |
+| Expert | `dev-expert@viak.test` | `/de/experte/profil` |
 | Admin | `dev-admin@viak.test` | `/dashboard` |
+| All three | `dev-all@viak.test` | `/de/student/profil` — **and both portals are real** |
 
-**Password, all three:**
+Plus eight throwaway students, `dev-teilnehmer-{event}-{0..3}@viak.test`, who
+exist to be names on the two experts' participant lists. They hold the same
+password and nothing else worth looking at.
+
+**Password, all of them:**
 
 ```
 FLAW-GLEE-CENT-BOSS-GAVE-HOOK-FUSE
@@ -39,6 +48,11 @@ The "Landing on" column is `SiteUrl::profileFor()`, which is what the header's
 *Profil* icon uses: student first for an account holding more than one role,
 then expert, then the dashboard for an admin-only account. A guest gets
 `/login`.
+
+`dev-all@viak.test` is what that precedence is for: it holds all three roles,
+lands on the student portal, and reaches the other two by typing the URL —
+legacy adds a role-picker screen after login that the rework does not have
+(`09-public-site.md`).
 
 ## What the student holds
 
@@ -63,25 +77,40 @@ get rather than insisting.
 answers 404. Producing a real one means running the invoice pipeline, which is a
 different thing to be testing; `03-invoices.md` covers it.
 
+## What each expert holds
+
+`dev-expert@viak.test` and `dev-all@viak.test` teach **different** courses, so
+the two sets of fixtures do not collide — pointing both at one event made the
+second run of the seeder add a second message and a second document to a course
+that already had one.
+
+| | |
+|---|---|
+| *Bevorstehende Kurse* | 1 course, with **3 live seats and a cancelled fourth** — so the count beside the row and the list disagree with the raw booking total, which is the thing to be able to look at |
+| *Vergangene Kurse* | 1 course, so the second list is not empty |
+| *Nachrichten* | 1 note, with its recipient rows written |
+| *Kurs-Dokumente* | 1 document — the row, **not the file**, so *Download* answers 404 for the same reason the student's do |
+
+One participant carries a firm on their profile, so the third column has
+something in it.
+
 ## What is not covered
 
-- **The expert portal does not exist.** `dev-expert@viak.test` signs in and the
-  header points at `/de/experte/profil`, which 404s. That is the next chunk of
-  `09-public-site.md`, not a broken account.
 - **Admin user management is not built** (`08-accounts.md`), so the admin lands
   on the dashboard shell and finds the screens that chunks 02–06 built.
-- **No multi-role account.** Four exist in the production data — three
-  Admin + Expert + Student and one Admin + Student — and they are the reason the
-  portals are two URL trees rather than one `/de/konto`. There is nothing to
-  click on the second tree yet, so seeding one would only prove the header's
-  precedence; add it when the expert portal lands.
+- **The participant list has no PDF.** The expert's course screen draws the
+  list; legacy's *Teilnehmerliste (PDF)* link is deferred with its policy
+  already in place (`09-public-site.md`).
+- **Nothing is mailed.** Posting a note to a course records who it reaches and
+  sends nothing — there is no Mailable in the rework yet, on this path or the
+  checkout's.
 - **Run My Accounts stays mocked.** Nothing these accounts do posts to the
   client's accounting; see `03-invoices.md`.
 
 ## Ported accounts
 
 The 577 ported users are real people with scrubbed emails
-(`user123@example.test`) and **no usable password**. Use the three above rather
+(`user123@example.test`) and **no usable password**. Use the four above rather
 than resetting one of theirs: a ported user's data is the record the port is
 checked against, and fixtures written onto it stop it being that.
 

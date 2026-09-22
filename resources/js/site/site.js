@@ -12,6 +12,7 @@ import Alpine from 'alpinejs';
 import basket from './stores/basket';
 import basketList from './components/basket-list';
 import bookmark from './components/bookmark';
+import confirm from './stores/confirm';
 import courseFilter from './components/course-filter';
 import menu from './components/menu';
 import portal from './stores/portal';
@@ -26,6 +27,13 @@ Alpine.store('toast', toast);
  * one: rendered once per page, talked to by every row.
  */
 Alpine.store('portal', portal);
+
+/*
+ * The expert portal's *Bitte Löschen bestätigen!*, which submits a form the page
+ * already rendered rather than firing a request of its own. See
+ * `stores/confirm.js`.
+ */
+Alpine.store('confirm', confirm);
 
 /*
  * The course filter is *one* mechanism, not two. The server still filters by

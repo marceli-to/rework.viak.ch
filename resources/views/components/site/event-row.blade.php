@@ -7,6 +7,7 @@
 	'rentalPrompt' => null,
 	'showExperts' => true,
 	'showFee' => true,
+	'bookings' => null,
 	'marked' => false,
 ])
 
@@ -139,11 +140,28 @@
 			'sm:flex sm:items-start sm:justify-between' => $action !== null,
 			'sm:flex sm:justify-end' => $action === null,
 		])>
-			@if ($showFee)
-				{{-- The 32/48px gap is legacy's `mr-8x`/`md:mr-12x` and belongs
-				     to the fee only where a button follows it. --}}
-				<div @class(['sm:mr-32 lg:mr-48' => $action !== null])>{{ $fee }}</div>
-			@endif
+			{{-- **The facts share one box and the button is its sibling**, which
+			     is legacy's own markup — `StackedListEvent.vue` renders a bare
+			     `<div>` around the seat count and the fee whether or not either
+			     is shown. It matters as soon as there are two of them: three
+			     flex children in a `justify-between` row would space the count,
+			     the fee and the button evenly across the column instead of
+			     putting the first two together. --}}
+			{{-- The 32/48px gap is legacy's `mr-8x`/`md:mr-12x` and belongs to
+			     the facts only where a button follows them. --}}
+			<div @class(['sm:mr-32 lg:mr-48' => $action !== null])>
+				{{-- *12 / 14 Teilnehmer* — `showBookings`, which only the expert
+				     portal passes ([[ExpertPortalController]]). The thin spaces
+				     around the slash are legacy's `&thinsp;` and they are what
+				     stop it reading as a date. --}}
+				@if ($bookings !== null)
+					<div>{{ $bookings }}&thinsp;/&thinsp;{{ $event->max_participants }} Teilnehmer</div>
+				@endif
+
+				@if ($showFee)
+					<div>{{ $fee }}</div>
+				@endif
+			</div>
 
 			@if ($action)
 				{{-- `.stacked-list__action`: 24px above it on a phone, where the

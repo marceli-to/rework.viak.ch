@@ -11,8 +11,8 @@ documents that history produces.
 
 ## Status
 
-**Partly built, 2026-09-18; the student portal added 2026-09-22.** 378 tests
-green, Pint clean. Scoped by the method that found chunk 06: mapping the legacy
+**Partly built, 2026-09-18; both portals added 2026-09-22.** 429 tests green,
+Pint clean. Scoped by the method that found chunk 06: mapping the legacy
 surface onto the rework and looking for what has nowhere to land.
 
 | Part | |
@@ -22,7 +22,7 @@ surface onto the rework and looking for what has nowhere to land.
 | **Messages** | Built — schema, `PostMessage`, `MessagePolicy`, HTTP, `port:messages` |
 | **Accounts** | Built — one profile controller for all three roles, addresses, `MustVerifyEmail` |
 | **The student portal** | Built 2026-09-22 — four screens at `/de/student/profil`, see `09-public-site.md` |
-| **The expert portal** | **Not built** |
+| **The expert portal** | Built 2026-09-22 — five screens at `/de/experte/profil`, see `09-public-site.md` |
 | **Admin user management** | **Not built** |
 
 **Building the student portal turned up six defects**, four of them in code that
@@ -58,12 +58,19 @@ should not wait for this chunk — the two profile defects below are now fixed
 
 ### What is left
 
-- ~~**The portal screens.**~~ The student's three are built (2026-09-22) —
-  *Mein Profil*, *Meine Dokumente*, the booked-event view, plus the
-  invoice-address pages. **The expert's course view is what remains**, with the
-  participant list, the files and the message composer; `08-accounts.md`'s
-  finding 5 — legacy's participant-list PDF has no ownership check — is the
-  thing to settle first, since that screen is where the link to it goes.
+- ~~**The portal screens.**~~ **Both are built, 2026-09-22.** The student's
+  four — *Mein Profil*, *Meine Dokumente*, the booked-event view and the
+  invoice-address pages — and the expert's five, with the participant list, the
+  message composer and the course-materials upload. Finding 5 is settled by
+  `EventPolicy::viewParticipants`; finding 4 is settled by `MessagePolicy`,
+  which the composer is the first thing to exercise in a browser.
+
+  **One piece is deferred with its policy already in place**: legacy's
+  *Teilnehmerliste (PDF)*. Nothing in the rework generates a PDF, and chunk 03
+  deferred the QR bill and the participation confirmation to whichever chunk
+  builds the document pipeline — so adding dompdf for the smallest of the three
+  would set the letterhead conventions for all of them (Marcel, 2026-09-22).
+  The route will ask `viewParticipants` the day there is a route.
 - **Admin user and expert management.** The dashboard CRUD, which is Vue and
   wants the field kit from chunk 04 rather than ten hand-rolled forms.
 - **Fortify's own routes and views** — login, registration, password reset.
@@ -209,6 +216,14 @@ said had to come first.
 can read the message thread of an event they have never booked, and post a
 message to one, **which mails every participant of that event**.
 
+**Settled in the rework**, `MessagePolicy` — and since 2026-09-22 it is actually
+reachable: the expert portal's composer is the first write path on the public
+site, and `PostEventMessageRequest::authorize()` asks
+`can('create', [Message::class, $event])`. Reading is
+`viewForEvent`, which the student portal's booked-event screen asks. Legacy's
+FormRequest authorises everything, which is where the hole is; ours authorises
+against the object, which is the whole difference this chunk makes.
+
 ### 5. Any expert can download any participant list
 
 `GET /pdf/teilnehmer-liste/{event:uuid}` is gated by `role:admin,expert` with no
@@ -216,6 +231,19 @@ check that the expert teaches that event. The PDF carries participant names and
 contact details. Note that the neighbouring API route *does* check —
 `EventController::findExpertEvent` calls `authorize('containsEvent', $event)` —
 so this is an omission on one route rather than a missing policy.
+
+**Settled in the rework, 2026-09-22.** `EventPolicy::viewParticipants` states
+the neighbour's rule once — *admin, or teaches this event* — and every caller
+asks it: the expert portal's course screen, which is what draws the list, and
+whatever serves it as a PDF the day there is a PDF. It denies with a **404**
+rather than a 403, because answering *forbidden* confirms that the uuid is a
+real course.
+
+The PDF itself is deferred, not ported; the reasoning is under *What is left*
+and in `09-public-site.md`. Worth keeping in view that **the PDF is the only
+place the phone numbers and email addresses appear** — legacy's screen shows
+name, town and firm and nothing more, which is exactly what makes the missing
+check on that one route matter.
 
 ### 6. The shape of it
 

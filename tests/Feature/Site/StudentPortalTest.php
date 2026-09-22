@@ -516,7 +516,18 @@ it('shows the course notes and the materials to somebody on the course', functio
 		->assertOk()
 		->assertSee('Anreise und Parkplätze')
 		->assertSee('Texturen.zip')
-		->assertSee(route('media.download', $file->uuid));
+		->assertSee(route('media.download', $file->uuid))
+		/*
+		 * **The row, not the message** — `messages/Index.vue` draws 35
+		 * characters of the body and an *Anzeigen* that opens the rest in a
+		 * lightbox, and both portals go through it
+		 * ([[x-site.message-row]]). This screen printed the whole body
+		 * inline until 2026-09-22, which was readable and was not legacy's.
+		 */
+		->assertSee('Anzeigen')
+		->assertSee('Bitte mit dem Zug.')
+		/* And the four-column file row, with the size in base 1000. */
+		->assertSee('Download');
 });
 
 /**

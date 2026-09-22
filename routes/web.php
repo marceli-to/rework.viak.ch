@@ -7,6 +7,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
+use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\StudentAddressController;
 use App\Http\Controllers\Site\StudentPortalController;
 use App\Http\Middleware\SetLocaleFromUrl;
@@ -198,6 +199,84 @@ Route::prefix('{locale}')
 						Route::delete('{address:uuid}', [StudentAddressController::class, 'destroy'])
 							->name("{$locale}.student.address.destroy");
 					});
+				});
+
+			/*
+			 * The expert portal ([[08-accounts]], [[09-public-site]]).
+			 *
+			 * Legacy's second role tree, `/de/experte/profil`, with the segments
+			 * read from `config/site.php` as the student's are. Five screens:
+			 * the landing page, the profile form, one course, the message
+			 * composer and the upload.
+			 *
+			 * **The guard is `role:admin,expert`, which is legacy's** — an admin
+			 * reaches these screens too, and [[EventPolicy::viewParticipants]]
+			 * then admits them to every course rather than to the ones they
+			 * teach. That is the shape legacy has and it is the right one: an
+			 * admin answering a question about a course should not have to be
+			 * added to it as an expert first.
+			 *
+			 * What legacy does *not* have is anything below the role. Every
+			 * screen under here is authorised against the **event**, which is
+			 * findings 4 and 5 of `08-accounts.md` — a participant list is names,
+			 * towns, phone numbers and email addresses, and
+			 * `/pdf/teilnehmer-liste/{event}` hands it to any of the 18 accounts
+			 * holding the Expert role.
+			 */
+			Route::middleware(['auth', 'verified', 'role:admin,expert'])
+				->prefix($segments['expert'].'/'.$segments['profile'])
+				->group(function () use ($locale, $segments): void {
+					Route::get('/', [ExpertPortalController::class, 'index'])
+						->name("{$locale}.expert.profile");
+
+					/*
+					 * A screen rather than a panel, for the reason the student's
+					 * form is one ([[SiteUrl::studentProfileEdit]]). The POST
+					 * lands on the same URL so a validation failure comes back
+					 * by itself.
+					 */
+					Route::get($segments['edit'], [ExpertPortalController::class, 'edit'])
+						->name("{$locale}.expert.profile.edit");
+
+					Route::post($segments['edit'], [ExpertPortalController::class, 'update'])
+						->name("{$locale}.expert.profile.update");
+
+					/*
+					 * One course, by the **event's** uuid — the student portal's
+					 * choice and legacy's, under a different root.
+					 *
+					 * The two screens under it keep legacy's English segments
+					 * inside the German path, `…/message` and `…/file-upload`,
+					 * for the same reason `/de/checkout/basket` does.
+					 */
+					Route::prefix($segments['course'].'/'.$segments['event'].'/{uuid}')
+						->whereUuid('uuid')
+						->group(function () use ($locale, $segments): void {
+							Route::get('/', [ExpertPortalController::class, 'event'])
+								->name("{$locale}.expert.event");
+
+							Route::get($segments['message'], [ExpertPortalController::class, 'createMessage'])
+								->name("{$locale}.expert.event.message.create");
+
+							Route::post($segments['message'], [ExpertPortalController::class, 'storeMessage'])
+								->name("{$locale}.expert.event.message.store");
+
+							Route::get($segments['upload'], [ExpertPortalController::class, 'createUpload'])
+								->name("{$locale}.expert.event.upload.create");
+
+							Route::post($segments['upload'], [ExpertPortalController::class, 'storeUpload'])
+								->name("{$locale}.expert.event.upload.store");
+
+							/*
+							 * Removing a course document. A `DELETE` from a form
+							 * with `@method`, as the address screens do — the
+							 * only verb-spoofed route on the portal, and it is
+							 * one because a file removal is not a navigation.
+							 */
+							Route::delete($segments['documents'].'/{media:uuid}',
+								[ExpertPortalController::class, 'destroyFile'])
+								->name("{$locale}.expert.event.file.destroy");
+						});
 				});
 		}
 	});
