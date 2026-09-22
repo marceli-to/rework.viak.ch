@@ -1081,7 +1081,8 @@ at each step:
 | `lg` | 18px × 1.3 = 23.4 | 14 | 5 |
 
 Measured at `lg` after: the box's centre and the label's first-line centre are
-**0.3px apart**.
+**0.3px apart**. Marcel confirmed the base and `sm` steps in his own browser —
+`resize_window` could not reach them.
 
 `items-center` would have been shorter and wrong — it centres against the
 *whole* label, so the registration form's two-line consent would drag the box
