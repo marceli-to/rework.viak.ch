@@ -861,3 +861,26 @@ it('capitalises Dir and Deine in the verification notice', function () {
 			&& ! str_contains($status, 'deine')
 			&& ! str_contains($status, ' dir '));
 });
+
+/**
+ * `Index.vue` puts `md:mt-3x` on `index == 0` and nothing on the rest, so the
+ * first address sits **12px** under the heading at desktop against the 32 every
+ * other row keeps. A desktop-only rule: below `bp-md` the first row keeps the
+ * row margin like any other, which is why it is `lg:mt-12` and not a margin
+ * removed.
+ */
+it('pulls the first invoice address up at desktop, and only there', function () {
+	$user = portalStudent();
+
+	foreach ([['Anna', 'Muster'], ['Beat', 'Keller']] as [$first, $last]) {
+		$user->addresses()->create([
+			'first_name' => $first, 'last_name' => $last,
+			'street' => 'Bahnhofstrasse', 'zip' => '8001', 'city' => 'Zürich', 'country_code' => 'ch',
+		]);
+	}
+
+	$html = $this->actingAs($user)->get('/de/student/profil/bearbeiten')->assertOk()->getContent();
+
+	// One row carries it, the other does not.
+	expect(substr_count($html, 'lg:mt-12'))->toBe(1);
+});

@@ -36,7 +36,12 @@
 		@if ($method === 'post') type="submit" @else href="{{ $href }}" @endif
 		title="{{ $label }}"
 		class="inline-block text-left transition-colors hover:text-teal">
-		<span class="block">{{ $label }}</span>
+		{{-- 4px between the word and the arrow (Marcel, 2026-09-22). Legacy's
+		     `:below` sets `display: inline-block` and nothing else, so the two
+		     sit flush — a small deliberate departure, and it applies to the
+		     profile's *Logout* as well, which is the same control pointing the
+		     other way. --}}
+		<span class="mb-4 block">{{ $label }}</span>
 		@if ($direction === 'left')
 			<x-icon.arrow-left />
 		@else

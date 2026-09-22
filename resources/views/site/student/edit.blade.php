@@ -103,10 +103,24 @@
 			--}}
 			<x-site.collapsible title="Rechnungsadressen" class="mt-56" :expanded="true">
 				@forelse ($addresses as $address)
-					{{-- `.stacked-list-item` with the pencil pinned to its right
-					     — measured at 17px down from the row's top border, which
-					     is the icon's own `mt-2x sm:mt-4x` plus the 1px rule. --}}
-					<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
+					{{--
+						`.stacked-list-item` with the pencil pinned to its right
+						— measured at 17px down from the row's top border, which
+						is the icon's own `mt-2x sm:mt-4x` plus the 1px rule.
+
+						**The first row is pulled up at `lg`.** `Index.vue` puts
+						`md:mt-3x` on `index == 0` and nothing on the rest, so
+						the gap from the heading is **12px** at desktop against
+						the 32 every other row keeps — measured on the live
+						stylesheet, 2026-09-22. It is a desktop-only rule:
+						below `bp-md` the first row keeps the row margin like
+						any other, which is why this is `lg:mt-12` rather than
+						a margin removed.
+					--}}
+					<article @class([
+						'relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl',
+						'lg:mt-12' => $loop->first,
+					])>
 						{{ $address->summary() }}
 
 						<a href="{{ \App\Support\SiteUrl::studentAddressEdit($address->uuid) }}"
