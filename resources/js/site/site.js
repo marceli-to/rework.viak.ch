@@ -14,10 +14,18 @@ import basketList from './components/basket-list';
 import bookmark from './components/bookmark';
 import courseFilter from './components/course-filter';
 import menu from './components/menu';
+import portal from './stores/portal';
 import toast from './stores/toast';
 
 Alpine.store('basket', basket);
 Alpine.store('toast', toast);
+
+/*
+ * The student portal's three booking actions and the confirmations they ask
+ * first ([[08-accounts]]). A store for the same reason the basket's dialogs are
+ * one: rendered once per page, talked to by every row.
+ */
+Alpine.store('portal', portal);
 
 /*
  * The course filter is *one* mechanism, not two. The server still filters by

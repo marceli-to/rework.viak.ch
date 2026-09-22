@@ -92,7 +92,13 @@
 						</a>
 					</li>
 					<li class="flex items-center sm:ml-16 lg:ml-32">
-						<a href="/dashboard" class="block hover:text-teal" title="Profil">
+						{{-- Where this goes depends on who is looking, as
+						     legacy's `MenuItemProfile` does it — and a **guest
+						     goes to the login**, which is the case that was
+						     missing: it pointed at `/dashboard` for everyone,
+						     so a signed-out visitor clicking *Profil* landed on
+						     the admin SPA shell ([[SiteUrl::profileFor]]). --}}
+						<a href="{{ \App\Support\SiteUrl::profileFor(auth()->user()) }}" class="block hover:text-teal" title="Profil">
 							{{-- `icons/_profile.scss` sizes this by **height** — 16px, 20px from
 							     the desktop breakpoint — and lets the width follow. --}}
 							<x-icon.profile class="h-16 w-auto! lg:h-20" />
@@ -162,7 +168,7 @@
 				</li>
 
 				<li>
-					<a href="/dashboard"
+					<a href="{{ \App\Support\SiteUrl::profileFor(auth()->user()) }}"
 						class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
 						Profil
 					</a>

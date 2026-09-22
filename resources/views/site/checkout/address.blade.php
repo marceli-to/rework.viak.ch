@@ -154,7 +154,13 @@
 									Adresse erfassen
 								</button>
 
-								<a href="{{ route('dashboard') }}"
+								{{-- The portal's own address list, which is where
+								     this has always meant to go — it pointed at
+								     `/dashboard` while there was nothing better
+								     ([[09-public-site]]). It leaves the checkout;
+								     the session keeps the answers, and *Adresse
+								     erfassen* beside it is the way to stay. --}}
+								<a href="{{ \App\Support\SiteUrl::studentPortal() }}"
 									class="text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
 									Adressen verwalten
 								</a>

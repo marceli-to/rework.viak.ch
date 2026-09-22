@@ -11,8 +11,12 @@ asks about the laptop and confirms the add, and **the checkout is built end to
 end** — basket, address, payment, summary and confirmation. A real purchase has
 been taken through it in a browser: two bookings, one checkout, a discount code
 and a laptop's VAT, all correct. Along the way it found that `auth:sanctum`
-could not see a session at all. **The two portals are next**; everything else is
-under *What is left*.
+could not see a session at all.
+
+**The student portal is built**, 2026-09-22 — all four screens, driven in a
+browser: the profile saved, a laptop added and given up again, and the
+cancellation dialog opened with the penalty in it. 378 tests green, Pint clean.
+**The expert portal is next**; everything else is under *What is left*.
 
 | | |
 |---|---|
@@ -63,6 +67,13 @@ under *What is left*.
   with its bookmark and its `Buchen`, and the prev/next pair — every block to
   the pixel. See *The course detail page*, below, for the three data findings
   that came out of it.
+- **The student portal**, at `/de/student/profil` — *Mein Profil* with its
+  inline edit form, the four collapsibles (Merkliste, Gebuchte Kurse,
+  Absolvierte Kurse, Dokumente), *Meine Dokumente*, one booked seat with its
+  notes and materials, and the invoice-address pages. Brings `x-site.event-row`,
+  `x-site.document-row`, `x-site.event-state`, `x-site.back-link` and
+  `x-site.booking-dialogs`. See *The student portal*, below, for the six defects
+  it turned up.
 
 ### What is left
 
@@ -107,11 +118,22 @@ Roughly in the order that unblocks the most.
    a basket for a guest* stays as it was, which is the point.
 2. ~~Register, login, password reset.~~ **Built 2026-09-21** — see *Fortify had
    no views at all*, below.
-3. **The two portals** — *Meine Kurse*, *Meine Dokumente*, the expert's course
-   view. Every endpoint exists (`08-accounts.md`); only the screens are missing.
-   **This is where to pick it up.** The checkout links at it twice already:
-   *Adressen verwalten* on step 2 and *Zum Profil* on the confirmation both
-   point at `/dashboard` because there is nothing better to point at yet.
+3. ~~**The two portals.**~~ **The student half is done, 2026-09-22** — four
+   screens at `/de/student/profil`, and the five links that pointed at
+   `/dashboard` for want of anywhere better now point at it: the header's
+   *Profil* icon (desktop and phone), the course card's *Verwalten*, *Adressen
+   verwalten* on checkout step 2 and *Zum Profil* on the confirmation. See *The
+   student portal*, below.
+
+   **The expert portal is what is left of it** — `/de/experte/profil`, with
+   *Bevorstehende Kurse* and *Vergangene Kurse* over `user.upcoming_events` and
+   `user.past_events`, an event screen carrying the participant list, the files
+   and the message composer, and the same profile block. `SiteUrl::expertPortal()`
+   already exists and the header already points at it for an expert, so the
+   route is the only thing missing. Two things to settle first: **legacy's
+   participant-list PDF has no ownership check at all** (`08-accounts.md`,
+   finding 5) and the message composer is the *write* side of
+   `MessagePolicy::create`, which nothing has exercised in a browser yet.
 4. ~~The course detail page.~~ **Built 2026-09-21** — see *The course detail
    page*, below.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The
@@ -1402,3 +1424,231 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
   (4)` counts and closes it, and the console is clean. `resize_window` does work
   — it clamps to a 500px minimum, which is under the 700px breakpoint. The rest
   of the site still has not been eyeballed.
+
+## The student portal — 2026-09-22
+
+`/de/student/profil` and three screens under it, from `backend/student/` — four
+Vue views, 839 lines, three API calls to draw a screen whose every value the
+server already had. Server-rendered Blade like the rest of the site; the only
+JavaScript is the Alpine store behind *Annullieren* and the laptop.
+
+`08-accounts.md` built every endpoint these use, so this was frontend work —
+and it still turned up **six defects**, four of them in code that was already
+built and green. That is the pattern the chunk doc already named: *a green suite
+can still be unreachable*.
+
+### The URLs are legacy's two role trees, with the segments in config
+
+**Marcel's call, 2026-09-22.** `/de/student/profil` and `/de/experte/profil`,
+not one `/de/konto` for both.
+
+The argument for merging them was the single `ProfileController` — one
+controller for all three roles was an explicit chunk 08 decision. The argument
+against is the data: **four accounts hold more than one role** (three
+Admin + Expert + Student, one Admin + Student), and what a student sees and what
+an expert sees are different screens over different data, not two views of one.
+A dual-role user needs both at once, and the role in the path is what separates
+them — it is also what the `role:` middleware is already guarding.
+
+What is *not* legacy's: the segments come from `config/site.php` rather than
+being written into `routes/web.php`, so `/en/student/profile/documents` exists
+the day `'en'` joins `site.locales`. Legacy spells both languages out by hand,
+twelve routes for six. Six new segments — `student`, `profile`, `event`,
+`address`, `create`, `edit` — join the ones that were already there.
+
+The `account` → `konto` and `documents` → `dokumente` pair that has been sitting
+unused in `config/site.php` stays unused, exactly as `basket` → `warenkorb` does
+for the checkout. Adopting either would be a decision rather than a port.
+
+### Measured against production's own classes
+
+The portal is behind a login, so it was measured the way the modal and the
+basket were: by rendering legacy's markup into a live page carrying the
+production stylesheet and reading `getComputedStyle`, at three widths.
+
+| | phone (375) | sm (800) | lg (2560) |
+|---|---|---|---|
+| `.collapsible-container` | mt 48 | mt 48 | mt 64 |
+| `.collapsible` | mb 64, 1px `#505050` | mb 64, 2px | mb 64, 2px |
+| `.btn-collapsible` | 14px, p 8/12 | 16px, p 16/24 | 18px, p 16/24 |
+| `%stacked-list` row | 16/24, mt 16 pt 8 | 16/22.4, mt 32 pt 16 | 18/25.2, mt 32 pt 16 |
+| grid gap | (stacked) | 16 | **40, rows as well as columns** |
+| `.stacked-list__icon` | absolute, t 12 r 0 | pr 16, pt 4 | pr 16, pt 4 |
+| `.stacked-list__action` | mt 24 | 0 | 0 |
+| aside's back / logout link | mt 0 | mt 20 | mt 40 |
+| `.icon-edit` | absolute t 0 r 0, 18×18 | | |
+| `.form-danger-zone` | mt 24, p 8, 14px | mt 48, p 8/12/12/12, 16px | mt 48, p 12/16/16/16, 18px |
+| `.no-results` | mt 16, italic | | |
+
+Everything in the middle three rows is what `x-site.event-card` and
+`x-site.basket-row` were already built to, which is the useful part: the row
+this portal is made of is the row the course page and the basket already draw,
+and it measured identically without being touched.
+
+**The row gap is the one that would have been missed.** `%sm\:grid-cols-12` sets
+`gap`, so legacy's twelve-column grid has a 40px gap **between rows** as well as
+between columns — which is what spaces the laptop line under the course line,
+and the rental offer under both. Add a margin for it and you get 64. Found by
+measuring the laptop row rather than by reading the SCSS, where one `gap`
+declaration covers both.
+
+### Two lists split on the date, and 67 live rows say why
+
+Legacy's *Gebuchte Kurse* is `bookings()->notFlagged('isConcluded')` and
+*Absolvierte Kurse* is `flagged('isConcluded')->flagged('hasParticipated')`.
+`isConcluded` is written in exactly one place — `EventClosedHandler` — and
+**only for a booking already flagged `hasParticipated`**, so a seat nobody
+ticked off never leaves the first list.
+
+Measured against the 2026-09-11 snapshot:
+
+| | |
+|---|---:|
+| Active bookings | 527 |
+| — carrying `isConcluded` | 436 |
+| — **not**, and the course has already run | **67** |
+| Students affected | **63** |
+| Oldest | **16 March 2023** |
+
+So 63 students open the live site today and see courses from 2023 listed as
+*Gebuchte Kurse*, each with a live *Annullieren* button beside it — and
+cancelling one would fire the 100 % penalty rule against a course that ran two
+years ago.
+
+**The rework splits on the event's date**, which needs no flag anybody has to
+remember to set, and which the rework could not have used anyway: neither flag
+was ported. *Absolvierte* then overstates slightly — it includes a course
+somebody booked and did not attend — and that is the right trade: attendance is
+recorded by the participation confirmation, not by a list heading, and the
+behaviour that matters is that a course which has happened cannot be cancelled.
+Today counts as upcoming, which is the boundary `Event::scopeUpcoming` already
+draws and legacy's `date > today` left in neither list.
+
+### The cancellation dialog names the price before it asks
+
+Legacy's `confirmBookingCancellation()` builds one of two sentences out of
+`booking.cancellation.penalty` and `.amount`, and `06-bookings.md` said the
+rework tells the student at the moment they cancel. This is the other half:
+told **before**.
+
+The two figures are rendered into the row by the server from
+`CancellationPenalty` — the same class `RaiseCancellationPenalty` calls — so the
+dialog cannot promise one number and the invoice say another. Nothing in the
+browser computes a penalty.
+
+### Six defects, four of them in code that was already green
+
+Worth listing, because five of the six are the same shape: **a rule written for
+a JSON client, met for the first time by a form.**
+
+1. **`route()` inside the locale group could not resolve.** Every route in the
+   prefixed group takes `{locale}`, and `SetLocaleFromUrl` then calls
+   `forgetParameter('locale')` — correct for the controllers, and it leaves
+   `route()` with a required parameter and no value. The checkout never hit it
+   because it goes through `SiteUrl`; the portal's form actions are named
+   routes, so the first `route()` call in the group was also the first
+   *Missing parameter: locale*. Fixed with `URL::defaults()` in the same
+   middleware, which makes every named route in the group resolvable.
+
+2. **The profile form demanded the password on every save.** `UpdateProfileRequest`
+   required `current_password` when `filled('email')`, and an edit form prints
+   the current address in the field — so a student could not correct a phone
+   number without typing their password. *Filled* is not *changed*; the rule
+   says `changesEmail()` now, and `UpdateProfile` compares too. Legacy sidesteps
+   this by calling the field `new_email` and leaving it blank, which is a
+   different form rather than a different rule.
+
+3. **And then failed on the empty one.** An untouched password box posts `''`,
+   which `ConvertEmptyStringsToNull` turns into `null`, which fails `string`. An
+   API client omits the key and never meets it. `nullable` added; `required`
+   is implicit and still fires ahead of it.
+
+4. **`Event` had no `media()` relation.** `port:media` wrote **13 rows** with
+   `mediable_type = App\Models\Event` — zips of models and textures, workshop
+   PDFs across 5 events — and they have been unreachable ever since, because a
+   morph with no relation on the owning side raises nothing at all: no error, no
+   null, no missing column. The same failure `event_expert` had. `Open-Questions.md`
+   already carries the item asking for the rest of the ported pivots to be
+   counted; this is the second one found by tripping over it.
+
+5. **`MessageResource` read `$this->author->firstname`** — legacy's column name,
+   where `name` held the surname. It does not exist here, so Eloquent returned
+   null and `trim()` swallowed the leading space: the right answer by accident,
+   one rename from a stray space in every payload.
+
+6. **The header's *Profil* icon pointed at `/dashboard` for everyone, including
+   a guest** — so a signed-out visitor clicking it landed on the admin SPA
+   shell. It is `SiteUrl::profileFor()` now: login for a guest, the student
+   portal, the expert portal, the dashboard for an admin-only account, in that
+   precedence. Legacy adds a fourth case this does not have — a `selected-role`
+   in the session, set by a role-picker screen after login — which four accounts
+   see and which is not built.
+
+### Three parity defects in the registration form, found on the way
+
+The profile form is the registration form's twin, so building it meant looking
+at that one again. All three were confirmed on the live `/de/registration`,
+which is public:
+
+| | production | was here |
+|---|---|---|
+| Geschlecht | `männlich / weiblich / andere` | `Frau / Herr / Divers` |
+| Strasse / Nr. | `span-6` + `span-6`, 329px each | 9 / 3 |
+| PLZ / Ort | `span-6` + `span-6`, 329px each | 4 / 8 |
+
+The gender labels are the more interesting one. *Frau / Herr / Divers* is
+defensible as copy — the field exists for the salutation on an invoice
+(`Gender`) — but it was neither measured nor recorded, and the portal's own form
+would then have disagreed with it. Both now come from `Gender::label()`, which
+returns exactly the three strings `genders.description` holds in the legacy
+database, so there is one place to change it if VIAK decides the salutation is
+the better wording.
+
+### Small things worth knowing before the expert portal
+
+- **`@js()` is not compiled inside a component tag's attribute.** It reaches the
+  browser as those six characters and Alpine answers *Invalid or unexpected
+  token*. An echo is, so `{{ Js::from(…) }}` — `Js` is `Htmlable`, so `{{ }}`
+  hands the JSON over without escaping it twice. `x-data="bookmark({ … @js(…) })"`
+  on the course card works because it sits on a plain `<button>`.
+- **`can('viewForEvent', $event)` denies silently.** The ability is on
+  `MessagePolicy` and the argument is an `Event`, so the Gate resolves
+  `EventPolicy`, which has no such method. `can('viewForEvent', [Message::class,
+  $event])` is the call the API already makes.
+- **The count beside a collapsed collapsible is a `<strong>`, not a `<span>`.**
+  `%content-list-collapsible` styles `> h2 a span` with a 12px margin and
+  regular weight, and `Count.vue` renders a `strong` — so **that rule has never
+  matched anything**. Ported as it renders: bold, `#505050`, one space.
+- **The booked-course checkmark is teal.** `Checkmark.vue` hardcodes
+  `fill="#46baba"`, and the Blade set normalises every icon to `currentColor` so
+  a `text-*` can reach it — which is right, and means the colour has to be said
+  at the call site instead of being smuggled in with the artwork.
+- **A form's submit button is full width.** `%btn` is `display: flex` and never
+  states a width, so legacy's `<a class="btn-primary">` in block flow fills its
+  column — 699px on the registration form, 663 inside the danger zone. A real
+  `<button>` sizes to `fit-content` whatever its display, so the width has to be
+  said. The row buttons are unaffected: those are flex items with a 140px floor.
+- **`danger-dark` joins `success-dark`** as the second and last derived colour.
+  `.btn-danger:hover` is `darken($color-danger, 15)`, which the compiled
+  stylesheet resolves to `#b31c00`. The note beside `success-dark` said two was
+  the point to ask for a scale instead; the answer is still no — `danger` and
+  `success` are the only two colours legacy darkens, and a scale would invent
+  seven values nothing uses.
+
+### What the screens do not do, on purpose
+
+- **No compose box on the course thread.** 251 messages over four years and
+  **every one written by an admin or an expert** (`08-accounts.md`), so the
+  student's side is a read. The endpoint that would take one is behind
+  `MessagePolicy::create`, which is staff-only.
+- **A cancelled seat keeps its screen but loses the thread.** The booking is the
+  customer's own history and its documents still point at it; the course's notes
+  and materials belong to the people actually on the course, which is
+  `MessagePolicy`'s and `MediaPolicy`'s call rather than the screen's. Legacy
+  has no state for this at all — it drops a cancelled booking out of every list,
+  so the only way back to that screen is a link that now 404s.
+- **The address pages leave the profile form.** Legacy's router-links do the
+  same and anything typed above is lost either way. Fixing it means a nested
+  form or a dialog, and the checkout's *Adresse erfassen* lightbox is a
+  different screen with a different job — it exists so a customer mid-purchase
+  does not lose the basket.

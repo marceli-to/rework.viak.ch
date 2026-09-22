@@ -11,9 +11,9 @@ documents that history produces.
 
 ## Status
 
-**Partly built, 2026-09-18.** 223 tests green, Pint clean. Scoped the same day
-by the method that found chunk 06: mapping the legacy surface onto the rework and
-looking for what has nowhere to land.
+**Partly built, 2026-09-18; the student portal added 2026-09-22.** 378 tests
+green, Pint clean. Scoped by the method that found chunk 06: mapping the legacy
+surface onto the rework and looking for what has nowhere to land.
 
 | Part | |
 |---|---|
@@ -21,8 +21,27 @@ looking for what has nowhere to land.
 | **Documents** | Built — private disk, policy-gated download, `port:documents` |
 | **Messages** | Built — schema, `PostMessage`, `MessagePolicy`, HTTP, `port:messages` |
 | **Accounts** | Built — one profile controller for all three roles, addresses, `MustVerifyEmail` |
-| **The two portals** | **Not built** — the screens themselves are parity frontend work |
+| **The student portal** | Built 2026-09-22 — four screens at `/de/student/profil`, see `09-public-site.md` |
+| **The expert portal** | **Not built** |
 | **Admin user management** | **Not built** |
+
+**Building the student portal turned up six defects**, four of them in code that
+was already built and green, and they are listed in `09-public-site.md` under
+*The student portal*. Two belong here rather than there:
+
+- **`Event` had no `media()` relation.** `port:media` wrote 13 rows against
+  `App\Models\Event` — course materials, zips and workshop PDFs across 5 events
+  — and nothing could read them, because a morph with no relation on the owning
+  side raises no error, no null and no missing column. `Open-Questions.md`
+  already carries *count-check the other pivots the ports fill*; this is the
+  second one found by tripping over it rather than by checking.
+- **`MessageResource` read `$this->author->firstname`**, a legacy column name.
+  Null, swallowed by a `trim()`, right by accident.
+
+`MediaPolicy` and an authenticated `/medien/{media:uuid}` arrive with the
+portal, so a course's materials go through a policy the way its documents
+already do. **The files themselves are still on the public disk** — moving them
+is a port change rather than a view change, and `Todo.md` carries it.
 
 All three ports ran clean against the production snapshot:
 
@@ -39,9 +58,12 @@ should not wait for this chunk — the two profile defects below are now fixed
 
 ### What is left
 
-- **The portal screens.** *Meine Kurse*, *Meine Dokumente* and the expert's
-  course view are Blade + Alpine, and belong to the parity frontend phase
-  (`00-foundation.md`). Every endpoint they need now exists.
+- ~~**The portal screens.**~~ The student's three are built (2026-09-22) —
+  *Mein Profil*, *Meine Dokumente*, the booked-event view, plus the
+  invoice-address pages. **The expert's course view is what remains**, with the
+  participant list, the files and the message composer; `08-accounts.md`'s
+  finding 5 — legacy's participant-list PDF has no ownership check — is the
+  thing to settle first, since that screen is where the link to it goes.
 - **Admin user and expert management.** The dashboard CRUD, which is Vue and
   wants the field kit from chunk 04 rather than ten hand-rolled forms.
 - **Fortify's own routes and views** — login, registration, password reset.

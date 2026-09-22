@@ -57,6 +57,10 @@
 		'gray' => 'border border-gray-600 bg-gray-600 text-white',
 		'gray-outline' => 'border border-gray-600 bg-white text-gray-600',
 		'success' => 'bg-success text-white hover:bg-success-dark',
+		// `.btn-danger`, and the only one on the public site: *Löschen* in the
+		// `form-danger-zone` at the foot of an address form. Darkens on hover
+		// like `success` rather than going black like the other three.
+		'danger' => 'bg-danger text-white hover:bg-danger-dark',
 		'success-outline' => 'border border-success bg-white text-success',
 		default => 'bg-teal text-white hover:bg-black',
 	};

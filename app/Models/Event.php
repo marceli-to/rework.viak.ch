@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\EventState;
 use App\Enums\ParticipantThreshold;
+use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Event extends Model
 {
 	use HasFactory;
+
+	/*
+	 * Course materials — the zips of models and textures and the workshop PDFs
+	 * an expert uploads for the people on the course ([[08-accounts]]).
+	 *
+	 * **The relation was missing and nothing said so.** `port:media` filled 13
+	 * rows with `mediable_type = App\Models\Event` and they have been
+	 * unreachable ever since, because a morph with no relation on the owning
+	 * side raises nothing — no error, no null, no missing column. It is the
+	 * same failure `event_expert` had, and `Open-Questions.md` already carries
+	 * the item asking for the rest of the ported pivots to be counted.
+	 */
+	use HasMedia;
 	use HasUuid;
 	use SoftDeletes;
 

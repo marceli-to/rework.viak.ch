@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
+use App\Http\Controllers\Site\StudentAddressController;
+use App\Http\Controllers\Site\StudentPortalController;
 use App\Http\Middleware\SetLocaleFromUrl;
 use Illuminate\Support\Facades\Route;
 
@@ -117,6 +120,71 @@ Route::prefix('{locale}')
 					Route::get('confirmation', [CheckoutController::class, 'confirmation'])
 						->name("{$locale}.checkout.confirmation");
 				});
+
+			/*
+			 * The student portal ([[08-accounts]], [[09-public-site]]).
+			 *
+			 * **Legacy's URL tree, with the segments read from
+			 * `config/site.php`** — `/de/student/profil` and four screens under
+			 * it. Legacy writes both languages out by hand in its own
+			 * `routes/web.php`, twelve routes for six; here the loop does it,
+			 * and adding `'en'` to `site.locales` adds the English tree.
+			 *
+			 * Why a role tree rather than one `/de/konto`: four accounts hold
+			 * more than one role, and what a student sees and what an expert
+			 * sees are different screens over different data, not two views of
+			 * one. See [[SiteUrl::studentPortal]].
+			 *
+			 * The guard is legacy's — `auth`, `verified`, `role:student` —
+			 * and it is the same one the checkout carries.
+			 */
+			Route::middleware(['auth', 'verified', 'role:student'])
+				->prefix($segments['student'].'/'.$segments['profile'])
+				->group(function () use ($locale, $segments): void {
+					Route::get('/', [StudentPortalController::class, 'index'])
+						->name("{$locale}.student.profile");
+
+					// The inline edit form, as a real post.
+					Route::post('/', [StudentPortalController::class, 'update'])
+						->name("{$locale}.student.profile.update");
+
+					Route::get($segments['documents'], [StudentPortalController::class, 'documents'])
+						->name("{$locale}.student.documents");
+
+					/*
+					 * One booked seat, resolved by the **event's** uuid rather
+					 * than the booking's — legacy's choice, and the uuid a
+					 * student already has from the course page. The booking is
+					 * found from it and the policy decides whether it is theirs.
+					 */
+					Route::get($segments['course'].'/'.$segments['event'].'/{uuid}',
+						[StudentPortalController::class, 'event'])
+						->whereUuid('uuid')
+						->name("{$locale}.student.event");
+
+					/*
+					 * Saved invoice addresses. Full pages rather than a dialog,
+					 * which is what legacy routes them as — the checkout's
+					 * *Adresse erfassen* lightbox is a different screen with a
+					 * different job ([[09-public-site]]).
+					 */
+					Route::prefix($segments['address'])->group(function () use ($locale, $segments): void {
+						Route::get($segments['create'], [StudentAddressController::class, 'create'])
+							->name("{$locale}.student.address.create");
+
+						Route::post('/', [StudentAddressController::class, 'store'])
+							->name("{$locale}.student.address.store");
+
+						Route::get($segments['edit'].'/{address:uuid}', [StudentAddressController::class, 'edit'])
+							->name("{$locale}.student.address.edit");
+
+						Route::put('{address:uuid}', [StudentAddressController::class, 'update'])
+							->name("{$locale}.student.address.update");
+
+						Route::delete('{address:uuid}', [StudentAddressController::class, 'destroy'])
+							->name("{$locale}.student.address.destroy");
+					});
+				});
 		}
 	});
 
@@ -127,6 +195,18 @@ Route::prefix('{locale}')
 Route::get('/dokumente/{document}', [DocumentController::class, 'show'])
 	->middleware('auth')
 	->name('documents.show');
+
+/*
+ * Attachments — a course's materials, a file on a message ([[08-accounts]]).
+ *
+ * Images do **not** come through here: they are published content and
+ * `/img/{path}` serves them at whatever size the page asked for.
+ * [[MediaPolicy]] admits an Event's or a Message's files to the people who
+ * belong to that course, and nothing else at all.
+ */
+Route::get('/medien/{media:uuid}', [MediaController::class, 'download'])
+	->middleware('auth')
+	->name('media.download');
 
 // SPA shell — the dashboard router takes over client-side.
 Route::view('/dashboard/{any?}', 'components.layout.app')

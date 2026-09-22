@@ -195,7 +195,13 @@
 
 			<div class="mt-24 sm:mt-0">
 				@if ($booked)
-					<x-site.button variant="outline" href="{{ route('dashboard') }}" title="Buchung verwalten">
+					{{-- The seat's own screen in the portal, which is where
+					     *Verwalten* has always meant to go — it pointed at
+					     `/dashboard` while there was nothing better
+					     ([[09-public-site]]). --}}
+					<x-site.button variant="outline"
+						href="{{ \App\Support\SiteUrl::studentEvent($event->uuid) }}"
+						title="Buchung verwalten">
 						Verwalten
 					</x-site.button>
 				@elseif ($full)

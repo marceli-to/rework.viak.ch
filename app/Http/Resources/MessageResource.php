@@ -21,7 +21,14 @@ class MessageResource extends JsonResource
 			'created_at' => $this->created_at?->toIso8601String(),
 
 			'author' => $this->whenLoaded('author', fn () => [
-				'name' => trim($this->author->firstname.' '.$this->author->name),
+				// `User::name` is an accessor composing `first_name` and
+				// `last_name` ([[User]]). This used to read
+				// `$this->author->firstname.' '.$this->author->name` — legacy's
+				// column names, where `name` held the *surname*. `firstname`
+				// does not exist here, so Eloquent returned null and `trim()`
+				// swallowed the leading space: the right answer by accident,
+				// and one rename away from a stray space in every payload.
+				'name' => $this->author->name,
 			]),
 
 			// Who it actually went to, as recorded when it was sent — not the

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use App\Enums\Role;
+use App\Models\User;
+
 /**
  * Builds public URLs with the locale prefix and the locale's own path segments
  * ([[00-foundation]]).
@@ -52,6 +55,114 @@ final class SiteUrl
 		$locale ??= app()->getLocale();
 
 		return '/'.$locale.'/'.self::segment('checkout', $locale).'/'.$step;
+	}
+
+	/**
+	 * The student portal, and the screens under it ([[08-accounts]]).
+	 *
+	 * **Legacy's own two trees, kept whole** — `/de/student/profil` for a
+	 * student and `/de/experte/profil` for an expert, rather than one `/de/konto`
+	 * for both. Three accounts hold Admin + Expert + Student and one holds
+	 * Admin + Student, so the two portals are not alternative views of the same
+	 * thing: they show different data and a dual-role user needs both at once.
+	 * The role in the path is what tells them apart, and it is also what the
+	 * role middleware is already guarding.
+	 *
+	 * Every segment comes from `config/site.php` rather than being written into
+	 * the path here, so `/en/student/profile/documents` exists the day `'en'`
+	 * joins `site.locales` (Marcel, 2026-09-22). That is the one thing that
+	 * differs from legacy, which spells both languages out twice in
+	 * `routes/web.php`.
+	 */
+	public static function studentPortal(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('student', $locale).'/'.self::segment('profile', $locale);
+	}
+
+	/** *Meine Dokumente* — `/de/student/profil/dokumente`. */
+	public static function studentDocuments(?string $locale = null): string
+	{
+		return self::studentPortal($locale).'/'.self::segment('documents', $locale);
+	}
+
+	/**
+	 * One booked seat — `/de/student/profil/kurs/veranstaltung/{uuid}`.
+	 *
+	 * The uuid is the **event's**, not the booking's, which is legacy's choice
+	 * and worth keeping: a student has at most one live booking per event, and
+	 * the uuid is the one already on the course page.
+	 */
+	public static function studentEvent(string $uuid, ?string $locale = null): string
+	{
+		return self::studentPortal($locale)
+			.'/'.self::segment('course', $locale)
+			.'/'.self::segment('event', $locale)
+			.'/'.$uuid;
+	}
+
+	/** *Adresse erfassen* — `/de/student/profil/adresse/erstellen`. */
+	public static function studentAddressCreate(?string $locale = null): string
+	{
+		return self::studentPortal($locale)
+			.'/'.self::segment('address', $locale)
+			.'/'.self::segment('create', $locale);
+	}
+
+	/** One saved address — `/de/student/profil/adresse/bearbeiten/{uuid}`. */
+	public static function studentAddressEdit(string $uuid, ?string $locale = null): string
+	{
+		return self::studentPortal($locale)
+			.'/'.self::segment('address', $locale)
+			.'/'.self::segment('edit', $locale)
+			.'/'.$uuid;
+	}
+
+	/**
+	 * The expert portal — `/de/experte/profil`.
+	 *
+	 * Here so the header can point at it; its screens are the second pass
+	 * ([[09-public-site]]).
+	 */
+	public static function expertPortal(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('expert', $locale).'/'.self::segment('profile', $locale);
+	}
+
+	/**
+	 * Where the header's *Profil* points, which depends on who is looking
+	 * ([[08-accounts]]).
+	 *
+	 * Legacy's `MenuItemProfile` does the same three-way choice and adds a
+	 * fourth case this does not have: a `selected-role` in the session, set by a
+	 * role-picker screen that four accounts see after logging in. That screen is
+	 * not built, so the precedence below decides for them — **student first**,
+	 * because a multi-role account browsing the public site is the one buying,
+	 * and the other portals are one link away from there.
+	 *
+	 * Until now the icon pointed at `/dashboard` for everyone, **including a
+	 * guest** — so *Profil* on the live rebuild sent a signed-out visitor to the
+	 * admin SPA shell rather than to the login screen.
+	 */
+	public static function profileFor(?User $user, ?string $locale = null): string
+	{
+		if ($user === null) {
+			return route('login');
+		}
+
+		if ($user->hasRole(Role::Student)) {
+			return self::studentPortal($locale);
+		}
+
+		if ($user->hasRole(Role::Expert)) {
+			return self::expertPortal($locale);
+		}
+
+		// Admin-only: the dashboard is theirs and has no public portal.
+		return '/dashboard';
 	}
 
 	public static function home(?string $locale = null): string

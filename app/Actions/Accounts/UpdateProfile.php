@@ -50,7 +50,12 @@ class UpdateProfile
 		?string $password = null,
 		?string $currentPassword = null,
 	): User {
-		$changingCredentials = $email !== null || $password !== null;
+		// An address **resent unchanged** is not a credential change. An edit
+		// form prints the current one in the field, so the common save carries
+		// it, and treating that as a change would demand the password every
+		// time somebody corrected their street number
+		// ([[UpdateProfileRequest::changesEmail]]).
+		$changingCredentials = ($email !== null && $email !== $user->email) || $password !== null;
 
 		if ($changingCredentials && ! $this->confirms($user, $currentPassword)) {
 			throw new RuntimeException('The current password is required to change an email address or a password.');

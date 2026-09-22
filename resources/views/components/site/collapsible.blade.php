@@ -1,4 +1,4 @@
-@props(['title', 'expanded' => true])
+@props(['title', 'expanded' => true, 'count' => null])
 
 {{--
 	`components/_collapsible.scss` and `components/lists/_global.scss:53`
@@ -39,6 +39,24 @@
 			@click="open = ! open"
 			:aria-expanded="open">
 			{{ $title }}
+
+			{{--
+				How many are inside, **while it is shut** — legacy's
+				`Count.vue`, shown by `Collapsible.vue` on `items.length > 0 &&
+				!isOpen`. The portal's four lists are the only callers; the
+				course page passes nothing and renders as before.
+
+				`<strong>` and a plain space, which is what production draws.
+				`%content-list-collapsible` styles `> h2 a span` with a 12px
+				margin and regular weight — and `Count.vue` renders a `strong`,
+				so **that rule has never matched anything**. Measured on the
+				live stylesheet: 18px, bold, `#505050`, separated from the title
+				by the template's own whitespace. Ported as it renders, not as
+				it was meant to.
+			--}}
+			@if ($count)
+				<strong x-show="! open" class="font-bold">({{ $count }})</strong>
+			@endif
 
 			{{-- Legacy's chevron is a CSS triangle rather than an icon
 			     (`%icon-chevron-up` / `-down`): 12×9, borders only. --}}

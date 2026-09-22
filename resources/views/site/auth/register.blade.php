@@ -1,10 +1,20 @@
 <x-layout.site title="Registrieren" auth>
 	@php
-		$genders = [
-			\App\Enums\Gender::Female->value => 'Frau',
-			\App\Enums\Gender::Male->value => 'Herr',
-			\App\Enums\Gender::Other->value => 'Divers',
-		];
+		/*
+		 * **`männlich / weiblich / andere`**, which is what production serves —
+		 * read off the live `/de/registration` on 2026-09-22, and the same three
+		 * strings `genders.description` holds in the legacy database.
+		 *
+		 * This said `Frau / Herr / Divers` until then. Defensible as copy — the
+		 * field exists for the salutation on an invoice ([[Gender]]) — but it
+		 * was neither measured nor recorded, and the portal's own profile form
+		 * would then have disagreed with this one. It comes from
+		 * `Gender::label()` now, so there is one place to change it if VIAK
+		 * decides the salutation is the better wording.
+		 */
+		$genders = collect(\App\Enums\Gender::cases())
+			->mapWithKeys(fn (\App\Enums\Gender $gender) => [$gender->value => $gender->label()])
+			->all();
 
 		$operatingSystems = [
 			\App\Enums\OperatingSystem::Windows->value => 'Windows',
@@ -47,22 +57,32 @@
 			<x-site.field name="company" label="Firma" autocomplete="organization" />
 			<x-site.field name="phone" label="Telefon" type="tel" required autocomplete="tel" />
 
-			{{-- Street and number share a row from `sm`, as legacy has them —
-			     `.form-group.has-grid` with a `span-3` number beside the name. --}}
+			{{--
+				Street and number share a row from `sm`, **half and half**.
+
+				This was 9/3, on the reasoning that a house number needs less
+				room than a street name — true, and not what the site does.
+				Measured on the live `/de/registration`, 2026-09-22: both
+				`.form-group`s are `span-6` and both render **329px** of the
+				1068 column. Legacy writes the pair as `class="span-6"` twice,
+				here and on the profile and address forms alike.
+			--}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-				<div class="sm:col-span-9">
+				<div class="sm:col-span-6">
 					<x-site.field name="street" label="Strasse" required autocomplete="address-line1" />
 				</div>
-				<div class="sm:col-span-3">
+				<div class="sm:col-span-6">
 					<x-site.field name="street_no" label="Nr." maxlength="5" />
 				</div>
 			</div>
 
+			{{-- Half and half again, and measured the same way — 329px each
+			     on production, not the 4/8 this carried. --}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-				<div class="sm:col-span-4">
+				<div class="sm:col-span-6">
 					<x-site.field name="zip" label="PLZ" required maxlength="10" autocomplete="postal-code" />
 				</div>
-				<div class="sm:col-span-8">
+				<div class="sm:col-span-6">
 					<x-site.field name="city" label="Ort" required autocomplete="address-level2" />
 				</div>
 			</div>

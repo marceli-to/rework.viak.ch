@@ -6,7 +6,7 @@ they belong to, and `Todo.md` keeps the struck-through record of how each was
 settled.
 
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
-and none of these held it up. Updated 2026-09-21.
+and none of these held it up. Updated 2026-09-22.
 
 **One item is not a question and is not waiting on anyone:** the
 `/expert/finish` account-takeover path on the live site, found 2026-09-18 while
@@ -38,6 +38,27 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08's **admin user screens**, which are not built. Nothing else |
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? | Marcel, then the client | The Kundenmeinungen column on the course page, and `04-content.md`'s `Testimonial` plan |
+| 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
+
+### 19. The 67 past courses sitting in *Gebuchte Kurse* on the live site
+
+Found 2026-09-22 while building the student portal. Legacy moves a booking from
+*Gebuchte Kurse* to *Absolvierte Kurse* on the `isConcluded` flag, which
+`EventClosedHandler` sets **only for a booking already flagged
+`hasParticipated`** — so a seat nobody ticked off never leaves the first list.
+
+Measured on the 2026-09-11 snapshot: **67 active bookings on courses that have
+already run**, across **63 students**, the oldest from **16 March 2023**. Each
+carries a live *Annullieren* button, and cancelling one would fire the 100 %
+penalty rule against a course that ran two years ago.
+
+The rework does not inherit it — it splits on the event's date, and neither flag
+was ported. **The question is only about the live site**: is this worth a tidy-up
+there before cutover, or does it simply go away at cutover? It goes away either
+way; the risk in the meantime is a student pressing a button that bills them.
+
+Ours to raise, then Marcel's to decide. Same conversation as the `/expert/finish`
+hole and the 2023 participation confirmations.
 
 Question 18 arrived with the course-page rebuild on 2026-09-21 and answers 12.
 Questions 14–17 arrived with `08-accounts.md` on 2026-09-18. **5 and 15 were
@@ -251,11 +272,31 @@ the same breath.
   elements under `views/site` rely on the pairing today. Marcel's call whether
   that is one pass now or left until the remaining pages are built.
   See `09-public-site.md`.
-- **Count-check the other pivots the ports fill.** `event_expert` was empty for
-  weeks because legacy calls it `event_user` and `PortCourses` only ever cleared
-  it. An unfilled pivot raises nothing — no error, no null, no missing column —
-  it just makes a relation permanently empty. Fixed for this one; the rest have
-  not been checked.
+- **Count-check the other pivots and morphs the ports fill.** `event_expert` was
+  empty for weeks because legacy calls it `event_user` and `PortCourses` only
+  ever cleared it. An unfilled pivot raises nothing — no error, no null, no
+  missing column — it just makes a relation permanently empty.
+
+  **A second one surfaced on 2026-09-22**, from the other direction: `port:media`
+  had filled **13 rows** with `mediable_type = App\Models\Event` and `Event`
+  carried no `media()` relation at all, so a course's materials were unreachable
+  for four days. Same silence. `media` has rows against four owners — Course
+  258, User 48, Event 13, Message 20 — and **`User` still has no relation for
+  its 48** (`08-accounts.md` says images attach to `Course`, `User`, `Hero` and
+  `News`; `Hero` and `News` are chunk 04 and do not exist yet).
+
+  So the check is now two-sided: every pivot a port fills, **and every
+  `mediable_type` it writes, against a model that can read it back**. Still not
+  done as a sweep.
+- **Move the 13 course-material files off the public disk.** The portal's
+  *Kurs-Dokumente* links now go through `MediaController` and `MediaPolicy`, but
+  the files still sit in `storage/app/public/uploads` under the storage symlink
+  — so the direct path is reachable without authenticating, which is the same
+  shape as `08-accounts.md`'s finding 3 for the generated PDFs. Those were moved
+  to a private disk because the storage decision came first; these were not,
+  because moving them is a change to `port:media` rather than to a view. Found
+  2026-09-22.
+
 - **A friendly 429 for a throttled login.** Fortify throttles through route
   middleware, so the sixth failed attempt in a minute is Laravel's bare 429 page
   rather than legacy's "Zu viele Loginversuche. Versuchen Sie es bitte in

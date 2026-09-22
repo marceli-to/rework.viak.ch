@@ -14,7 +14,7 @@
 			{{-- `sm:mt-5x md:mt-10x` — 20px, then 40 from `lg`. The label sits
 			     above the arrow, which is legacy's `icon-arrow-right:below`. --}}
 			<div class="mt-20 lg:mt-40">
-				<a href="{{ route('dashboard') }}" title="Zum Profil"
+				<a href="{{ \App\Support\SiteUrl::studentPortal() }}" title="Zum Profil"
 					class="inline-flex flex-col items-start hover:text-teal">
 					<span>Zum Profil</span>
 					<x-icon.arrow-right class="mt-8" />

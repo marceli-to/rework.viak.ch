@@ -43,6 +43,42 @@ class UserDocument extends Model
 	}
 
 	/**
+	 * The invoice this document *is*, where it is one.
+	 *
+	 * Measured on the ported data: all 568 `INVOICE` rows point at an `Invoice`
+	 * and all 437 `PARTICIPATION_CONFIRMATION` rows at a `Booking`, so the
+	 * morph is exact in both directions and this never has to guess.
+	 */
+	public function invoice(): ?Invoice
+	{
+		return $this->documentable instanceof Invoice ? $this->documentable : null;
+	}
+
+	/**
+	 * The seat this document is about, whichever end it hangs off.
+	 *
+	 * A participation confirmation points at the booking directly. An invoice
+	 * points at the invoice, and the booking is behind its **first line** —
+	 * `invoice_items.itemable`, because [[03-invoices]] put the link on the line
+	 * rather than on a column, so one invoice can cover several bookings.
+	 *
+	 * *Meine Dokumente* wants one course name per row and legacy showed the
+	 * first, which is right in all but the handful of multi-line invoices; a
+	 * list of them in a 3-of-12 column would be worse than the name of the one
+	 * the customer is looking for.
+	 */
+	public function relatedBooking(): ?Booking
+	{
+		if ($this->documentable instanceof Booking) {
+			return $this->documentable;
+		}
+
+		$itemable = $this->invoice()?->items->first()?->itemable;
+
+		return $itemable instanceof Booking ? $itemable : null;
+	}
+
+	/**
 	 * Where the file lives on the private disk.
 	 *
 	 * Derived rather than stored, which is the point. Legacy kept a `uri`

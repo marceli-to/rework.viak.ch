@@ -21,6 +21,14 @@
 			<div class="sm:sticky sm:top-20">{{ $aside }}</div>
 		</aside>
 
-		<div class="mt-24 sm:col-span-8 sm:mt-0">{{ $slot }}</div>
+		{{-- **Only when there is something in it**, which is what
+		     `ArticleText.vue` does (`v-if="$slots.content"`). The portal's
+		     documents and booked-event screens render the aside alone and put
+		     their lists under the article at full width; an empty `span-8` there
+		     would still spend its 24px on a phone, where the two columns are
+		     stacked blocks rather than grid cells. --}}
+		@if (trim($slot) !== '')
+			<div class="mt-24 sm:col-span-8 sm:mt-0">{{ $slot }}</div>
+		@endif
 	</div>
 </article>

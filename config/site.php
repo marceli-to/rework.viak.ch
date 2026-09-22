@@ -49,6 +49,20 @@ return [
 			'checkout' => 'checkout',
 			'account' => 'konto',
 			'documents' => 'dokumente',
+
+			/*
+			 * The portals ([[08-accounts]]). Legacy's own two trees —
+			 * `/de/student/profil` and `/de/experte/profil` — kept whole,
+			 * because a user holding two roles needs two of them and the role
+			 * in the path is what separates them. Only the *segments* move in
+			 * here, so `/en/student/profile/…` exists the day EN does.
+			 */
+			'student' => 'student',
+			'profile' => 'profil',
+			'event' => 'veranstaltung',
+			'address' => 'adresse',
+			'create' => 'erstellen',
+			'edit' => 'bearbeiten',
 		],
 		'en' => [
 			'courses' => 'courses',
@@ -61,6 +75,12 @@ return [
 			'checkout' => 'checkout',
 			'account' => 'account',
 			'documents' => 'documents',
+			'student' => 'student',
+			'profile' => 'profile',
+			'event' => 'event',
+			'address' => 'address',
+			'create' => 'create',
+			'edit' => 'edit',
 		],
 	],
 

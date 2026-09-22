@@ -51,4 +51,17 @@
 	 * palette already covers. If a second darkened tone ever appears, that is
 	 * the moment to ask for a scale instead of two one-offs. */
 	--color-success-dark: #427b3c;
+
+	/* And a second one did appear, 2026-09-22: `.btn-danger:hover` is
+	 * `darken($color-danger, 15)`, which the compiled stylesheet resolves to
+	 * `#b31c00`. Read from the file, like its neighbour.
+	 *
+	 * It arrives with *Adresse löschen*, the one `.btn-danger` on the public
+	 * site ([[09-public-site]]). Two darkened tones is the point the note above
+	 * said to ask the question at, and the answer is still *no scale*: `danger`
+	 * and `success` are the only two colours legacy darkens, `warning` and
+	 * `info` have no button, and a scale would invent seven values nothing
+	 * uses. Two named one-offs, and the pattern is now closed rather than
+	 * open. */
+	--color-danger-dark: #b31c00;
 }

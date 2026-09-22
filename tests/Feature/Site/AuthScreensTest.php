@@ -218,3 +218,31 @@ it('returns to the page that asked for the login', function () {
         ->post('/login', ['email' => $student->email, 'password' => 'pw-for-the-student'])
         ->assertRedirect('/de/checkout/basket');
 });
+
+/**
+ * Three parity defects found on 2026-09-22 while building the portal's profile
+ * form, which is this form's twin — and all three confirmed on the live
+ * `/de/registration`, which is public ([[09-public-site]]).
+ *
+ * The gender labels are the one worth pinning. *Frau / Herr / Divers* is
+ * defensible as copy — the field exists for the salutation on an invoice
+ * ([[Gender]]) — but it was neither measured nor recorded, and the portal's own
+ * form would have disagreed with it. Both read `Gender::label()` now.
+ */
+it('offers the three gender labels production serves, from one place', function () {
+	$this->get('/de/registration')
+		->assertOk()
+		->assertSee('männlich')
+		->assertSee('weiblich')
+		->assertSee('andere')
+		->assertDontSee('Divers');
+});
+
+it('splits street/number and zip/city in half, as production does', function () {
+	$html = $this->get('/de/registration')->assertOk()->getContent();
+
+	// `span-6` twice, not 9/3 and not 4/8 — 329px each of the 1068 column.
+	expect(substr_count($html, 'sm:col-span-6'))->toBe(4)
+		->and($html)->not->toContain('sm:col-span-9')
+		->and($html)->not->toContain('sm:col-span-3');
+});
