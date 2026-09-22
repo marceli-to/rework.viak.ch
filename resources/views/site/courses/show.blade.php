@@ -189,4 +189,8 @@
 			</div>
 		@endif
 	</div>
+
+	{{-- The rental question and the confirmation that follows an add. One pair
+	     for the whole page, however many events it lists. --}}
+	<x-site.basket-dialogs />
 </x-layout.site>

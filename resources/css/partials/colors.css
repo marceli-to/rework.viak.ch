@@ -39,4 +39,16 @@
 	--color-warning: #ff944f;
 	--color-success: #5fad56;
 	--color-info: #505050;
+
+	/* The one hover the palette could not express, added deliberately
+	 * 2026-09-22. `.btn-success:hover` is `darken($color-success, 15)`, and
+	 * there is no `darken()` here — Sass resolved it at build time and the
+	 * compiled `viak.ch/public/assets/css/app.css` says the answer is
+	 * `#427b3c`, read from the file rather than recomputed.
+	 *
+	 * It earns a name because it is the *only* button on the site whose hover
+	 * is a darker shade of itself: teal and grey both go to black, which the
+	 * palette already covers. If a second darkened tone ever appears, that is
+	 * the moment to ask for a scale instead of two one-offs. */
+	--color-success-dark: #427b3c;
 }

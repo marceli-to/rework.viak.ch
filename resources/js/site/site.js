@@ -13,8 +13,10 @@ import basket from './stores/basket';
 import bookmark from './components/bookmark';
 import courseFilter from './components/course-filter';
 import menu from './components/menu';
+import toast from './stores/toast';
 
 Alpine.store('basket', basket);
+Alpine.store('toast', toast);
 
 /*
  * The course filter is *one* mechanism, not two. The server still filters by

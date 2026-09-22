@@ -44,6 +44,22 @@ space-* w h size min-* max-* inset top right bottom left leading`.
 Why: Tailwind's 4px unit forces every value into a multiple of four, and the
 design is full of values that are not — a 70px card header, a 13px label.
 
+### The scale ends at 1200, and falling off it is silent
+
+The partial defines `--spacing-0` through `--spacing-1200`. For a number in
+that range a class is the number of pixels. For a number **outside** it,
+Tailwind falls back to its own `calc(var(--spacing) * n)` — and `--spacing` is
+still `.25rem`, so the class compiles to **four times** what it says.
+
+`w-600` was 2400px until the ceiling went from 500 to 1200 on 2026-09-22, which
+is how the basket's modal came out the full width of the window. Nothing warns:
+the class is valid, the CSS is valid, the number is wrong.
+
+If you need a value past 1200, raise the ceiling in `partials/spacing.css`
+rather than reaching for `w-[1400px]`. Unused tokens are pruned from the build
+— 42 of the 1201 reach the stylesheet today — so the scale costs lines in that
+file and nothing in the bundle.
+
 ## 2. Type: a named scale, no `text-base`
 
 `partials/type.css`. The nine sizes the legacy stylesheet actually uses.
@@ -85,7 +101,11 @@ heading, 1.3 on body, 1.44 on a lead), so set `leading-*` where you need it.
 | `gray-400` | `#969696` | hairlines, de-emphasised text |
 | `gray-600` | `#505050` | secondary text, the card category label |
 
-Plus `danger` `warning` `success` `info` for notifications.
+Plus `danger` `warning` `success` `info` for notifications, and one derived
+value: `success-dark` `#427b3c`, which is `darken($color-success, 15)` read out
+of legacy's compiled stylesheet. It is the only button on the site whose hover
+is a darker shade of itself — teal and grey both go to black — so it is a named
+one-off rather than the start of a scale.
 
 **Do not add a colour to make something look right.** There is no `teal-dark`
 for a hover and no tint for a badge — an earlier pass invented both. Use an

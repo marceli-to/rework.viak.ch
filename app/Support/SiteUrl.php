@@ -36,6 +36,24 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('course', $locale).'/'.$slug;
 	}
 
+	/**
+	 * A checkout step — `/de/checkout/basket`.
+	 *
+	 * **Legacy's own URLs, English step names and all.** `config/site.php`
+	 * carries a `basket` segment of `warenkorb`, which somebody meant as the
+	 * German form; legacy never used it and serves `/de/checkout/basket`
+	 * throughout ([[09-public-site]]). Parity wins here, so the segment stays
+	 * unused until it is decided on rather than being adopted by accident —
+	 * these pages are behind a login and nothing indexes them, which is why it
+	 * is a small question rather than an SEO one.
+	 */
+	public static function checkout(string $step = 'basket', ?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('checkout', $locale).'/'.$step;
+	}
+
 	public static function home(?string $locale = null): string
 	{
 		return '/'.($locale ?? app()->getLocale());

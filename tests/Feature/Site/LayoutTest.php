@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Course;
+use App\Models\User;
 
 /**
  * Head tags legacy has none of, checked against production 2026-09-18
@@ -203,4 +204,38 @@ it('leaves the public pages white', function () {
 	$this->get('/de')
 		->assertOk()
 		->assertDontSee('class="overflow-y-scroll bg-teal"', false);
+});
+
+/**
+ * The flag the basket store reads before it asks what anything costs
+ * ([[09-public-site]]).
+ *
+ * Pricing sits behind the session guard on both sites — legacy leaves
+ * `PUT /basket/{event}` open to a guest and puts `GET /basket` behind
+ * `auth:sanctum + verified + role:student`, so a visitor can fill a basket and
+ * cannot see the total until they log in. The rework keeps that line, so the
+ * fix for a guest clicking *Buchen* was never to open `/api/basket/price` — it
+ * was to stop asking. Before this, every guest add set `basket.error` to
+ * `Unauthenticated.`, invisible only because nothing rendered it yet.
+ */
+it('tells the browser whether anyone is signed in', function () {
+	$this->get('/de')
+		->assertOk()
+		->assertSee('<meta name="authenticated" content="0">', false);
+
+	$this->actingAs(User::factory()->create())
+		->get('/de')
+		->assertOk()
+		->assertSee('<meta name="authenticated" content="1">', false);
+});
+
+/**
+ * One live toast per document, for anything the browser decides rather than the
+ * server — a course removed from the basket, today. The flash variant is the
+ * same component with a slot, which is why the anchoring maths exists once.
+ */
+it('carries the live toast on every page, and only once', function () {
+	$content = $this->get('/de')->assertOk()->getContent();
+
+	expect(substr_count($content, 'x-show="$store.toast.open"'))->toBe(1);
 });

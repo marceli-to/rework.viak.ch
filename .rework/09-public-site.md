@@ -6,9 +6,10 @@ its reasoning are in `00-foundation.md` under *Parity means the current design*.
 ## Status
 
 Started 2026-09-18. The shell, the course list with its full filter, the auth
-screens and the **course detail page** are built and match production. The
-`Buchen` button is on the page and fills the basket store; **the basket page is
-next**, and everything else is listed under *What is left*.
+screens and the **course detail page** are built and match production. `Buchen`
+now asks about the laptop and confirms the add, both through the modal the rest
+of the checkout needs; **the basket page is next**, and everything else is
+listed under *What is left*.
 
 | | |
 |---|---|
@@ -38,6 +39,11 @@ next**, and everything else is listed under *What is left*.
   legacy's own URLs — `/login`, `/de/registration`, `/password/reset`.
 - **A form kit for the checkout to use**: `x-site.article`, `field`, `select`,
   `checkbox`, `toast`, plus `lang/de/`.
+- **The modal, and the basket's two dialogs.** `x-site.modal` is
+  `.notification.is-modal`; `x-site.basket-dialogs` is the rental question and
+  the confirmation that follows an add. `x-site.toast` gained a live mode so a
+  removal can say so. See *The modal is 600px wide and the stylesheet says 480*,
+  below.
 - **Course detail page.** The teal hero, the five collapsibles, the event row
   with its bookmark and its `Buchen`, and the prev/next pair — every block to
   the pixel. See *The course detail page*, below, for the three data findings
@@ -56,23 +62,33 @@ Roughly in the order that unblocks the most.
 
    Next, in order:
 
-   1. ~~`Buchen` on the course detail page.~~ **Built 2026-09-21**, on the
-      rebuilt page — `add()` and `remove()` are wired and the header's basket
-      count answers. What is still owed is the **rental dialog** and the
-      post-add **toast**, both of which need `.notification.is-modal`; they
-      belong with item 2, which needs the same modal.
+   1. ~~`Buchen` on the course detail page.~~ **Built 2026-09-21**, and
+      **finished 2026-09-22** — `add()` and `remove()` are wired, the header's
+      basket count answers, the **rental dialog** asks before the add and the
+      **confirmation** follows it, and a removal raises a toast. The modal they
+      all needed is `x-site.modal`; see *The modal is 600px wide and the
+      stylesheet says 480*, below.
    2. **The basket page** at `/de/checkout/basket` — the first time `PriceBasket`
       runs in a browser. It takes `<x-layout.site auth>`, and so does every page
       after it: legacy paints the whole purchase flow teal, not just the login
       (see *The teal background*, below).
    3. **The three remaining steps**, then the confirmation.
 
-   **One bug to fix first, now confirmed firing.** `POST /api/basket/price` is
-   behind `auth:sanctum` while `basket.js` calls `price()` from `add()` and from
-   `init()`. Clicking `Buchen` as a guest on the course page sets
-   `store.basket.error` to `Unauthenticated.` every time — checked in the
-   browser on 2026-09-21, not inferred. It is invisible only because nothing
-   renders the error yet, and the basket page is the thing that will.
+   ~~**One bug to fix first, now confirmed firing.**~~ **Fixed 2026-09-22 — and
+   the fix was the other way round.** `POST /api/basket/price` is behind
+   `auth:sanctum` while `basket.js` called `price()` from `add()` and from
+   `init()`, so clicking `Buchen` as a guest set `store.basket.error` to
+   `Unauthenticated.` every time.
+
+   The reflex is to open the endpoint. **Legacy draws exactly the same line**:
+   `PUT /basket/{event}` is public and `GET /basket` sits behind
+   `auth:sanctum + verified + role:student`, so on production a visitor can fill
+   a basket and cannot see what it costs until they log in. Every screen that
+   shows a price is behind the login on both sites, so the guard is right and
+   the *asking* was wrong. The layout now writes
+   `<meta name="authenticated">`, the store reads it, and `price()` returns
+   early for a guest — no request, no error. `BookingApiTest`'s *will not price
+   a basket for a guest* stays as it was, which is the point.
 2. ~~Register, login, password reset.~~ **Built 2026-09-21** — see *Fortify had
    no views at all*, below.
 3. **The two portals** — *Meine Kurse*, *Meine Dokumente*, the expert's course
@@ -533,6 +549,109 @@ One more of the same family, without Tailwind's help: a `<div>` per event day
 rounds each day's 2 × 25.2px up on its own and made a two-day row a pixel taller.
 Legacy puts all the days in one block separated by `<br>`, and that is why.
 
+## The modal is 600px wide and the stylesheet says 480 — 2026-09-22
+
+`.notification.is-modal` is the dialog legacy asks its questions in, and it is
+the single best argument this chunk has for measuring rather than reading.
+
+**The SCSS says 480 and the browser says 600.** `.notification.is-modal`
+extends `%lightbox`, whose `> div` carries `min-width: 600px` from `bp-sm` up.
+The modal's own rules then set `max-width: 360px` at `bp-sm` and
+`480px !important` at `bp-md`. A min-width always beats a max-width, `!important`
+or not, so **the box on production is 600px** and the 480 has never once
+happened. A port written from the stylesheet comes out a fifth too narrow and
+nothing in the source says why.
+
+Measured with `getComputedStyle` over legacy's own markup rendered into a live
+course page, 2026-09-22:
+
+| | phone | `sm` | `lg` |
+|---|---|---|---|
+| box | 80% of the window | 600px | 600px |
+| box padding | 24 / 16 | 24 / 16 | 32 / 24 |
+| type | 16px | 16px | 20px, line height 1.3 |
+| border | 3px, in the variant's colour | | |
+| message | bold, centred | | |
+| text | 16px whatever the box does, 16px above it | | |
+| actions | 32px above, stacked, 12px apart | | |
+
+The rebuilt dialog measures 600×274 against production's 600×274, and the
+confirmation 600×196 against 600×196.
+
+### The actions column is as wide as its widest button
+
+`.notification-actions` is a shrink-to-fit column inside a centred column, and
+`.btn-primary` carries `width: 100%` — so **every button is the width of the
+longest label**, capped at the 240px the actions block imposes. The rental
+dialog drops the cap with `!max-w-none`, because *Nein, ich bringe meinen
+eigenen Laptop* wraps onto two lines at 240. Both its buttons then come out
+339px, which is the long label's own width and not a number anybody chose.
+
+### Two buttons whose hover does nothing, and it is not an oversight
+
+Inside `.notification-actions`, legacy restates `.btn-primary` and
+`.btn-secondary` at four class selectors deep — grey fill, grey border, and
+white or grey text. `.btn-primary:hover` is two selectors deep, so **the black
+hover the rest of the site has never fires in a modal**. An accident of
+specificity that has been live for years.
+
+`.btn-success` has no such override, so it does darken — to `#427b3c`, which is
+`darken($color-success, 15)` read out of legacy's compiled
+`public/assets/css/app.css` rather than recomputed. That is the one derived
+colour in the palette.
+
+Both ported as found. The dead hover is worth a decision rather than a quiet
+fix, so it is on the list for Marcel.
+
+### Three more things the markup does not say
+
+- **`\n\n` in the rental text is not a paragraph break.** `Basket.vue` writes
+  `…(exkl. MwSt.)\n\n(Du kannst dies auch später noch anpassen)`, and
+  `white-space: normal` collapses it to one space. Production runs the sentence
+  on, so the rebuild does too.
+- **The backdrop does not close it on production.** `Notification.vue` defines
+  an `addListeners()` that wires exactly that and never calls it, while the
+  overlay still says `cursor: pointer` and the box `cursor: default`. The
+  rental dialog has no close button either, so a visitor who wants neither
+  answer has only the Escape key. **The rebuild honours what the cursor
+  promises** — a deliberate departure, and the only one here.
+- **Legacy renders both dialogs inside every `basket-button`.** A course page
+  with four events carries eight hidden modals and eight copies of the text.
+  The state lives on the basket store here, so the page carries one of each; a
+  test counts them.
+
+### The post-add message is a modal, not a toast
+
+Worth saying because the earlier note in this doc called it a toast. Legacy
+raises `.notification.is-modal` in green with *Der Kurs wurde im Warenkorb
+abgelegt.* and two buttons, *Warenkorb* and *Schliessen*. The **removal** is
+the toast — grey, because `$toast-colors` maps `default` to `#505050` and
+legacy calls `$toast.open('…')` with no type.
+
+That removal toast is also legacy's second toast implementation:
+`vue-toast-notification`, with `vendor/vue-toast/_main.scss` existing purely to
+make it look like the Blade one. Measured side by side they differ by a pixel
+of padding and by the 480px step at `md`, which the vue one never got. Here
+they are one component in two modes — `<x-site.toast>` with a slot for a server
+flash, `<x-site.toast live />` driven by the store.
+
+### Alpine 3 will not evaluate a directive outside a component
+
+Not legacy's, ours, and it cost half an hour. `x-show="$store.basket.rentalFor"`
+on an element with **no `x-data` anywhere above it** is never initialised: the
+element keeps its `x-cloak`, nothing renders, and **nothing errors**. A store
+magic is not a scope. Both the modal and the live toast carry an empty
+`x-data` for this reason.
+
+### `w-600` was 2400px
+
+The spacing scale stopped at 500, and Tailwind falls back to its own
+`calc(var(--spacing) * n)` for any number it has no token for — with `--spacing`
+still `.25rem`. So `w-600` compiled, validated, and came out **four times** the
+intended width, stretching the dialog across the window. The ceiling is now
+1200 and `resources/css/README.md` says so out loud, because this is precisely
+the silent wrongness that partial exists to prevent.
+
 ## Measure the page, do not read the stylesheet
 
 The most useful thing learned today, and it cost three corrections to learn.
@@ -574,6 +693,15 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
+- **The modal's dead hover.** `.btn-primary` and `.btn-secondary` inside a
+  notification have no hover on production, because the rule that recoloured
+  them outranks their own `:hover`. Ported as found. Giving them the black
+  hover the rest of the site has is a one-line change and a design decision.
+- **`/de/checkout/basket` or `/de/warenkorb`.** `config/site.php` carries a
+  `basket` segment of `warenkorb` that legacy never used — it serves
+  `/de/checkout/…` throughout, and the rebuild follows it. Nothing indexes
+  these pages, so it is a naming question rather than an SEO one, but the
+  segment sits there unused until it is answered.
 - **Experten and Kontakt** are in the nav pointing at `#`. Fine while they have
   no pages; worth a decision if that lasts.
 - **`meta keywords`** is carried across verbatim. Google has ignored it since

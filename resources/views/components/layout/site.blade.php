@@ -64,6 +64,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
+	{{-- The basket store reads this and stops asking for a price when nobody is
+	     signed in — every screen that shows one is behind the login, on both
+	     sites, and `/api/basket/price` answers a guest with `Unauthenticated.`
+	     by design ([[09-public-site]]). Beside `csrf-token` because that is
+	     where the store already looks. --}}
+	<meta name="authenticated" content="{{ auth()->check() ? '1' : '0' }}">
+
 	{{-- `page • Visualisierungs-Akademie`, as legacy composes it from
 	     `config('seo.title')` — which is the short name, not the legal entity in
 	     `APP_NAME`. Here they are the same string. --}}
@@ -135,5 +142,10 @@
 	<main role="main" class="pb-24 sm:pb-32">
 		{{ $slot }}
 	</main>
+
+	{{-- The live toast, for anything the browser decides rather than the
+	     server — a course removed from the basket, today. One per document,
+	     hidden until the store has something to say. --}}
+	<x-site.toast live />
 </body>
 </html>

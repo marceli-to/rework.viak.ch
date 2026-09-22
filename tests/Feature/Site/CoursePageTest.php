@@ -8,6 +8,7 @@ use App\Models\CourseVideo;
 use App\Models\Event;
 use App\Models\Location;
 use App\Models\User;
+use App\Support\SiteUrl;
 use Illuminate\Testing\TestResponse;
 
 /**
@@ -196,4 +197,43 @@ it('wraps the previous and next links around the ends of the catalogue', functio
 
 it('has no browse pair when the catalogue holds one course', function () {
 	coursePage(detailCourse())->assertDontSee('Weitere Kurse');
+});
+
+/**
+ * The rental question, which is the reason `Buchen` is not always an add
+ * ([[09-public-site]]).
+ *
+ * `Basket.vue` renders two different buttons off `hasRentals`, and the one that
+ * asks has to ask *before* the add: the rental and its price are frozen onto
+ * the booking, and an event whose room has no machines cannot sell one at all
+ * ([[PriceBasket]]). The button therefore carries the flag and the store
+ * decides, so this asserts the flag reaches the page.
+ */
+it('tells the Buchen button whether the event can sell a laptop', function () {
+	$course = detailCourse();
+	Event::factory()->for($course)->create(['rentals_available' => true]);
+
+	coursePage($course)->assertSee('rentals: true }', false);
+
+	$without = detailCourse(['slug' => ['de' => 'ohne-miete'], 'title' => ['de' => 'Ohne Miete']]);
+	Event::factory()->for($without)->create(['rentals_available' => false]);
+
+	coursePage($without)->assertSee('rentals: false }', false);
+});
+
+it('carries the rental dialog and the confirmation once, however many events it lists', function () {
+	$course = detailCourse();
+	Event::factory()->for($course)->count(3)->create(['rentals_available' => true]);
+
+	$page = coursePage($course);
+
+	// Legacy renders both `<notification>` tags inside every `basket-button`,
+	// which on this page would be six modals and six copies of the text. Counted
+	// on the `x-show` rather than on the message: *Computer mieten* is also a
+	// phrase inside the dialog's own body text.
+	expect(substr_count($page->getContent(), 'x-show="$store.basket.rentalFor"'))->toBe(1)
+		->and(substr_count($page->getContent(), 'x-show="$store.basket.confirmed"'))->toBe(1);
+
+	$page->assertSee('Nein, ich bringe meinen eigenen Laptop')
+		->assertSee(SiteUrl::checkout('basket'));
 });

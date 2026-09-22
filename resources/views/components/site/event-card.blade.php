@@ -162,21 +162,22 @@
 					{{-- `Basket.vue`: *Buchen* while the event is not in the
 					     basket, the grey *Entfernen* once it is.
 
-					     **The rental dialog is still owed.** Legacy asks, before
-					     adding an event with `rentals_available`, whether to
-					     rent a laptop at CHF 80 excl. VAT — and says in the same
-					     breath that you can change it later. Adding with no
-					     rental is that dialog's cheaper answer, so nobody is
-					     charged for something they did not ask for; what is
-					     missing is the offer. It needs the modal the basket page
-					     needs too, and arrives with it ([[09-public-site]]). --}}
-					<div x-data="{ uuid: @js($event->uuid) }">
+					     **`book()` is not always an add.** Legacy renders two
+					     different *Buchen* buttons off `hasRentals` — one that
+					     adds, and one that first asks whether to rent a laptop
+					     at CHF 80 excl. VAT. The question has to come first,
+					     because the rental is frozen onto the booking with its
+					     price ([[PriceBasket]]), and `rentals_available` is the
+					     event's own switch: a course in a room without machines
+					     cannot sell one. The dialog itself is
+					     `<x-site.basket-dialogs />`, once per page. --}}
+					<div x-data="{ uuid: @js($event->uuid), rentals: @js((bool) $event->rentals_available) }">
 						{{-- *Buchen* renders without `x-cloak`, so it is what a
 						     visitor with no JavaScript is left holding, and the
 						     common case never flashes. Only *Entfernen* has to
 						     wait for the store to be read. --}}
 						<x-site.button x-show="! $store.basket.has(uuid)"
-							@click="$store.basket.add(uuid)">Buchen</x-site.button>
+							@click="$store.basket.book(uuid, rentals)">Buchen</x-site.button>
 
 						<x-site.button variant="secondary" x-cloak x-show="$store.basket.has(uuid)"
 							@click="$store.basket.remove(uuid)">Entfernen</x-site.button>
