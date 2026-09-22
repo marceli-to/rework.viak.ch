@@ -1100,6 +1100,12 @@ above at 16px — **every value production's.**
 same call as the RAV passage above them (Marcel, 2026-09-22): they are the only
 two controls in that block and one of them opens a form.
 
+**And the plus icon is gone** from *Adresse erfassen*, where legacy sets a 12px
+one 8px to its left. The word already says what the control does, and it was
+the only icon anywhere in the checkout — it read as decoration rather than as
+meaning. `x-icon.plus` went with it, so the Blade and Vue icon sets are back to
+the split `resources/css/README.md` describes: `Plus` is the dashboard's.
+
 ## The checkbox sat high, and `items-start` is why — 2026-09-22
 
 Legacy's checkbox is an inline input with `vertical-align: middle`, so the box

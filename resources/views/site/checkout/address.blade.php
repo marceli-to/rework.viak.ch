@@ -141,9 +141,16 @@
 							     the only controls in the block and one of them
 							     opens a form. --}}
 							<div class="mt-4 flex justify-between sm:mt-12">
+								{{-- **No plus icon**, where legacy sets a 12px one
+								     8px to the left (Marcel, 2026-09-22). The
+								     word already says what the control does, and
+								     it is the only icon anywhere in the checkout
+								     — it read as decoration rather than as
+								     meaning. Its Blade component went with it;
+								     the set is back to the split
+								     `resources/css/README.md` describes. --}}
 								<button type="button" @click="dialog = true"
-									class="flex items-center text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
-									<x-icon.plus size="tiny" class="mt-4 mr-8" />
+									class="text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
 									Adresse erfassen
 								</button>
 
