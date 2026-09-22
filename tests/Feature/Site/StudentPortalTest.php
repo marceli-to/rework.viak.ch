@@ -268,24 +268,56 @@ it('shows the address block on the profile and the form on its own URL', functio
 
 	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
 		->assertOk()
+		->assertSee('Profil bearbeiten')
 		->assertSee('Rechnungsadressen')
-		->assertSee('Zugangsdaten')
-		// The pencil turns round, and *Abbrechen* goes the same way.
-		->assertSee('title="Bearbeiten abbrechen"', escape: false);
+		->assertSee('Zugangsdaten');
 });
 
-it('keeps the four lists on both, because it is one page in legacy', function () {
+/**
+ * **The form and nothing else** (Marcel, 2026-09-22) — a sibling of the address
+ * screens rather than a state of the profile. Legacy keeps the whole page
+ * around the form, because there it is one page and a toggle.
+ */
+it('puts nothing but the form on the edit screen', function () {
 	$user = portalStudent();
 	portalSeat($user, 30);
 
-	foreach (['/de/student/profil', '/de/student/profil/bearbeiten'] as $url) {
-		$this->actingAs($user)->get($url)
-			->assertOk()
-			->assertSee('Merkliste')
-			->assertSee('Gebuchte Kurse')
-			->assertSee('Absolvierte Kurse')
-			->assertSee('Dokumente');
-	}
+	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+		->assertOk()
+		->assertDontSee('Merkliste')
+		->assertDontSee('Gebuchte Kurse')
+		->assertDontSee('Absolvierte Kurse');
+});
+
+/**
+ * And *Zurück* where the profile has *Logout* — the same control the address
+ * screens carry. Offering to end the session from the middle of an unsaved form
+ * is not the exit anyone is looking for.
+ */
+it('gives the edit screen a Zurück rather than the profile’s Logout', function () {
+	$user = portalStudent();
+
+	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+		->assertOk()
+		->assertSee('Zurück')
+		->assertSee('href="/de/student/profil"', escape: false)
+		->assertDontSee('Logout');
+
+	$this->actingAs($user)->get('/de/student/profil')
+		->assertOk()
+		->assertSee('Logout');
+});
+
+it('keeps the four lists on the profile', function () {
+	$user = portalStudent();
+	portalSeat($user, 30);
+
+	$this->actingAs($user)->get('/de/student/profil')
+		->assertOk()
+		->assertSee('Merkliste')
+		->assertSee('Gebuchte Kurse')
+		->assertSee('Absolvierte Kurse')
+		->assertSee('Dokumente');
 });
 
 /**

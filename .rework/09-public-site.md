@@ -68,9 +68,9 @@ cancellation dialog opened with the penalty in it. 378 tests green, Pint clean.
   the pixel. See *The course detail page*, below, for the three data findings
   that came out of it.
 - **The student portal**, at `/de/student/profil` — *Mein Profil* with its
-  edit form on `/bearbeiten`, the four collapsibles (Merkliste, Gebuchte Kurse,
-  Absolvierte Kurse, Dokumente), *Meine Dokumente*, one booked seat with its
-  notes and materials, and the invoice-address pages. Brings `x-site.event-row`,
+  edit form on its own screen at `/bearbeiten`, the four collapsibles
+  (Merkliste, Gebuchte Kurse, Absolvierte Kurse, Dokumente), *Meine Dokumente*,
+  one booked seat with its notes and materials, and the invoice-address pages. Brings `x-site.event-row`,
   `x-site.document-row`, `x-site.event-state`, `x-site.back-link` and
   `x-site.booking-dialogs`. See *The student portal*, below, for the six defects
   it turned up.
@@ -1455,21 +1455,39 @@ invisible there; it is just less obvious, because nothing navigated.
 
 So the form gets a URL — `/de/student/profil/bearbeiten`, from the `edit`
 segment already in `config/site.php`, with the POST landing on the same URL so a
-validation failure comes back by itself. One view, one `$editing` flag, the same
-four collapsibles underneath — which is legacy's page, since there the form
-replaces the same block.
+validation failure comes back by itself.
+
+**And it is the form and nothing else** (Marcel, 2026-09-22). Not the profile
+with the form swapped in: a sibling of the address screens, built the same way —
+an aside carrying the heading and a *Zurück*, the form in the `span-8` column,
+and the page ends. The first attempt kept the four collapsibles underneath on
+the grounds that legacy's is one page; it is one page there *because* it is a
+toggle, and once it is a screen the course lists are only something to scroll
+past on the way to *Speichern*.
+
+Three things follow from *only the form*:
+
+- **The aside carries *Zurück*, not *Logout*.** The same control the address
+  screens have, pointing at the profile. Offering to end the session from the
+  middle of an unsaved form is not the exit anyone is looking for — and *Logout*
+  belongs on the screen you land on, which still has it.
+- **No pencil.** On the profile it opens this; here *Zurück* closes it, and two
+  controls doing one job is what the toggle was.
+- **`edit()` loads none of what the landing screen does** — no bookings, no
+  bookmarks, no documents, no penalties. A form asking for a phone number has no
+  use for a course list, and computing one per visit was the cost of treating
+  this as the same page.
 
 What it settles, beyond the bug:
 
-- **The screen has no JavaScript of its own left.** No toggle, no `x-show`, no
-  `x-cloak`. The pencil is a link, *Abbrechen* is a link, and the browser's back
-  button does what it looks like it should. What Alpine remains on the page
-  belongs to the collapsibles, the basket and the cancellation dialogs.
+- **Both screens have no JavaScript of their own left.** No toggle, no `x-show`,
+  no `x-cloak`. The pencil is a link, *Abbrechen* is a link, and the browser's
+  back button does what it looks like it should. What Alpine remains on the
+  profile belongs to the collapsibles, the basket and the cancellation dialogs;
+  the edit screen has only the two collapsibles inside the form.
 - **The three address redirects go back into the form**, not to the read view —
   which would show somebody who just added an address a page with no addresses
   on it at all.
-- The pencil turns round on the form and points back, which is what legacy's
-  toggle does in one place rather than two.
 
 A query flag (`?bearbeiten`) would have done the same job — the course filter
 already writes its state back that way — and it was the first attempt. A route

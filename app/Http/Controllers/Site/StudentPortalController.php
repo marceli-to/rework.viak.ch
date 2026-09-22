@@ -42,38 +42,13 @@ class StudentPortalController extends Controller
 	private const DOCUMENT_PREVIEW = 5;
 
 	/**
-	 * The landing screen: the profile block, then four collapsibles.
+	 * The landing screen: the address block, then four collapsibles.
 	 *
 	 * Legacy's `Index.vue` fetches `/api/student/profile`, `/api/user/settings`
 	 * and — for the edit form — the country and gender lists, then renders. All
 	 * of it is one query set here.
 	 */
 	public function index(Request $request, CancellationPenalty $penalty): View
-	{
-		return $this->page($request, $penalty, editing: false);
-	}
-
-	/**
-	 * The same screen with the **form** in the profile column instead of the
-	 * address block — `/de/student/profil/bearbeiten`.
-	 *
-	 * A URL rather than legacy's in-place toggle, because the toggle is
-	 * component state and *Rechnungsadressen* sits inside it: its links go to
-	 * screens of their own, and coming back from one landed on a shut panel with
-	 * the address you had just added invisible inside it
-	 * ([[SiteUrl::studentProfileEdit]]).
-	 *
-	 * The four collapsibles come with it, as they do in legacy — it is one page
-	 * there, and coming back from an address screen should land on something
-	 * that looks like what you left.
-	 */
-	public function edit(Request $request, CancellationPenalty $penalty): View
-	{
-		return $this->page($request, $penalty, editing: true);
-	}
-
-	/** Everything both of them need. */
-	private function page(Request $request, CancellationPenalty $penalty, bool $editing): View
 	{
 		$user = $request->user()->load('country');
 
@@ -84,7 +59,6 @@ class StudentPortalController extends Controller
 
 		return view('site.student.profile', [
 			'user' => $user,
-			'addresses' => $user->addresses()->with('country')->orderBy('company')->orderBy('last_name')->get(),
 			'bookmarks' => $user->bookmarks()
 				->with(['course', 'dates', 'location', 'experts'])
 				->get()
@@ -98,10 +72,34 @@ class StudentPortalController extends Controller
 				->take(self::DOCUMENT_PREVIEW)
 				->get(),
 			'documentCount' => $user->documents()->count(),
+			'penalties' => $this->penalties($upcoming, $penalty),
+		]);
+	}
+
+	/**
+	 * The form, on a screen of its own — `/de/student/profil/bearbeiten`.
+	 *
+	 * **A sibling of the address screens, not a state of the profile** (Marcel,
+	 * 2026-09-22): the form and nothing else, with a *Zurück* where the profile
+	 * has its *Logout*. Legacy toggles it in place off `isEdit`, and that is
+	 * component state — which does not survive leaving the page, and
+	 * *Rechnungsadressen* lives inside the form with links to screens of their
+	 * own ([[SiteUrl::studentProfileEdit]]).
+	 *
+	 * It wants none of what the landing screen loads. No bookings, no bookmarks,
+	 * no documents, no penalties — a form asking for a phone number has no use
+	 * for a course list, and computing one per visit was the cost of treating
+	 * this as the same page.
+	 */
+	public function edit(Request $request): View
+	{
+		$user = $request->user()->load('country');
+
+		return view('site.student.edit', [
+			'user' => $user,
+			'addresses' => $user->addresses()->with('country')->orderBy('company')->orderBy('last_name')->get(),
 			'countries' => Country::query()->orderBy('order')->orderBy('name')->get(),
 			'genders' => Gender::cases(),
-			'penalties' => $this->penalties($upcoming, $penalty),
-			'editing' => $editing,
 		]);
 	}
 
