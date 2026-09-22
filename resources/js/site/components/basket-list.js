@@ -26,6 +26,11 @@ export default () => ({
 		return this.basket.pricing?.items ?? [];
 	},
 
+	/** The priced basket, or null until the server has answered. */
+	get pricing() {
+		return this.basket.pricing;
+	},
+
 	/**
 	 * `15. Oktober 2026`, which is `translatedFormat('d. F Y')` — legacy's
 	 * `EventDate::getDateLongAttribute()`, and the same string the course

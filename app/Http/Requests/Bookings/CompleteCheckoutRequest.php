@@ -24,12 +24,30 @@ class CompleteCheckoutRequest extends PriceBasketRequest
 		return [
 			...parent::rules(),
 			'total_shown' => ['required', 'decimal:0,2'],
+			/*
+			 * **The same fields a `UserAddress` has**, settled 2026-09-22.
+			 *
+			 * Three shapes disagreed about a frozen billing address: the 126
+			 * ported bookings carry `{"lines": […]}` because legacy stored a
+			 * rendered HTML fragment and there is no honest way back to fields
+			 * ([[LegacyInvoiceAddress]]); this request asked for a flat
+			 * `name`; and `UserAddress::toSnapshot()` gives the real columns.
+			 *
+			 * The last one wins, because it is what the customer actually
+			 * picks on the checkout's address step and the only one that
+			 * carries a country and a street number — both of which an invoice
+			 * needs. The history keeps its lines; everything captured from here
+			 * on has fields ([[09-public-site]]).
+			 */
 			'invoice_address' => ['nullable', 'array'],
-			'invoice_address.name' => ['required_with:invoice_address', 'string', 'max:255'],
+			'invoice_address.first_name' => ['nullable', 'string', 'max:255'],
+			'invoice_address.last_name' => ['nullable', 'string', 'max:255'],
+			'invoice_address.company' => ['nullable', 'string', 'max:255'],
 			'invoice_address.street' => ['required_with:invoice_address', 'string', 'max:255'],
+			'invoice_address.street_no' => ['nullable', 'string', 'max:20'],
 			'invoice_address.zip' => ['required_with:invoice_address', 'string', 'max:20'],
 			'invoice_address.city' => ['required_with:invoice_address', 'string', 'max:255'],
-			'invoice_address.company' => ['nullable', 'string', 'max:255'],
+			'invoice_address.country_code' => ['required_with:invoice_address', 'string', 'size:2'],
 		];
 	}
 

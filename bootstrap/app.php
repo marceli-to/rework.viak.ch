@@ -53,20 +53,35 @@ return Application::configure(basePath: dirname(__DIR__))
 		 * which is the whole point. Legacy's equivalents failed *silently*:
 		 * `Discount::apply()` returned FALSE and became a 0 discount, and
 		 * nothing re-checked the price or the seat at all.
+		 *
+		 * **And there are two callers now.** The API answers JSON; the
+		 * checkout's summary step is a Blade form, and a form post that gets
+		 * 422 JSON back shows the customer a page of braces. So each one is a
+		 * redirect with the message in the error bag when the caller is not
+		 * asking for JSON — which is what puts it in the toast on the summary
+		 * page ([[09-public-site]]).
 		 */
-		$exceptions->render(fn (DiscountCodeNotRedeemable $e) => response()->json([
-			'message' => $e->getMessage(),
-			'errors' => ['code' => [$e->getMessage()]],
-		], 422));
+		$wantsJson = fn (Request $request) => $request->is('api/*') || $request->expectsJson();
 
-		$exceptions->render(fn (BasketPriceChanged $e) => response()->json([
-			'message' => $e->getMessage(),
-			'shown' => $e->shown,
-			'actual' => $e->actual,
-		], 422));
+		$exceptions->render(fn (DiscountCodeNotRedeemable $e, Request $request) => $wantsJson($request)
+			? response()->json([
+				'message' => $e->getMessage(),
+				'errors' => ['code' => [$e->getMessage()]],
+			], 422)
+			: back()->withErrors(['code' => $e->getMessage()]));
 
-		$exceptions->render(fn (SeatNotAvailable $e) => response()->json([
-			'message' => $e->getMessage(),
-			'event' => $e->event->uuid,
-		], 422));
+		$exceptions->render(fn (BasketPriceChanged $e, Request $request) => $wantsJson($request)
+			? response()->json([
+				'message' => $e->getMessage(),
+				'shown' => $e->shown,
+				'actual' => $e->actual,
+			], 422)
+			: back()->withErrors(['total_shown' => $e->getMessage()]));
+
+		$exceptions->render(fn (SeatNotAvailable $e, Request $request) => $wantsJson($request)
+			? response()->json([
+				'message' => $e->getMessage(),
+				'event' => $e->event->uuid,
+			], 422)
+			: back()->withErrors(['items' => $e->getMessage()]));
 	})->create();

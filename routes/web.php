@@ -104,6 +104,18 @@ Route::prefix('{locale}')
 					// The *Adresse erfassen* dialog, as a real form post.
 					Route::post('address/new', [CheckoutController::class, 'storeNewAddress'])
 						->name("{$locale}.checkout.address.new");
+
+					Route::get('payment', [CheckoutController::class, 'payment'])
+						->name("{$locale}.checkout.payment");
+
+					Route::get('summary', [CheckoutController::class, 'summary'])
+						->name("{$locale}.checkout.summary");
+
+					// The only irreversible POST in the flow.
+					Route::post('summary', [CheckoutController::class, 'complete']);
+
+					Route::get('confirmation', [CheckoutController::class, 'confirmation'])
+						->name("{$locale}.checkout.confirmation");
 				});
 		}
 	});

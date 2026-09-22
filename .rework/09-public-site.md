@@ -7,10 +7,12 @@ its reasoning are in `00-foundation.md` under *Parity means the current design*.
 
 Started 2026-09-18. The shell, the course list with its full filter, the auth
 screens and the **course detail page** are built and match production. `Buchen`
-asks about the laptop and confirms the add, and the checkout is built through
-**step 2 of 4** — the basket, which found that `auth:sanctum` could not see a
-session at all, and the address step, which is the first one with server state.
-**Payment is next**; everything else is under *What is left*.
+asks about the laptop and confirms the add, and **the checkout is built end to
+end** — basket, address, payment, summary and confirmation. A real purchase has
+been taken through it in a browser: two bookings, one checkout, a discount code
+and a laptop's VAT, all correct. Along the way it found that `auth:sanctum`
+could not see a session at all. **The two portals are next**; everything else is
+under *What is left*.
 
 | | |
 |---|---|
@@ -53,6 +55,10 @@ session at all, and the address step, which is the first one with server state.
   *entspricht Teilnehmer-Adresse* toggle, the saved-address picker and the
   *Adresse erfassen* dialog, with the answer in the session. Brings
   `x-site.lightbox` with it. See *The address step*, below.
+- **Payment, summary and confirmation** — the discount-code field, the priced
+  summary with both addresses, *Buchen* as a real form post, and the thank-you
+  that empties the browser's basket. See *Payment, summary, and the only
+  irreversible POST on the site*, below.
 - **Course detail page.** The teal hero, the five collapsibles, the event row
   with its bookmark and its `Buchen`, and the prev/next pair — every block to
   the pixel. See *The course detail page*, below, for the three data findings
@@ -62,9 +68,9 @@ session at all, and the address step, which is the first one with server state.
 
 Roughly in the order that unblocks the most.
 
-1. **Basket and checkout — started, and this is where to pick it up.** The one
-   with money in it, and the reason this track was chosen: chunk 06 has 251
-   tests and has never run in a browser. Its blocker is gone — the auth screens
+1. ~~**Basket and checkout.**~~ **Done 2026-09-22.** The one with money in it,
+   and the reason this track was chosen: chunk 06 had 251 tests and had never
+   run in a browser. Its blocker is gone — the auth screens
    are built (item 2) — and the flow is mapped in *What the checkout actually
    is*, below. The shape stays what `06-bookings.md` decided: **a POST per step
    with the state in the session**, because the server is the pricing authority.
@@ -81,10 +87,8 @@ Roughly in the order that unblocks the most.
       the first time `PriceBasket` ran in a browser, and it did not, until
       `statefulApi()` was registered. See *The basket page*, below.
    3. ~~Address.~~ **Built 2026-09-22** — see *The address step*, below.
-   4. **Payment**, then the summary, then the confirmation. Payment is the
-      thinnest of the four: a paragraph of text and the discount-code field,
-      because there is no Stripe anywhere in this flow (see *What the checkout
-      actually is*, above).
+   4. ~~Payment, summary, confirmation.~~ **Built 2026-09-22.** The flow is
+      complete and has been driven end to end in a browser.
 
    ~~**One bug to fix first, now confirmed firing.**~~ **Fixed 2026-09-22 — and
    the fix was the other way round.** `POST /api/basket/price` is behind
@@ -105,6 +109,9 @@ Roughly in the order that unblocks the most.
    no views at all*, below.
 3. **The two portals** — *Meine Kurse*, *Meine Dokumente*, the expert's course
    view. Every endpoint exists (`08-accounts.md`); only the screens are missing.
+   **This is where to pick it up.** The checkout links at it twice already:
+   *Adressen verwalten* on step 2 and *Zum Profil* on the confirmation both
+   point at `/dashboard` because there is nothing better to point at yet.
 4. ~~The course detail page.~~ **Built 2026-09-21** — see *The course detail
    page*, below.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The
@@ -792,6 +799,121 @@ The phone layout, again — `resize_window` does not take on this machine. The
 step was measured at desktop only, and its rows reuse the `.stacked-list`
 geometry the course page's row was measured with.
 
+## Payment, summary, and the only irreversible POST on the site — 2026-09-22
+
+Steps 3 and 4, from `Payment.vue` and `Summary.vue`, plus the confirmation —
+which, unlike the four steps, really is a Blade page on the live site too.
+
+### Payment takes no payment
+
+The whole step is a paragraph of text and a discount-code field. Invoices are
+raised on `EventConfirmed`, days or weeks later ([[03-invoices]]), so **there is
+no Stripe anywhere in this flow**; `PaymentController` and its checkout session
+are a separate thing, for paying an invoice that already exists.
+
+**The code belongs to the basket, not to the session**, and that is the one
+design call on the page. Everything else the checkout remembers is an *answer*
+and lives in [[CheckoutSession]]; a discount code is part of what is being
+priced, and the basket is the browser's. `basket.js` already carried `code`,
+`/api/basket/price` already took it, and [[CompleteCheckoutRequest]] already
+expected it in the payload — putting it anywhere else would have made two
+sources of truth for one number.
+
+Legacy validates the code before letting you past, with
+`GET /api/discount-code/check/{code}` behind a client-side `length < 12` guard —
+a wrong constant, since all 102 codes are 14 characters. Here *Weiter* calls
+`applyCode()`, which prices the basket with the code: the same question, asked
+of the thing that will actually answer it. A code that will not apply comes back
+422 and the label turns into legacy's red *Gutschein-Code ist ungültig!*.
+
+### The summary is half server, half browser
+
+The two addresses are the server's — one is the customer's own, the other is the
+answer step 2 put in the session — so they are rendered in Blade. The lines are
+the browser's, because the selection is, so they come back from
+`/api/basket/price` exactly as on step 1. The row itself is now
+`x-site.basket-row`, shared by both, because legacy renders the same
+`StackedListEvent` on both with the `action` slot filled only on the basket.
+
+**A VAT row is the one departure on this page.** Legacy's summary shows *Total*
+under the label **exkl. Mehrwertsteuer**, because `getTotals()` hard-zeroes VAT
+under a `@todo: fix vat on event` that chunk 03 found was wrong about its own
+zero. Courses are exempt, so the row appears only when a laptop is rented —
+**every other basket renders precisely legacy's rows.** Two reasons it had to:
+
+- The customer would otherwise be quoted a number they are not charged.
+- `total_shown` is checked against the figure they actually pay, so a net total
+  would have been refused by our own guard.
+
+The client's own confirmed pattern is `Gesamtnettosumme` → `zzgl. 8.1 % MwSt.` →
+`Gesamtsumme` ([[03-invoices]]), which is the shape now on the page. The *Total*
+sublabel says `exkl. Mehrwertsteuer` when there is no VAT — legacy's sentence,
+and true, since nothing on that basket is taxed — and `inkl. Mehrwertsteuer`
+when there is.
+
+### *Buchen* is a form, not a fetch
+
+Legacy sends `POST /api/booking` and then sets `window.location.href`. Here it
+is a real form post: a CSRF token, a redirect, and a failure that lands back on
+the page with a message the customer can read.
+
+The hidden inputs are the browser's basket, written out by `<template x-for>` —
+the only way a server-rendered form can carry a selection the server does not
+hold. **Nothing about the price crosses that boundary.** The server re-prices
+from scratch, re-resolves the code, re-checks every seat, and refuses a checkout
+whose total has moved.
+
+### Two bugs this uncovered
+
+**The three failure modes answered JSON to a browser.** `DiscountCodeNotRedeemable`,
+`BasketPriceChanged` and `SeatNotAvailable` were registered with
+`response()->json(…, 422)` unconditionally, which was right while the only
+caller was the API. A form post that gets 422 JSON back shows the customer a
+page of braces. Each one now redirects with the message in the error bag when
+the caller is not asking for JSON, which is what puts it in the summary's toast.
+
+**`basketList` never exposed `pricing`.** The component had an `items` getter
+reading `basket.pricing?.items` and nothing for the totals, so every totals row
+on the summary silently evaluated `undefined && …` and rendered nothing — and
+the form's `total_shown` would have posted empty. Caught by looking at the page,
+not by a test: `x-if` on an undefined variable is not an error in Alpine.
+
+### The frozen invoice address, settled
+
+Three shapes disagreed ([[09-public-site]], *The address step*). The winner is
+**the fields a `UserAddress` has**, because it is what the customer actually
+picks and the only one carrying a country and a street number — both of which an
+invoice needs. `CompleteCheckoutRequest`'s flat `name` is gone. The 126 ported
+bookings keep their `{"lines": […]}`, which is the honest record of what was
+printed on a bill that has already gone out ([[LegacyInvoiceAddress]]).
+
+It is snapshotted **at the moment of purchase**, not at step 2 — which is what
+holding a uuid in the session buys, and what a test pins: an address edited
+between the two bills the edit.
+
+### The confirmation has one job the server cannot do
+
+Emptying the basket. It is in `localStorage`, so the page tells Alpine to clear
+it on arrival. Legacy never had to: `BasketStore` was a session bag a completed
+checkout simply dropped — which is also why nothing in the old data records that
+two bookings were one purchase, the gap [[Checkout]] exists to close.
+
+### Driven end to end, on the real pages
+
+A basket of two courses and a laptop, with a fixed CHF 80 code:
+
+```
+Zwischentotal                          CHF 1179.00
+Gutschein-Code VIAK-JBR9-7JAZ        – CHF   80.00
+MwSt. 8.1 % auf Mietcomputer           CHF    6.48
+Total (inkl. Mehrwertsteuer)           CHF 1105.48
+```
+
+*Buchen* produced **one checkout and two bookings**, the discount recorded once
+against the order rather than twice against the lines — which is the CHF 80 bug
+chunk 06 was built to fix — the rental frozen at 80.00, and the basket empty
+afterwards. The test purchase was then removed from the local database.
+
 ## The modal is 600px wide and the stylesheet says 480 — 2026-09-22
 
 `.notification.is-modal` is the dialog legacy asks its questions in, and it is
@@ -936,10 +1058,12 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
-- **What a frozen invoice address looks like.** Three shapes disagree today —
-  the ported `{"lines": […]}`, `CompleteCheckoutRequest`'s flat `name/street/
-  zip/city`, and `UserAddress::toSnapshot()`'s fields. Step 4 writes one, so
-  step 4 has to pick. See *The address step*.
+- **The summary shows a VAT row that legacy does not** — only when a laptop is
+  rented, because courses are exempt and legacy hard-zeroed the rest. The
+  alternative was quoting a total the customer is not charged. Worth a nod, not
+  a decision, unless you disagree.
+- ~~**What a frozen invoice address looks like.**~~ **Settled 2026-09-22**: the
+  fields a `UserAddress` has. The 126 ported bookings keep their lines.
 - **Adressen verwalten** points at `/dashboard`, because the student portal is
   not built yet (item 3 under *What is left*). Legacy links
   `/de/student/profil`.
