@@ -786,12 +786,17 @@ Legacy's `Overview.vue` shows a fee per row and **no sum**; the total first
 appears on the summary step. Matched, because parity, but it is a real gap in a
 screen called a basket and it is on the list for Marcel.
 
-### What is not verified
+### Seeing it at phone width
 
 ~~**The phone layout has not been seen.**~~ **Seen 2026-09-22**, at 500px, and
-it found two things — see *The phone layout, seen at last*, below.
-`resize_window` on this machine only ever shrinks a window, never widens one,
-so getting back to desktop needs a human at the keyboard.
+it found four things — see *The phone layout, seen at last*, below. Marcel
+confirmed the last round of them in his own browser.
+
+**`resize_window` cannot be relied on here.** It reports success and leaves
+`innerWidth` where it was; over one session it shrank a window once, then
+refused to widen it, then refused to do either. So narrow browsing is a human at
+the keyboard, and anything claimed about a phone layout should say which of the
+two it was — measured, or reasoned from the rendered source.
 
 ## The address step — 2026-09-22
 
@@ -904,9 +909,13 @@ as it was when the customer picked it.
 
 ### What is not verified
 
-The phone layout, again — `resize_window` does not take on this machine. The
-step was measured at desktop only, and its rows reuse the `.stacked-list`
-geometry the course page's row was measured with.
+The phone layout of **this step** specifically. Its rows reuse the
+`.stacked-list` geometry that the basket's were measured with at 500px, and its
+form controls are the kit the auth screens use — but the *Adresse erfassen*
+dialog at phone width has never been looked at by anybody. The lightbox is
+`max-w-[90%]` below `sm` with a 90vh scroller, so a long form should scroll
+inside the box rather than push it off screen; that is a reading of the CSS,
+not a measurement.
 
 ## Payment, summary, and the only irreversible POST on the site — 2026-09-22
 
