@@ -101,25 +101,31 @@
 			@endforelse
 
 			{{--
-				**Legacy's *Teilnehmerliste (PDF)* is not here, and it is the one
-				thing on this screen that is deferred rather than ported**
-				(Marcel, 2026-09-22).
+				*Teilnehmerliste (PDF)* — the printable form of the list above.
 
-				`GET /pdf/teilnehmer-liste/{event}` builds a PDF of names, towns,
-				phone numbers and email addresses with no ownership check at all,
-				and writes it to a world-readable directory it then forgets about
-				— 239 of them, 27 MB, referenced by no database row
-				([[08-accounts]], findings 3 and 5). The half that is a rework
-				question is settled: [[EventPolicy::viewParticipants]] exists, it
-				is what admits this whole screen, and the route will ask it the
-				day there is a route.
+				**Behind the same check as the screen** ([[EventPolicy::viewParticipants]]),
+				which is what legacy's own route does not have: it carries
+				`role:admin,expert` and nothing else, so any of the 18 accounts
+				holding the Expert role could download the names, towns, phone
+				numbers and email addresses of every student on every course in
+				the archive (`08-accounts.md`, finding 5).
 
-				The other half is that **nothing in the rework generates a PDF
-				yet** — no dompdf, and chunk 03 deferred the QR-bill and the
-				participation confirmation to whichever chunk builds the document
-				pipeline. Adding one here would set the letterhead conventions
-				for all three from the smallest of them.
+				Hidden on a cancelled course, as legacy hides it —
+				`v-if="!data.event.is_cancelled"`.
 			--}}
+			@if ($bookings->isNotEmpty() && ! $cancelled)
+				{{-- `.mt-5x sm:mt-10x` above it, and the same arrow-below link
+				     the aside's *Zurück* uses. --}}
+				<div class="mt-20 sm:mt-40">
+					<a href="{{ route($locale.'.expert.event.participants', ['uuid' => $event->uuid]) }}"
+						title="Teilnehmerliste herunterladen"
+						class="inline-block text-left transition-colors hover:text-teal">
+						<span class="mb-4 block">Teilnehmerliste (PDF)</span>
+						<x-icon.arrow-right />
+					</a>
+				</div>
+			@endif
+
 		</x-site.collapsible>
 	</div>
 

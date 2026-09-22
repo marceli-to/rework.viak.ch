@@ -11,14 +11,14 @@ documents that history produces.
 
 ## Status
 
-**Partly built, 2026-09-18; both portals added 2026-09-22.** 429 tests green,
-Pint clean. Scoped by the method that found chunk 06: mapping the legacy
+**Partly built, 2026-09-18; both portals and the generated documents added
+2026-09-22.** 451 tests green, Pint clean. Scoped by the method that found chunk 06: mapping the legacy
 surface onto the rework and looking for what has nowhere to land.
 
 | Part | |
 |---|---|
 | **Media** | Built — `media` table, Glide renderer, `<x-media.image>`, six Actions, `port:media` |
-| **Documents** | Built — private disk, policy-gated download, `port:documents` |
+| **Documents** | Built — private disk, policy-gated download, `port:documents`, and **generated** since 2026-09-22 ([[03-invoices]]) |
 | **Messages** | Built — schema, `PostMessage`, `MessagePolicy`, HTTP, `port:messages` |
 | **Accounts** | Built — one profile controller for all three roles, addresses, `MustVerifyEmail` |
 | **The student portal** | Built 2026-09-22 — four screens at `/de/student/profil`, see `09-public-site.md` |
@@ -208,6 +208,17 @@ In the rework these are served by an authenticated route with a policy, and the
 files live outside the public root. That is the storage decision `01-schema.md`
 said had to come first.
 
+**Closed on both halves, 2026-09-22.** The ported files went onto the private
+`documents` disk when chunk 08 was built; the *generator* now writes there too,
+so a newly issued invoice or certificate is never reachable without the policy
+([[RenderInvoice]]). And the participant list is no longer written to disk at
+all — it is rendered on request and streamed, because it belongs to a course
+rather than to a customer and is out of date the moment somebody cancels
+([[RenderParticipantList]]).
+
+The 294 loose participant lists on the **live** site are still there and still
+worth deleting; `Todo.md` carries it.
+
 ### 4. Any student can read, and write, any event's messages
 
 `GET /api/event/messages/{event:uuid}` and `POST /api/event/message` are gated by
@@ -239,11 +250,16 @@ whatever serves it as a PDF the day there is a PDF. It denies with a **404**
 rather than a 403, because answering *forbidden* confirms that the uuid is a
 real course.
 
-The PDF itself is deferred, not ported; the reasoning is under *What is left*
-and in `09-public-site.md`. Worth keeping in view that **the PDF is the only
-place the phone numbers and email addresses appear** — legacy's screen shows
-name, town and firm and nothing more, which is exactly what makes the missing
-check on that one route matter.
+~~The PDF itself is deferred, not ported~~ — **built 2026-09-22**
+([[03-invoices]]). It lives under the portal now, at
+`/de/experte/profil/kurs/veranstaltung/{uuid}/teilnehmerliste`, rather than at
+legacy's top-level `/pdf/teilnehmer-liste/{event}`, so it inherits the same
+object-level check as the screen that links to it and cannot drift away from it
+again.
+
+Worth keeping in view that **the PDF is the only place the phone numbers and
+email addresses appear** — the screen shows name, town and firm and nothing
+more, which is exactly what made the missing check on that one route matter.
 
 ### 6. The shape of it
 
@@ -340,6 +356,20 @@ a file and a `user_documents` row while building the email. A document that is
 part of the customer's record should not be a side effect of rendering a
 message — in the rework the Action creates the document and the mail attaches
 it.
+
+**Done, 2026-09-22.** [[RenderInvoice]] and [[RenderParticipationConfirmation]]
+are Actions and nothing about them needs a mail. Which also means a document can
+be produced for a preview or a test without sending anything, and a retried mail
+does not make a second copy.
+
+Two things the certificate corrected on the way:
+
+- **Legacy dates it twice, differently.** The page says `Zürich, {closed_at}`
+  and the *filename* is built from `date('d-m-Y', time())` — today — so a
+  certificate reissued a year later is filed under a date that appears nowhere
+  on it, and two for the same booking cannot be told apart by name.
+- **`closed_at` can be null**, and legacy writes it into the row unchecked. The
+  event's own date is the fallback here, and that is never null.
 
 ## What is *not* in this chunk
 

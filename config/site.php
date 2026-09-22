@@ -74,6 +74,7 @@ return [
 			 */
 			'message' => 'message',
 			'upload' => 'file-upload',
+			'participants' => 'teilnehmerliste',
 		],
 		'en' => [
 			'courses' => 'courses',
@@ -94,6 +95,7 @@ return [
 			'edit' => 'edit',
 			'message' => 'message',
 			'upload' => 'file-upload',
+			'participants' => 'participants',
 		],
 	],
 

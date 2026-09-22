@@ -255,6 +255,16 @@ Route::prefix('{locale}')
 							Route::get('/', [ExpertPortalController::class, 'event'])
 								->name("{$locale}.expert.event");
 
+							/*
+							 * The participant list as a PDF — legacy's
+							 * `/pdf/teilnehmer-liste/{event}`, moved under the
+							 * portal so it inherits the same object-level check
+							 * as the screen that links to it
+							 * ([[EventPolicy::viewParticipants]]).
+							 */
+							Route::get($segments['participants'], [ExpertPortalController::class, 'participants'])
+								->name("{$locale}.expert.event.participants");
+
 							Route::get($segments['message'], [ExpertPortalController::class, 'createMessage'])
 								->name("{$locale}.expert.event.message.create");
 

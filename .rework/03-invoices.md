@@ -13,10 +13,14 @@ legacy self amount for amount** — Σ net 410,455.00, Σ discount 15,251.00,
 Two findings stand, both of them the `due_at` decisions already tracked in
 `Todo.md`; the port names them on every run rather than carrying them quietly.
 
-**Deferred, deliberately:** the QR-bill PDF and `user_documents`, the admin
-invoice worklist, and the checkout trigger (a seat sold on an already-confirmed
-event bills at purchase — [[RaiseInvoiceForBooking]] takes a single booking and
-is ready for it). Nothing in the chunk waits on them.
+~~**Deferred, deliberately:** the QR-bill PDF and `user_documents`~~ — **the
+document is built, 2026-09-22**; see *The invoice PDF and its QR bill*, below.
+`user_documents` arrived with chunk 08.
+
+**Still deferred:** the admin invoice worklist, and the checkout trigger (a seat
+sold on an already-confirmed event bills at purchase —
+[[RaiseInvoiceForBooking]] takes a single booking and is ready for it). Nothing
+in the chunk waits on them.
 
 One finding below is about the **live** site and should not wait for the
 rework — see *`invoices.due_at` overwrites itself*.
@@ -458,3 +462,140 @@ line says `Laptopmiete` and sits on the course invoice instead of on its own.
 - **the fake accounting system is bound even with credentials present**, and the
   real client refuses to exist without them. The one mistake here that cannot be
   undone is writing into VIAK's live books from a prototype.
+
+## The invoice PDF and its QR bill — 2026-09-22
+
+The deferred half of this chunk, built. Two packages, both checked against
+Laravel 13 and PHP 8.4 before anything was written:
+
+| | |
+|---|---|
+| `dompdf/dompdf` `^3.1` | HTML to PDF |
+| `sprain/swiss-qr-bill` `^5.3` | the Swiss QR bill, legacy's own library |
+
+**`barryvdh/laravel-dompdf` was installed and then removed.** It adds a facade,
+a service provider and a 200-line published config over `loadHtml`, `render`
+and `output` — and half of that config's defaults are ones this application
+contradicts on purpose. [[PdfRenderer]] states every option where the reason
+for it is, so the wrapper would only have been a second place to look.
+
+### 273 lines become one renderer
+
+Legacy's PDF layer is `Services/Pdf/Pdf.php`, `Invoice/EventInvoice.php`,
+`Invoice/RentalInvoice.php` and `EventParticipationConfirmation.php`. The two
+invoice services are **the same 115-line file with two strings changed**, and
+each carries a `create()` and an `update()` that are themselves copies of one
+another — four near-identical 40-line methods for one job.
+
+They collapse because the rework's data collapsed first: one `Invoice` with
+`InvoiceItem`s replaces `Invoice` + `RentalInvoice`, so there is one document
+where there were two. A student who rented a laptop used to get **two invoice
+numbers and two QR bills for one booking**.
+
+### The reference number was right all along
+
+Worth recording, because the code does not look it. `Invoice/Qr.php` assembles
+the payment reference by hand — `esr_customer_id . ' 00000 ' . clientNumber . ' '
+. paddedInvoiceNumber`, then a modulo-10 check digit from a lookup table — and
+it reads like an ESR reference from the old orange payment slips. It is in fact
+a **valid 27-digit QR reference** in the conventional 2-5-5-5-5-5 grouping, and
+`QrPaymentReferenceGenerator` produces the identical string.
+
+Checked for three invoice numbers before a line was changed, and pinned in a
+test against a **real ported invoice** — `viak-rechnung-02-10-2024-000300.pdf`,
+in a customer's hands, prints `00 00000 00000 00000 00000 03009`, which is what
+the rework prints and encodes.
+
+So deleting 150 lines of `Qr.php` and 251 lines of hand-laid Blade changes
+**400 lines of code and not one character of output**.
+
+### What the library does that legacy does not
+
+- **`StructuredAddress`, because the standard withdrew the combined form.**
+  v5 removed `CombinedAddress` outright, so this is not an API rename that could
+  be worked around: the creditor's street number, postal code and town are
+  separate fields now.
+- **The bill is validated.** `getViolations()` is asked before anything renders,
+  so a bad IBAN or an out-of-range amount is an exception rather than a slip a
+  bank rejects. Legacy never calls it.
+- **The debtor is encoded.** Legacy sets no `ultimateDebtor` at all, so a
+  scanned bill reaches the bank with no payer while the hand-built HTML prints
+  one beside it. The rework encodes the frozen invoice address, or the
+  customer's own where there is none.
+- The separation line and its *Vor der Einzahlung abzutrennen*, the Swiss cross,
+  the corner marks on empty fields, the localised labels — all of it free, all
+  of it to specification.
+
+**The 131 historical invoices are the one case that loses something.** Their
+`invoice_address` is legacy's rendered HTML fragment, which has no fields to
+recover ([[LegacyInvoiceAddress]]), so the QR code gets an empty debtor box —
+which is valid, and is printed with corner marks to be written in. A guess would
+be a payment arriving from the wrong party. The invoice itself still prints
+exactly the text that was billed.
+
+### dompdf against the library's HTML: four rules
+
+`HtmlOutput` lays the slip out for a browser, and almost all of it — tables,
+margins, an SVG QR code — renders correctly. **The amount block does not**:
+`#qr-bill-payment-part-left` is a floated, fixed-width box and
+`#qr-bill-currency` floats again inside it, which dompdf cannot nest. *Währung*
+and *Betrag* land on top of each other, and so do `CHF` and the figure.
+
+[[PaymentSlipStyles]] is four rules making those two cells table cells, labelled
+as the dompdf quirk they are. Everything the standard governs stays the
+library's.
+
+Two more that cost a render each to find, both recorded in the templates:
+
+- **`box-sizing: border-box` is not honoured.** A 210mm sheet with 42mm of
+  padding stayed 210mm wide and the padding was added outside it, so every table
+  ran off the right edge of the page. Content-box, stating the 168mm column.
+- **The page box has to be zero.** The payment slip is **210mm wide by
+  specification** and a `@page` margin crops it. The margins moved onto the
+  sheet, which lets the slip have the page.
+
+### The QR code is scanned in a test
+
+The last check no amount of reading can make: the finished PDF is rasterised at
+200 dpi and the code read back. It decodes to
+
+```
+SPC | 0200 | 1 | CH3130000001876763179 | S | Visualisierungs-Akademie Schweiz GmbH
+    | Limmatstrasse | 291 | 8005 | Zürich | CH | … | 989.00 | CHF | …
+    | QRR | 000000000000000000000003009 | Rechnung 000300 | EPD
+```
+
+Everything else can be right while the thing on the paper is unreadable —
+scaled, cropped or dithered into something no banking app will take. This is the
+only test that says it works.
+
+### Hardening that came with it
+
+- **No network at render time.** Legacy's templates load both Effra faces with
+  `url('{{ url("/") }}/assets/fonts/…')` and the letterhead with `asset()`, so
+  every render makes three HTTP requests to the application's own public URL. A
+  queue worker with no route out, or a wrong `APP_URL`, gets Helvetica and no
+  logo — and no error. Everything is a local file now and `isRemoteEnabled` is
+  **false**.
+- **`isPhpEnabled` is off and says why.** dompdf executes
+  `<script type="text/php">` when it is on, and these templates interpolate a
+  customer's own address. Legacy has a commented-out page-number script that
+  would have turned it on.
+- **The document is not a side effect of an email.** `EventConfirmationStudent`
+  creates the invoice, renders the PDF and inserts the `user_documents` row
+  **while composing a message** ([[08-accounts]]). The Action does it now and
+  the mail will attach what it made.
+- **Re-rendering replaces.** Legacy's `update()` writes a new file under a name
+  built from the invoice's date and does not touch the row, so moving a date
+  orphans a PDF and leaves the row pointing at it. `Todo.md` already counts 294
+  such orphans on the live site.
+- **The private disk.** Legacy writes under the `public/storage` symlink
+  ([[08-accounts]], finding 3).
+
+### A finding this confirmed rather than found
+
+Ported invoice 000300 carries `due_at = 17.10.2024`. **The PDF in the
+customer's hands says 07.10.2024.** That is `invoices.due_at overwrites itself`
+— already written up in `Todo.md` — seen from the other side: the document is
+the record of what was actually demanded, and the column no longer agrees with
+it.

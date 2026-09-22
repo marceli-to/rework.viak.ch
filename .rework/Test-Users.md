@@ -74,8 +74,19 @@ has 36 upcoming events and only **3 confirmed**, so the seeder takes what it can
 get rather than insisting.
 
 **The document files are not there.** Those are rows, not PDFs, so *Download*
-answers 404. Producing a real one means running the invoice pipeline, which is a
-different thing to be testing; `03-invoices.md` covers it.
+answers 404 — the seeder writes the record, not the artefact.
+
+Since 2026-09-22 a real one can be made, which is the way to look at the actual
+document:
+
+```sh
+php artisan tinker
+>>> app(App\Actions\Documents\RenderInvoice::class)->execute(App\Models\Invoice::first());
+```
+
+That renders the PDF, files it on the private disk and points the row at it, so
+*Download* then answers with the real thing. Same for
+`RenderParticipationConfirmation` and a booking.
 
 ## What each expert holds
 
@@ -98,9 +109,8 @@ something in it.
 
 - **Admin user management is not built** (`08-accounts.md`), so the admin lands
   on the dashboard shell and finds the screens that chunks 02–06 built.
-- **The participant list has no PDF.** The expert's course screen draws the
-  list; legacy's *Teilnehmerliste (PDF)* link is deferred with its policy
-  already in place (`09-public-site.md`).
+- **The expert's *Teilnehmerliste (PDF)* works** and needs no fixture — it is
+  rendered from the course on request and never stored.
 - **Nothing is mailed.** Posting a note to a course records who it reaches and
   sends nothing — there is no Mailable in the rework yet, on this path or the
   checkout's.

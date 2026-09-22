@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Site;
 
 use App\Actions\Accounts\UpdateProfile;
+use App\Actions\Documents\RenderParticipantList;
 use App\Actions\Media\AttachMedia;
 use App\Actions\Media\DeleteMedia;
 use App\Actions\Media\UploadMedia;
@@ -24,6 +25,7 @@ use App\Support\SiteUrl;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 use RuntimeException;
 
@@ -229,6 +231,32 @@ class ExpertPortalController extends Controller
 		 */
 		return redirect(SiteUrl::expertEvent($event->uuid))
 			->with('status', 'Die Nachricht wurde erfasst.');
+	}
+
+	/**
+	 * *Teilnehmerliste (PDF)* — the printable form of the list on the screen
+	 * ([[08-accounts]], finding 5).
+	 *
+	 * **The check is [[ExpertPortalController::teachable]]'s**, which every
+	 * screen here goes through, and it is the one legacy's route does not make:
+	 * `GET /pdf/teilnehmer-liste/{event}` carries `role:admin,expert` and
+	 * nothing else, so any of the 18 accounts holding the Expert role can
+	 * download the contact details of every student on every course in the
+	 * archive.
+	 *
+	 * Streamed rather than stored. Legacy writes each one into the public
+	 * directory and records nothing, which is how 294 loose PDFs of names and
+	 * contact details came to sit there ([[RenderParticipantList]]).
+	 */
+	public function participants(Request $request, string $uuid, RenderParticipantList $list): Response
+	{
+		$event = $this->teachable($request->user(), $uuid);
+
+		return response($list->execute($event), 200, [
+			'Content-Type' => 'application/pdf',
+			'Content-Disposition' => 'attachment; filename="'.$list->filename($event).'"',
+			'Cache-Control' => 'private, no-store',
+		]);
 	}
 
 	/** *Dokumente hochladen* — the course materials form. */

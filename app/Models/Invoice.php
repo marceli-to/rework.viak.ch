@@ -83,6 +83,46 @@ class Invoice extends Model
 		return $this->hasOne(self::class, 'replaced_by_invoice_id');
 	}
 
+	/**
+	 * The frozen billing address, as lines to print ([[03-invoices]]).
+	 *
+	 * **The column holds two shapes and always will.** Addresses captured from
+	 * the rework's own checkout are the structured snapshot
+	 * `UserAddress::toSnapshot()` writes; the **131 historical invoices** carry
+	 * `{"lines": [...]}`, because legacy stored a rendered HTML fragment and
+	 * there is no reliable way back to fields from one ([[LegacyInvoiceAddress]]).
+	 *
+	 * So this reads either and never guesses. An invoice is a document that was
+	 * sent: what it says has to be what was printed, and for those 131 the
+	 * printed text is all there is.
+	 *
+	 * @return array<int, string>
+	 */
+	public function billingLines(): array
+	{
+		$address = $this->invoice_address;
+
+		if (blank($address)) {
+			return [];
+		}
+
+		if (isset($address['lines'])) {
+			return array_values(array_filter((array) $address['lines'], 'filled'));
+		}
+
+		$name = trim(($address['first_name'] ?? '').' '.($address['last_name'] ?? ''));
+
+		return array_values(array_filter([
+			$address['company'] ?? null,
+			$name,
+			trim(($address['street'] ?? '').' '.($address['street_no'] ?? '')),
+			trim(($address['zip'] ?? '').' '.($address['city'] ?? '')),
+			// The country only where it is not Switzerland, as everywhere else
+			// on the site ([[UserAddress::lines]]).
+			($address['country_code'] ?? 'ch') === 'ch' ? null : strtoupper((string) $address['country_code']),
+		], 'filled'));
+	}
+
 	public function isPaid(): bool
 	{
 		return $this->status === InvoiceStatus::Paid;

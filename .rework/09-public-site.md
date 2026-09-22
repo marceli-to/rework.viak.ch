@@ -137,12 +137,13 @@ Roughly in the order that unblocks the most.
    participant list has nowhere, and the message composer has been driven in a
    browser. See *The expert portal*, below.
 
-   **One thing is deferred rather than ported**, deliberately and with the
-   policy already in place: legacy's *Teilnehmerliste (PDF)*. Nothing in the
-   rework generates a PDF yet, and chunk 03 deferred the QR bill and the
-   participation confirmation to whichever chunk builds the document pipeline —
-   so adding dompdf here would set the letterhead conventions for all three from
-   the smallest of them (Marcel, 2026-09-22).
+   ~~**One thing is deferred rather than ported**: legacy's *Teilnehmerliste
+   (PDF)*.~~ **Built 2026-09-22**, when the document pipeline was, and the link
+   is on the course screen. It sits under the portal —
+   `…/kurs/veranstaltung/{uuid}/teilnehmerliste` — rather than at legacy's
+   top-level `/pdf/teilnehmer-liste/{event}`, so it goes through
+   `teachable()` like every other screen here and cannot drift away from the
+   check again. See [[03-invoices]] for the pipeline.
 4. ~~The course detail page.~~ **Built 2026-09-21** — see *The course detail
    page*, below.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The

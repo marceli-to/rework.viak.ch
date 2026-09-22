@@ -39,9 +39,24 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? | Marcel, then the client | The Kundenmeinungen column on the course page, and `04-content.md`'s `Testimonial` plan |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
-| 20 | Which chunk installs dompdf, and what is the letterhead? | Marcel | The expert portal's *Teilnehmerliste (PDF)*, the QR bill and the participation confirmation — three deferred documents waiting on one decision |
+| ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
+| 21 | Who signs a participation confirmation, and with what? | Client | Nothing — the certificate is built and simply ends without a signature, as legacy's does |
 
-### 20. Which chunk installs dompdf, and what is the letterhead?
+### 21. Who signs a participation confirmation?
+
+Found 2026-09-22 while building the certificate. Legacy's template ends with
+`@include('pdf.partials.signature')` and **that file is zero bytes** — it has
+been empty since 2022, so all 594 participation confirmations ever issued end in
+mid-air with nothing signing them.
+
+Not reproduced and not invented. A name, a title and a signature image are the
+client's to choose, and the alternative — making one up — puts a person's
+signature on a certificate without asking them.
+
+**Blocks nothing.** The document is built and correct otherwise; adding a
+signature block later is a template change.
+
+### ~~20. Which chunk installs dompdf, and what is the letterhead?~~
 
 Raised 2026-09-22, building the expert portal. **Three deferred documents are now
 waiting on one decision**, and they were deferred separately:
@@ -52,16 +67,12 @@ waiting on one decision**, and they were deferred separately:
 | The participation confirmation | `03-invoices.md` |
 | The *Teilnehmerliste* | the expert portal, 2026-09-22 |
 
-Nothing in the rework generates a PDF — `00-foundation.md` says dompdf gets
-added by the chunk that needs it, and no chunk has yet. The participant list is
-by far the smallest of the three and building it now would set the page
-furniture — letterhead, margins, fonts, footer — for the two that carry money.
-So it waits for the chunk that owns documents, and the policy in front of it is
-already written (`EventPolicy::viewParticipants`).
-
-**Not urgent, and not a blocker:** the expert's course screen draws the
-participant list itself. The PDF is the printable form of a list that is on the
-screen.
+**Answered the same day, by building it.** `dompdf/dompdf ^3.1` and
+`sprain/swiss-qr-bill ^5.3`, both verified against Laravel 13 and PHP 8.4 before
+a line was written. The letterhead is legacy's own `pdf-header.svg` and the
+typeface is legacy's own Effra, both carried across as files rather than fetched
+over HTTP. All three documents are built and tested; the write-up is in
+`03-invoices.md` under *The invoice PDF and its QR bill*.
 
 ### 19. The 67 past courses sitting in *Gebuchte Kurse* on the live site
 

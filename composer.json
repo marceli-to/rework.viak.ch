@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "dompdf/dompdf": "^3.1",
         "laravel/fortify": "^1.39",
         "laravel/framework": "^13.17",
         "laravel/sanctum": "^4.0",
@@ -17,10 +18,12 @@
         "league/glide": "^3.1",
         "spatie/image": "^3.9",
         "spatie/laravel-sluggable": "^4.0",
-        "spatie/laravel-translatable": "^6.14"
+        "spatie/laravel-translatable": "^6.14",
+        "sprain/swiss-qr-bill": "^5.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "khanamiryan/qrcode-detector-decoder": "^2.0",
         "laravel/pail": "^1.2",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
