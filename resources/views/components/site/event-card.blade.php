@@ -18,6 +18,13 @@
 
 	$full = $event->isFull();
 	$expert = $event->experts->first();
+
+	/*
+	 * Printed twice — in the third column, and again inside the second one for
+	 * the phone. See the comment beside the mobile copy; the string is decided
+	 * here so the two cannot drift.
+	 */
+	$fee = $event->free_of_charge ? 'kostenlos' : $event->fee();
 @endphp
 
 {{--
@@ -34,16 +41,15 @@
 	`position: absolute` in the top right of the row, where there is no column
 	to put it in.
 
-	**The registration deadline and the state now read at the row's own size**,
-	where legacy drops them to `.text-xsmall`. See the comment beside them.
+	**Every line of small print now reads at the row's own size** — the
+	registration deadline, the state, and *Kurs ist ausgebucht* — where legacy
+	drops all three to `.text-xsmall`. See the comments beside them.
 
-	The one line of small print that is still small is *Kurs ist ausgebucht*, in
-	the right-hand column — it stands in for the button rather than sitting in a
-	sentence, so it keeps legacy's size until somebody says otherwise. It is
-	also where the old trap lives: a `text-*` class brings Tailwind's own line
-	height with it, and `leading-[inherit]` is not the way out — that inherits
-	the parent's **25.2px**, taller on 16px text than the 1.4 it came from
-	(`resources/css/README.md`).
+	Which leaves no `text-*` class in this column at all, and that is the point:
+	naming a Tailwind size brings its own line height with it, and
+	`leading-[inherit]` is not the way out — that inherits the parent's
+	**25.2px**, taller on 16px text than the 1.4 it came from
+	(`resources/css/README.md`). Inheriting means saying nothing.
 --}}
 <article {{ $attributes->class([
 	'relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl',
@@ -143,30 +149,49 @@
 
 				A departure from production, and a deliberate one.
 			--}}
-			@if ($event->registration_until && ! $booked && ! $full)
-				<div>
-					<em class="italic">
-						Anmeldung möglich bis {{ $event->registration_until->format('d.m.Y') }}
-					</em>
-				</div>
-			@endif
+			{{--
+				**On a phone the price comes before the two remarks** (Marcel,
+				2026-09-22). Stacked, legacy's column order reads *deadline,
+				state, price* — the two asides first and the number they are
+				about last. Reversed, the facts close on what it costs and the
+				remarks become the footnote they are.
 
-			@if ($event->state === \App\Enums\EventState::Confirmed)
-				<div class="text-success"><em class="italic">Kurs findet statt</em></div>
-			@else
-				<div class="text-warning"><em class="italic">Kurs offen, wird bestätigt</em></div>
-			@endif
+				Printed here rather than moved, because `order` cannot reach
+				across parents and the price lives in the **third** column. The
+				alternatives were splitting the grid into five items with
+				explicit `col-start`/`row-start`, or flattening the row — both
+				of which would put the measured desktop layout at risk to fix a
+				phone. A hidden copy changes nothing above `sm`: `$fee` is
+				decided once, at the top.
+			--}}
+			<div class="sm:hidden">{{ $fee }}</div>
+
+			{{-- The breath Marcel asked for, between the number and the two
+			     italics. Phone only — at `sm` these are back under the expert
+			     in their own column and there is nothing above them to be
+			     spaced from. --}}
+			<div class="max-sm:mt-16">
+				@if ($event->registration_until && ! $booked && ! $full)
+					<div>
+						<em class="italic">
+							Anmeldung möglich bis {{ $event->registration_until->format('d.m.Y') }}
+						</em>
+					</div>
+				@endif
+
+				@if ($event->state === \App\Enums\EventState::Confirmed)
+					<div class="text-success"><em class="italic">Kurs findet statt</em></div>
+				@else
+					<div class="text-warning"><em class="italic">Kurs offen, wird bestätigt</em></div>
+				@endif
+			</div>
 		</div>
 
 		{{-- What it costs, and the way in --}}
 		<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
-			<div class="sm:mr-32 lg:mr-48">
-				@if ($event->free_of_charge)
-					kostenlos
-				@else
-					{{ $event->fee() }}
-				@endif
-			</div>
+			{{-- Hidden on a phone, where the copy in the second column stands
+			     in for it — see there. --}}
+			<div class="max-sm:hidden sm:mr-32 lg:mr-48">{{ $fee }}</div>
 
 			<div class="mt-24 sm:mt-0">
 				@if ($booked)
@@ -174,7 +199,13 @@
 						Verwalten
 					</x-site.button>
 				@elseif ($full)
-					<div class="pl-16 text-right text-sm leading-[1.5] text-danger italic sm:text-md sm:leading-[1.4] lg:text-lg">
+					{{-- At the row's size, like the deadline and the state line
+					     (Marcel, 2026-09-22). It stands in for the button
+					     rather than sitting in a sentence, which is why it was
+					     left behind the first time — but it is the reason there
+					     is no button, so it is the last thing on the row that
+					     should be whispering. --}}
+					<div class="pl-16 text-right text-danger italic">
 						Kurs ist ausgebucht
 					</div>
 				@elseif (auth()->check() && ! auth()->user()->hasVerifiedEmail())

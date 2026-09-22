@@ -696,10 +696,28 @@ thing on the row that says whether the course is actually happening.
 it. Measured after: all four lines in that column are 18px on 25.2px, differing
 only in the italic.
 
-**A departure from production, and a deliberate one.** The one line of small
-print still small is *Kurs ist ausgebucht*, which stands in for the button in
-the right-hand column rather than sitting in a sentence — say if that should
-follow.
+*Kurs ist ausgebucht* followed a few minutes later, on the same reasoning: it
+stands in for the button rather than sitting in a sentence, which is why it was
+missed first time — but it is the *reason* there is no button, so it is the last
+thing on the row that should be whispering. There is now **no `text-*` class
+anywhere in that row**, which is the point: inheriting means saying nothing.
+
+**A departure from production, and a deliberate one.**
+
+### And on a phone the price comes before the remarks — Marcel, 2026-09-22
+
+Stacked, legacy's column order reads *deadline, state, price* — the two asides
+first and the number they are about last. Reversed, the facts close on what it
+costs and the remarks become the footnote they are, with 16px between them.
+
+**The price is printed twice, and that is the cheap answer rather than the
+lazy one.** `order` cannot reach across parents and the price lives in the
+*third* column, so moving it meant either splitting the grid into five items
+with explicit `col-start`/`row-start`, or flattening the row — both of which put
+a desktop layout that has been measured against production at risk in order to
+fix a phone. A `sm:hidden` copy beside the remarks and `max-sm:hidden` on the
+original changes nothing above `sm`; `$fee` is decided once at the top of the
+component, so the two cannot drift.
 
 ### The one pasted embed that was not a bare iframe — 2026-09-22
 
@@ -1173,10 +1191,6 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
-- **`Kurs ist ausgebucht` is still a size down.** The deadline and the state
-  line now read at the row's size; this one stands in for the button in the
-  right-hand column rather than sitting in a sentence, so it kept legacy's
-  `.text-xsmall`. Say if it should follow the other two.
 - **The summary shows a VAT row that legacy does not** — only when a laptop is
   rented, because courses are exempt and legacy hard-zeroed the rest. The
   alternative was quoting a total the customer is not charged. Worth a nod, not
