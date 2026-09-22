@@ -662,13 +662,19 @@ row on the page down. The row below it is *not* the same case:
   the only thing `PriceBasket`'s `$for` argument has ever been for — it was
   accepted and unused until now.
 
-### Every amount is `CHF n.nn`, right-aligned — Marcel, 2026-09-22
+### The money column: bare numbers, right-aligned — Marcel, 2026-09-22
 
 Legacy writes the currency on the laptop line and **not** on the course line
 directly above it, in the same column of the same row: `499.00` then
 `CHF 80.00`. This doc carried that across on parity grounds until Marcel looked
-at it; the two sit a line apart and read as two different kinds of number, so
-both say `CHF` now.
+at it. It went to `CHF` on both lines first and then to **neither** — the course
+page shows a bare `499.00`, that page is the one anyone can load and compare,
+and the basket should not read differently from it.
+
+So: **no `CHF` on a row, on either page.** The currency still leads the
+**totals** on step 4, as legacy has it — `CHF 1179.00`, `CHF 6.48` — which is a
+real distinction rather than an oversight: those are sums, and the rows are
+prices.
 
 Right-aligned for the reason money columns usually are — the decimal points
 line up — and because on step 4 it puts the row fees in the **same column as
@@ -677,10 +683,42 @@ the totals**, which were already `text-right` and had nothing to align with.
 before aligning inside it. The 32/48px gap to *Entfernen* stays where there is
 a button, and goes where there is not.
 
-The course detail page still shows a bare `499.00`, which is what production
-shows — it is `x-site.event-card`, a different component, measured against a
-page anyone can load. Worth a decision if the two reading differently bothers
-anyone.
+### The deadline and the state read at the row's size — Marcel, 2026-09-22
+
+Legacy gives *Anmeldung möglich bis …* and *Kurs offen, wird bestätigt*
+`.text-xsmall` — 12/14/16 against the row's 16/16/18 — so on the live site they
+are smaller than the expert's name directly above them, for no reason either the
+markup or the design gives. They are not a footnote; the state line is the one
+thing on the row that says whether the course is actually happening.
+
+`italic` and nothing else now: no size, no `leading-*`. That is the only way to
+*inherit* here, because naming a Tailwind size drags its own line height in with
+it. Measured after: all four lines in that column are 18px on 25.2px, differing
+only in the italic.
+
+**A departure from production, and a deliberate one.** The one line of small
+print still small is *Kurs ist ausgebucht*, which stands in for the button in
+the right-hand column rather than sitting in a sentence — say if that should
+follow.
+
+### The one pasted embed that was not a bare iframe — 2026-09-22
+
+The video on the SketchUp course ran past its column and gave the page a
+horizontal scrollbar. The ratio box was right; the selector was not.
+
+`[&>iframe]` is a **child**. Of the 19 rows in `course_videos`, 18 are a bare
+`<iframe>` and **one is wrapped in `<div class="embed-container">`** — a class
+that has no CSS anywhere in either codebase, pasted by whoever made that entry.
+The wrapped one kept the `width="640"` on its own tag and overflowed.
+
+Legacy's own rule is `.ratio-container iframe`, a **descendant**, which is why
+it never had this problem. Now `[&_iframe]`, plus `[&>div]:h-full` so a wrapper
+has a height for the iframe's `h-full` to resolve against. Measured after:
+699×393 inside a 699×393 box, no page overflow.
+
+Worth keeping in mind for every other field an editor pastes into: the shape is
+whatever somebody's clipboard held that day, so matching on depth is the wrong
+thing to be strict about.
 
 ### The phone layout, seen at last — 2026-09-22
 
@@ -721,8 +759,8 @@ rather than two renderings.
 
 `23. November 2026, 08.45 – 17.00 Uhr` is ~270px at 16px, so it still fits a
 320px phone's 288px column; narrower than that it wraps, which is what it did
-before anyway. **Only the basket row** — the course detail page renders its
-dates the same way production does, and anyone can open that page to compare.
+before anyway. **Both the basket row and the course page**, which Marcel asked for
+once he had seen it in the basket.
 
 ### There is no total on the basket page
 
@@ -1135,14 +1173,10 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
-- **The course detail page still breaks the date and the time onto two lines**
-  on a phone, where the basket now keeps them together. Production breaks them,
-  and that page is one anyone can load and compare — but a three-day course is
-  six lines there too. Say if you want it to match the basket.
-- **The course page still shows a bare `499.00`** where the basket now says
-  `CHF 499.00`. The course page is 1:1 with production and anyone can load it;
-  the basket is not and nobody outside a login can. Say if you want them to
-  match and I will change the course card too.
+- **`Kurs ist ausgebucht` is still a size down.** The deadline and the state
+  line now read at the row's size; this one stands in for the button in the
+  right-hand column rather than sitting in a sentence, so it kept legacy's
+  `.text-xsmall`. Say if it should follow the other two.
 - **The summary shows a VAT row that legacy does not** — only when a laptop is
   rented, because courses are exempt and legacy hard-zeroed the rest. The
   alternative was quoting a total the customer is not charged. Worth a nod, not

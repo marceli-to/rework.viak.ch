@@ -34,13 +34,16 @@
 	`position: absolute` in the top right of the row, where there is no column
 	to put it in.
 
-	**The small print restates the row's line height**, 1.5 and 1.4 from `sm`.
-	Legacy's `.text-xsmall` sets a size and nothing else, so those lines simply
-	inherit — and a `text-*` class here does not, it brings Tailwind's own
-	pairing with it (`resources/css/README.md`). `leading-[inherit]` is not the
-	way out: it inherits the parent's line height as **25.2px**, which on 16px
-	text is taller again than the 1.4 it came from. The row measured 119px
-	against production's 118 either way until the numbers were written down.
+	**The registration deadline and the state now read at the row's own size**,
+	where legacy drops them to `.text-xsmall`. See the comment beside them.
+
+	The one line of small print that is still small is *Kurs ist ausgebucht*, in
+	the right-hand column — it stands in for the button rather than sitting in a
+	sentence, so it keeps legacy's size until somebody says otherwise. It is
+	also where the old trap lives: a `text-*` class brings Tailwind's own line
+	height with it, and `leading-[inherit]` is not the way out — that inherits
+	the parent's **25.2px**, taller on 16px text than the 1.4 it came from
+	(`resources/css/README.md`).
 --}}
 <article {{ $attributes->class([
 	'relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl',
@@ -77,13 +80,22 @@
 					@endguest
 				</div>
 
-				{{-- **One block for all the days, broken with `<br>`** — legacy's
-				     shape, and it is load-bearing. A `<div>` per day rounds each
-				     one's 2 × 25.2px up on its own, which made a two-day row a
-				     pixel taller than production and moved everything below it. --}}
+				{{--
+					**One block for all the days, broken with `<br>`** — legacy's
+					shape, and it is load-bearing. A `<div>` per day rounds each
+					one's 2 × 25.2px up on its own, which made a two-day row a
+					pixel taller than production and moved everything below it.
+
+					**On a phone the day and its hours share a line**, as they do
+					in the basket (Marcel, 2026-09-22). Legacy breaks them at
+					every width, which on a three-day course spends six lines on
+					what is really three facts. The break is hidden below `sm`
+					and a comma stands in; a `<br>` set to `display: none`
+					genuinely stops breaking.
+				--}}
 				<div>
 					@foreach ($event->dates as $date)
-						<strong class="font-bold">{{ $date->date->translatedFormat('d. F Y') }}</strong><br>
+						<strong class="font-bold">{{ $date->date->translatedFormat('d. F Y') }}</strong><span class="sm:hidden">,</span><br class="max-sm:hidden">
 						{{ $time($date->time_start) }} – {{ $time($date->time_end) }} Uhr
 						@if (! $loop->last)<br>@endif
 					@endforeach
@@ -115,22 +127,34 @@
 				<div>mit {{ $expert->first_name }} {{ $expert->last_name }}</div>
 			@endif
 
+			{{--
+				**These read at the row's own size**, not a step down (Marcel,
+				2026-09-22). Legacy gives them `.text-xsmall` — 12/14/16 against
+				the row's 16/16/18 — so on the live site the deadline and the
+				state are smaller than the expert's name directly above them,
+				for no reason either the markup or the design gives. They are
+				not a footnote; the state line is the one thing on the row that
+				says whether the course is actually happening.
+
+				So: `italic` and nothing else. No size and no `leading-*`, which
+				is the only way to *inherit* here — naming a Tailwind size would
+				drag its own line height in with it
+				(`resources/css/README.md`).
+
+				A departure from production, and a deliberate one.
+			--}}
 			@if ($event->registration_until && ! $booked && ! $full)
 				<div>
-					<em class="text-xs leading-[1.5] italic sm:text-md sm:leading-[1.4] lg:text-lg">
+					<em class="italic">
 						Anmeldung möglich bis {{ $event->registration_until->format('d.m.Y') }}
 					</em>
 				</div>
 			@endif
 
 			@if ($event->state === \App\Enums\EventState::Confirmed)
-				<div class="text-success">
-					<em class="text-xs leading-[1.5] italic sm:text-md sm:leading-[1.4] lg:text-lg">Kurs findet statt</em>
-				</div>
+				<div class="text-success"><em class="italic">Kurs findet statt</em></div>
 			@else
-				<div class="text-warning">
-					<em class="text-xs leading-[1.5] italic sm:text-md sm:leading-[1.4] lg:text-lg">Kurs offen, wird bestätigt</em>
-				</div>
+				<div class="text-warning"><em class="italic">Kurs offen, wird bestätigt</em></div>
 			@endif
 		</div>
 

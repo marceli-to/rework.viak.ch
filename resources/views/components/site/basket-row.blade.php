@@ -78,12 +78,14 @@
 		{{--
 			What it costs, and the way out.
 
-			**Every amount is `CHF n.nn` and right-aligned** (Marcel,
-			2026-09-22). Legacy writes the currency on the laptop line and not
+			**Bare numbers, right-aligned** (Marcel, 2026-09-22 — `CHF` first,
+			then without). Legacy writes the currency on the laptop line and not
 			on the course line directly above it, in the same column of the same
-			row — an inconsistency this doc used to carry across on parity
-			grounds and no longer does, because the two sit a line apart and
-			read as two different kinds of number.
+			row; the two sit a line apart and read as two different kinds of
+			number. Settled the other way from where it started: **no `CHF` on
+			any row**, matching the course page, which is the one anyone can
+			load and compare. The currency still leads the **totals** on step 4,
+			as legacy has it — those are sums rather than prices.
 
 			Right-aligned for the reason money columns usually are: the decimal
 			points line up, so the eye can add them. It also puts the row fees
@@ -98,7 +100,7 @@
 		<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
 			<div @class(['grow sm:text-right', 'sm:mr-32 lg:mr-48' => $removable])>
 				<span x-show="item.event.free_of_charge">kostenlos</span>
-				<span x-show="! item.event.free_of_charge" x-text="`CHF ${item.course_fee}`"></span>
+				<span x-show="! item.event.free_of_charge" x-text="item.course_fee"></span>
 			</div>
 
 			@if ($removable)
@@ -139,7 +141,7 @@
 		<template x-if="item.rental">
 			<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
 				<div @class(['grow sm:text-right', 'sm:mr-32 lg:mr-48' => $removable])>
-					<span x-text="`CHF ${item.rental_fee}`"></span>
+					<span x-text="item.rental_fee"></span>
 				</div>
 
 				@if ($removable)

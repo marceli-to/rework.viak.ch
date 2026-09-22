@@ -101,16 +101,27 @@
 		</x-site.collapsible>
 
 		@if ($course->videos->isNotEmpty())
-			{{-- `course_videos`, which chunk 01 never ported — see
-			     `09-public-site.md`. `code` is an `<iframe>` an editor pasted,
-			     so it prints unescaped; the ratio box is legacy's
-			     `.ratio-container`, which is what stops the embed from
-			     collapsing to nothing. --}}
+			{{--
+				`course_videos`, which chunk 01 never ported — see
+				`09-public-site.md`. `code` is markup an editor pasted, so it
+				prints unescaped; the ratio box is legacy's `.ratio-container`,
+				which is what stops the embed from collapsing to nothing.
+
+				**`[&_iframe]`, a descendant — not `[&>iframe]`.** Legacy's own
+				rule is `.ratio-container iframe`, and the reason is in the
+				data: of the 19 pasted embeds, 18 are a bare `<iframe>` and
+				**one is wrapped in a `<div class="embed-container">`** that
+				carries no CSS anywhere in either codebase. A child selector
+				missed that one, so it kept the `width="640"` off its own tag
+				and ran past the column (Marcel, 2026-09-22). Whatever an editor
+				pastes, the iframe is somewhere inside — matching on depth is
+				the wrong thing to be strict about.
+			--}}
 			<x-site.collapsible title="Videos">
 				@foreach ($course->videos as $video)
 					<div class="pt-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 						<div class="sm:col-span-4">{{ $video->getTranslation('title', $locale, false) }}</div>
-						<div class="mt-8 aspect-video sm:col-span-8 sm:mt-0 [&>iframe]:h-full [&>iframe]:w-full">
+						<div class="mt-8 aspect-video sm:col-span-8 sm:mt-0 [&_iframe]:h-full [&_iframe]:w-full [&>div]:h-full">
 							{!! $video->code !!}
 						</div>
 					</div>
