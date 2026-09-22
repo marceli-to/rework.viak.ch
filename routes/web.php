@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
 use App\Http\Middleware\SetLocaleFromUrl;
 use Illuminate\Support\Facades\Route;
@@ -84,8 +85,25 @@ Route::prefix('{locale}')
 			Route::middleware(['auth', 'verified', 'role:student'])
 				->prefix($segments['checkout'])
 				->group(function () use ($locale): void {
+					/*
+					 * The basket is a bare view: its contents are in the
+					 * browser and its prices come from `/api/basket/price`, so
+					 * there is nothing for a controller to hand it.
+					 */
 					Route::view('basket', 'site.checkout.basket')
 						->name("{$locale}.checkout.basket");
+
+					/*
+					 * From here on every step is Blade with a POST and the
+					 * answers in the session ([[CheckoutSession]]).
+					 */
+					Route::get('address', [CheckoutController::class, 'address'])
+						->name("{$locale}.checkout.address");
+					Route::post('address', [CheckoutController::class, 'storeAddress']);
+
+					// The *Adresse erfassen* dialog, as a real form post.
+					Route::post('address/new', [CheckoutController::class, 'storeNewAddress'])
+						->name("{$locale}.checkout.address.new");
 				});
 		}
 	});

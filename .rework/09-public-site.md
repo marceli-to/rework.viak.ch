@@ -7,10 +7,10 @@ its reasoning are in `00-foundation.md` under *Parity means the current design*.
 
 Started 2026-09-18. The shell, the course list with its full filter, the auth
 screens and the **course detail page** are built and match production. `Buchen`
-asks about the laptop and confirms the add, and the **basket page** is built and
-measured — step 1 of 4, and the first screen on this site to make a real API
-call from a real session, which is how it found that `auth:sanctum` could not
-see one. **The address step is next**; everything else is under *What is left*.
+asks about the laptop and confirms the add, and the checkout is built through
+**step 2 of 4** — the basket, which found that `auth:sanctum` could not see a
+session at all, and the address step, which is the first one with server state.
+**Payment is next**; everything else is under *What is left*.
 
 | | |
 |---|---|
@@ -49,6 +49,10 @@ see one. **The address step is next**; everything else is under *What is left*.
   the laptop as its own row, the red already-booked warning, the empty state
   and *Weiter*. Behind `auth`, `verified` and `role:student`, as legacy's whole
   checkout is. See *The basket page*, below.
+- **The address step**, at `/de/checkout/address` — the participant block, the
+  *entspricht Teilnehmer-Adresse* toggle, the saved-address picker and the
+  *Adresse erfassen* dialog, with the answer in the session. Brings
+  `x-site.lightbox` with it. See *The address step*, below.
 - **Course detail page.** The teal hero, the five collapsibles, the event row
   with its bookmark and its `Buchen`, and the prev/next pair — every block to
   the pixel. See *The course detail page*, below, for the three data findings
@@ -76,9 +80,11 @@ Roughly in the order that unblocks the most.
    2. ~~**The basket page** at `/de/checkout/basket`.~~ **Built 2026-09-22** —
       the first time `PriceBasket` ran in a browser, and it did not, until
       `statefulApi()` was registered. See *The basket page*, below.
-   3. **The three remaining steps**, then the confirmation. Address is next.
-      Unlike the basket it has server state to keep, so it is the first one
-      that actually POSTs.
+   3. ~~Address.~~ **Built 2026-09-22** — see *The address step*, below.
+   4. **Payment**, then the summary, then the confirmation. Payment is the
+      thinnest of the four: a paragraph of text and the discount-code field,
+      because there is no Stripe anywhere in this flow (see *What the checkout
+      actually is*, above).
 
    ~~**One bug to fix first, now confirmed firing.**~~ **Fixed 2026-09-22 — and
    the fix was the other way round.** `POST /api/basket/price` is behind
@@ -671,6 +677,121 @@ top margin, which is the same arrangement the course page's row was measured
 with — but it has not been looked at, and that is a debt rather than an
 assumption.
 
+## The address step — 2026-09-22
+
+`/de/checkout/address`, step 2 of 4, from `frontend/checkout/views/User.vue` and
+its `AddressForm.vue`. The first step with **server state**, and the first that
+is a plain Blade form.
+
+### The session holds a uuid, not an address
+
+`00-foundation.md` settled the flow as a POST per step with the state in the
+session, and [[CheckoutSession]] is that state: what the customer has decided
+that is not in the basket. The basket stays in the browser — legacy's
+server-held one is why a completed checkout left nothing behind
+([[06-bookings]]).
+
+It stores the chosen address's **uuid**, and every read re-checks the row still
+belongs to the customer, because a session outlives the row it names. Deleting
+an invoice address in another tab would otherwise bill the next checkout to a
+row the customer no longer has. A test pins that.
+
+It also keeps a shape question out of the middle of the flow — see below.
+
+### Server-rendered, where legacy made two API calls to draw it
+
+`User.vue` fetches `/api/student` and then `/api/basket`, nested, before it can
+paint a screen whose every value the server already had: the customer's own
+address, their saved invoice addresses, and which one they picked. Here the
+controller hands all three to the view. The only JavaScript left is the
+checkbox that reveals the picker and the dialog that adds to it.
+
+### Three things that would have been wrong
+
+- **A hidden `<select>` still posts its value.** `x-show` is `display: none`,
+  not `disabled`, so ticking *entspricht Teilnehmer-Adresse* after picking an
+  address would have billed the employer anyway. `<template x-if>` takes it out
+  of the DOM, which is the version that cannot be wrong.
+- **`exists:user_addresses,uuid` is not enough.** It passes for any address in
+  the table, so a guessed uuid would bill a stranger's employer. The row has to
+  be one of the customer's own, which is a `where` on the relation rather than
+  a validation rule.
+- **The checkbox is inverted.** Checked means *same as the participant* — the
+  common case, 126 of 710 bookings use a separate address — so ticking it
+  *hides* the picker. Legacy binds `:checked="hasAdresses ? false : true"`, and
+  reading it the other way round makes the whole step behave backwards.
+
+### The dialog is a real form post
+
+Legacy's `AddressForm.vue` calls `/api/student/address` and splices the answer
+into the select. Here it is a form that POSTs, so the step behaves like every
+other form on the site and a validation error comes back through the session
+with `old()` intact. `StoreAddressRequest` is the same rule set the API uses,
+unchanged.
+
+**The dialog has to reopen itself**, or the redirect lands on a closed dialog
+with the messages hidden behind it. It keys that on the form's own fields being
+in the error bag — so an `invoice_address` error, which belongs to the step
+rather than the dialog, does not open it. That one is a toast, as legacy raises
+it.
+
+### `x-site.lightbox`, and how it differs from the modal
+
+Legacy has two overlays that both extend `%lightbox`. `.notification.is-modal`
+is the message-with-buttons one; `.lightbox` is the one you put a form in. They
+differ in exactly three ways:
+
+| | modal | lightbox |
+|---|---|---|
+| border | 3px | 2px |
+| box | 600px flat | 600–900px, shrink to fit |
+| padding | 24/16, 32/24 from `lg` | 12, 24 from `sm` |
+
+The width really is a range here — `max-width: 900px` and `min-width: 600px`
+do not collide — unlike the modal, where a 480px max-width loses to the same
+600px min-width and the box is always exactly 600. Measured 626×691 on the
+address dialog, inside the range and driven by the form.
+
+`.lightbox-overflow` caps the inner scroller at **90vh**, which is the whole
+reason legacy has a second overlay: a long form scrolls inside the box instead
+of pushing it off the screen.
+
+### Legacy's picker label has no street in it
+
+`address_str` is company, name, city — so two addresses at the same firm in the
+same town read identically in the dropdown. Carried across as found;
+`UserAddress::summary()` is that string and `UserAddress::lines()` is the block
+form, both as lines rather than as the HTML with `<br>` in it that legacy's
+accessors returned.
+
+**The country is named only when it is not Switzerland**, which is also
+legacy's rule.
+
+### A shape question the summary step has to settle
+
+There are **three** disagreeing ideas of what a frozen invoice address looks
+like in this codebase today:
+
+| where | shape |
+|---|---|
+| the 126 ported bookings | `{"lines": [...]}` — [[LegacyInvoiceAddress]] |
+| [[CompleteCheckoutRequest]] | `name`, `street`, `zip`, `city`, `company` |
+| `UserAddress::toSnapshot()` | `first_name`, `last_name`, `company`, `street`, `street_no`, `zip`, `city`, `country_code` |
+
+The first is settled and deliberate: legacy stored a rendered HTML fragment and
+there is no honest way back to fields, so the history keeps the lines that were
+actually printed. The other two are a disagreement inside the rework, and
+**step 4 is where it gets decided**, because step 4 is what writes one. The
+session holding a uuid rather than a snapshot is what keeps this out of step 2's
+way — and it means the address is read as it is at the moment of purchase, not
+as it was when the customer picked it.
+
+### What is not verified
+
+The phone layout, again — `resize_window` does not take on this machine. The
+step was measured at desktop only, and its rows reuse the `.stacked-list`
+geometry the course page's row was measured with.
+
 ## The modal is 600px wide and the stylesheet says 480 — 2026-09-22
 
 `.notification.is-modal` is the dialog legacy asks its questions in, and it is
@@ -815,6 +936,13 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
 
 ## Open, for Marcel
 
+- **What a frozen invoice address looks like.** Three shapes disagree today —
+  the ported `{"lines": […]}`, `CompleteCheckoutRequest`'s flat `name/street/
+  zip/city`, and `UserAddress::toSnapshot()`'s fields. Step 4 writes one, so
+  step 4 has to pick. See *The address step*.
+- **Adressen verwalten** points at `/dashboard`, because the student portal is
+  not built yet (item 3 under *What is left*). Legacy links
+  `/de/student/profil`.
 - **The basket shows no total.** Legacy's step 1 prints a fee per row and no
   sum — the total first appears on the summary. Ported as found, but a basket
   that will not tell you what it costs is a real gap, and the server already

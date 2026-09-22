@@ -203,4 +203,21 @@ class User extends Authenticatable implements MustVerifyEmail
 	{
 		return $this->hasRole(Role::Student);
 	}
+
+	/**
+	 * The customer's own address, as the checkout prints it under
+	 * *Kursteilnehmer* — legacy's `getAddressAttribute()`, as lines rather than
+	 * as an HTML string with `<br>` in it ([[UserAddress]]).
+	 *
+	 * @return array<int, string>
+	 */
+	public function addressLines(): array
+	{
+		return array_values(array_filter([
+			$this->company,
+			trim("{$this->first_name} {$this->last_name}"),
+			trim("{$this->street} {$this->street_no}"),
+			trim("{$this->zip} {$this->city}"),
+		], 'filled'));
+	}
 }
