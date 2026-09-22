@@ -62,7 +62,7 @@ final class PdfRenderer
 		// later rather than as an error.
 		File::ensureDirectoryExists($cache);
 
-		$options = new Options();
+		$options = new Options;
 
 		/*
 		 * **No network at render time.** Legacy's templates pull the two Effra
