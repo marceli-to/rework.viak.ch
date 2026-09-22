@@ -71,11 +71,25 @@
 			@forelse ($bookmarks as $event)
 				{{-- The heart and the basket buttons, which is what a bookmark
 				     row is for. `x-site.event-card` draws the same pair on the
-				     course page and its Alpine components are the same ones. --}}
-				<x-site.event-row :event="$event">
+				     course page and its Alpine components are the same ones.
+
+				     **`hideAfter` and the `x-data` on the row**, not on the
+				     heart: this is the list *of* bookmarks, so un-hearting one
+				     has to take its row away — legacy passes the same prop here
+				     and nowhere else ([[bookmark]]). Without it the row stayed,
+				     advertising a course that was no longer on the list. --}}
+				{{-- `Js::from`, because **a Blade directive inside a component
+				     tag's attribute is not compiled** — `@js(…)` reaches the
+				     browser as those six characters and Alpine never
+				     initialises, silently. An echo is compiled, and `Js` is
+				     `Htmlable` so `{{ }}` does not escape it twice. The heart on
+				     the course card gets away with `@js` because it sits on a
+				     plain `<button>`. --}}
+				<x-site.event-row :event="$event"
+					x-data="bookmark({{ \Illuminate\Support\Js::from(['event' => $event->uuid, 'saved' => true, 'hideAfter' => true]) }})"
+					x-show="! removed">
 					<x-slot:icon>
 						<button type="button"
-							x-data="bookmark({ event: @js($event->uuid), saved: true })"
 							@click="toggle()"
 							:title="saved ? 'Von Merkliste entfernen' : 'Zur Merkliste hinzufügen'"
 							:aria-pressed="saved"

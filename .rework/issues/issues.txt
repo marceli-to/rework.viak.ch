@@ -1,0 +1,28 @@
+Layout issues rework.viak.ch - Student Portal
+
+1. check and fix cancel button text size and spacing
+   FIXED 2026-09-22. `.form-helper` is 14/16/18 and italic; it had no size and
+   inherited the page's 24px, so it came out larger than the button above it.
+   The gap is the button's `.form-group` margin — 16, and 32 from `lg` — where
+   this had 16 at every width. Measured against the live stylesheet; the values
+   are in 09-public-site.md under *Four things the screenshots caught*.
+
+2. check and fix formfield text color
+   FIXED 2026-09-22, and it was site-wide rather than the portal's.
+   `form/_global.scss` sets the input colour twice and the second rule wins, so
+   production's values are teal and its labels black. `x-site.field` had it
+   black, with a docblock citing the rule that loses. Login, registration,
+   password reset, the checkout's address dialog and the portal were all
+   inverted.
+
+3. change validation: it's either name + firstname or company
+   FIXED 2026-09-22. `StoreAddressRequest` now takes a name pair **or** a firm;
+   half a name with no company is still a failure. The `*` came off all three
+   and the rule is stated once, under Firma. Shared with the checkout dialog,
+   which gets the same rule and the same sentence.
+
+4. removing a bookmark does not remove the bookmark from the dom
+   FIXED 2026-09-22. Legacy passes `hideAfter` to the heart on the Merkliste and
+   nowhere else; the row now goes with the bookmark, and both verbs raise the
+   toast legacy raises. The row hides rather than being removed, so a failed
+   request can put it back — legacy's cannot, having thrown the markup away.

@@ -1,6 +1,0 @@
-Layout issues rework.viak.ch - Student Portal
-
-1. check and fix cancel button text size and spacing
-2. check and fix formfield text color
-3. change validation: it's either name + firstname or company
-4. removing a bookmark does not remove the bookmark from the dom

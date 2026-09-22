@@ -155,20 +155,29 @@
 					autocomplete="current-password" />
 			</x-site.collapsible>
 
-			{{-- Full width of the `span-8` column, which is what production
-			     renders — `%btn` never states a width and an `<a>` in block flow
-			     fills its parent (measured 699px, 2026-09-22). A real `<button>`
-			     sizes to `fit-content` whatever its display, so here it has to
-			     be said. --}}
-			<div class="mt-32">
+			{{--
+				Full width of the `span-8` column, which is what production
+				renders — `%btn` never states a width and an `<a>` in block flow
+				fills its parent (measured 699px, 2026-09-22). A real `<button>`
+				sizes to `fit-content` whatever its display, so here it has to be
+				said.
+
+				The button sits in a `.form-group` like every field above it, and
+				**its margin is what spaces *Abbrechen*** — 16px, 32 from `lg`.
+				This carried `mt-32` above and `mt-16` below instead, which put
+				16px between them at every width where production has 32.
+			--}}
+			<div class="mb-16 lg:mb-32">
 				<x-site.button type="submit" class="w-full">Speichern</x-site.button>
 			</div>
 
-			{{-- `.form-helper`: italic, at the page's own size. A link rather
-			     than a button — nothing has been posted, so leaving the form
-			     *is* going back to the screen it came from. --}}
+			{{-- `.form-helper`: **14/16/18 and italic**, measured on the live
+			     stylesheet 2026-09-22. It had no size and inherited the page's
+			     24px, which made it bigger than the button above it. A link
+			     rather than a button — nothing has been posted, so leaving the
+			     form *is* going back to the screen it came from. --}}
 			<a href="{{ \App\Support\SiteUrl::studentPortal() }}"
-				class="mt-16 inline-block italic transition-colors hover:text-teal">Abbrechen</a>
+				class="inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl">Abbrechen</a>
 		</form>
 	</x-site.article>
 </x-layout.site>

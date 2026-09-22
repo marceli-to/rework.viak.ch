@@ -688,3 +688,111 @@ it('accepts an empty current-password box when nothing needs confirming', functi
 
 	expect($user->refresh()->company)->toBe('Nookla GmbH');
 });
+
+/*
+|--------------------------------------------------------------------------
+| An invoice address is a person or a firm
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Marcel, 2026-09-22. The first cut required both names and left the company
+ * optional, which is legacy's shape — and *Rechnungen, Muster AG* needs no
+ * contact name ([[StoreAddressRequest]]).
+ */
+it('accepts an invoice address with a company and no name', function () {
+	$user = portalStudent();
+
+	$this->actingAs($user)
+		->post('/de/student/profil/adresse', [
+			'company' => 'Muster AG',
+			'street' => 'Bahnhofstrasse',
+			'zip' => '8001',
+			'city' => 'Zürich',
+			'country_code' => 'ch',
+		])
+		->assertRedirect('/de/student/profil/bearbeiten')
+		->assertSessionHasNoErrors();
+
+	expect($user->addresses()->count())->toBe(1);
+});
+
+it('accepts one with a name and no company, as before', function () {
+	$user = portalStudent();
+
+	$this->actingAs($user)
+		->post('/de/student/profil/adresse', [
+			'first_name' => 'Anna',
+			'last_name' => 'Muster',
+			'street' => 'Bahnhofstrasse',
+			'zip' => '8001',
+			'city' => 'Zürich',
+			'country_code' => 'ch',
+		])
+		->assertSessionHasNoErrors();
+
+	expect($user->addresses()->count())->toBe(1);
+});
+
+it('refuses half a name with no company, because half a name is not one', function () {
+	$user = portalStudent();
+
+	$this->actingAs($user)
+		->post('/de/student/profil/adresse', [
+			'first_name' => 'Anna',
+			'street' => 'Bahnhofstrasse',
+			'zip' => '8001',
+			'city' => 'Zürich',
+			'country_code' => 'ch',
+		])
+		->assertSessionHasErrors(['last_name' => 'Bitte Vor- und Nachname oder eine Firma angeben.']);
+
+	expect($user->addresses()->count())->toBe(0);
+});
+
+it('refuses neither, and says the rule rather than the branch that fired', function () {
+	$user = portalStudent();
+
+	$this->actingAs($user)
+		->post('/de/student/profil/adresse', [
+			'street' => 'Bahnhofstrasse',
+			'zip' => '8001',
+			'city' => 'Zürich',
+			'country_code' => 'ch',
+		])
+		->assertSessionHasErrors(['company' => 'Bitte Vor- und Nachname oder eine Firma angeben.']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| The two form details the screenshots caught
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * `form/_global.scss` sets the input colour twice and the **second** rule wins,
+ * so production's values are teal and its labels black. Read from the
+ * stylesheet the first rule looks like the answer, which is how this shipped
+ * inverted on every form on the site ([[x-site.field]]).
+ */
+it('paints form values teal, as production does', function () {
+	$html = $this->get('/de/registration')->assertOk()->getContent();
+
+	expect($html)->toContain('font-bold text-teal');
+});
+
+/**
+ * *Abbrechen* is `.form-helper` — 14/16/18 and italic — where it had no size at
+ * all and inherited the page's 24px, coming out larger than the button above
+ * it. The gap is the button's `.form-group` margin, 16 and 32 from `lg`.
+ */
+it('sizes Abbrechen below the button rather than above it', function () {
+	$html = $this->actingAs(portalStudent())
+		->get('/de/student/profil/bearbeiten')
+		->assertOk()
+		->getContent();
+
+	expect($html)
+		->toContain('inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl')
+		->toContain('<div class="mb-16 lg:mb-32">');
+});

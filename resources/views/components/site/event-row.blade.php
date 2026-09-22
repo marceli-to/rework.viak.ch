@@ -58,13 +58,17 @@
 	two deliberate departures from it, and widening it to cover four more
 	callers would put that at risk for no gain.
 --}}
-<article @class([
+{{-- `$attributes` rather than a bare `@class`, so a caller can put its own
+     directives on the row — the Merkliste needs `x-data`/`x-show` **here**,
+     because un-hearting has to take the whole row with it and the heart is
+     three levels down in the icon slot ([[bookmark]]). --}}
+<article {{ $attributes->class([
 	'relative mt-16 border-t pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl',
 	// `has-booking`: the rule and every text in the row go red, while the
 	// buttons keep their own colours — legacy's `*:not([class*=btn-])`.
 	'border-danger text-danger [&_a:not([class*=bg-])]:text-danger' => $marked,
 	'border-black' => ! $marked,
-])>
+]) }}>
 	@if ($marked)
 		<div class="font-bold">Du hast bereits eine Buchung für diesen Kurs!</div>
 	@endif

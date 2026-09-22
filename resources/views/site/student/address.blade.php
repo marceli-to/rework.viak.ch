@@ -41,16 +41,28 @@
 			{{-- `span-6` and `span-6` throughout, which is what the live forms
 			     render — measured 2026-09-22 on `/de/registration`, where all
 			     four of these fields are 329px of the 1068 column. --}}
+			{{--
+				**None of these three carries a `*`**, because none of them is
+				required on its own: it is a name pair **or** a firm (Marcel,
+				2026-09-22 — [[StoreAddressRequest]]). A star on Vorname would
+				say something the server does not enforce, and `required` on the
+				input would stop the browser submitting a perfectly valid
+				company-only address before the server ever saw it.
+
+				The rule is said once, under *Firma*, where somebody who has left
+				the names blank is looking.
+			--}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="first_name" label="Vorname" :value="$address?->first_name" required autocomplete="given-name" />
+					<x-site.field name="first_name" label="Vorname" :value="$address?->first_name" autocomplete="given-name" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="last_name" label="Nachname" :value="$address?->last_name" required autocomplete="family-name" />
+					<x-site.field name="last_name" label="Nachname" :value="$address?->last_name" autocomplete="family-name" />
 				</div>
 			</div>
 
-			<x-site.field name="company" label="Firma" :value="$address?->company" autocomplete="organization" />
+			<x-site.field name="company" label="Firma" :value="$address?->company"
+				hint="Vor- und Nachname oder Firma angeben." autocomplete="organization" />
 
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
@@ -73,7 +85,10 @@
 			<x-site.select name="country_code" label="Land" :options="$countryOptions"
 				:value="$address?->country_code ?? 'ch'" required />
 
-			<div class="mt-32">
+			{{-- `.form-group` like every field above it — 16px below, 32 from
+			     `lg`. No top margin: the `Land` select above already carries
+			     its own. --}}
+			<div class="mb-16 lg:mb-32">
 				{{-- Full width, which is what production renders: `%btn` is
 				     `display: flex` and never states a width, so an `<a>` in
 				     block flow fills its column — measured at 699px on the

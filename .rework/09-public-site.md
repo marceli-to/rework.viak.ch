@@ -1711,3 +1711,101 @@ the better wording.
   form or a dialog, and the checkout's *Adresse erfassen* lightbox is a
   different screen with a different job — it exists so a customer mid-purchase
   does not lose the basket.
+
+### Four things the screenshots caught — 2026-09-22
+
+Marcel put the rebuilt portal beside the live one and found four. Two are
+**site-wide** rather than the portal's, and both are the same mistake: a value
+read out of the SCSS instead of off the page.
+
+#### The input colour was inverted on every form
+
+`form/_global.scss` states it twice, and the **second** rule wins:
+
+```scss
+button, input[type=text], select, textarea  { color: $color-primary }   // #000
+.select-wrapper, input[type=text], textarea { color: $color-secondary } // #46baba
+```
+
+Read from the stylesheet the first is the answer. Read from the browser the
+second is: measured on the live `/de/registration`, every text input is
+`rgb(70, 186, 186)`. So the **labels are black and the values are teal**, which
+is the whole visual logic of these forms — and `x-site.field` had it the other
+way round, with a docblock quoting the losing rule as its evidence.
+
+`x-site.select` had it right all along, because `.select-wrapper select` is the
+one place the teal is stated only once and there was nothing to misread.
+
+It shipped on login, registration, password reset, the checkout's address dialog
+and the portal. One class.
+
+#### *Abbrechen* was bigger than the button above it
+
+`.form-helper` is **14/16/18 and italic**. It had no size at all, so it inherited
+the page's 24px. And the gap to the button is the button's own `.form-group`
+margin — 16px, **32 from `lg`** — where this had `mt-16` on the helper and
+`mt-32` above the button, giving 16 at every width.
+
+| | production | was | now |
+|---|---|---|---|
+| *Abbrechen* | 18px / 23.4 italic | 24px / 31.2 | 18px / 23.4 |
+| gap below *Speichern* | 38px | 16px | 38px |
+
+#### An invoice address is a person **or** a firm — Marcel, 2026-09-22
+
+The first cut required first and last name and left company optional, which is
+legacy's shape. *Rechnungen, Muster AG* needs no contact name, and demanding one
+invents a person.
+
+So: no company → both names; a company → names optional; **one name and no
+company is still a failure**, because half a name is not one.
+`required_without` on each name gives the first three and
+`required_without_all` on the company makes the *neither* case say so.
+
+The `*` came off all three — a star on Vorname would claim something the server
+does not enforce, and `required` on the input would stop the browser submitting
+a valid company-only address before the server saw it. The rule is stated once,
+as a hint under *Firma*, where somebody who left the names blank is looking.
+Laravel's own wording for `required_without` names the other field — *"Vorname
+muss ausgefüllt sein, wenn Firma nicht ausgefüllt ist"* — which is accurate and
+reads like a riddle, so all three carry one sentence instead.
+
+**The data did not force this.** All 122 ported addresses carry both names, so
+the old rule refused none of them; 114 also carry a company, which says only
+that the employer-paying case is the norm. The loosening is safe precisely
+because nothing existing depends on the stricter form.
+
+`StoreAddressRequest` is shared with the checkout's *Adresse erfassen* dialog,
+so that gets the same rule and the same sentence.
+
+#### Un-hearting a bookmark left its row on the list
+
+`Bookmark.vue` takes a `callback` prop and the **Merkliste is the only caller
+that passes `hideAfter`** — because it is the list *of* hearted courses, so
+removing one has to take the row with it. Ported without it, the row stayed and
+went on advertising a course that was no longer on the list.
+
+Legacy removes the element (`el.remove()`); this hides it, so a failed request
+can put it back — legacy's cannot, having already thrown the markup away.
+
+Both verbs also raise the toast legacy raises, in legacy's words and in its grey
+(`$toast.open()` with no type). They were left out when the heart was built
+because nothing drew a toast yet; the store arrived with the basket.
+
+#### And the same Blade trap twice
+
+`x-data="bookmark({ … @js(…) })"` works on the course card and **not** on the
+portal's row, because there it sits on `<x-site.event-row>` — and a Blade
+directive inside a *component tag's* attribute is not compiled. It reaches the
+browser as those six characters, Alpine fails to initialise, and nothing says
+so: the heart simply does not respond. `{{ Js::from(…) }}` is the form that
+works, because an echo is compiled and `Js` is `Htmlable`.
+
+This is the second time it bit in one day — the first was the cancellation
+dialog's payload. The rule, stated once: **inside a `<x-…>` tag, `@js` is text
+and `{{ }}` is code.**
+
+Which is also why `x-site.event-row` now merges `$attributes` onto its
+`<article>` rather than writing a bare `@class`: the Merkliste needs `x-data`
+and `x-show` on the row itself, because un-hearting has to hide the whole thing
+and the heart is three levels down in the icon slot.

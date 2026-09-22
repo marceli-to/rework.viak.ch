@@ -216,7 +216,10 @@
 					<div class="sm:col-span-6"><x-site.field name="last_name" label="Nachname" /></div>
 				</div>
 
-				<x-site.field name="company" label="Firma" />
+				{{-- The same either/or the portal's form states — one
+				     [[StoreAddressRequest]] behind both, so one rule to say. --}}
+				<x-site.field name="company" label="Firma"
+					hint="Vor- und Nachname oder Firma angeben." />
 
 				{{-- Strasse/Nr. and PLZ/Ort are `span-6` with **no breakpoint**
 				     in legacy, so they sit side by side on a phone too — unlike
