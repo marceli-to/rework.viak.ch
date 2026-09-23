@@ -51,27 +51,36 @@
 
 			<x-site.field name="subject" label="Betreff" required />
 
-			<x-site.textarea name="body" label="Nachricht" required :rows="12" />
+			<x-site.textarea name="body" label="Nachricht" required :rows="6" />
 
 			{{-- *Anhänge (max. 32 MB)* — legacy's label, and here the number is
 			     the rule rather than a sentence beside it
 			     ([[PostEventMessageRequest]]). --}}
-			<x-site.file-input name="attachments" label="Anhänge (max. 32 MB)"
-				hint="Höchstens 10 Dateien. Nach einem Fehler müssen die Anhänge neu gewählt werden." />
+			{{-- No hint line, as legacy has none: the ten-file cap is said by
+			     the drop box when it bites. The one thing a visitor could not
+			     otherwise know — that a failed send drops the chosen files —
+			     is said only when it has just happened. --}}
+			<x-site.file-input name="attachments" label="Anhänge" rule
+				:accept="\App\Support\DocumentTypes::accept()"
+				:restrictions="\App\Support\DocumentTypes::RESTRICTIONS"
+				:max-size="32" :max-files="10"
+				:hint="$errors->any() ? 'Bitte die Anhänge neu wählen.' : null" />
 
-			{{-- `.line-after`: a 1px black rule under the group and 32px below. --}}
-			<div class="mb-32 border-b border-black pb-16">
+			{{-- `.line-after`: a 1px black rule under the group, and the space
+			     over it is `.form-group__checkbox`'s bottom margin plus the
+			     group's own padding — measured 2026-09-23 at 500 / 800 / 1200
+			     as 22 / 26 / 36 in all. --}}
+			<div class="mb-16 border-b border-black pb-22 sm:pb-26 lg:mb-32 lg:pb-36">
 				<x-site.checkbox name="copy_to_me" :checked="(bool) old('copy_to_me')">
 					Kopie der Nachricht an mich
 				</x-site.checkbox>
 			</div>
 
+			{{-- No *Abbrechen*: legacy's composer has none, and *Zurück* in
+			     the aside already goes where it would. --}}
 			<div class="mb-16 lg:mb-32">
 				<x-site.button type="submit" class="w-full">Senden</x-site.button>
 			</div>
-
-			<a href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
-				class="inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl">Abbrechen</a>
 		</form>
 	</x-site.article>
 </x-layout.site>

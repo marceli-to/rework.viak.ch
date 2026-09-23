@@ -28,24 +28,38 @@
 			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
 		@endif
 
-		<form method="POST" enctype="multipart/form-data"
+		{{-- `group`, so *Speichern* can read the input's validity: `required`
+		     leaves it `:invalid` until a file is in it, and legacy's button is
+		     `.is-disabled` — 60% and dead to the pointer — until then. CSS
+		     rather than Alpine state, so it holds with no JavaScript as well. --}}
+		<form method="POST" enctype="multipart/form-data" class="group"
 			action="{{ route($locale.'.expert.event.upload.store', ['uuid' => $event->uuid]) }}">
 			@csrf
 
-			<x-site.file-input name="files" label="Dokumente (max. 32 MB pro Datei)"
-				hint="Höchstens 10 Dateien." />
+			{{-- No label, as legacy has none: the box names itself, and the
+			     limits are the `.requirements` line under it — legacy's
+			     (`shared/modules/files/Index.vue`) plus JPG, PNG and TIFF, all
+			     in [[DocumentTypes]], which the server checks too. The ten-file
+			     cap is ours ([[UploadEventMediaRequest]]) and is said when it
+			     bites. 16px above it, as legacy's `mt-2x` wrapper puts it. --}}
+			<div class="pt-16">
+				<x-site.file-input name="files" required
+					:accept="\App\Support\DocumentTypes::accept()"
+					:restrictions="\App\Support\DocumentTypes::RESTRICTIONS"
+					:max-size="32" :max-files="10" />
+			</div>
 
-			{{-- `.line-before`: a 1px black rule **above** the group, 32px of
-			     space over it — the mirror of the `.line-after` the other forms
-			     carry, and legacy puts it here rather than there because this
-			     form has nothing under the rule but the button. --}}
-			<div class="mt-32 border-t border-black pt-16">
+			{{-- `.line-before`: a 1px black rule **above** the group — the
+			     mirror of the `.line-after` the other forms carry, and legacy
+			     puts it here rather than there because this form has nothing
+			     under the rule but the button. The space over it is the file
+			     control's own; 12px under it, 24 from `lg`, measured. --}}
+			<div class="border-t border-black pt-12 lg:pt-24">
+				{{-- No *Abbrechen*: legacy's `Files.vue` has none, and *Zurück*
+				     in the aside already goes where it would. --}}
 				<div class="mb-16 lg:mb-32">
-					<x-site.button type="submit" class="w-full">Speichern</x-site.button>
+					<x-site.button type="submit" class="w-full group-has-[:invalid]:pointer-events-none group-has-[:invalid]:opacity-60">Speichern</x-site.button>
 				</div>
-
-				<a href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
-					class="inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl">Abbrechen</a>
 			</div>
 		</form>
 	</x-site.article>

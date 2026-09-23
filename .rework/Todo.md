@@ -280,6 +280,18 @@ One unrelated thing worth doing at the same time, already noted in
 (*neuzeit-grotesk*), referenced by no stylesheet. It is a dead render-blocking
 request on every page of the live site.
 
+## Before go-live: two upload checks on the production host
+
+Both come from the expert portal's upload forms ([[09-public-site]]).
+
+- **PHP's `upload_max_filesize` and `post_max_size`** have to allow the 32 MB per
+  file that `UploadEventMediaRequest` promises, times up to ten files. If PHP's
+  limit is lower, the upload fails before validation runs.
+- **Upload one old `.doc` and one `.xls`** and check that they pass.
+  `DocumentTypes` checks the type libmagic detects from the content, and
+  libmagic versions differ on old Office files. Both passed on macOS on
+  2026-09-23.
+
 ## Other open questions
 
 **Live questions now live in `Open-Questions.md`** — what is still unanswered,

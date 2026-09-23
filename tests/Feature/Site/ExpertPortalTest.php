@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\Media;
 use App\Models\Message;
 use App\Models\User;
+use App\Support\DocumentTypes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -475,6 +476,71 @@ it('refuses an upload to a course somebody else teaches', function () {
 		->assertForbidden();
 
 	expect($event->media()->count())->toBe(0);
+});
+
+it('takes JPG, PNG and TIFF', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload', [
+		'files' => [
+			UploadedFile::fake()->image('render.jpg'),
+			UploadedFile::fake()->image('plan.png'),
+			UploadedFile::fake()->create('scan.tiff', 200),
+		],
+	])->assertSessionHasNoErrors();
+
+	expect($event->media()->count())->toBe(3);
+});
+
+it('refuses a HEIC, which was tried and taken out again', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload', [
+		'files' => [UploadedFile::fake()->create('baustelle.heic', 200)],
+	])->assertSessionHasErrors('files.0');
+});
+
+it('refuses a file whose name is not on the list', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload', [
+		'files' => [UploadedFile::fake()->create('setup.exe', 10)],
+	])->assertSessionHasErrors(['files.0' => DocumentTypes::message()]);
+
+	expect($event->media()->count())->toBe(0);
+});
+
+it('refuses a program renamed to look like a PDF, on its content', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+
+	// A real file rather than a fake, because a fake reports the type its
+	// extension implies and the point is that the content disagrees.
+	$path = tempnam(sys_get_temp_dir(), 'viak');
+	file_put_contents($path, "MZ\x90\x00\x03\x00\x00\x00\x04\x00\x00\x00\xff\xff".str_repeat("\x00", 64).'PE');
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload', [
+		'files' => [new UploadedFile($path, 'handout.pdf', null, null, true)],
+	])->assertSessionHasErrors(['files.0' => DocumentTypes::message()]);
+
+	expect($event->media()->count())->toBe(0);
+});
+
+it('holds a message attachment to the same list', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+	expertSeatOn($event);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/message', [
+		'subject' => 'Unterlagen',
+		'body' => 'Im Anhang.',
+		'attachments' => [UploadedFile::fake()->create('makro.js', 1)],
+	])->assertSessionHasErrors('attachments.0');
+
+	expect(Message::query()->count())->toBe(0);
 });
 
 it('deletes a course document, and its file with it', function () {

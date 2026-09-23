@@ -2005,9 +2005,40 @@ it is dropped and sends a list of uuids with the message.
   draft leaves nothing behind. Legacy's eager upload is why **11 of its 44 files
   are attached to nothing at all**.
 
-What is lost is the thumbnail strip and the per-file remove. Both matter for the
-dashboard's image field, which is chunk 04's and is Vue; neither matters for two
-PDFs on a course.
+~~What is lost is the thumbnail strip and the per-file remove.~~ **The drop box
+came back on 2026-09-23** (Marcel), without the eager upload. `<x-site.file-input>`
+draws legacy's box — measured on the live expert upload at 1482px and matching
+to the pixel — over the same `<input type="file">`, and
+`js/site/components/file-drop.js` writes each dropped file into the input's
+`files` through a `DataTransfer`. So a drop fills the field and nothing leaves
+the browser until the form is sent; the controllers did not change.
+
+- **The message is German**: *Dateien hierher ziehen oder klicken*. Legacy's
+  *Drop files here to upload* is `vue2-dropzone`'s built-in default, not copy
+  anybody wrote.
+- **The list under the box is new.** Legacy lists a file once it has
+  *uploaded*, with a download link and a description field that belong to a
+  stored file. These are not stored yet, so each row is a name, a size and a
+  cross to take it back out.
+- **`accept` is checked in JavaScript too**, because the attribute only filters
+  the dialog and a drop ignores it. The rejection is legacy's own sentence.
+- **And on the server, which legacy never did** (Marcel, 2026-09-23). The list
+  lives in `App\Support\DocumentTypes`: legacy's nine plus JPG, PNG and TIFF
+  (HEIC was added and taken out again the same day as unnecessary), used by
+  both requests and both forms. Checked by extension *and* by sniffed content,
+  so a program renamed `handout.pdf` fails too. The content side is
+  `mimetypes` with a deliberately wide list, not `mimes`, because libmagic
+  reports some old `.doc`/`.xls` files as `application/vnd.ms-office` or
+  `CDFV2`, which map to no extension.
+- **Legacy's disabled *Speichern* is CSS**: the input is `required`, so it is
+  `:invalid` until it holds a file, and the button reads that through
+  `group-has-[:invalid]`. It works the same with no JavaScript.
+- Without JavaScript the box stays `x-cloak`ed and the styled native input is
+  what the visitor gets.
+
+The dashboard's image field is a separate uploader, and deliberately so: it
+uploads straight into the media library and crops there, which is the ported
+forrerzimmermann Vue UI in chunk 04.
 
 **The trap inside it**: `UploadMedia` leaves the file in `temp/` and
 `AttachMedia` is what moves it to `uploads/`. `PostMessage` takes an

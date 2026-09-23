@@ -14,6 +14,7 @@ import basketList from './components/basket-list';
 import bookmark from './components/bookmark';
 import confirm from './stores/confirm';
 import courseFilter from './components/course-filter';
+import fileDrop from './components/file-drop';
 import menu from './components/menu';
 import portal from './stores/portal';
 import toast from './stores/toast';
@@ -46,6 +47,7 @@ Alpine.data('courseFilter', courseFilter);
 Alpine.data('menu', menu);
 Alpine.data('bookmark', bookmark);
 Alpine.data('basketList', basketList);
+Alpine.data('fileDrop', fileDrop);
 
 window.Alpine = Alpine;
 Alpine.start();

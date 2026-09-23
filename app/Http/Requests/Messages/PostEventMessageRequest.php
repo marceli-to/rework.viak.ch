@@ -6,6 +6,7 @@ namespace App\Http\Requests\Messages;
 
 use App\Models\Event;
 use App\Models\Message;
+use App\Support\DocumentTypes;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -51,7 +52,7 @@ class PostEventMessageRequest extends FormRequest
 			 * PDFs and zips of models and textures, not photographs.
 			 */
 			'attachments' => ['sometimes', 'array', 'max:10'],
-			'attachments.*' => ['file', 'max:'.(32 * 1024)],
+			'attachments.*' => ['file', 'max:'.(32 * 1024), ...DocumentTypes::rules()],
 
 			'copy_to_me' => ['sometimes', 'boolean'],
 		];
@@ -64,6 +65,15 @@ class PostEventMessageRequest extends FormRequest
 			'subject' => 'Betreff',
 			'body' => 'Nachricht',
 			'attachments.*' => 'Anhang',
+		];
+	}
+
+	/** @return array<string, string> */
+	public function messages(): array
+	{
+		return [
+			'attachments.*.extensions' => DocumentTypes::message(),
+			'attachments.*.mimetypes' => DocumentTypes::message(),
 		];
 	}
 }

@@ -6,6 +6,7 @@ namespace App\Http\Requests\Media;
 
 use App\Models\Event;
 use App\Models\Media;
+use App\Support\DocumentTypes;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -43,7 +44,7 @@ class UploadEventMediaRequest extends FormRequest
 			 * PHP's own `upload_max_filesize` is the ceiling underneath it and
 			 * is what a deployment has to agree with ([[Todo]]).
 			 */
-			'files.*' => ['file', 'max:'.(32 * 1024)],
+			'files.*' => ['file', 'max:'.(32 * 1024), ...DocumentTypes::rules()],
 		];
 	}
 
@@ -51,5 +52,14 @@ class UploadEventMediaRequest extends FormRequest
 	public function attributes(): array
 	{
 		return ['files' => 'Dokumente', 'files.*' => 'Dokument'];
+	}
+
+	/** @return array<string, string> */
+	public function messages(): array
+	{
+		return [
+			'files.*.extensions' => DocumentTypes::message(),
+			'files.*.mimetypes' => DocumentTypes::message(),
+		];
 	}
 }
