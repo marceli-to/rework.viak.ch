@@ -1,0 +1,398 @@
+{
+  "quelle": "Screen-Review viak.ch",
+  "call": "2026-09-23",
+  "exportiert": "2026-09-23T11:37:04",
+  "artifact": "https://claude.ai/artifact/GiNvcrc9AieZLkaQPmZLMh",
+  "designbreite_px": 1280,
+  "screens": [
+    {
+      "slug": "Homepage",
+      "titel": "Homepage",
+      "gruppe": "Einstieg & Orientierung",
+      "datei": "Homepage.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [
+        {
+          "n": 1,
+          "text": "Element für Startseite mit 'Vorhaben'-Picker",
+          "x": 424,
+          "y": 206
+        },
+        {
+          "n": 2,
+          "text": "Text statisch hinterlegen",
+          "x": 648,
+          "y": 631
+        },
+        {
+          "n": 3,
+          "text": "Autom. Widget",
+          "x": 655,
+          "y": 769
+        },
+        {
+          "n": 4,
+          "text": "Teaser mit Formular",
+          "x": 817,
+          "y": 1133
+        },
+        {
+          "n": 5,
+          "text": "Flag auf Kurs (Anzeige auf Detailseite)",
+          "x": 832,
+          "y": 1243
+        },
+        {
+          "n": 6,
+          "text": "Widget auf Startseite",
+          "x": 569,
+          "y": 1358
+        },
+        {
+          "n": 7,
+          "text": "Kurs und Lizenz zusammen",
+          "x": 607,
+          "y": 1674
+        },
+        {
+          "n": 8,
+          "text": "Angebot statt Kurse / Software, Firmenschulung kein Menüpunkt",
+          "x": 388,
+          "y": 54
+        },
+        {
+          "n": 9,
+          "text": "About Modul (Kursleiter optional), Link auf über uns",
+          "x": 535,
+          "y": 2131
+        },
+        {
+          "n": 10,
+          "text": "Testimonials als Backend Modul ersetzt bestehende Google Rez.",
+          "x": 370,
+          "y": 2727
+        },
+        {
+          "n": 11,
+          "text": "Blog? ",
+          "x": 566,
+          "y": 2819
+        }
+      ],
+      "screenshot": "marker/Homepage-marker.png",
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Methode",
+      "titel": "Unsere Methode",
+      "gruppe": "Einstieg & Orientierung",
+      "datei": "Methode.html",
+      "entscheid": "nicht",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Aktuelles",
+      "titel": "Aktuelles",
+      "gruppe": "Einstieg & Orientierung",
+      "datei": "Aktuelles.html",
+      "entscheid": "teilweise",
+      "notizen": "Blog-Einstieg, noch offen",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Vorhaben-Bilder",
+      "titel": "Bilder gestalten",
+      "gruppe": "Vorhaben",
+      "datei": "Vorhaben-Bilder.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Vorhaben-Raeume",
+      "titel": "Räume visualisieren",
+      "gruppe": "Vorhaben",
+      "datei": "Vorhaben-Raeume.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [
+        {
+          "n": 1,
+          "text": "kann weggelassen werden",
+          "x": 910,
+          "y": 212
+        },
+        {
+          "n": 2,
+          "text": "nicht notwendig",
+          "x": 384,
+          "y": 1908
+        },
+        {
+          "n": 3,
+          "text": "Seiten anlegen und mit Titel und Text",
+          "x": 307,
+          "y": 112
+        }
+      ],
+      "screenshot": "marker/Vorhaben-Raeume-marker.png",
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Vorhaben-Objekte",
+      "titel": "Objekte entwerfen",
+      "gruppe": "Vorhaben",
+      "datei": "Vorhaben-Objekte.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Vorhaben-Bewegtbild",
+      "titel": "Bewegtbild erstellen",
+      "gruppe": "Vorhaben",
+      "datei": "Vorhaben-Bewegtbild.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Vorhaben-KI",
+      "titel": "Mit KI gestalten",
+      "gruppe": "Vorhaben",
+      "datei": "Vorhaben-KI.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Vorhaben-Teams",
+      "titel": "Teams & Unternehmen",
+      "gruppe": "Vorhaben",
+      "datei": "Vorhaben-Teams.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Alle-Angebote",
+      "titel": "Alle Angebote",
+      "gruppe": "Angebot & Übersichten",
+      "datei": "Alle-Angebote.html",
+      "entscheid": "umsetzen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Kurse",
+      "titel": "Kurse",
+      "gruppe": "Angebot & Übersichten",
+      "datei": "Kurse.html",
+      "entscheid": "umsetzen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Software",
+      "titel": "Software",
+      "gruppe": "Angebot & Übersichten",
+      "datei": "Software.html",
+      "entscheid": "umsetzen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Rhino",
+      "titel": "Rhinoceros",
+      "gruppe": "Software",
+      "datei": "Rhino.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Twinmotion",
+      "titel": "Twinmotion",
+      "gruppe": "Software",
+      "datei": "Twinmotion.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Twinmotion-Ueberblick",
+      "titel": "Was ist Twinmotion?",
+      "gruppe": "Software",
+      "datei": "Twinmotion-Ueberblick.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "After-Effects",
+      "titel": "After Effects",
+      "gruppe": "Software",
+      "datei": "After-Effects.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "After-Effects-Ueberblick",
+      "titel": "Was ist After Effects?",
+      "gruppe": "Software",
+      "datei": "After-Effects-Ueberblick.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Rhino-Einstiegskurs",
+      "titel": "Rhino Einstiegskurs",
+      "gruppe": "Kurse & Schulung",
+      "datei": "Rhino-Einstiegskurs.html",
+      "entscheid": "nicht",
+      "notizen": "Existiert bereits",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "After-Effects-Einstiegskurs",
+      "titel": "After Effects Einstiegskurs",
+      "gruppe": "Kurse & Schulung",
+      "datei": "After-Effects-Einstiegskurs.html",
+      "entscheid": "nicht",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Firmenschulung",
+      "titel": "Firmenschulung",
+      "gruppe": "Kurse & Schulung",
+      "datei": "Firmenschulung.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [
+        {
+          "n": 1,
+          "text": "Rezensionen anzeigen",
+          "x": 385,
+          "y": 722
+        }
+      ],
+      "screenshot": "marker/Firmenschulung-marker.png",
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Meine-Lizenzen",
+      "titel": "Mein Konto",
+      "gruppe": "Konto & Lizenzen",
+      "datei": "Meine-Lizenzen.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Twinmotion-Lizenzen",
+      "titel": "Twinmotion Lizenzen",
+      "gruppe": "Konto & Lizenzen",
+      "datei": "Twinmotion-Lizenzen.html",
+      "entscheid": "offen",
+      "notizen": "",
+      "marker": [],
+      "screenshot": null,
+      "im_call_erfasst": false
+    },
+    {
+      "slug": "Team",
+      "titel": "Team",
+      "gruppe": "Über uns",
+      "datei": "Team.html",
+      "entscheid": "umsetzen",
+      "notizen": "",
+      "marker": [
+        {
+          "n": 1,
+          "text": "Text 'Über uns'",
+          "x": 838,
+          "y": 142
+        },
+        {
+          "n": 2,
+          "text": "Experten Listing",
+          "x": 498,
+          "y": 479
+        },
+        {
+          "n": 3,
+          "text": "Team",
+          "x": 988,
+          "y": 232
+        }
+      ],
+      "screenshot": "marker/Team-marker.png",
+      "im_call_erfasst": true
+    },
+    {
+      "slug": "Kontakt",
+      "titel": "Kontakt",
+      "gruppe": "Über uns",
+      "datei": "Kontakt.html",
+      "entscheid": "umsetzen",
+      "notizen": "",
+      "marker": [
+        {
+          "n": 1,
+          "text": "Verlinken mit Firmenschulung",
+          "x": 355,
+          "y": 177
+        },
+        {
+          "n": 2,
+          "text": "Hinzufügen",
+          "x": 618,
+          "y": 340
+        }
+      ],
+      "screenshot": "marker/Kontakt-marker.png",
+      "im_call_erfasst": true
+    }
+  ]
+}
