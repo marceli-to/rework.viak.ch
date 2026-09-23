@@ -11,8 +11,10 @@ use Illuminate\Support\HtmlString;
  * unescaped, so it goes through a tag allowlist rather than straight out —
  * cheap insurance against a pasted `<script>` or `<iframe>`.
  *
- * Attributes are not filtered here. When the editor moves to tiptap
- * ([[07-editor]]) this should become a proper sanitiser.
+ * Attributes are not filtered here. Message bodies no longer depend on it —
+ * the composer's HTML is sanitised on the way in ([[MessageHtml]]) — but the
+ * admin-authored fields still do, and when the dashboard's editor moves to
+ * tiptap ([[07-editor]]) this should become a proper sanitiser too.
  */
 final class RichText
 {

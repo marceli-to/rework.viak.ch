@@ -14,11 +14,12 @@
 		authorises everything, so any authenticated student could post to any
 		course and mail every participant of it (finding 4).
 
-		**The body is a `<textarea>` where legacy has TinyMCE.** There is no
-		editor on the public site and there will not be one before
-		[[07-editor]]; blank lines become paragraphs on the way in
-		([[ExpertPortalController::paragraphs]]), which is what the thread and the
-		mail render.
+		**The body is a tiptap editor in TinyMCE's clothes** ([[x-site.editor]]),
+		with three of legacy's eight buttons: none of the 255 messages legacy
+		holds uses any formatting (Marcel, 2026-09-23). Its HTML is cleaned on
+		the way in ([[MessageHtml]]); without JavaScript it is the textarea
+		underneath, and blank lines become paragraphs
+		([[ExpertPortalController::paragraphs]]).
 	--}}
 	<x-site.article>
 		<x-slot:aside>
@@ -51,7 +52,7 @@
 
 			<x-site.field name="subject" label="Betreff" required />
 
-			<x-site.textarea name="body" label="Nachricht" required :rows="6" />
+			<x-site.editor name="body" label="Nachricht" required />
 
 			{{-- *Anhänge (max. 32 MB)* — legacy's label, and here the number is
 			     the rule rather than a sentence beside it

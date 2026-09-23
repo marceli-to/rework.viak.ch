@@ -7,6 +7,7 @@ namespace App\Http\Requests\Messages;
 use App\Models\Event;
 use App\Models\Message;
 use App\Support\DocumentTypes;
+use App\Support\MessageHtml;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -35,12 +36,31 @@ class PostEventMessageRequest extends FormRequest
 		return $this->user()?->can('create', [Message::class, $event]) ?? false;
 	}
 
+	/**
+	 * The editor's HTML is cleaned **before** it is validated, so `required`
+	 * judges what would be stored: an emptied editor sends `<p></p>`, which is
+	 * a string and would pass. Without JavaScript `body_format` stays `text`
+	 * and the body is left for the controller to escape ([[MessageHtml]],
+	 * [[ExpertPortalController::storeMessage]]).
+	 */
+	protected function prepareForValidation(): void
+	{
+		if ($this->input('body_format') !== 'html') {
+			return;
+		}
+
+		$body = MessageHtml::sanitize((string) $this->input('body'));
+
+		$this->merge(['body' => MessageHtml::isBlank($body) ? '' : $body]);
+	}
+
 	/** @return array<string, mixed> */
 	public function rules(): array
 	{
 		return [
 			'subject' => ['required', 'string', 'max:255'],
 			'body' => ['required', 'string'],
+			'body_format' => ['sometimes', 'in:text,html'],
 
 			/*
 			 * *Anhänge (max. 32 MB)*, which is what legacy's label promises and

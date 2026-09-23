@@ -361,7 +361,8 @@ it('posts a note and records who it reaches', function () {
 	$message = Message::query()->where('event_id', $event->id)->firstOrFail();
 
 	expect($message->subject)->toBe('Anreise')
-		// Blank lines become paragraphs; there is no editor on the public site
+		// No `body_format`, which is what the bare textarea sends without
+		// JavaScript: blank lines become paragraphs
 		// ([[ExpertPortalController::paragraphs]]).
 		->and($message->body)->toBe('<p>Erste Zeile.</p><p>Zweiter Absatz.</p>')
 		->and($message->recipients()->pluck('users.id')->sort()->values()->all())
@@ -379,6 +380,68 @@ it('escapes what was typed rather than letting it through as markup', function (
 	])->assertRedirect();
 
 	expect(Message::query()->firstOrFail()->body)->not->toContain('<script>');
+});
+
+it('keeps the editor s bold, list and link', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+	expertSeatOn($event);
+
+	// Exactly what the editor put in the textarea in the browser, trailing
+	// empty paragraph included.
+	$html = '<p>Hallo <strong>fett</strong></p><ul><li><p>eins</p></li></ul>'
+		.'<p>Siehe <a href="https://visualisierungs-akademie.ch">hier</a></p><p></p>';
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/message', [
+		'subject' => 'Test', 'body' => $html, 'body_format' => 'html',
+	])->assertRedirect();
+
+	expect(Message::query()->firstOrFail()->body)->toBe(
+		'<p>Hallo <strong>fett</strong></p><ul><li><p>eins</p></li></ul>'
+		.'<p>Siehe <a href="https://visualisierungs-akademie.ch">hier</a></p>'
+	);
+});
+
+it('cleans the editor s HTML on the way in, which strip_tags on the way out would not', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+	expertSeatOn($event);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/message', [
+		'subject' => 'Test',
+		'body' => '<p><a href="javascript:alert(1)" onclick="x()">klick</a></p>'
+			.'<h1>Titel</h1><script>alert(1)</script><img src=x onerror=alert(1)>',
+		'body_format' => 'html',
+	])->assertRedirect();
+
+	expect(Message::query()->firstOrFail()->body)->toBe('<p><a>klick</a></p>');
+});
+
+it('refuses an emptied editor, which still sends a paragraph', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+	expertSeatOn($event);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/message', [
+		'subject' => 'Test', 'body' => '<p></p><p>&nbsp;</p>', 'body_format' => 'html',
+	])->assertSessionHasErrors('body');
+
+	expect(Message::query()->count())->toBe(0);
+});
+
+it('draws the editor over the textarea, and loads it on this page only', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+
+	$this->actingAs($expert)->get('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/message')
+		->assertOk()
+		->assertSee('x-data="editor"', false)
+		->assertSee('name="body_format" value="text"', false)
+		->assertSee('<textarea', false);
+
+	$this->actingAs($expert)->get('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload')
+		->assertOk()
+		->assertDontSee('x-data="editor"', false);
 });
 
 it('copies the author in only when asked', function () {

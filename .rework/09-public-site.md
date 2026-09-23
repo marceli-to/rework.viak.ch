@@ -1997,10 +1997,10 @@ like nothing and is the whole fix.
 Legacy's is TinyMCE plus a `vue-dropzone` that posts each file to `/api/file` as
 it is dropped and sends a list of uuids with the message.
 
-- **The body is a `<textarea>`.** There is no editor on the public site and
-  there will not be one before `[[07-editor]]`; blank lines become paragraphs on
-  the way in, escaped first, and `RichText`'s allowlist strips tags on the way
-  out — one belt more than legacy has at either end.
+- ~~**The body is a `<textarea>`.**~~ **A tiptap editor since 2026-09-23**
+  (Marcel), with three of legacy's eight buttons — see *The composer's editor*
+  below. Without JavaScript the textarea underneath is still the field, and
+  its blank lines still become paragraphs, escaped first.
 - **The attachments come with the form.** One multipart POST, so an abandoned
   draft leaves nothing behind. Legacy's eager upload is why **11 of its 44 files
   are attached to nothing at all**.
@@ -2039,6 +2039,49 @@ the browser until the form is sent; the controllers did not change.
 The dashboard's image field is a separate uploader, and deliberately so: it
 uploads straight into the media library and crops there, which is the ported
 forrerzimmermann Vue UI in chunk 04.
+
+### The composer's editor — tiptap in TinyMCE's clothes, 2026-09-23
+
+Asked for at parity, then cut down on the evidence: **none of legacy's 255
+messages uses any formatting.** The port copies bodies verbatim
+(`PortMessages.php:92`) and every tag in them is a `<p>`. So the toolbar is bold,
+a bullet list and a link (Marcel's call between full parity, this, and keeping
+the textarea), and the schema is cut to match (`js/shared/editor.js`) so a
+shortcut or a paste cannot bring back what the toolbar left out.
+
+- **tiptap, as forrerzimmermann uses it** — v3, StarterKit plus Link — but
+  `@tiptap/core` under Alpine rather than `@tiptap/vue-3`, since the public site
+  has no Vue. The schema lives in `js/shared/` so the dashboard's `richtext`
+  field can import the same one in chunk 04.
+- **Loaded on this page only.** Dynamically imported, so the ~145 kB gzipped of
+  ProseMirror and tiptap never reach another page; the manifest confirms the
+  site entry references it only as a dynamic import.
+- **TinyMCE 5.10.9's proportions, the site's clothes.** Measured on legacy at
+  1482px: the 320px box, the 39px toolbar, 34px buttons with 24px icons. The
+  first cut also took the oxide skin's colours and system font to the pixel,
+  and looked like somebody else's widget; Marcel asked for it to look like the
+  other controls instead — 1px black lines, Effra, teal for hover and active.
+  The text inside is `x-site.rich-text`'s, at the size the thread shows it,
+  so the composer previews the message. The icons are TinyMCE 6.8's, which is
+  MIT; 5.x is LGPL.
+- **`[&_li>p]:mb-0` went into `x-site.rich-text` too.** tiptap wraps a list
+  item's text in a paragraph, and the paragraph margin spaced the list out in
+  the thread as well. TinyMCE's lists — every course description — have no
+  `<p>` in an `<li>`, so they are untouched.
+- **The link dialog is a bar.** Legacy's is a modal with four fields; this asks
+  for the address only, adds `https://` or `mailto:` to what people actually
+  type, and sits over the text so the box keeps its height.
+- **Cleaned on the way in** by `App\Support\MessageHtml`
+  (`symfony/html-sanitizer`): `p br strong ul li` and `a[href]` with `http`,
+  `https` or `mailto`, nothing else. `RichText`'s `strip_tags` on the way out
+  keeps attributes, so `<a href="javascript:…">` would have survived it. An
+  emptied editor still sends `<p></p>`; the request cleans before it validates,
+  so `required` sees nothing.
+- **Unlisted elements are dropped with their text**, not unwrapped. Unwrapping
+  sounds kinder and leaks: the body context will not register a drop for a
+  `<head>` element, so a `<style>` left its CSS behind as text. The schema has
+  already reduced a paste to the allowed tags, so only a hand-made request
+  carries anything else.
 
 **The trap inside it**: `UploadMedia` leaves the file in `temp/` and
 `AttachMedia` is what moves it to `uploads/`. `PostMessage` takes an

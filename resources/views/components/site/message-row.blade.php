@@ -129,9 +129,10 @@
 				<p class="mb-12 lg:mb-16">{{ $message->subject }}</p>
 			@endif
 
-			{{-- The body is editor HTML on the dashboard's side and a
-			     [[ExpertPortalController::paragraphs]] textarea on this one;
-			     either way it goes out through [[RichText]]'s allowlist. --}}
+			{{-- The body is editor HTML from either side — the dashboard's, or
+			     the expert composer's ([[x-site.editor]], cleaned on the way in
+			     by [[MessageHtml]]) — and goes out through [[RichText]]'s
+			     allowlist either way. --}}
 			<x-site.rich-text :html="$message->body" />
 
 			@if ($message->media->isNotEmpty())

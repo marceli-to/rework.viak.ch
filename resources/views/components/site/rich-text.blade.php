@@ -37,7 +37,7 @@
 	'[&_p]:mb-12 lg:[&_p]:mb-16 [&_p:last-child]:mb-0',
 	'[&_strong]:font-bold [&_b]:font-bold [&_em]:italic [&_i]:italic',
 	'[&_ul]:m-0 [&_ul]:list-disc [&_ul]:p-0 [&_ol]:m-0 [&_ol]:list-decimal [&_ol]:p-0',
-	'[&_li]:ml-20 [&_li]:list-item',
+	'[&_li]:ml-20 [&_li]:list-item [&_li>p]:mb-0',
 	'[&_h2]:font-bold [&_h3]:font-bold [&_h2]:mb-8 [&_h3]:mb-8',
 	'[&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-[3px] [&_a:hover]:no-underline',
 	'sm:[&_a]:decoration-2 sm:[&_a]:underline-offset-[5px]' => $hero,

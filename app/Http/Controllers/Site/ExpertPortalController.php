@@ -207,7 +207,12 @@ class ExpertPortalController extends Controller
 			event: $event,
 			author: $request->user(),
 			subject: $request->string('subject')->value(),
-			body: $this->paragraphs($request->string('body')->value()),
+			// Already cleaned by the request when it came from the editor;
+			// escaped into paragraphs here when it came from the bare
+			// textarea ([[PostEventMessageRequest::prepareForValidation]]).
+			body: $request->input('body_format') === 'html'
+				? $request->string('body')->value()
+				: $this->paragraphs($request->string('body')->value()),
 			copyToAuthor: $request->boolean('copy_to_me'),
 		);
 
@@ -365,10 +370,10 @@ class ExpertPortalController extends Controller
 	 * A textarea's blank lines as paragraphs.
 	 *
 	 * The body is stored and rendered as HTML — legacy composes it in TinyMCE,
-	 * and the student's screen puts it through [[RichText]]. There is no editor
-	 * on the public site and there will not be one before [[07-editor]], so the
-	 * composer is a plain `<textarea>` and this is what turns what was typed
-	 * into what the mail and the thread render.
+	 * and the student's screen puts it through [[RichText]]. The composer is a
+	 * tiptap editor now ([[x-site.editor]]), whose HTML the request cleans;
+	 * this is for the `<textarea>` under it, which is what a browser without
+	 * JavaScript sends.
 	 *
 	 * `e()` first: whatever is typed is text, and treating it as markup here is
 	 * how a pasted `<script>` would reach every student's inbox. [[RichText]]
