@@ -33,8 +33,10 @@
 		retried ([[RenderParticipationConfirmation]]).
 	--}}
 	<div class="addresses">
+		{{-- The label is the address's first line, as in legacy — one `<br>`,
+		     not the invoice's spaced label. --}}
 		<div class="address">
-			<div class="address__label">Kursteilnehmer:in</div>
+			Kursteilnehmer:in<br>
 			@foreach ($user->addressLines() as $line)
 				{{ $line }}@if (! $loop->last)<br>@endif
 			@endforeach
@@ -88,13 +90,8 @@
 		<x-site.rich-text :html="$event->course->getTranslation('summary', $locale)" />
 	@endif
 
-	{{--
-		**Legacy includes `pdf/partials/signature.blade.php` here and that file
-		is empty** — zero bytes, on every one of the 594 participation
-		confirmations ever issued. So the certificate ends mid-air, with nothing
-		signing it.
-
-		Not reproduced and not invented: who signs a VIAK certificate and with
-		what image is the client's to say, and `Open-Questions.md` carries it.
-	--}}
+	{{-- `pdf/partials/signature.blade.php`: a name and the company, no image.
+	     Read wrongly as empty once; it is on all 447 confirmations in the prod
+	     storage copy ([[Open-Questions]] 21). --}}
+	<p>{{ config('documents.signature') }}<br>{{ config('documents.creditor.name') }}</p>
 </x-documents.layout>

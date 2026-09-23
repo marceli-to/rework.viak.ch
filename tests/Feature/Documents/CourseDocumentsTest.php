@@ -105,6 +105,16 @@ it('names the student and the booking on the certificate', function () {
 		->and($html)->toContain('erfolgreich absolviert hat');
 });
 
+it('signs the certificate the way every legacy one is signed', function () {
+	$booking = closedSeat();
+
+	$html = view('documents.participation-confirmation', [
+		'booking' => $booking->load(['event.course', 'event.dates', 'event.experts', 'user']),
+	])->render();
+
+	expect($html)->toContain('Oliver Schmid, Kurs Organisator<br>Visualisierungs-Akademie Schweiz GmbH');
+});
+
 /*
 |--------------------------------------------------------------------------
 | The participant list

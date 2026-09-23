@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Support\Documents;
 
 /**
- * Four rules that make the library's payment part survive dompdf
+ * Six rules that make the library's payment part survive dompdf
  * ([[03-invoices]]).
  *
  * `HtmlOutput` lays the slip out for a browser. Almost all of it is table cells
@@ -23,8 +23,8 @@ namespace App\Support\Documents;
  *
  * **Kept as a patch rather than a fork.** The alternative is legacy's: 251
  * lines of hand-laid slip that has to be checked against the specification by
- * hand every time the standard moves. These four rules are a dompdf quirk and
- * are labelled as one; everything about the slip that the standard governs —
+ * hand every time the standard moves. These rules are dompdf quirks and
+ * are labelled as such; everything about the slip that the standard governs —
  * the sizes, the wording, the languages, the corner marks — stays the
  * library's.
  */
@@ -46,6 +46,19 @@ final class PaymentSlipStyles
 			/* Shrink-wrapped: a percentage width is narrower than the word. */
 			#qr-bill-currency,
 			#qr-bill-currency-receipt { width: 1%; white-space: nowrap; padding-right: 4mm; }
+
+			/* dompdf ignores `box-sizing: border-box` and adds the padding to
+			   the library's 62 / 148mm, which put the cut line at 67mm and ran
+			   the slip to 225mm. The content widths, so the boxes come out at
+			   the standard's. */
+			#qr-bill-receipt { width: 57mm; }
+			#qr-bill-payment-part { width: 138mm; }
+
+			/* The slip is 105mm tall and the library leaves it to its content,
+			   which stops the vertical cut line 5mm short of the edge. 5mm of
+			   padding plus this, with half a millimetre spare so rounding cannot
+			   push the slip onto a third page. */
+			#qr-bill-receipt, #qr-bill-payment-part { height: 99.5mm; }
 			</style>
 			CSS;
 	}

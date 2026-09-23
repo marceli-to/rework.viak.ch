@@ -533,7 +533,7 @@ which is valid, and is printed with corner marks to be written in. A guess would
 be a payment arriving from the wrong party. The invoice itself still prints
 exactly the text that was billed.
 
-### dompdf against the library's HTML: four rules
+### dompdf against the library's HTML: six rules
 
 `HtmlOutput` lays the slip out for a browser, and almost all of it — tables,
 margins, an SVG QR code — renders correctly. **The amount block does not**:
@@ -545,6 +545,14 @@ and *Betrag* land on top of each other, and so do `CHF` and the figure.
 as the dompdf quirk they are. Everything the standard governs stays the
 library's.
 
+Two more were added on 2026-09-23 when the slip was measured against prod's.
+The library sizes its two cells with `box-sizing: border-box`, which dompdf
+ignores (see below), so the receipt came out 67mm wide and the payment part
+158mm: the cut line was at 67mm and the slip ran to 225mm, 15mm past the
+page edge. The rules now state content widths (57 / 138mm) and a height that
+runs the vertical cut line to the bottom of the page. The layout's spacer puts
+the horizontal cut line at exactly 192mm.
+
 Two more that cost a render each to find, both recorded in the templates:
 
 - **`box-sizing: border-box` is not honoured.** A 210mm sheet with 42mm of
@@ -553,6 +561,34 @@ Two more that cost a render each to find, both recorded in the templates:
 - **The page box has to be zero.** The payment slip is **210mm wide by
   specification** and a `@page` margin crops it. The margins moved onto the
   sheet, which lets the slip have the page.
+
+### Measured against the prod PDFs — 2026-09-23
+
+Ten documents that prod actually sent (four invoices, three confirmations,
+three participant lists) were overlaid on the rework's rendering of the same
+records and compared line by line: font, size and position of every text line.
+The letterhead, margins and type already matched. The layout did not:
+
+- **Title, date and table flowed** from the address block, so the middle of
+  each document sat 12–43pt off legacy's, differently on each. Legacy positions
+  them absolutely (85 / 110 / 124mm, or 127 / 142 / 155 with a billing
+  address). The rework now reserves those heights **as minimums**. A usual
+  address lands on legacy's millimetre, and a long one still pushes the title
+  down instead of being overprinted, which legacy's absolute positioning does.
+- **The footer followed the content** and landed mid-page. It is now pinned to
+  the foot of page 1, as legacy's fixed footer is. It is not repeated: on the
+  invoice's second page legacy's footer overprints the QR receipt.
+- **Table rows were 25.7pt apart, legacy's 22.3**: legacy pads 1mm over and 2mm
+  under, with a .1mm rule. **The H1 leading** was 1.1 against legacy's .9, and
+  legacy's `<h1>` keeps dompdf's default .67em top margin.
+- **The letterhead is repeated above the slip**, as legacy's fixed header is.
+- **The confirmation's signature was missing** ([[Open-Questions]] 21, withdrawn).
+
+After the fixes every line on page 1 is within 0.1pt of legacy's. The
+remaining differences are content by design (line items, the discount's
+minus sign) and the inside of the QR slip, where the library follows the
+SIX style guide and legacy's hand-laid slip does not (8pt *Annahmestelle*,
+stacked currency and amount).
 
 ### The QR code is scanned in a test
 

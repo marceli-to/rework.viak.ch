@@ -40,9 +40,16 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? | Marcel, then the client | The Kundenmeinungen column on the course page, and `04-content.md`'s `Testimonial` plan |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
-| 21 | Who signs a participation confirmation, and with what? | Client | Nothing — the certificate is built and simply ends without a signature, as legacy's does |
+| ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 
-### 21. Who signs a participation confirmation?
+### ~~21. Who signs a participation confirmation?~~
+
+**Withdrawn 2026-09-23 — the premise was wrong.** `pdf/partials/signature.blade.php`
+is 61 bytes: `Oliver Schmid, Kurs Organisator<br>{{env('APP_NAME')}}`, which is
+the company on production. All 447 participation confirmations in the prod
+storage copy end with it. The rework's certificate now does too
+(`config('documents.signature')`), with a test. What follows is the original
+entry, kept so the mistake stays visible.
 
 Found 2026-09-22 while building the certificate. Legacy's template ends with
 `@include('pdf.partials.signature')` and **that file is zero bytes** — it has

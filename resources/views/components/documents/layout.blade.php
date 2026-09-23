@@ -1,4 +1,4 @@
-@props(['title'])
+@props(['title', 'billing' => false])
 
 {{--
 	The page every generated PDF is printed on — `pdf/partials/header.blade.php`,
@@ -17,10 +17,14 @@
 	that wraps, or a fifth line, and the title lands on top of the address.
 	Nothing errors, and the invoice goes out overlapping.
 
-	Here the blocks are in flow and the only fixed measurement is the one that
-	has to be fixed: the address sits where a window envelope shows it. Below
-	that everything stacks, so a long address pushes the title down instead of
-	being written over.
+	Here the blocks are in flow, but each one reserves legacy's height as a
+	**minimum** — so with an address of the usual length the title, the date
+	and the table land on legacy's millimetre, and a long one pushes them down
+	instead of being written over. `billing` is `.has-invoice-address`.
+
+	Measured against the prod PDFs on 2026-09-23, overlaid line by line: until
+	then the blocks stacked with margins of their own and every document's
+	middle sat 12–43pt off legacy's, differently on each.
 --}}
 @php
 	$assets = config('documents.assets');
@@ -75,8 +79,8 @@
 			font-weight: 400;
 			/* Legacy's own, and it has to be this tight: the address blocks are
 			   `<br>`-separated lines and a looser leading spreads a four-line
-			   address over the gap the next block needs. Prose gets its own
-			   below, because 1 is unreadable over more than a line. */
+			   address over the gap the next block needs. Paragraphs keep it too:
+			   legacy sets them at 1, and a looser leading moves the signature. */
 			line-height: 1;
 			margin: 0;
 		}
@@ -96,41 +100,56 @@
 		*/
 		.sheet { width: 168mm; padding: 10mm 10mm 10mm 32mm; }
 
-		.letterhead { width: 168mm; margin-bottom: 18mm; }
+		/* 10 + the letterhead + 16 puts the first address line at legacy's
+		   `.page-info { top: 42mm }`. */
+		.letterhead { width: 168mm; margin-bottom: 16mm; }
 		.letterhead img { width: 100%; height: auto; display: block; }
 
 		/*
-			The window-envelope position, and the one measurement that stays
-			absolute in spirit: 42mm from the top of the page to the first line
-			of the address. Expressed as a reserved height on the block above
-			rather than as `position: absolute`, so what follows is pushed down
-			by a long address instead of being overlapped by it.
+			Legacy's absolute tops, from the top of the page, as minimum
+			heights: the address block from 42mm, the title from 85, the date
+			from 110, the content from 124 — and 127 / 142 / 155 when a billing
+			address stacks a second block above the first
+			(`css/global.blade.php`).
 		*/
-		.addresses { margin-bottom: 14mm; }
-		.address { margin-bottom: 8mm; }
+		.addresses { min-height: 43mm; }
+		.title { min-height: 21.2mm; }
+		.date { min-height: 14mm; }
+		.sheet--billing .addresses { min-height: 85mm; }
+		.sheet--billing .title { min-height: 11.2mm; }
+		.sheet--billing .date { min-height: 13mm; }
+
+		/* Legacy separates its blocks with `<br><br><br>`: two blank lines at
+		   Effra's 13.5pt leading. */
+		.address { margin-bottom: 27pt; }
 		.address:last-child { margin-bottom: 0; }
 		.address__label { margin-bottom: 1.5mm; }
 
-		.title { font-size: 16pt; font-weight: 700; line-height: 1.1; margin: 0 0 6mm 0; }
-		.date { font-weight: 700; margin-bottom: 12mm; }
+		/* Legacy's `<h1>` keeps dompdf's default top margin, .67em — so the
+		   title's first line sits 10.7pt below the 85mm, and the reserved
+		   heights above are 25 and 15mm less that margin. */
+		.title { font-size: 16pt; font-weight: 700; line-height: .9; margin: .67em 0 0 0; }
+		.date { font-weight: 700; }
 
 		table { border-collapse: collapse; border-spacing: 0; width: 100%; }
 		td, th { padding: 0; text-align: left; vertical-align: top; }
 
 		.items { margin-bottom: 10mm; }
-		.items th { border-bottom: .3mm solid #000; padding: 0 0 2mm 0; font-weight: 400; }
-		.items td { border-bottom: .3mm solid #000; padding: 2mm 0; }
+		/* `.content-table`: 1mm over, 2mm under, a .1mm rule — a 22.3pt row. */
+		.items th { border-bottom: .1mm solid #000; padding: 1mm 0 2mm 0; font-weight: 400; }
+		.items td { border-bottom: .1mm solid #000; padding: 1mm 0 2mm 0; }
 		.items tr.total td { border-bottom: none; font-weight: 700; }
 		.items .right { text-align: right; }
 
 		/*
-			Legacy's header and footer are both `position: fixed`, which in
-			dompdf repeats them on **every** page — so the real invoices carry
-			the full letterhead printed above the payment slip on page two,
-			where the standard wants nothing at all. In flow here, so each
-			appears once, on the page it belongs to.
+			**Pinned to the foot of the first page**, where legacy's
+			`.footer { position: fixed; bottom: -2mm }` puts it. Absolute rather
+			than fixed: dompdf repeats a fixed box on every page, and on the
+			invoice's second page legacy's footer is printed across the QR
+			receipt. No document runs to a second page of its own — the longest
+			participant list in the data is nine rows.
 		*/
-		.footer { margin-top: 16mm; font-weight: 700; }
+		.footer { position: absolute; left: 32mm; top: 279.5mm; font-weight: 700; }
 
 		.page-break { page-break-after: always; }
 
@@ -141,15 +160,21 @@
 			box on every page, which is the bug above.
 		*/
 		.appendix { width: 210mm; }
-		.appendix__spacer { height: 192mm; }
+		/* Legacy's letterhead repeats above the slip — its header is fixed.
+		   Out of the flow, so the spacer below still measures from the top. */
+		.appendix .letterhead { position: absolute; top: 10mm; left: 32mm; margin: 0; }
+		/* 192mm to the cut line, less the 3.4mm "Vor der Einzahlung
+		   abzutrennen" row the library prints above it. */
+		.appendix__spacer { height: 188.6mm; }
 
-		p { margin: 0 0 4mm 0; line-height: 1.35; }
+		/* Legacy's own: a paragraph is a 5mm step at the body's leading. */
+		p { margin: 0 0 5mm 0; }
 		ul { margin: 0 0 4mm 0; padding-left: 5mm; }
 	</style>
 	{{ $head ?? '' }}
 </head>
 <body>
-	<div class="sheet">
+	<div class="sheet{{ $billing ? ' sheet--billing' : '' }}">
 		{{-- An `<img>` rather than the SVG inline: dompdf renders a referenced
 		     SVG and ignores an inline `<svg>` element entirely (measured, and
 		     it fails silently — the logo simply is not there). --}}
@@ -167,6 +192,7 @@
 	@isset($appendix)
 		<div class="page-break"></div>
 		<div class="appendix">
+			<div class="letterhead"><img src="file://{{ $assets['letterhead'] }}" alt=""></div>
 			<div class="appendix__spacer"></div>
 			{{ $appendix }}
 		</div>

@@ -53,6 +53,14 @@ return [
 	'place' => 'Zürich',
 
 	/*
+	 * Who signs a participation confirmation — legacy's
+	 * `pdf/partials/signature.blade.php`, `Oliver Schmid, Kurs Organisator` over
+	 * `env('APP_NAME')`, which is the company on production. Every one of the
+	 * 447 confirmations in the 2026-09-23 prod storage copy ends with it.
+	 */
+	'signature' => 'Oliver Schmid, Kurs Organisator',
+
+	/*
 	 * The page furniture, as files on disk.
 	 *
 	 * **Local paths, deliberately.** Legacy's templates load the fonts with

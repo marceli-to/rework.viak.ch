@@ -34,7 +34,7 @@
 		->values();
 @endphp
 
-<x-documents.layout :title="'Rechnung '.$invoice->number">
+<x-documents.layout :title="'Rechnung '.$invoice->number" :billing="(bool) $billing">
 	{{--
 		The invoice — `pdf/invoice/event-invoice.blade.php` and its twin
 		`rental-invoice.blade.php`, which are the same file with a different
