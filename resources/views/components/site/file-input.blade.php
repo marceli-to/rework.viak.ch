@@ -25,9 +25,11 @@
 	with a download link and a description field that belong to a stored file;
 	these are not stored yet, so they get a name, a size and a way back out.
 
-	The box, measured on the live expert upload at 1482px: a 2px dashed
-	`gray-400` border going teal on hover, 150px tall, 20px of padding, the
-	message at 14/16/18px (`vendor/_dropzone-custom.scss`). Under it
+	The box, measured on the live expert upload at 1482px: 150px tall, 20px of
+	padding, the message at 14/16/18px (`vendor/_dropzone-custom.scss`). **The
+	border is not legacy's** 2px dashed `gray-400`: it is 1px solid black,
+	going teal on hover, focus and drag, like the composer's editor above it
+	(Marcel, 2026-09-23). Under it
 	`.requirements` (`form/_validation.scss`): uppercase `gray-400`, 12/14px,
 	4px above.
 
@@ -63,9 +65,9 @@
 		x-on:drop.prevent="dropped($event)"
 		x-bind:data-dragging="dragging ? '' : null"
 		@class([
-			'flex min-h-150 cursor-pointer items-center justify-center border-2 border-dashed p-20 text-center text-md transition-colors hover:border-teal has-[:focus-visible]:border-teal data-dragging:border-teal sm:text-lg lg:text-xl',
+			'flex min-h-150 cursor-pointer items-center justify-center border p-20 text-center text-md transition-colors hover:border-teal has-[:focus-visible]:border-teal data-dragging:border-teal sm:text-lg lg:text-xl',
 			'border-danger' => $errors->has($name) || $errors->has($name.'.*'),
-			'border-gray-400' => ! ($errors->has($name) || $errors->has($name.'.*')),
+			'border-black' => ! ($errors->has($name) || $errors->has($name.'.*')),
 			'mt-8 sm:mt-16' => $label,
 		])>
 		{{-- `pointer-events-none`, so dragging across the words does not fire a

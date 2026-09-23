@@ -2013,6 +2013,8 @@ to the pixel — over the same `<input type="file">`, and
 `files` through a `DataTransfer`. So a drop fills the field and nothing leaves
 the browser until the form is sent; the controllers did not change.
 
+- **The border is 1px solid black, teal on hover**, not legacy's 2px dashed
+  grey — changed the same day to match the composer's editor (Marcel).
 - **The message is German**: *Dateien hierher ziehen oder klicken*. Legacy's
   *Drop files here to upload* is `vue2-dropzone`'s built-in default, not copy
   anybody wrote.
