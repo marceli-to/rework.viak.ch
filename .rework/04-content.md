@@ -13,6 +13,77 @@ the failure mode this chunk exists to prevent. The **new pages and templates** �
 Vorhaben, the software templates, Aktuelles, the homepage — are phase two, and
 wait on designs and copy. The two halves of this chunk no longer land together.
 
+**The client went through all 24 mockups on 2026-09-23** — see *The mockup
+review*, below. It approved five screens, dropped three and left fifteen open.
+It does **not** move the phasing: the parity versions of Experten, Kontakt,
+Individualschulungen and the homepage exist on the live site and are rebuilt
+first, as `09-public-site.md` has them; the approved mockups are what those pages
+become afterwards.
+
+## The mockup review — 2026-09-23
+
+A call with the client over the 24 mockups, captured in an artifact and kept in
+`history/mockup/review-2026-09-23/` — `screen-review.md` for reading,
+`screen-review.json` for the marker coordinates (1280px design width),
+`marker/` for the annotated screenshots. What follows is what it decided for the
+build; the review itself is the record of what was said.
+
+### Decided
+
+| Decision | Screens |
+|---|---|
+| **build** | Alle Angebote, Kurse, Software, Team, Kontakt |
+| **build in part** | Aktuelles — as a way into a blog, and the blog itself is still open |
+| **drop** | Unsere Methode; the Rhino and After Effects *Einstiegskurs* mockups (the course detail page already exists, chunk 02) |
+| **open** | Homepage, all six Vorhaben, the five software screens, Firmenschulung, Meine Lizenzen, Twinmotion Lizenzen |
+
+Nine of the fifteen open screens were **not discussed at all** — the six
+Vorhaben other than Räume, and the software screens. Open means *not yet
+talked about*, not *disputed*.
+
+### What the markers say, per screen
+
+- **Team** — three parts: an *Über uns* text, the **experts listing**, and the
+  team. So the mockup's Team page is legacy's Experten page and the *Über uns*
+  and *Team* collapsibles from legacy's Kontakt page, merged. The parity build
+  keeps them where legacy has them; the merge is phase two.
+- **Kontakt** — link it to Firmenschulung, and **add the form**. Legacy's Kontakt
+  has no form at all (address, map, and four collapsibles), so the form is new,
+  and it is the first public form that sends a mail to VIAK rather than to the
+  customer. It waits on mail, which does not exist yet.
+- **Firmenschulung** — show reviews. That is the `Testimonial` model below.
+- **Räume visualisieren** — the Vorhaben are **pages with a title and text**; the
+  tools box beside the headline can go, and so can *Andere Vorhaben* at the
+  foot. Which makes the template cheaper than the plan above: the offer list is
+  what is left of it.
+- **Homepage**, eleven markers, the most decided of the open screens:
+  1. an element with a **Vorhaben picker**,
+  2. the copy **static** — not an editable field,
+  3. an automatic widget (the next course dates),
+  4. the Firmenschulung teaser **with a form**,
+  5. a **flag on a course** to feature it — shown on the detail page too,
+  6. a widget on the homepage for the flagged courses,
+  7. courses and licences **together** in one offer list,
+  8. **nav: *Angebot* instead of *Kurse* / *Software*, and Firmenschulung is not
+     a menu item**,
+  9. an *About* module, the experts in it optional, linking to *Über uns*,
+  10. **testimonials as a backend module, replacing the Google reviews**,
+  11. a blog — with a question mark.
+
+### What it changes in this document
+
+- **`Testimonial` is in.** Marker 10 answers `Open-Questions.md` #18 for the
+  homepage: the Elfsight Google reviews are replaced by quotes VIAK enters, not
+  carried across. Whether the course page's *Kundenmeinungen* column moves to
+  the same model is the part still open (#18, narrowed).
+- **The homepage worked example below needs revisiting** before it is built:
+  the hero copy is static (marker 2), a course flag replaces or joins the
+  curated Software picker (5, 6), and the Firmenschulung teaser carries a form
+  (4). Left as written until the homepage is decided, because it is still
+  marked open.
+- **Aktuelles depends on the blog question.** `Article` stays in the cost table
+  but is not started until #22 is answered.
+
 ## The mockups are 24 files but about nine templates
 
 Counting the mockup directory as pages badly overstates the work, and counting it
@@ -270,7 +341,9 @@ Neither is homepage-specific, and both are needed elsewhere:
   are Google reviews drawn by a third party in the browser. VIAK owns none of
   that text. Either this model is filled by hand from real quotes, or the widget
   is carried across and the model is not built at all — `Open-Questions.md` #18,
-  which replaces the old #12.
+  which replaces the old #12. **The client chose the first on 2026-09-23**
+  (homepage marker 10): a backend module, filled by hand, replacing the Google
+  reviews. Firmenschulung shows them too.
 - **`Settings` / globals** — phone, address, footer nav, newsletter copy. One
   schema, one screen. Could also be a config file if the client never edits it;
   see the levers below.
@@ -348,7 +421,10 @@ lets a Vorhaben page pull courses *and* licences for one tool from one relation.
    are Elfsight embeds, not data, so there is nothing to reshape. What is left
    is a decision about the widget, which is `Open-Questions.md` #18.
 5. **Which of the six Vorhaben are real**, and are there more coming? The
-   template is cheap; six is assumed from the mockups.
+   template is cheap; six is assumed from the mockups. **Narrowed 2026-09-23**:
+   the review settled the template (title, text, offer list) on Räume, and
+   did not discuss the other five. The count is still open —
+   `Open-Questions.md` #4.
 6. ~~Media: `spatie/laravel-medialibrary` assumed.~~ — **answered 2026-09-18:
    no package. Port the media subsystem from
    `github.com/marceli-to/forrerzimmermann.ch`** — `league/glide` on Imagick,

@@ -6,7 +6,8 @@ they belong to, and `Todo.md` keeps the struck-through record of how each was
 settled.
 
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
-and none of these held it up. Updated 2026-09-22.
+and none of these held it up. Updated 2026-09-24, with the 2026-09-23 mockup
+review (22–24 are from it).
 
 **One item is not a question and is not waiting on anyone:** the
 `/expert/finish` account-takeover path on the live site, found 2026-09-18 while
@@ -23,7 +24,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 1 | Is the Bildung licence tier real? | Client | Chunk 05, partly |
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
-| 4 | Which of the six Vorhaben are real? | Client | Chunk 04 page count |
+| 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed | Client | Chunk 04 page count |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
 | 7 | Do the historical invoice due dates matter? | Client | Cutover — `port:invoices` reports it every run |
@@ -37,9 +38,12 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08's **admin user screens**, which are not built. Nothing else |
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
-| 18 | Do the Elfsight review widgets come across, get replaced, or go? | Marcel, then the client | The Kundenmeinungen column on the course page, and `04-content.md`'s `Testimonial` plan |
+| 18 | Do the Elfsight review widgets come across, get replaced, or go? — **mostly answered 2026-09-23: replaced** by a `Testimonial` backend module. Left: does the course page's column move to it too? | Marcel, then the client | The Kundenmeinungen column on the course page |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
+| 22 | Is there a blog, and is Aktuelles its front page? | Client | Aktuelles, and `Article` in chunk 04 |
+| 23 | The homepage: what is on it? | Client | The phase-two homepage. Eleven markers from the review, still marked open |
+| 24 | Where does the new Kontakt form send, and what does it keep? | Marcel | The phase-two Kontakt page. Needs mail first |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 
 ### ~~21. Who signs a participation confirmation?~~
@@ -154,6 +158,25 @@ needs no schema change whichever way this goes.
 Räume, Bilder, Objekte, Bewegtbild, KI, Teams — six is assumed from the mockups,
 not confirmed. The template is cheap; the count is what drives the work.
 
+### 22. Is there a blog, and is Aktuelles its front page?
+
+Raised in the 2026-09-23 mockup review, which marked Aktuelles *build in part*
+with the note "Blog-Einstieg, noch offen", and put "Blog?" against the
+homepage's Aktuelles strip. Nothing in the rework has a news or article model
+yet; legacy has a `news` table (`08-accounts.md`).
+
+**Decides:** whether `Article` is built at all, and whether it is a news strip
+or a blog with its own pages, categories and URLs.
+
+### 23. The homepage: what is on it?
+
+Marked open in the review, but with eleven markers — the most decided of the
+open screens. They are listed in `04-content.md` under *The mockup review*. The
+nav change in marker 8 (*Angebot* replacing *Kurse* and *Software*,
+Firmenschulung out of the menu) is site-wide, not a homepage detail.
+
+**Decides:** the phase-two homepage, and the nav on every page.
+
 ### 5. What does "image handling (frontend output)" mean?
 
 It is listed as a special task in the original brief. `spatie/laravel-medialibrary`
@@ -241,6 +264,12 @@ The rework is pinned to 8.3 because Herd serves 8.3 locally. If production runs
 
 ### 18. Do the Elfsight review widgets come across, get replaced, or go?
 
+**Mostly answered 2026-09-23, in the mockup review**: "Testimonials als Backend
+Modul ersetzt bestehende Google Rez." — the widgets are replaced by quotes VIAK
+enters, and `Testimonial` stays in `04-content.md`. What is left is whether the
+course page's *Kundenmeinungen* column draws from the same module, or goes.
+The original entry follows.
+
 **Answers and replaces 12**, which asked what `courses.reviews` holds. Checked
 on 2026-09-21 while rebuilding the course page: all 32 non-empty rows are
 
@@ -269,6 +298,16 @@ the widget and declare it; the most work is to ask the client for real quotes.
 
 Answered 2026-09-21 — see 18.
 Ours to answer by looking, not a client question.
+
+### 24. Where does the new Kontakt form send, and what does it keep?
+
+The review approved the Kontakt mockup with a form on it (marker 2,
+"Hinzufügen"). Legacy's Kontakt page has none. It is the first public form that
+mails VIAK rather than the customer, so it needs a recipient, spam protection
+(honeypot or a rate limit — no third-party captcha without a consent question),
+and a decision about whether submissions are also stored.
+
+**Decides:** nothing until mail exists. Phase two.
 
 ### 14. How does the queue worker run in production?
 
