@@ -215,6 +215,52 @@ kit is just as clear:
 - **password and e-mail changes** are account flows with verification, not
   fields.
 
+## How it is built — decided 2026-09-24
+
+Talked through with Marcel before step 1, and agreed point by point.
+
+1. **The shell is admin-only.** `/dashboard` takes `auth` and `role:admin`. A
+   guest goes to the login and comes back; a signed-in student or expert is
+   sent to their own portal rather than shown a bare 403 — they almost always
+   arrived by mistake.
+2. **Admin endpoints live under `/api/admin/…`**, with the role on the whole
+   group. The public and portal endpoints stay where they are. Today the
+   dashboard reuses `/api/courses` and relies on policies; that works for
+   courses and not for users, invoices or discount codes, which have no public
+   side. Legacy drew the same line with `/api/dashboard/*`.
+3. **What a form loads is what it saves.** An admin endpoint's response has the
+   shape of its request, and names everything by uuid. Two places break it
+   today and get fixed on the way: course taxonomies go out as uuids and come
+   back as ids, and SEO is nested in `CourseResource` and flat in the request.
+   The field kit only stays simple if a form can PUT back what it got.
+4. **The look is a working admin, not the site.** Dense and grey, built for
+   scanning long lists — 360 course dates, 578 people — with the site's
+   typeface and teal. Desktop first; it works on a phone but is not designed
+   for one.
+5. **The stack is the one chunk 00 set: Vue 3, Vue Router, Pinia, Tailwind 4.**
+   Nothing from legacy's dashboard comes across — it is Vue 2, Vuex,
+   `vue2-dropzone`, `vue-the-mask`, TinyMCE, `vue-moment`, none of which runs on
+   Vue 3. Legacy says *what* each screen does; every component is new.
+6. **Components: Reka UI underneath, ours on top.** Reka is the Vue port of
+   Radix — dialog, combobox, select, checkbox, switch, popover, date picker,
+   toast, tabs — and ships no styles, so everything is drawn in Tailwind in the
+   look above while focus, keyboard and ARIA come from the library. That is the
+   part hand-rolled components get 90 % right and never finish: a searchable
+   multi-select for five taxonomies and a course's experts, focus inside a
+   dialog, a date picker. shadcn-vue, built on Reka, is a source to borrow
+   from, not a dependency. A full kit (PrimeVue, Vuetify) was declined: its own
+   look and theming would fight the Tailwind conventions.
+7. **Around it, proven pieces**: tiptap (already here), Uppy and
+   `vue-advanced-cropper` 2 (both from `forrerzimmermann.ch`, whose media
+   screens are ported as planned), `vuedraggable` 4 or `vue-draggable-plus`
+   for sortable lists. **The list is ours** — server-paginated, simple
+   columns; a table library would be more machinery than it saves.
+8. **Lists search and paginate on the server**, where legacy loaded
+   everything: people and invoices outgrow that.
+9. **Tests**: Pest for every endpoint, as now, and every screen driven in a
+   browser. Vitest arrives with the field kit (step 5), because the renderer
+   is the first piece of the SPA with logic worth testing on its own.
+
 ## A navigation for it
 
 Legacy's top bar holds Kurse, Experten, Studenten; everything else sits in a
