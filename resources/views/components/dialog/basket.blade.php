@@ -23,7 +23,7 @@
 	collapses it, and production runs it on as a single sentence, which is how
 	it is written here.
 --}}
-<x-site.modal
+<x-ui.modal
 	wide
 	message="Computer mieten"
 	show="$store.basket.rentalFor"
@@ -36,14 +36,14 @@
 	</x-slot:text>
 
 	<x-slot:actions>
-		<x-site.button variant="gray" @click="$store.basket.answerRental(true)">
+		<x-ui.button variant="gray" @click="$store.basket.answerRental(true)">
 			Ja gerne
-		</x-site.button>
-		<x-site.button variant="gray-outline" @click="$store.basket.answerRental(false)">
+		</x-ui.button>
+		<x-ui.button variant="gray-outline" @click="$store.basket.answerRental(false)">
 			Nein, ich bringe meinen eigenen Laptop
-		</x-site.button>
+		</x-ui.button>
 	</x-slot:actions>
-</x-site.modal>
+</x-ui.modal>
 
 {{--
 	And the confirmation that follows, green, with the way on.
@@ -51,18 +51,18 @@
 	*Warenkorb* is a link and *Schliessen* is a button, which is what they each
 	are — legacy writes both as `<a href="javascript:;">`.
 --}}
-<x-site.modal
+<x-ui.modal
 	variant="success"
 	message="Der Kurs wurde im Warenkorb abgelegt."
 	show="$store.basket.confirmed"
 	close="$store.basket.confirmed = false">
 
 	<x-slot:actions>
-		<x-site.button variant="success" href="{{ \App\Support\SiteUrl::checkout('basket') }}">
+		<x-ui.button variant="success" href="{{ \App\Support\SiteUrl::checkout('basket') }}">
 			Warenkorb
-		</x-site.button>
-		<x-site.button variant="success-outline" @click="$store.basket.confirmed = false">
+		</x-ui.button>
+		<x-ui.button variant="success-outline" @click="$store.basket.confirmed = false">
 			Schliessen
-		</x-site.button>
+		</x-ui.button>
 	</x-slot:actions>
-</x-site.modal>
+</x-ui.modal>

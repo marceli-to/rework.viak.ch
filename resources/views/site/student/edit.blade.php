@@ -34,17 +34,17 @@
 		There is no pencil here. On the profile it opens this; here *Zurück*
 		closes it, and two controls doing one job is what the toggle was.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			{{-- Hidden below `sm` — legacy's `xs:hide` — because the header
 			     already carries the page title on a phone. --}}
 			<h1 class="hidden font-bold text-teal sm:block">Profil bearbeiten</h1>
 
-			<x-site.back-link :href="\App\Support\SiteUrl::studentPortal()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::studentPortal()" />
 		</x-slot:aside>
 
 		@if ($errors->any())
-			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
+			<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
 		@endif
 
 		{{-- The POST lands on this same URL, so a validation failure comes back
@@ -52,43 +52,43 @@
 		<form method="POST" action="{{ route($locale.'.student.profile.update') }}">
 			@csrf
 
-			<x-site.select name="gender" label="Geschlecht" :options="$genderOptions"
+			<x-form.select name="gender" label="Geschlecht" :options="$genderOptions"
 				placeholder="Bitte wählen..." :value="$user->gender?->value" required />
 
-			<x-site.field name="first_name" label="Vorname" :value="$user->first_name" required autocomplete="given-name" />
-			<x-site.field name="last_name" label="Nachname" :value="$user->last_name" required autocomplete="family-name" />
-			<x-site.field name="company" label="Firma" :value="$user->company" autocomplete="organization" />
-			<x-site.field name="phone" label="Telefon" type="tel" :value="$user->phone" required autocomplete="tel" />
+			<x-form.field name="first_name" label="Vorname" :value="$user->first_name" required autocomplete="given-name" />
+			<x-form.field name="last_name" label="Nachname" :value="$user->last_name" required autocomplete="family-name" />
+			<x-form.field name="company" label="Firma" :value="$user->company" autocomplete="organization" />
+			<x-form.field name="phone" label="Telefon" type="tel" :value="$user->phone" required autocomplete="tel" />
 
 			{{-- `span-6` and `span-6`, as on the registration form and as
 			     production renders both — 329px each, measured 2026-09-22. --}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="street" label="Strasse" :value="$user->street" required autocomplete="address-line1" />
+					<x-form.field name="street" label="Strasse" :value="$user->street" required autocomplete="address-line1" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="street_no" label="Nr." :value="$user->street_no" maxlength="5" />
+					<x-form.field name="street_no" label="Nr." :value="$user->street_no" maxlength="5" />
 				</div>
 			</div>
 
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="zip" label="PLZ" :value="$user->zip" required maxlength="10" autocomplete="postal-code" />
+					<x-form.field name="zip" label="PLZ" :value="$user->zip" required maxlength="10" autocomplete="postal-code" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="city" label="Ort" :value="$user->city" required autocomplete="address-level2" />
+					<x-form.field name="city" label="Ort" :value="$user->city" required autocomplete="address-level2" />
 				</div>
 			</div>
 
-			<x-site.select name="country_code" label="Land" :options="$countryOptions"
+			<x-form.select name="country_code" label="Land" :options="$countryOptions"
 				:value="$user->country_code" required />
 
 			{{-- `.line-after`: a 1px black rule under the group and 32px
 			     below it. --}}
 			<div class="mb-32 border-b border-black pb-16">
-				<x-site.checkbox name="subscribe_newsletter" :checked="(bool) old('subscribe_newsletter', $user->subscribe_newsletter)">
+				<x-form.checkbox name="subscribe_newsletter" :checked="(bool) old('subscribe_newsletter', $user->subscribe_newsletter)">
 					Ich möchte den Newsletter abonnieren.
-				</x-site.checkbox>
+				</x-form.checkbox>
 			</div>
 
 			{{--
@@ -101,7 +101,7 @@
 				fixed is the way back: those screens return *here* rather than to
 				a profile that does not show them ([[StudentAddressController]]).
 			--}}
-			<x-site.collapsible title="Rechnungsadressen" class="mt-56" :expanded="true">
+			<x-ui.collapsible title="Rechnungsadressen" class="mt-56" :expanded="true">
 				@forelse ($addresses as $address)
 					{{--
 						`.stacked-list-item` with the pencil pinned to its right
@@ -141,14 +141,14 @@
 						<x-icon.plus class="w-16" />
 					</a>
 				</div>
-			</x-site.collapsible>
+			</x-ui.collapsible>
 
-			<x-site.collapsible title="Zugangsdaten" class="mt-32 sm:mt-48" :expanded="false">
-				<x-site.field name="email" label="E-Mail" type="email" :value="$user->email" autocomplete="email" />
+			<x-ui.collapsible title="Zugangsdaten" class="mt-32 sm:mt-48" :expanded="false">
+				<x-form.field name="email" label="E-Mail" type="email" :value="$user->email" autocomplete="email" />
 
-				<x-site.field name="password" label="Passwort" type="password"
+				<x-form.field name="password" label="Passwort" type="password"
 					hint="min. 8 Zeichen" autocomplete="new-password" />
-				<x-site.field name="password_confirmation" label="Passwort wiederholen" type="password"
+				<x-form.field name="password_confirmation" label="Passwort wiederholen" type="password"
 					autocomplete="new-password" />
 
 				{{--
@@ -164,10 +164,10 @@
 					enforces; leaving all three as they are saves the rest of the
 					form as before.
 				--}}
-				<x-site.field name="current_password" label="Aktuelles Passwort" type="password"
+				<x-form.field name="current_password" label="Aktuelles Passwort" type="password"
 					hint="Nur nötig, um E-Mail oder Passwort zu ändern."
 					autocomplete="current-password" />
-			</x-site.collapsible>
+			</x-ui.collapsible>
 
 			{{--
 				Full width of the `span-8` column, which is what production
@@ -182,7 +182,7 @@
 				16px between them at every width where production has 32.
 			--}}
 			<div class="mb-16 lg:mb-32">
-				<x-site.button type="submit" class="w-full">Speichern</x-site.button>
+				<x-ui.button type="submit" class="w-full">Speichern</x-ui.button>
 			</div>
 
 			{{-- `.form-helper`: **14/16/18 and italic**, measured on the live
@@ -193,5 +193,5 @@
 			<a href="{{ \App\Support\SiteUrl::studentPortal() }}"
 				class="inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl">Abbrechen</a>
 		</form>
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

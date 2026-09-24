@@ -38,7 +38,7 @@
 			<a href="{{ \App\Support\SiteUrl::home() }}"
 				title="Home | {{ config('app.name') }}"
 				@class(['text-black', 'max-sm:hidden' => ! $isHome])>
-				<x-site.icons.logo />
+				<x-icon.logo />
 			</a>
 
 			{{-- Mobile: on an inner page the title takes the logo's place, exactly
@@ -136,7 +136,7 @@
 				title="Home | {{ config('app.name') }}"
 				class="block text-black"
 				@click="close()">
-				<x-site.icons.logo />
+				<x-icon.logo />
 			</a>
 
 			{{--

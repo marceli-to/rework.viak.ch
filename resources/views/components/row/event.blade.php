@@ -16,7 +16,7 @@
 
 	// `08:30:00` off a `TIME` column; the site writes `08.30 – 17.00 Uhr`, and
 	// the dot is the separator on every date on the site. Same helper as
-	// `x-site.event-card`, and for the same reason it is not on the model:
+	// `x-card.event`, and for the same reason it is not on the model:
 	// `Event::dateRange()` is frozen into invoice lines, this is only ever read
 	// off a screen.
 	$time = fn (?string $value) => $value === null
@@ -51,7 +51,7 @@
 	line height on 16/18px type, and a twelve-column grid of three `span-4`
 	columns with a 16px gap that becomes 40 from `lg`.
 
-	**What separates it from `x-site.event-card`** is that this row leads with
+	**What separates it from `x-card.event`** is that this row leads with
 	the course title — the portal lists seats across many courses, the course
 	page lists dates within one — and that its buttons come from the caller
 	rather than from the basket. Kept as a second component rather than folded
@@ -131,7 +131,7 @@
 				<div>mit {{ $expert->first_name }} {{ $expert->last_name }}</div>
 			@endif
 
-			<x-site.event-state :event="$event" />
+			<x-course.event-state :event="$event" />
 		</div>
 
 		{{-- What it costs, and what can be done about it --}}
@@ -176,7 +176,7 @@
 			three more `.stacked-list__col` divs after the first three so they
 			wrap onto a second row of the same twelve columns, which is what
 			lines CHF 80.00 up under the course fee — the same shape
-			`x-site.basket-row` draws.
+			`x-row.basket` draws.
 		--}}
 		@if ($booking?->has_rental)
 			{{-- 24px above it below `sm` only, where the grid has collapsed and

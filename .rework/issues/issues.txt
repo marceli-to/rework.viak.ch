@@ -10,7 +10,7 @@ Layout issues rework.viak.ch - Student Portal
 2. check and fix formfield text color
    FIXED 2026-09-22, and it was site-wide rather than the portal's.
    `form/_global.scss` sets the input colour twice and the second rule wins, so
-   production's values are teal and its labels black. `x-site.field` had it
+   production's values are teal and its labels black. `x-form.field` had it
    black, with a docblock citing the rule that loses. Login, registration,
    password reset, the checkout's address dialog and the portal were all
    inverted.

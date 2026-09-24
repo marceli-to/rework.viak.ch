@@ -19,7 +19,7 @@
 	to be. Legacy's is `<a href="/logout">`, and Fortify's route is POST only —
 	so a link cannot reach it, and a GET that ends a session is something any
 	prefetcher can fire. The button is styled to nothing but the tag swap, the
-	same way `x-site.button` switches between `<a>` and `<button>`, so the two
+	same way `x-ui.button` switches between `<a>` and `<button>`, so the two
 	render alike.
 --}}
 @php

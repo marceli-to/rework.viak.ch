@@ -197,7 +197,7 @@ The only one of the four that needs no translation.
 
 ## Rich text from the editor
 
-`<x-site.rich-text :html="$html" />`. Course descriptions come out of a WYSIWYG
+`<x-ui.rich-text :html="$html" />`. Course descriptions come out of a WYSIWYG
 field, so there is no element to put a class on — the component styles the tags
 from its wrapper with arbitrary variants, and the values are legacy's
 (`typo/_helpers.scss`, `components/lists/_global.scss`, `layout/_article.scss`).

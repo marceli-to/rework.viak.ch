@@ -105,8 +105,8 @@
 
 			@if ($removable)
 				<div class="mt-24 sm:mt-0">
-					<x-site.button variant="secondary"
-						@click="$store.basket.remove(item.event.uuid)">Entfernen</x-site.button>
+					<x-ui.button variant="secondary"
+						@click="$store.basket.remove(item.event.uuid)">Entfernen</x-ui.button>
 				</div>
 			@endif
 		</div>
@@ -146,8 +146,8 @@
 
 				@if ($removable)
 					<div class="mt-24 sm:mt-0">
-						<x-site.button variant="secondary"
-							@click="$store.basket.setRental(item.event.uuid, false)">Entfernen</x-site.button>
+						<x-ui.button variant="secondary"
+							@click="$store.basket.setRental(item.event.uuid, false)">Entfernen</x-ui.button>
 					</div>
 				@endif
 			</div>

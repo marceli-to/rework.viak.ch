@@ -50,11 +50,11 @@ already built, one of them site-wide. Everything else is under *What is left*.
   fallback.
 - **Auth.** Login, registration, forgot/reset password and verify-email, on
   legacy's own URLs — `/login`, `/de/registration`, `/password/reset`.
-- **A form kit for the checkout to use**: `x-site.article`, `field`, `select`,
+- **A form kit for the checkout to use**: `x-layout.article`, `field`, `select`,
   `checkbox`, `toast`, plus `lang/de/`.
-- **The modal, and the basket's two dialogs.** `x-site.modal` is
-  `.notification.is-modal`; `x-site.basket-dialogs` is the rental question and
-  the confirmation that follows an add. `x-site.toast` gained a live mode so a
+- **The modal, and the basket's two dialogs.** `x-ui.modal` is
+  `.notification.is-modal`; `x-dialog.basket` is the rental question and
+  the confirmation that follows an add. `x-ui.toast` gained a live mode so a
   removal can say so. See *The modal is 600px wide and the stylesheet says 480*,
   below.
 - **The basket**, at `/de/checkout/basket` — the stacked list with its header,
@@ -64,7 +64,7 @@ already built, one of them site-wide. Everything else is under *What is left*.
 - **The address step**, at `/de/checkout/address` — the participant block, the
   *entspricht Teilnehmer-Adresse* toggle, the saved-address picker and the
   *Adresse erfassen* dialog, with the answer in the session. Brings
-  `x-site.lightbox` with it. See *The address step*, below.
+  `x-ui.lightbox` with it. See *The address step*, below.
 - **Payment, summary and confirmation** — the discount-code field, the priced
   summary with both addresses, *Buchen* as a real form post, and the thank-you
   that empties the browser's basket. See *Payment, summary, and the only
@@ -76,9 +76,9 @@ already built, one of them site-wide. Everything else is under *What is left*.
 - **The student portal**, at `/de/student/profil` — *Mein Profil* with its
   edit form on its own screen at `/bearbeiten`, the four collapsibles
   (Merkliste, Gebuchte Kurse, Absolvierte Kurse, Dokumente), *Meine Dokumente*,
-  one booked seat with its notes and materials, and the invoice-address pages. Brings `x-site.event-row`,
-  `x-site.document-row`, `x-site.event-state`, `x-site.back-link` and
-  `x-site.booking-dialogs`. See *The student portal*, below, for the six defects
+  one booked seat with its notes and materials, and the invoice-address pages. Brings `x-row.event`,
+  `x-row.document`, `x-course.event-state`, `x-ui.back-link` and
+  `x-dialog.booking`. See *The student portal*, below, for the six defects
   it turned up.
 
 ### What is left
@@ -98,7 +98,7 @@ Roughly in the order that unblocks the most.
       **finished 2026-09-22** — `add()` and `remove()` are wired, the header's
       basket count answers, the **rental dialog** asks before the add and the
       **confirmation** follows it, and a removal raises a toast. The modal they
-      all needed is `x-site.modal`; see *The modal is 600px wide and the
+      all needed is `x-ui.modal`; see *The modal is 600px wide and the
       stylesheet says 480*, below.
    2. ~~**The basket page** at `/de/checkout/basket`.~~ **Built 2026-09-22** —
       the first time `PriceBasket` ran in a browser, and it did not, until
@@ -228,7 +228,7 @@ Three things to know before extending it:
   in PHP and `course-filter.js` decides it in the browser, over the same uuids —
   the card carries them in `data-facets`. Change one rule and change the other.
 - **`::class` on a component tag.** Blade reads a single leading colon as a PHP
-  expression, so the Alpine binding on `<x-site.course-card>` needs two.
+  expression, so the Alpine binding on `<x-card.course>` needs two.
 - **Alpine's `:class` object form removes a class the server put there**; the
   string form only manages what Alpine itself added. The first is why
   `{ hidden: … }` can undo a server-rendered `hidden` and `open ? '' : '…'`
@@ -381,11 +381,11 @@ Four pieces came out of it that the checkout needs next:
 
 | Component | From |
 |---|---|
-| `x-site.article` | `layout/_article.scss:116` — the aside/column text page |
-| `x-site.field` | `.form-group` + label + input + error |
-| `x-site.select` | `.select-wrapper`, **teal** where the filter's is black |
-| `x-site.checkbox` | 12×12, 14×14 from `sm`, solid teal when checked, no tick |
-| `x-site.toast` | `.notification.is-toast`, anchored to the container's edge |
+| `x-layout.article` | `layout/_article.scss:116` — the aside/column text page |
+| `x-form.field` | `.form-group` + label + input + error |
+| `x-form.select` | `.select-wrapper`, **teal** where the filter's is black |
+| `x-form.checkbox` | 12×12, 14×14 from `sm`, solid teal when checked, no tick |
+| `x-ui.toast` | `.notification.is-toast`, anchored to the container's edge |
 
 And `lang/de/` — legacy's `auth`, `passwords` and `validation` carried across,
 because without them a failed login reads **`auth.failed`**.
@@ -794,7 +794,7 @@ shrinks to its content with the 140px floor. One declaration, two behaviours,
 and it is why every caller in a block context had been passing `w-full` by hand.
 
 A `<button>` does not inherit that: form controls size to `fit-content` whatever
-their `display`. `max-sm:w-full` on `x-site.button` rather than
+their `display`. `max-sm:w-full` on `x-ui.button` rather than
 `w-full sm:w-auto`, because the auth screens pass `w-full` deliberately and must
 keep it at desktop. The course page's *Buchen* now measures 461 against
 production's 461.
@@ -897,7 +897,7 @@ in the error bag — so an `invoice_address` error, which belongs to the step
 rather than the dialog, does not open it. That one is a toast, as legacy raises
 it.
 
-### `x-site.lightbox`, and how it differs from the modal
+### `x-ui.lightbox`, and how it differs from the modal
 
 Legacy has two overlays that both extend `%lightbox`. `.notification.is-modal`
 is the message-with-buttons one; `.lightbox` is the one you put a form in. They
@@ -991,7 +991,7 @@ The two addresses are the server's — one is the customer's own, the other is t
 answer step 2 put in the session — so they are rendered in Blade. The lines are
 the browser's, because the selection is, so they come back from
 `/api/basket/price` exactly as on step 1. The row itself is now
-`x-site.basket-row`, shared by both, because legacy renders the same
+`x-row.basket`, shared by both, because legacy renders the same
 `StackedListEvent` on both with the `action` slot filled only on the basket.
 
 **A VAT row is the one departure on this page.** Legacy's summary shows *Total*
@@ -1077,7 +1077,7 @@ afterwards. The test purchase was then removed from the local database.
 
 Every link inside *Detailbeschrieb* and *Weitere Informationen* came out **teal
 with a heavy underline** where production has plain black. Marcel spotted it;
-the cause is that legacy has two rules and the comment in `x-site.rich-text`
+the cause is that legacy has two rules and the comment in `x-ui.rich-text`
 named only one of them.
 
 | rule | where it applies | link |
@@ -1128,7 +1128,7 @@ stylesheet, and neither is measuring.
 box.** `.btn-primary` extends `%btn-full-width`, so *Speichern* is full width
 inside a centred flex column — it is centred and 100% at the same time, which
 looks like a contradiction and is not. Ours shrink-wrapped because
-`x-site.button` is full width only below `sm`, so the call site passes `w-full`
+`x-ui.button` is full width only below `sm`, so the call site passes `w-full`
 the way the auth screens do.
 
 After: widget 626 / pad 24 / border 2px, overflow 0 4px and 90vh, h1 24px on
@@ -1323,8 +1323,8 @@ That removal toast is also legacy's second toast implementation:
 `vue-toast-notification`, with `vendor/vue-toast/_main.scss` existing purely to
 make it look like the Blade one. Measured side by side they differ by a pixel
 of padding and by the 480px step at `md`, which the vue one never got. Here
-they are one component in two modes — `<x-site.toast>` with a slot for a server
-flash, `<x-site.toast live />` driven by the store.
+they are one component in two modes — `<x-ui.toast>` with a slot for a server
+flash, `<x-ui.toast live />` driven by the store.
 
 ### Alpine 3 will not evaluate a directive outside a component
 
@@ -1555,8 +1555,8 @@ production stylesheet and reading `getComputedStyle`, at three widths.
 | `.form-danger-zone` | mt 24, p 8, 14px | mt 48, p 8/12/12/12, 16px | mt 48, p 12/16/16/16, 18px |
 | `.no-results` | mt 16, italic | | |
 
-Everything in the middle three rows is what `x-site.event-card` and
-`x-site.basket-row` were already built to, which is the useful part: the row
+Everything in the middle three rows is what `x-card.event` and
+`x-row.basket` were already built to, which is the useful part: the row
 this portal is made of is the row the course page and the basket already draw,
 and it measured identically without being touched.
 
@@ -1746,10 +1746,10 @@ button, input[type=text], select, textarea  { color: $color-primary }   // #000
 Read from the stylesheet the first is the answer. Read from the browser the
 second is: measured on the live `/de/registration`, every text input is
 `rgb(70, 186, 186)`. So the **labels are black and the values are teal**, which
-is the whole visual logic of these forms — and `x-site.field` had it the other
+is the whole visual logic of these forms — and `x-form.field` had it the other
 way round, with a docblock quoting the losing rule as its evidence.
 
-`x-site.select` had it right all along, because `.select-wrapper select` is the
+`x-form.select` had it right all along, because `.select-wrapper select` is the
 one place the teal is stated only once and there was nothing to misread.
 
 It shipped on login, registration, password reset, the checkout's address dialog
@@ -1811,7 +1811,7 @@ because nothing drew a toast yet; the store arrived with the basket.
 #### And the same Blade trap twice
 
 `x-data="bookmark({ … @js(…) })"` works on the course card and **not** on the
-portal's row, because there it sits on `<x-site.event-row>` — and a Blade
+portal's row, because there it sits on `<x-row.event>` — and a Blade
 directive inside a *component tag's* attribute is not compiled. It reaches the
 browser as those six characters, Alpine fails to initialise, and nothing says
 so: the heart simply does not respond. `{{ Js::from(…) }}` is the form that
@@ -1821,7 +1821,7 @@ This is the second time it bit in one day — the first was the cancellation
 dialog's payload. The rule, stated once: **inside a `<x-…>` tag, `@js` is text
 and `{{ }}` is code.**
 
-Which is also why `x-site.event-row` now merges `$attributes` onto its
+Which is also why `x-row.event` now merges `$attributes` onto its
 `<article>` rather than writing a bare `@class`: the Merkliste needs `x-data`
 and `x-show` on the row itself, because un-hearting has to hide the whole thing
 and the heart is three levels down in the icon slot.
@@ -1971,7 +1971,7 @@ is exactly what makes the missing check matter.
    MB* here.
 
 Both of the last two are now one component used by both portals —
-`x-site.message-row` and `x-site.file-row` — which is what legacy has and what
+`x-row.message` and `x-row.file` — which is what legacy has and what
 building the second portal made obvious.
 
 ### The lightbox inherits a line height from where it sits, not from what it is
@@ -2013,7 +2013,7 @@ it is dropped and sends a list of uuids with the message.
   are attached to nothing at all**.
 
 ~~What is lost is the thumbnail strip and the per-file remove.~~ **The drop box
-came back on 2026-09-23** (Marcel), without the eager upload. `<x-site.file-input>`
+came back on 2026-09-23** (Marcel), without the eager upload. `<x-form.file-input>`
 draws legacy's box — measured on the live expert upload at 1482px and matching
 to the pixel — over the same `<input type="file">`, and
 `js/site/components/file-drop.js` writes each dropped file into the input's
@@ -2070,10 +2070,10 @@ shortcut or a paste cannot bring back what the toolbar left out.
   first cut also took the oxide skin's colours and system font to the pixel,
   and looked like somebody else's widget; Marcel asked for it to look like the
   other controls instead — 1px black lines, Effra, teal for hover and active.
-  The text inside is `x-site.rich-text`'s, at the size the thread shows it,
+  The text inside is `x-ui.rich-text`'s, at the size the thread shows it,
   so the composer previews the message. The icons are TinyMCE 6.8's, which is
   MIT; 5.x is LGPL.
-- **`[&_li>p]:mb-0` went into `x-site.rich-text` too.** tiptap wraps a list
+- **`[&_li>p]:mb-0` went into `x-ui.rich-text` too.** tiptap wraps a list
   item's text in a paragraph, and the paragraph margin spaced the list out in
   the thread as well. TinyMCE's lists — every course description — have no
   `<p>` in an `<li>`, so they are untouched.
@@ -2109,7 +2109,7 @@ directories.
   the fee and the button evenly across it.
 - **No fee and no `mit …` on these rows.** What a course costs is the student's
   question, and naming the expert on the expert's own screen is noise. Both are
-  props `x-site.event-row` already had.
+  props `x-row.event` already had.
 - **`Vergangene Kurse` keeps its *Detail* button**, where the student's
   *Absolvierte Kurse* loses everything but the link. An expert still wants the
   participant list of a course that has run: it is who was in the room.
@@ -2191,7 +2191,7 @@ measured, as with Experten.
   and the `<h2>`s legacy leaves open inside its asides closed. Carried
   verbatim otherwise, save one fix: legacy's *Escher-Wyss-PlatzWer* runs two
   sentences together and reads *Escher-Wyss-Platz. Wer* here (Marcel,
-  2026-09-24). The live site still has the typo. `x-site.card-text` is
+  2026-09-24). The live site still has the typo. `x-card.text` is
   `article.card-text`, with a `privacy` flag for the one card that has its own
   headings.
 - **The AGB is a file in `public/media/downloads/`**, at legacy's path,
@@ -2203,10 +2203,38 @@ measured, as with Experten.
   to production; without it the page draws the map's 16:10 grey box, so the
   layout holds locally and in tests. Loading Google on page view is the same
   consent question as the Elfsight widgets, and legacy asks nothing.
-- **Two changes to `x-site.collapsible`**, both for this page and both
+- **Two changes to `x-ui.collapsible`**, both for this page and both
   harmless to the others: `last` drops the 64px under the final block
   (`.container:last-of-type`), and a block that starts **shut** is now
   `x-cloak`ed. Without it the 14,000px Datenschutzerklärung painted open for
   a frame before Alpine closed it. The two student-portal blocks that start
   shut get the same fix.
 
+
+## Where a component goes — 2026-09-24
+
+`resources/views/components/` was `site/` plus a flat pile of 35 files. The
+prefix separated nothing: the dashboard is Vue, so every Blade component serves
+the public site or the PDFs. It is now grouped by what a component *is*
+(Marcel, 2026-09-24):
+
+| Folder | Holds | Tag |
+|---|---|---|
+| `layout/` | the page shell and what only it uses: `site`, `header`, `article` | `x-layout.article` |
+| `ui/` | primitives with no domain: button, modal, toast, collapsible, lightbox, rich-text, back-link, map | `x-ui.button` |
+| `form/` | controls that post: field, select, checkbox, file-input, editor | `x-form.field` |
+| `card/` | legacy's `components/cards/` — course, event, expert, text | `x-card.course` |
+| `row/` | a line in a `.stacked-list` — basket, event, document, file, message | `x-row.event` |
+| `dialog/` | a store-driven pair of modals, once per page — basket, booking | `x-dialog.basket` |
+| `course/` | course-only pieces that are neither card nor row: filter, event-state | `x-course.filter` |
+| `icon/` | one SVG per file, including the logo | `x-icon.cross` |
+| `media/`, `documents/` | the image class component; the PDF layout | |
+
+A new component goes in the folder of its *shape* before its *domain* — a card
+for experts is `card/`, not `expert/`. A domain folder is for what has no shape
+folder, like the filter. The dashboard's Blade shell is `views/dashboard.blade.php`,
+not a component, since nothing renders it as one.
+
+`breadcrumb` and `textarea` were deleted: breadcrumb had no caller since chunk
+02 and was in stock Tailwind units; textarea lost its only one to the tiptap
+editor (b718c67), whose no-JS fallback is the same control.

@@ -74,9 +74,9 @@
 
 				     `target="_blank"` is legacy's, and it is right here: the
 				     list is something a customer works through. --}}
-				<x-site.button href="{{ route('documents.show', $document->uuid) }}"
+				<x-ui.button href="{{ route('documents.show', $document->uuid) }}"
 					target="_blank"
-					title="{{ $document->type->label() }}">Download</x-site.button>
+					title="{{ $document->type->label() }}">Download</x-ui.button>
 			</div>
 		</div>
 	</div>

@@ -8,7 +8,7 @@
  * immediately, and that is kept: it is the only one of the three that is free
  * to undo.
  *
- * A **store** rather than a component, for the reason `x-site.basket-dialogs`
+ * A **store** rather than a component, for the reason `x-dialog.basket`
  * is one: the dialogs are rendered once per page and every row talks to the same
  * pair. Legacy renders a `<notification>` inside every row.
  *

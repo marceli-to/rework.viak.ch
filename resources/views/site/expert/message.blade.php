@@ -14,14 +14,14 @@
 		authorises everything, so any authenticated student could post to any
 		course and mail every participant of it (finding 4).
 
-		**The body is a tiptap editor in TinyMCE's clothes** ([[x-site.editor]]),
+		**The body is a tiptap editor in TinyMCE's clothes** ([[x-form.editor]]),
 		with three of legacy's eight buttons: none of the 255 messages legacy
 		holds uses any formatting (Marcel, 2026-09-23). Its HTML is cleaned on
 		the way in ([[MessageHtml]]); without JavaScript it is the textarea
 		underneath, and blank lines become paragraphs
 		([[ExpertPortalController::paragraphs]]).
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Nachricht erstellen</h1>
 
@@ -34,11 +34,11 @@
 				Sende eine Nachricht an alle Studenten dieses Kurses ({{ $recipients }}).
 			</p>
 
-			<x-site.back-link :href="\App\Support\SiteUrl::expertEvent($event->uuid)" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::expertEvent($event->uuid)" />
 		</x-slot:aside>
 
 		@if ($errors->any())
-			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
+			<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
 		@endif
 
 		{{-- `multipart/form-data`, because the attachments come with the form
@@ -50,9 +50,9 @@
 			action="{{ route($locale.'.expert.event.message.store', ['uuid' => $event->uuid]) }}">
 			@csrf
 
-			<x-site.field name="subject" label="Betreff" required />
+			<x-form.field name="subject" label="Betreff" required />
 
-			<x-site.editor name="body" label="Nachricht" required />
+			<x-form.editor name="body" label="Nachricht" required />
 
 			{{-- *Anhänge (max. 32 MB)* — legacy's label, and here the number is
 			     the rule rather than a sentence beside it
@@ -61,7 +61,7 @@
 			     the drop box when it bites. The one thing a visitor could not
 			     otherwise know — that a failed send drops the chosen files —
 			     is said only when it has just happened. --}}
-			<x-site.file-input name="attachments" label="Anhänge" rule
+			<x-form.file-input name="attachments" label="Anhänge" rule
 				:accept="\App\Support\DocumentTypes::accept()"
 				:restrictions="\App\Support\DocumentTypes::RESTRICTIONS"
 				:max-size="32" :max-files="10"
@@ -72,16 +72,16 @@
 			     group's own padding — measured 2026-09-23 at 500 / 800 / 1200
 			     as 22 / 26 / 36 in all. --}}
 			<div class="mb-16 border-b border-black pb-22 sm:pb-26 lg:mb-32 lg:pb-36">
-				<x-site.checkbox name="copy_to_me" :checked="(bool) old('copy_to_me')">
+				<x-form.checkbox name="copy_to_me" :checked="(bool) old('copy_to_me')">
 					Kopie der Nachricht an mich
-				</x-site.checkbox>
+				</x-form.checkbox>
 			</div>
 
 			{{-- No *Abbrechen*: legacy's composer has none, and *Zurück* in
 			     the aside already goes where it would. --}}
 			<div class="mb-16 lg:mb-32">
-				<x-site.button type="submit" class="w-full">Senden</x-site.button>
+				<x-ui.button type="submit" class="w-full">Senden</x-ui.button>
 			</div>
 		</form>
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

@@ -9,7 +9,7 @@
  * first, and it very nearly does: measured on production, both are white bold
  * text on a solid bar, 360px wide, anchored to the container's right edge.
  *
- * Here they are one component, `<x-site.toast>`, in two modes — the flash on
+ * Here they are one component, `<x-ui.toast>`, in two modes — the flash on
  * the page renders it with a slot, and this store drives the live one.
  *
  * **Grey is the default, not an oversight.** `$toast-colors` maps `default` to

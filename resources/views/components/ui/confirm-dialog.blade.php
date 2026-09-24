@@ -8,7 +8,7 @@
 	style: 'info' })`, which is the grey modal with *Bestätigen* and *Abbrechen*
 	— the same pair the portal's cancellations use, and the same four-selectors-
 	deep colours that make those two buttons grey inside a notification and leave
-	them without a hover ([[x-site.button]]).
+	them without a hover ([[x-ui.button]]).
 
 	**One per page, and it names a form rather than a row.** Include it once on a
 	screen where something can be deleted, and give each row a hidden
@@ -16,13 +16,13 @@
 	Legacy renders one of these inside every row instead, so a course with ten
 	documents carries ten copies of it ([[confirm]]).
 --}}
-<x-site.modal
+<x-ui.modal
 	:message="$message"
 	show="$store.confirm.form"
 	close="$store.confirm.dismiss()">
 
 	<x-slot:actions>
-		<x-site.button variant="gray" @click="$store.confirm.submit()">Bestätigen</x-site.button>
-		<x-site.button variant="gray-outline" @click="$store.confirm.dismiss()">Abbrechen</x-site.button>
+		<x-ui.button variant="gray" @click="$store.confirm.submit()">Bestätigen</x-ui.button>
+		<x-ui.button variant="gray-outline" @click="$store.confirm.dismiss()">Abbrechen</x-ui.button>
 	</x-slot:actions>
-</x-site.modal>
+</x-ui.modal>

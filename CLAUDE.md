@@ -65,7 +65,7 @@ domain 301s to it). The legacy application is checked out beside this one at
 ## Two things that are easy to get wrong
 
 **The public site is the current design rebuilt 1:1**, not a new one. A value in
-`resources/views/site/` or `components/site/` should trace back to
+`resources/views/site/` or in a Blade component it uses should trace back to
 `../viak.ch/resources/sass/`, and the source file belongs in a comment. New pages
 and new features come after parity. The Vue dashboard is not held to this — it
 has no legacy design worth keeping.

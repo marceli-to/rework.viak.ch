@@ -17,15 +17,15 @@
 		and its route is `role:admin,expert`, so any of the 18 accounts holding
 		the Expert role can add a file to any course in the archive.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Dokumente hochladen</h1>
 
-			<x-site.back-link :href="\App\Support\SiteUrl::expertEvent($event->uuid)" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::expertEvent($event->uuid)" />
 		</x-slot:aside>
 
 		@if ($errors->any())
-			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
+			<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
 		@endif
 
 		{{-- `group`, so *Speichern* can read the input's validity: `required`
@@ -43,7 +43,7 @@
 			     cap is ours ([[UploadEventMediaRequest]]) and is said when it
 			     bites. 16px above it, as legacy's `mt-2x` wrapper puts it. --}}
 			<div class="pt-16">
-				<x-site.file-input name="files" required
+				<x-form.file-input name="files" required
 					:accept="\App\Support\DocumentTypes::accept()"
 					:restrictions="\App\Support\DocumentTypes::RESTRICTIONS"
 					:max-size="32" :max-files="10" />
@@ -58,9 +58,9 @@
 				{{-- No *Abbrechen*: legacy's `Files.vue` has none, and *Zurück*
 				     in the aside already goes where it would. --}}
 				<div class="mb-16 lg:mb-32">
-					<x-site.button type="submit" class="w-full group-has-[:invalid]:pointer-events-none group-has-[:invalid]:opacity-60">Speichern</x-site.button>
+					<x-ui.button type="submit" class="w-full group-has-[:invalid]:pointer-events-none group-has-[:invalid]:opacity-60">Speichern</x-ui.button>
 				</div>
 			</div>
 		</form>
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

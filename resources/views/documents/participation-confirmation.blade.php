@@ -87,7 +87,7 @@
 		reproduced ([[PortCourses]]).
 	--}}
 	@if (filled($event->course->getTranslation('summary', $locale)))
-		<x-site.rich-text :html="$event->course->getTranslation('summary', $locale)" />
+		<x-ui.rich-text :html="$event->course->getTranslation('summary', $locale)" />
 	@endif
 
 	{{-- `pdf/partials/signature.blade.php`: a name and the company, no image.

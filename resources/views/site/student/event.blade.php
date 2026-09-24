@@ -16,16 +16,16 @@
 		course's name rather than the screen's, so it reads as content rather
 		than as a label.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold sm:block">{{ $title }}</h1>
-			<x-site.back-link :href="\App\Support\SiteUrl::studentPortal()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::studentPortal()" />
 		</x-slot:aside>
-	</x-site.article>
+	</x-layout.article>
 
 	<div class="mt-48 lg:mt-64">
-		<x-site.collapsible title="Buchung" :expanded="true">
-			<x-site.event-row :event="$event" :booking="$booking">
+		<x-ui.collapsible title="Buchung" :expanded="true">
+			<x-row.event :event="$event" :booking="$booking">
 				{{-- **Nothing to cancel once the course is shut.** Legacy hides
 				     the button on `event.is_closed`, and the rule underneath is
 				     stronger than the screen: cancelling a closed course would
@@ -35,7 +35,7 @@
 				     the invoice is raised. --}}
 				@if (! $booking->isCancelled() && $event->state !== \App\Enums\EventState::Closed)
 					<x-slot:action>
-						<x-site.button variant="secondary"
+						<x-ui.button variant="secondary"
 							@click="$store.portal.askCancel({{ \Illuminate\Support\Js::from([
 								'uuid' => $booking->uuid,
 								'penalty' => $penalty['applies'],
@@ -43,19 +43,19 @@
 								'rate' => $penalty['rate'],
 							]) }})">
 							Annullieren
-						</x-site.button>
+						</x-ui.button>
 					</x-slot:action>
 
 					@if ($booking->has_rental && $booking->isEditable())
 						<x-slot:rentalAction>
-							<x-site.button variant="secondary"
+							<x-ui.button variant="secondary"
 								@click="$store.portal.askCancelRental({{ \Illuminate\Support\Js::from(['uuid' => $booking->uuid]) }})">
 								Annullieren
-							</x-site.button>
+							</x-ui.button>
 						</x-slot:rentalAction>
 					@endif
 				@endif
-			</x-site.event-row>
+			</x-row.event>
 
 			@if ($booking->isCancelled())
 				{{-- The row stays reachable after a cancellation — the booking
@@ -67,7 +67,7 @@
 					Diese Buchung wurde am {{ $booking->cancelled_at->format('d.m.Y') }} annulliert.
 				</p>
 			@endif
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
 	<div class="mt-48 lg:mt-64">
@@ -88,14 +88,14 @@
 		     list. Both portals draw the thread through `messages/Index.vue`, and
 		     what it draws is a row with 35 characters of the body and an
 		     *Anzeigen* that opens the message in a lightbox
-		     ([[x-site.message-row]]). --}}
-		<x-site.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
+		     ([[x-row.message]]). --}}
+		<x-ui.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
 			@forelse ($messages as $message)
-				<x-site.message-row :message="$message" />
+				<x-row.message :message="$message" />
 			@empty
 				<p class="mt-16 italic">Es sind keine Nachrichten vorhanden.</p>
 			@endforelse
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
 	<div class="mt-48 lg:mt-64">
@@ -113,16 +113,16 @@
 		     legacy's either** — same finding as the thread above.
 		     `files/components/ListItem.vue` draws four columns: the name, when it
 		     was uploaded, how big it is, and the buttons
-		     ([[x-site.file-row]]). The student passes no `action`, so the column
+		     ([[x-row.file]]). The student passes no `action`, so the column
 		     holds the *Download* alone; the expert's passes a *Löschen*. --}}
-		<x-site.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
+		<x-ui.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
 			@forelse ($files as $file)
-				<x-site.file-row :file="$file" />
+				<x-row.file :file="$file" />
 			@empty
 				<p class="mt-16 italic">Es sind keine Kurs-Dokumente vorhanden.</p>
 			@endforelse
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
-	<x-site.booking-dialogs />
+	<x-dialog.booking />
 </x-layout.site>

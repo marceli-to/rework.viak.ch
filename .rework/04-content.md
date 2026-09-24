@@ -332,14 +332,14 @@ Backend: one `HomeSchema` — hero headline (DE/EN), hero media, "Warum" copy
 Vue.
 
 Frontend: a `HomeController` assembling the queries, and `home.blade.php` as a
-stack of `<x-site.*>` partials — every one of which is needed by another page
+stack of Blade components — every one of which is needed by another page
 anyway:
 
-- `x-site.vorhaben-tiles` → also "Andere Vorhaben" on all six Vorhaben pages
-- `x-site.event-list` → also Kurse, Vorhaben, software pages
-- `x-site.offer-grid` → the Vorhaben offer list, Alle Angebote
-- `x-site.article-list` → Aktuelles
-- `x-site.callback-band`, `x-site.newsletter`, `x-site.footer` → everywhere
+- `x-vorhaben-tiles` → also "Andere Vorhaben" on all six Vorhaben pages
+- `x-event-list` → also Kurse, Vorhaben, software pages
+- `x-offer-grid` → the Vorhaben offer list, Alle Angebote
+- `x-article-list` → Aktuelles
+- `x-callback-band`, `x-newsletter`, `x-footer` → everywhere
 
 Alpine only in the header (basket, search) and on the filter chips — not Vue; see
 *The public site is Blade + Alpine* in `00-foundation.md`. The homepage body needs

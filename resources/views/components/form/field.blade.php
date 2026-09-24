@@ -24,7 +24,7 @@
 	Read from the stylesheet the first rule is the answer; read from the browser
 	the second is. Measured on the live `/de/registration`:
 	`rgb(70, 186, 186)` on every text input, matching the selects beside them —
-	which `x-site.select` had right all along, because `.select-wrapper select`
+	which `x-form.select` had right all along, because `.select-wrapper select`
 	is the one place the teal is stated only once. So the labels are black and
 	the **values** are teal, which is the whole visual logic of these forms and
 	was inverted on every screen: login, registration, password reset, the

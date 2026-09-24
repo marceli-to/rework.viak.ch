@@ -25,7 +25,7 @@
 	     expired, a price that moved while the basket sat open, or the last seat
 	     going. Legacy's equivalents failed silently ([[06-bookings]]). --}}
 	@if ($errors->any())
-		<x-site.toast>{{ $errors->first() }}</x-site.toast>
+		<x-ui.toast>{{ $errors->first() }}</x-ui.toast>
 	@endif
 
 	<div class="mt-48 lg:mt-64" x-data="basketList">
@@ -63,7 +63,7 @@
 		{{-- The same row as step 1, without its *Entfernen*: legacy renders the
 		     same `StackedListEvent` here with the `action` slot unfilled. --}}
 		<template x-for="item in items" :key="item.event.uuid">
-			<x-site.basket-row />
+			<x-row.basket />
 		</template>
 
 		{{--

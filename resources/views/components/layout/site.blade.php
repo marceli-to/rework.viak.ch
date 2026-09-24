@@ -136,7 +136,7 @@
 	     sections — and the course page is where they differ: the tab says the
 	     course, the phone's header row says **Kurse**. Everywhere else they are
 	     the same string, so `heading` falls back to the title. --}}
-	<x-site.header :heading="$heading ?? $title" />
+	<x-layout.header :heading="$heading ?? $title" />
 
 	{{-- `layout/_main.scss` --}}
 	<main role="main" class="pb-24 sm:pb-32">
@@ -146,6 +146,6 @@
 	{{-- The live toast, for anything the browser decides rather than the
 	     server — a course removed from the basket, today. One per document,
 	     hidden until the store has something to say. --}}
-	<x-site.toast live />
+	<x-ui.toast live />
 </body>
 </html>

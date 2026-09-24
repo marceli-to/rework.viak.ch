@@ -2,7 +2,7 @@
 	The two confirmations the portal asks before changing a booking, from
 	`shared/mixins/Booking.js` ([[08-accounts]], [[09-public-site]]).
 
-	**One pair per page**, on the store, for the reason `x-site.basket-dialogs`
+	**One pair per page**, on the store, for the reason `x-dialog.basket`
 	is: legacy renders a `<notification>` inside every row, so a portal with six
 	booked courses carries twelve hidden dialogs and twelve copies of the same
 	text.
@@ -25,7 +25,7 @@
 	the student has to be told at the moment they cancel rather than when the
 	bill arrives. This is the other half of that: told *before* they cancel.
 --}}
-<x-site.modal
+<x-ui.modal
 	wide
 	x-bind:data-booking="$store.portal.cancelling?.uuid"
 	show="$store.portal.cancelling"
@@ -36,29 +36,29 @@
 	</x-slot:text>
 
 	<x-slot:actions>
-		<x-site.button variant="gray"
+		<x-ui.button variant="gray"
 			x-bind:disabled="$store.portal.busy"
-			@click="$store.portal.confirmCancel()">Bestätigen</x-site.button>
-		<x-site.button variant="gray-outline"
-			@click="$store.portal.cancelling = null">Abbrechen</x-site.button>
+			@click="$store.portal.confirmCancel()">Bestätigen</x-ui.button>
+		<x-ui.button variant="gray-outline"
+			@click="$store.portal.cancelling = null">Abbrechen</x-ui.button>
 	</x-slot:actions>
-</x-site.modal>
+</x-ui.modal>
 
 {{-- Giving the laptop back. No penalty applies to a rental, so there is one
      sentence and legacy asks it plainly. --}}
-<x-site.modal
+<x-ui.modal
 	show="$store.portal.cancellingRental"
 	close="$store.portal.cancellingRental = null"
 	message="Möchtest Du den Mietcomputer wirklich stornieren?">
 
 	<x-slot:actions>
-		<x-site.button variant="gray"
+		<x-ui.button variant="gray"
 			x-bind:disabled="$store.portal.busy"
-			@click="$store.portal.confirmCancelRental()">Bestätigen</x-site.button>
-		<x-site.button variant="gray-outline"
-			@click="$store.portal.cancellingRental = null">Abbrechen</x-site.button>
+			@click="$store.portal.confirmCancelRental()">Bestätigen</x-ui.button>
+		<x-ui.button variant="gray-outline"
+			@click="$store.portal.cancellingRental = null">Abbrechen</x-ui.button>
 	</x-slot:actions>
-</x-site.modal>
+</x-ui.modal>
 
 {{-- The store shows a toast after the reload the three actions end in; `init()`
      is what picks it up, and it needs an element in the page to run on. --}}

@@ -521,7 +521,7 @@ it('shows the course notes and the materials to somebody on the course', functio
 		 * **The row, not the message** — `messages/Index.vue` draws 35
 		 * characters of the body and an *Anzeigen* that opens the rest in a
 		 * lightbox, and both portals go through it
-		 * ([[x-site.message-row]]). This screen printed the whole body
+		 * ([[x-row.message]]). This screen printed the whole body
 		 * inline until 2026-09-22, which was readable and was not legacy's.
 		 */
 		->assertSee('Anzeigen')
@@ -784,7 +784,7 @@ it('refuses neither, and says the rule rather than the branch that fired', funct
  * `form/_global.scss` sets the input colour twice and the **second** rule wins,
  * so production's values are teal and its labels black. Read from the
  * stylesheet the first rule looks like the answer, which is how this shipped
- * inverted on every form on the site ([[x-site.field]]).
+ * inverted on every form on the site ([[x-form.field]]).
  */
 it('paints form values teal, as production does', function () {
 	$html = $this->get('/de/registration')->assertOk()->getContent();

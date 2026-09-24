@@ -81,7 +81,7 @@
 			     underline from `sm`. Everything below this article gets the
 			     flat one ([[RichText]]). --}}
 			@if ($html = $course->getTranslation('short_description', $locale, false))
-				<x-site.rich-text :html="$html" hero class="sm:col-span-8" />
+				<x-ui.rich-text :html="$html" hero class="sm:col-span-8" />
 			@else
 				<div class="sm:col-span-8"></div>
 			@endif
@@ -91,9 +91,9 @@
 	{{-- `section.container-course`. The hero's body has a 40px row gap under it
 	     already, so the stack starts straight in. --}}
 	<div class="mt-48 lg:mt-64">
-		<x-site.collapsible title="Aktuelle Kurse">
+		<x-ui.collapsible title="Aktuelle Kurse">
 			@forelse ($course->events as $event)
-				<x-site.event-card
+				<x-card.event
 					:event="$event"
 					:bookmarked="in_array($event->id, $bookmarked, true)"
 					:booked="in_array($event->id, $booked, true)"
@@ -101,7 +101,7 @@
 			@empty
 				<p class="mt-16 sm:mt-32">Neues Kursdatum folgt in Kürze</p>
 			@endforelse
-		</x-site.collapsible>
+		</x-ui.collapsible>
 
 		@if ($course->videos->isNotEmpty())
 			{{--
@@ -120,7 +120,7 @@
 				pastes, the iframe is somewhere inside — matching on depth is
 				the wrong thing to be strict about.
 			--}}
-			<x-site.collapsible title="Videos">
+			<x-ui.collapsible title="Videos">
 				@foreach ($course->videos as $video)
 					<div class="pt-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 						<div class="sm:col-span-4">{{ $video->getTranslation('title', $locale, false) }}</div>
@@ -129,36 +129,36 @@
 						</div>
 					</div>
 				@endforeach
-			</x-site.collapsible>
+			</x-ui.collapsible>
 		@endif
 
 		@if ($facts->isNotEmpty())
-			<x-site.collapsible title="Facts">
+			<x-ui.collapsible title="Facts">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					@foreach ($facts as $fact)
-						<x-site.rich-text :html="$fact" class="mb-16 sm:col-span-4 sm:mb-0" />
+						<x-ui.rich-text :html="$fact" class="mb-16 sm:col-span-4 sm:mb-0" />
 					@endforeach
 				</div>
-			</x-site.collapsible>
+			</x-ui.collapsible>
 		@endif
 
 		@if ($html = $course->getTranslation('full_description', $locale, false))
-			<x-site.collapsible title="Detailbeschrieb">
+			<x-ui.collapsible title="Detailbeschrieb">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<x-site.rich-text :html="$html" class="sm:col-span-8" />
+					<x-ui.rich-text :html="$html" class="sm:col-span-8" />
 				</div>
-			</x-site.collapsible>
+			</x-ui.collapsible>
 		@endif
 
 		@if ($booking || $content || $course->reviews)
-			<x-site.collapsible title="Weitere Informationen">
+			<x-ui.collapsible title="Weitere Informationen">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					@if ($booking)
-						<x-site.rich-text :html="$booking" class="mb-16 sm:col-span-4 sm:mb-0" />
+						<x-ui.rich-text :html="$booking" class="mb-16 sm:col-span-4 sm:mb-0" />
 					@endif
 
 					@if ($content)
-						<x-site.rich-text :html="$content" class="mb-16 sm:col-span-4 sm:mb-0" />
+						<x-ui.rich-text :html="$content" class="mb-16 sm:col-span-4 sm:mb-0" />
 					@endif
 
 					{{-- **Empty on every course today, deliberately.** Legacy's
@@ -175,7 +175,7 @@
 						</div>
 					@endif
 				</div>
-			</x-site.collapsible>
+			</x-ui.collapsible>
 		@endif
 
 		{{-- `.content-list-item` + `nav.browse`: a `#969696` rule, a grey label
@@ -206,5 +206,5 @@
 
 	{{-- The rental question and the confirmation that follows an add. One pair
 	     for the whole page, however many events it lists. --}}
-	<x-site.basket-dialogs />
+	<x-dialog.basket />
 </x-layout.site>

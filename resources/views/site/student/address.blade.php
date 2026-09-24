@@ -30,18 +30,18 @@
 		is nothing to lose and legacy gives the form a screen of its own
 		([[StudentAddressController]]).
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">{{ $title }}</h1>
 			{{-- Back **into the form**, not to the profile that shows it shut.
 			     This screen is reached from the *Rechnungsadressen* block inside
 			     it, and landing anywhere else hides the address you just came
 			     here to add ([[SiteUrl::studentProfileEdit]]). --}}
-			<x-site.back-link :href="\App\Support\SiteUrl::studentProfileEdit()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::studentProfileEdit()" />
 		</x-slot:aside>
 
 		@if ($errors->any())
-			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
+			<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
 		@endif
 
 		<form method="POST"
@@ -67,35 +67,35 @@
 			--}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="first_name" label="Vorname" :value="$address?->first_name" autocomplete="given-name" />
+					<x-form.field name="first_name" label="Vorname" :value="$address?->first_name" autocomplete="given-name" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="last_name" label="Nachname" :value="$address?->last_name" autocomplete="family-name" />
+					<x-form.field name="last_name" label="Nachname" :value="$address?->last_name" autocomplete="family-name" />
 				</div>
 			</div>
 
-			<x-site.field name="company" label="Firma" :value="$address?->company"
+			<x-form.field name="company" label="Firma" :value="$address?->company"
 				hint="Vor- und Nachname oder Firma angeben." autocomplete="organization" />
 
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="street" label="Strasse" :value="$address?->street" required autocomplete="address-line1" />
+					<x-form.field name="street" label="Strasse" :value="$address?->street" required autocomplete="address-line1" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="street_no" label="Nr." :value="$address?->street_no" maxlength="5" />
+					<x-form.field name="street_no" label="Nr." :value="$address?->street_no" maxlength="5" />
 				</div>
 			</div>
 
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="zip" label="PLZ" :value="$address?->zip" required maxlength="10" autocomplete="postal-code" />
+					<x-form.field name="zip" label="PLZ" :value="$address?->zip" required maxlength="10" autocomplete="postal-code" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="city" label="Ort" :value="$address?->city" required autocomplete="address-level2" />
+					<x-form.field name="city" label="Ort" :value="$address?->city" required autocomplete="address-level2" />
 				</div>
 			</div>
 
-			<x-site.select name="country_code" label="Land" :options="$countryOptions"
+			<x-form.select name="country_code" label="Land" :options="$countryOptions"
 				:value="$address?->country_code ?? 'ch'" required />
 
 			{{-- `.form-group` like every field above it — 16px below, 32 from
@@ -109,8 +109,8 @@
 				     2026-09-22. A real `<button>` does **not** inherit that,
 				     because a form control sizes to `fit-content` whatever its
 				     display, so the width has to be said
-				     ([[x-site.button]]). --}}
-				<x-site.button type="submit" class="w-full">Speichern</x-site.button>
+				     ([[x-ui.button]]). --}}
+				<x-ui.button type="submit" class="w-full">Speichern</x-ui.button>
 			</div>
 		</form>
 
@@ -151,9 +151,9 @@
 				<p class="mb-12 lg:mb-16">Mit dieser Aktion wird diese Adresse gelöscht.</p>
 
 				<div class="mt-12 sm:mt-24">
-					<x-site.button type="submit" variant="danger" class="w-full">Löschen</x-site.button>
+					<x-ui.button type="submit" variant="danger" class="w-full">Löschen</x-ui.button>
 				</div>
 			</form>
 		@endif
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

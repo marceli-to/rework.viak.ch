@@ -673,7 +673,7 @@ it('lists an event s materials with the download link the policy gates', functio
 		->assertOk()
 		->assertSee('modelle.zip')
 		// `Vue.filter('fileSize')` is base 1000 with two decimals and the
-		// trailing zeros trimmed ([[x-site.file-row]]).
+		// trailing zeros trimmed ([[x-row.file]]).
 		->assertSee('1.54 MB')
 		->assertSee(route('media.download', $media->uuid), escape: false);
 });

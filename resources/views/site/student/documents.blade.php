@@ -12,20 +12,20 @@
 		links since 2023; the path is derived rather than stored here, so it
 		cannot acquire a typo ([[UserDocument::path]]).
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Meine Dokumente</h1>
-			<x-site.back-link :href="\App\Support\SiteUrl::studentPortal()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::studentPortal()" />
 		</x-slot:aside>
-	</x-site.article>
+	</x-layout.article>
 
 	<div class="mt-48 lg:mt-64">
-		<x-site.collapsible title="Dokumente" :expanded="true" :count="$documents->count()">
+		<x-ui.collapsible title="Dokumente" :expanded="true" :count="$documents->count()">
 			@forelse ($documents as $document)
-				<x-site.document-row :document="$document" />
+				<x-row.document :document="$document" />
 			@empty
 				<p class="mt-16 italic">Es sind noch keine Dokumente vorhanden.</p>
 			@endforelse
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 </x-layout.site>

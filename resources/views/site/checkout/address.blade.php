@@ -25,7 +25,7 @@
 	     'error' })`, from its own client-side check. Ours comes back off a
 	     redirect, in the same bar. --}}
 	@error('invoice_address')
-		<x-site.toast>{{ $message }}</x-site.toast>
+		<x-ui.toast>{{ $message }}</x-ui.toast>
 	@enderror
 
 	<article class="relative">
@@ -106,11 +106,11 @@
 					     (Marcel, 2026-09-22). At `sm` the two are in different
 					     columns and there is nothing to be spaced from. --}}
 					<div class="mb-12 max-sm:mt-24">
-						<x-site.checkbox id="same_address" name="same_address"
+						<x-form.checkbox id="same_address" name="same_address"
 							x-bind:checked="! separate"
 							@change="separate = ! separate">
 							<em class="italic">entspricht Teilnehmer-Adresse</em>
-						</x-site.checkbox>
+						</x-form.checkbox>
 					</div>
 
 					{{--
@@ -123,7 +123,7 @@
 					<template x-if="separate">
 						<div>
 							@if ($addresses->isNotEmpty())
-								<x-site.select
+								<x-form.select
 									name="invoice_address"
 									placeholder="Bitte wählen..."
 									:value="$selected?->uuid"
@@ -207,34 +207,34 @@
 			uses. The new address is selected on return, which is the only
 			reason to be typing one here.
 		--}}
-		<x-site.lightbox title="Adresse erfassen" show="dialog" close="dialog = false">
+		<x-ui.lightbox title="Adresse erfassen" show="dialog" close="dialog = false">
 			<form method="POST" action="{{ \App\Support\SiteUrl::checkout('address').'/new' }}">
 				@csrf
 
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="sm:col-span-6"><x-site.field name="first_name" label="Vorname" /></div>
-					<div class="sm:col-span-6"><x-site.field name="last_name" label="Nachname" /></div>
+					<div class="sm:col-span-6"><x-form.field name="first_name" label="Vorname" /></div>
+					<div class="sm:col-span-6"><x-form.field name="last_name" label="Nachname" /></div>
 				</div>
 
 				{{-- The same either/or the portal's form states — one
 				     [[StoreAddressRequest]] behind both, so one rule to say. --}}
-				<x-site.field name="company" label="Firma"
+				<x-form.field name="company" label="Firma"
 					hint="Vor- und Nachname oder Firma angeben." />
 
 				{{-- Strasse/Nr. and PLZ/Ort are `span-6` with **no breakpoint**
 				     in legacy, so they sit side by side on a phone too — unlike
 				     Vorname/Nachname above, which are `sm:span-6`. --}}
 				<div class="grid grid-cols-12 gap-16 lg:gap-40">
-					<div class="col-span-6"><x-site.field name="street" label="Strasse" required /></div>
-					<div class="col-span-6"><x-site.field name="street_no" label="Nr." maxlength="5" /></div>
+					<div class="col-span-6"><x-form.field name="street" label="Strasse" required /></div>
+					<div class="col-span-6"><x-form.field name="street_no" label="Nr." maxlength="5" /></div>
 				</div>
 
 				<div class="grid grid-cols-12 gap-16 lg:gap-40">
-					<div class="col-span-6"><x-site.field name="zip" label="PLZ" required maxlength="10" /></div>
-					<div class="col-span-6"><x-site.field name="city" label="Ort" required /></div>
+					<div class="col-span-6"><x-form.field name="zip" label="PLZ" required maxlength="10" /></div>
+					<div class="col-span-6"><x-form.field name="city" label="Ort" required /></div>
 				</div>
 
-				<x-site.select name="country_code" label="Land" required
+				<x-form.select name="country_code" label="Land" required
 					:value="old('country_code', 'ch')"
 					:options="$countries->mapWithKeys(fn ($country) => [$country->code => $country->name])->all()"
 				/>
@@ -246,7 +246,7 @@
 					production — `.btn-primary` extends `%btn-full-width`, and
 					`align-items: center` does not stop a `width: 100%` child
 					filling its container. Ours shrink-wrapped to its label at
-					desktop, because `x-site.button` is only full width below
+					desktop, because `x-ui.button` is only full width below
 					`sm` (Marcel, 2026-09-22).
 
 					*Abbrechen* sits **16px** under it at every width. The markup
@@ -254,7 +254,7 @@
 					generated in that codebase — measured 16px at 1717px.
 				--}}
 				<div class="mb-16 flex flex-col items-center lg:mb-32">
-					<x-site.button type="submit" class="w-full">Speichern</x-site.button>
+					<x-ui.button type="submit" class="w-full">Speichern</x-ui.button>
 
 					<button type="button" @click="dialog = false"
 						class="mt-16 text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
@@ -262,6 +262,6 @@
 					</button>
 				</div>
 			</form>
-		</x-site.lightbox>
+		</x-ui.lightbox>
 	</div>
 </x-layout.site>

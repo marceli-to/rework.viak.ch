@@ -19,7 +19,7 @@
 	above it. `italic` and nothing else is the only way to inherit: naming a
 	Tailwind size drags its own line height along (`resources/css/README.md`).
 
-	`x-site.event-card` still spells its own two states out inline. It lists
+	`x-card.event` still spells its own two states out inline. It lists
 	only bookable events, so *abgeschlossen* and *abgesagt* cannot appear there
 	and swapping it to this component would add two branches it has no use for.
 --}}

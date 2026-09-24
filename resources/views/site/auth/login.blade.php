@@ -13,7 +13,7 @@
 		24px at `lg`. Spelling `text-3xl` here made it 24 at every width and put
 		the heading a size above its own body copy on a tablet.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Login</h1>
 
@@ -29,7 +29,7 @@
 		     deliberately vague — naming which of email or password was wrong
 		     tells an attacker which half they have. --}}
 		@if ($errors->any())
-			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
+			<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
 		@endif
 
 		{{-- `mb-16 lg:mb-32` is the submit button's `.form-group` bottom margin.
@@ -40,10 +40,10 @@
 		<form method="POST" action="{{ route('login') }}" class="mb-16 lg:mb-32">
 			@csrf
 
-			<x-site.field name="email" type="email" label="E-Mail" required autocomplete="username" />
-			<x-site.field name="password" type="password" label="Passwort" required autocomplete="current-password" />
+			<x-form.field name="email" type="email" label="E-Mail" required autocomplete="username" />
+			<x-form.field name="password" type="password" label="Passwort" required autocomplete="current-password" />
 
-			<x-site.button type="submit" class="w-full">Anmelden</x-site.button>
+			<x-ui.button type="submit" class="w-full">Anmelden</x-ui.button>
 		</form>
 
 		{{-- `.form-helper` (`form/_layout.scss:150`) — italic, black, 14/16/18px,
@@ -58,5 +58,5 @@
 				Passwort vergessen?
 			</a>
 		@endif
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

@@ -150,21 +150,21 @@
 			{{-- Label and count are **one** text node. The button is a flex
 			     container, so `Anzeigen <span>` would make them two flex items
 			     and the space between them would collapse to nothing. --}}
-			<x-site.button type="submit" class="w-full sm:hidden" @click.prevent="apply()">
+			<x-ui.button type="submit" class="w-full sm:hidden" @click.prevent="apply()">
 				<span x-text="count ? `Anzeigen (${count})` : 'Anzeigen'">Anzeigen{{ $matching ? ' ('.$matching.')' : '' }}</span>
-			</x-site.button>
+			</x-ui.button>
 
 			{{-- **Always shown**, with nothing chosen as much as with something —
 			     legacy renders it unconditionally and the live page confirms it.
 			     An earlier pass hid it until a filter was set. --}}
-			<x-site.button
+			<x-ui.button
 				variant="outline"
 				class="w-full"
 				:href="$urlFor(array_fill_keys(\App\Support\CourseFilter::ATTRIBUTES, null))"
 				@click.prevent="reset()"
 			>
 				Zurücksetzen
-			</x-site.button>
+			</x-ui.button>
 		</div>
 
 		{{-- `.card-teaser-training` — the teal promo box under the filter. --}}

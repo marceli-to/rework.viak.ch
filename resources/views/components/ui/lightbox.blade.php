@@ -2,7 +2,7 @@
 
 {{--
 	`components/_lightbox.scss` — the bigger overlay, the one legacy puts a whole
-	form in. `<x-site.modal>` is its sibling: `.notification.is-modal` extends
+	form in. `<x-ui.modal>` is its sibling: `.notification.is-modal` extends
 	the same `%lightbox` and then narrows it to a message with buttons.
 
 	The two differ in exactly three ways, and all three are why this is its own

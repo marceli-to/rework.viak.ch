@@ -51,7 +51,7 @@
 			</div>
 
 			@if ($expert->expertProfile?->description)
-				<x-site.rich-text :html="$expert->expertProfile->description" hero class="font-bold sm:col-span-8" />
+				<x-ui.rich-text :html="$expert->expertProfile->description" hero class="font-bold sm:col-span-8" />
 			@endif
 		</div>
 	</article>

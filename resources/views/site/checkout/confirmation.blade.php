@@ -4,10 +4,10 @@
 		four steps this one really is a Blade page on the live site too.
 
 		`article.content-text` with both halves this time, so
-		`<x-site.article>` rather than the bare aside the steps use: the heading
+		`<x-layout.article>` rather than the bare aside the steps use: the heading
 		and *Zum Profil* in the `span-4`, the thank-you in the `span-8`.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Buchung abgeschlossen</h1>
 
@@ -43,5 +43,5 @@
 				</a>
 			</p>
 		</div>
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

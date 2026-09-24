@@ -24,16 +24,16 @@
 		details of everyone on it ([[08-accounts]], finding 5). The controller
 		asks [[EventPolicy::viewParticipants]] once, before the screen exists.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold sm:block">{{ $title }}</h1>
-			<x-site.back-link :href="\App\Support\SiteUrl::expertPortal()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::expertPortal()" />
 		</x-slot:aside>
-	</x-site.article>
+	</x-layout.article>
 
 	@if (session('status'))
 		<div class="mt-48 lg:mt-64">
-			<x-site.toast variant="success">{{ session('status') }}</x-site.toast>
+			<x-ui.toast variant="success">{{ session('status') }}</x-ui.toast>
 		</div>
 	@endif
 
@@ -41,10 +41,10 @@
 		{{-- *Informationen* — the row, without a fee and without *mit …*: what
 		     the course costs is the student's question, and naming the expert on
 		     the expert's own screen is noise. --}}
-		<x-site.collapsible title="Informationen" :expanded="true">
-			<x-site.event-row :event="$event" :showExperts="false" :showFee="false"
+		<x-ui.collapsible title="Informationen" :expanded="true">
+			<x-row.event :event="$event" :showExperts="false" :showFee="false"
 				:bookings="$bookings->count()" />
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
 	<div class="mt-48 lg:mt-64">
@@ -64,7 +64,7 @@
 			contact details are in the participant list, and the participant list
 			is the one thing here that is not built ([[09-public-site]]).
 		--}}
-		<x-site.collapsible title="Teilnehmer" :expanded="false" :count="$bookings->count()">
+		<x-ui.collapsible title="Teilnehmer" :expanded="false" :count="$bookings->count()">
 			@forelse ($bookings as $booking)
 				@php
 					// The firm, from the seat's own record first and the invoice
@@ -126,7 +126,7 @@
 				</div>
 			@endif
 
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
 	<div class="mt-48 lg:mt-64">
@@ -138,9 +138,9 @@
 			(`v-if="data.participants.length"`), which is a reasonable thing to
 			do with a form that mails a list of nought — kept.
 		--}}
-		<x-site.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
+		<x-ui.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
 			@forelse ($messages as $message)
-				<x-site.message-row :message="$message" />
+				<x-row.message :message="$message" />
 			@empty
 				<p class="mt-16 italic">Es sind keine Nachrichten vorhanden.</p>
 			@endforelse
@@ -156,7 +156,7 @@
 					</a>
 				</div>
 			@endif
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
 	<div class="mt-48 lg:mt-64">
@@ -171,9 +171,9 @@
 			anything. In the rework it cannot arise at all, because a `media` row
 			has one owner ([[MediaPolicy::delete]]).
 		--}}
-		<x-site.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
+		<x-ui.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
 			@forelse ($files as $file)
-				<x-site.file-row :file="$file">
+				<x-row.file :file="$file">
 					<x-slot:action>
 						{{-- **A form, and it asks first.** Legacy's *Löschen* is
 						     an `<a>` that opens a `<notification>` and then
@@ -185,8 +185,8 @@
 						     `btn-secondary` is legacy's own choice of colour for
 						     it — grey, not the danger red the address screen's
 						     *Löschen* carries. Ported as found. --}}
-						<x-site.button variant="secondary"
-							@click="$store.confirm.ask({{ \Illuminate\Support\Js::from('delete-file-'.$file->uuid) }})">Löschen</x-site.button>
+						<x-ui.button variant="secondary"
+							@click="$store.confirm.ask({{ \Illuminate\Support\Js::from('delete-file-'.$file->uuid) }})">Löschen</x-ui.button>
 
 						<form method="POST" id="delete-file-{{ $file->uuid }}" class="hidden"
 							action="{{ route($locale.'.expert.event.file.destroy', ['uuid' => $event->uuid, 'media' => $file->uuid]) }}">
@@ -194,7 +194,7 @@
 							@method('DELETE')
 						</form>
 					</x-slot:action>
-				</x-site.file-row>
+				</x-row.file>
 			@empty
 				<p class="mt-16 italic">Es sind keine Dokumente vorhanden.</p>
 			@endforelse
@@ -208,10 +208,10 @@
 					</a>
 				</div>
 			@endif
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 
 	{{-- The one confirmation this screen asks — one dialog per page, told which
-	     form to submit ([[x-site.confirm-dialog]]). --}}
-	<x-site.confirm-dialog />
+	     form to submit ([[x-ui.confirm-dialog]]). --}}
+	<x-ui.confirm-dialog />
 </x-layout.site>

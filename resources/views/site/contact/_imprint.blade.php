@@ -1,40 +1,40 @@
-<x-site.card-text>
+<x-card.text>
 	<x-slot:aside>
 		<h2>Verantwortlich für den Inhalt</h2>
 	</x-slot:aside>
 	<p>Visualisierungs-Akademie Schweiz GmbH<br>Oliver Schmid<br>Limmatstrasse 291<br>8005 Zürich<br>Schweiz</p>
 	<p><a href="mailto:oliver.schmid@visualisierungs-akademie.ch" target="_blank" title="E-Mail oliver.schmid@visualisierungs-akademie.ch">oliver.schmid@visualisierungs-akademie.ch</a><br>Telefon: <a href="tel:+41435014040" title="Telefon +41 43 501 40 40">+41 43 501 40 40</a></p>
 	<p>MWST-Nr. CHE-110.279.761 MWST<br>Handelsreg.-Nr. CH-020.4.027.770-0</p>
-</x-site.card-text>
+</x-card.text>
 
-<x-site.card-text>
+<x-card.text>
 	<x-slot:aside>
 		<h2>Copyright</h2>
 	</x-slot:aside>
 	<p>Das Copyright für sämtliche Inhalte dieser Website liegt bei der Visualisierungs-Akademie Schweiz GmbH, Oliver Schmid.</p>
-</x-site.card-text>
+</x-card.text>
 
-<x-site.card-text>
+<x-card.text>
 	<x-slot:aside>
 		<h2>Umsetzung</h2>
 	</x-slot:aside>
 	<p>Design und Branding:<br>WBG AG, Zürich, <a href="https://www.wbg.ch" target="_blank" title="WBG AG, Zürich">www.wbg.ch</a></p>
 	<p>Programmierung:<br>Marcel Stadelmann, Zürich, <a href="https://www.marceli.to" target="_blank" title="Marcel Stadelmann, marceli.to">www.marceli.to</a></p>
 	<p>Portraits:<br>Simon Hallström, <a href="https://www.simonhallstroem.com" target="_blank" title="Simon Hallström">www.simonhallstroem.com</a><br>Christoph Deiters, <a href="https://www.nightnurse.ch" target="_blank" title="Christoph Deiters">www.nightnurse.ch</a><br>Oliver Schmid, <a href="https://www.visualisierungs-akademie.ch" target="_blank" title="Oliver Schmid">www.visualisierungs-akademie.ch</a></p>
-</x-site.card-text>
-<x-site.card-text>
+</x-card.text>
+<x-card.text>
 	<x-slot:aside>
 		<h2>Allgemeine Geschäftsbedingungen</h2>
 	</x-slot:aside>
 	<p>Unsere Allgemeine Geschäftsbedingungen finden Sie <a href="/media/downloads/Visualisierungs-Akademie_AGB_Jul24.pdf" target="_blank">hier</a>.</p>
-</x-site.card-text>
-<x-site.card-text>
+</x-card.text>
+<x-card.text>
 	<x-slot:aside>
 		<h2>Disclaimer</h2>
 	</x-slot:aside>
 	<p>Alle Texte und Links wurden sorgfältig geprüft und werden laufend aktualisiert. Wir sind bemüht, richtige und vollständige Informationen auf dieser Website bereitzustellen, übernehmen aber keinerlei Verantwortung, Garantien oder Haftung dafür, dass die durch diese Website bereitgestellten Informationen, richtig, vollständig oder aktuell sind. Wir behalten uns das Recht vor, jederzeit und ohne Vorankündigung die Informationen auf dieser Website zu ändern und verpflichten uns auch nicht, die enthaltenen Informationen zu aktualisieren. Alle Links zu externen Anbietern wurden zum Zeitpunkt ihrer Aufnahme auf ihre Richtigkeit überprüft, dennoch haften wir nicht für Inhalte und Verfügbarkeit von Websites, die mittels Hyperlinks zu erreichen sind. Für illegale, fehlerhafte oder unvollständige Inhalte und insbesondere für Schäden, die durch Inhalte verknüpfter Seiten entstehen, haftet allein der Anbieter der Seite, auf welche verwiesen wurde. Dabei ist es gleichgültig, ob der Schaden direkter, indirekter oder finanzieller Natur ist oder ein sonstiger Schaden vorliegt, der sich aus Datenverlust, Nutzungsausfall oder anderen Gründen aller Art ergeben könnte.</p>
-</x-site.card-text>
-<x-site.card-text privacy>
+</x-card.text>
+<x-card.text privacy>
 	<x-slot:aside>
 		<h2>Datenschutzerklärung</h2>
 	</x-slot:aside>
@@ -250,4 +250,4 @@
 	<h2>13. Schlussbestimmungen</h2>
 	<p>Wir haben diese Datenschutzerklärung mit dem <a href="https://www.datenschutzpartner.ch/angebot-datenschutz-generator/" rel="nofollow noopener noreferrer" target="_blank">Datenschutz-Generator</a> von <a href="https://datenschutzpartner.ch/" rel="nofollow noopener noreferrer" target="_blank">Datenschutzpartner</a> erstellt.</p>
 	<p>Wir können diese Datenschutzerklärung jederzeit anpassen und ergänzen. Wir werden über solche Anpassungen und Ergänzungen in geeigneter Form informieren, insbesondere durch Veröffentlichung der jeweils aktuellen Datenschutzerklärung auf unserer Website.</p>
-</x-site.card-text>
+</x-card.text>

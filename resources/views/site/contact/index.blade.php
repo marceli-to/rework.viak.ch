@@ -36,20 +36,20 @@
 			</p>
 
 			<div class="mt-16 sm:mt-24 lg:mt-32">
-				<x-site.map />
+				<x-ui.map />
 			</div>
 		</div>
 	</article>
 
-	<x-site.collapsible title="Anreise">
+	<x-ui.collapsible title="Anreise">
 		@include('site.contact._directions')
-	</x-site.collapsible>
+	</x-ui.collapsible>
 
-	<x-site.collapsible title="Über uns" :expanded="false">
+	<x-ui.collapsible title="Über uns" :expanded="false">
 		@include('site.contact._about')
-	</x-site.collapsible>
+	</x-ui.collapsible>
 
-	<x-site.collapsible title="Impressum" :expanded="false" last>
+	<x-ui.collapsible title="Impressum" :expanded="false" last>
 		@include('site.contact._imprint')
-	</x-site.collapsible>
+	</x-ui.collapsible>
 </x-layout.site>

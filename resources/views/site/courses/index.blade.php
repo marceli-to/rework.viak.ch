@@ -27,7 +27,7 @@
 		filtered by so the two agree on the first paint.
 	--}}
 	{{-- The trigger lives inside this scope now — it is the filter's own control
-	     (`components/site/course-filter.blade.php`), so it sets `open` directly
+	     (`components/course/filter.blade.php`), so it sets `open` directly
 	     rather than asking for it through a window event. --}}
 	<div
 		class="grid grid-cols-12 gap-16 lg:gap-40"
@@ -47,7 +47,7 @@
 					     no uuid is written down twice. `::class` escapes to a
 					     literal `:class` — on a component tag Blade would read
 					     one colon as a PHP expression. --}}
-					<x-site.course-card
+					<x-card.course
 						:course="$course"
 						:eager="$loop->index < 2"
 						data-facets="{{ json_encode($facets[$course->uuid]) }}"
@@ -62,7 +62,7 @@
 		</div>
 
 		<div class="col-span-12 sm:col-span-4">
-			<x-site.course-filter :filter="$filter" :matching="count($matching)" />
+			<x-course.filter :filter="$filter" :matching="count($matching)" />
 		</div>
 	</div>
 </x-layout.site>

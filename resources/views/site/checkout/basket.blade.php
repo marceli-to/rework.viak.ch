@@ -7,7 +7,7 @@
 		`checkout/index.blade.php` sets `is-auth` on `<html>` and every step
 		after this one does the same.
 
-		The heading sits in a bare `<aside>` rather than in `<x-site.article>`:
+		The heading sits in a bare `<aside>` rather than in `<x-layout.article>`:
 		legacy's checkout puts `article.content-text` on the page with **only**
 		an aside in it and the list as a sibling, so the list runs the full
 		container width instead of a `span-8` column. `xs:hide` because the
@@ -58,7 +58,7 @@
 				</header>
 
 				<template x-for="item in items" :key="item.event.uuid">
-					<x-site.basket-row removable />
+					<x-row.basket removable />
 				</template>
 
 				{{--
@@ -90,5 +90,5 @@
 	{{-- *Entfernen* raises the same toast it does on the course page, and the
 	     rental question has nowhere to fire here — but the pair is one
 	     component and costs nothing hidden. --}}
-	<x-site.basket-dialogs />
+	<x-dialog.basket />
 </x-layout.site>

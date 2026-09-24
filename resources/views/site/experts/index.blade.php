@@ -10,7 +10,7 @@
 <x-layout.site title="Experten" heading="Experten">
 	<div class="grid grid-cols-12 gap-16 lg:gap-40">
 		@foreach ($experts as $expert)
-			<x-site.expert-card :expert="$expert" :eager="$loop->index < 3" class="col-span-6 sm:col-span-4" />
+			<x-card.expert :expert="$expert" :eager="$loop->index < 3" class="col-span-6 sm:col-span-4" />
 		@endforeach
 	</div>
 </x-layout.site>

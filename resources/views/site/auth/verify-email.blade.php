@@ -1,11 +1,11 @@
 <x-layout.site title="E-Mail bestätigen" auth>
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">E-Mail bestätigen</h1>
 		</x-slot:aside>
 
 		@if (session('status') === 'verification-link-sent')
-			<x-site.toast variant="success">Wir haben Ihnen einen neuen Bestätigungslink gesendet.</x-site.toast>
+			<x-ui.toast variant="success">Wir haben Ihnen einen neuen Bestätigungslink gesendet.</x-ui.toast>
 		@endif
 
 		<p class="mb-32">
@@ -15,7 +15,7 @@
 
 		<form method="POST" action="{{ route('verification.send') }}">
 			@csrf
-			<x-site.button type="submit" class="w-full">Link erneut senden</x-site.button>
+			<x-ui.button type="submit" class="w-full">Link erneut senden</x-ui.button>
 		</form>
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

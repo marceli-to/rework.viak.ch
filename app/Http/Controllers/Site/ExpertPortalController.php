@@ -371,7 +371,7 @@ class ExpertPortalController extends Controller
 	 *
 	 * The body is stored and rendered as HTML — legacy composes it in TinyMCE,
 	 * and the student's screen puts it through [[RichText]]. The composer is a
-	 * tiptap editor now ([[x-site.editor]]), whose HTML the request cleans;
+	 * tiptap editor now ([[x-form.editor]]), whose HTML the request cleans;
 	 * this is for the `<textarea>` under it, which is what a browser without
 	 * JavaScript sends.
 	 *

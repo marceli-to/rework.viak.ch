@@ -26,8 +26,8 @@
 	TinyMCE's colours exactly and looked like a different site's widget.
 
 	**The text inside is what the student will see**: 14/16/18px, the size the
-	thread's collapsible gives a message ([[x-site.message-row]]), and
-	`x-site.rich-text`'s own rules for paragraphs, lists, bold and links. The
+	thread's collapsible gives a message ([[x-row.message]]), and
+	`x-ui.rich-text`'s own rules for paragraphs, lists, bold and links. The
 	icons are TinyMCE 6.8's, which is MIT — 5.x, the version legacy runs, is
 	LGPL.
 
@@ -35,8 +35,9 @@
 	that matters, in a bar under the toolbar.
 
 	Without JavaScript the box stays cloaked and the textarea is the field,
-	styled as `x-site.textarea` styles it; the server tells the two apart by
-	`{name}_format`.
+	styled as the site's inputs are but with the body's 1.3 line height — legacy's
+	normalize sets `input { line-height: normal }` and leaves `textarea` alone.
+	The server tells the two apart by `{name}_format`.
 --}}
 <div class="relative mb-16 lg:mb-32" x-data="editor">
 	@if ($label)
@@ -103,7 +104,7 @@
 		</div>
 
 		{{-- ProseMirror's own element goes in here, styled with
-		     `x-site.rich-text`'s rules so the composer shows the message as
+		     `x-ui.rich-text`'s rules so the composer shows the message as
 		     the thread will. `[&_li>p]:mb-0` is in both: tiptap wraps a list
 		     item's text in a paragraph, and the paragraph margin would space
 		     the list out. --}}

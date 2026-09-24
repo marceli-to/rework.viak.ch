@@ -199,11 +199,11 @@
 					     *Verwalten* has always meant to go — it pointed at
 					     `/dashboard` while there was nothing better
 					     ([[09-public-site]]). --}}
-					<x-site.button variant="outline"
+					<x-ui.button variant="outline"
 						href="{{ \App\Support\SiteUrl::studentEvent($event->uuid) }}"
 						title="Buchung verwalten">
 						Verwalten
-					</x-site.button>
+					</x-ui.button>
 				@elseif ($full)
 					{{-- At the row's size, like the deadline and the state line
 					     (Marcel, 2026-09-22). It stands in for the button
@@ -218,7 +218,7 @@
 					{{-- Legacy sends an unverified account to the verification
 					     screen rather than into the basket, because the
 					     confirmation mail has nowhere to land. --}}
-					<x-site.button href="{{ route('verification.notice') }}">Buchen</x-site.button>
+					<x-ui.button href="{{ route('verification.notice') }}">Buchen</x-ui.button>
 				@else
 					{{-- `Basket.vue`: *Buchen* while the event is not in the
 					     basket, the grey *Entfernen* once it is.
@@ -231,17 +231,17 @@
 					     price ([[PriceBasket]]), and `rentals_available` is the
 					     event's own switch: a course in a room without machines
 					     cannot sell one. The dialog itself is
-					     `<x-site.basket-dialogs />`, once per page. --}}
+					     `<x-dialog.basket />`, once per page. --}}
 					<div x-data="{ uuid: @js($event->uuid), rentals: @js((bool) $event->rentals_available) }">
 						{{-- *Buchen* renders without `x-cloak`, so it is what a
 						     visitor with no JavaScript is left holding, and the
 						     common case never flashes. Only *Entfernen* has to
 						     wait for the store to be read. --}}
-						<x-site.button x-show="! $store.basket.has(uuid)"
-							@click="$store.basket.book(uuid, rentals)">Buchen</x-site.button>
+						<x-ui.button x-show="! $store.basket.has(uuid)"
+							@click="$store.basket.book(uuid, rentals)">Buchen</x-ui.button>
 
-						<x-site.button variant="secondary" x-cloak x-show="$store.basket.has(uuid)"
-							@click="$store.basket.remove(uuid)">Entfernen</x-site.button>
+						<x-ui.button variant="secondary" x-cloak x-show="$store.basket.has(uuid)"
+							@click="$store.basket.remove(uuid)">Entfernen</x-ui.button>
 					</div>
 				@endif
 			</div>

@@ -15,7 +15,7 @@
 		No JavaScript of its own. The pencil is a link and the two collapsibles
 		are the only Alpine on the page.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		{{-- `.icon-edit`, `position: absolute; top: 0; right: 0` at 18×18, over
 		     the aside rather than over the column — the student's profile has
 		     the same one in the same place. --}}
@@ -30,11 +30,11 @@
 			     already carries the page title on a phone. --}}
 			<h1 class="hidden font-bold text-teal sm:block">Mein Profil</h1>
 
-			<x-site.back-link :href="route('logout')" label="Logout" direction="right" method="post" />
+			<x-ui.back-link :href="route('logout')" label="Logout" direction="right" method="post" />
 		</x-slot:aside>
 
 		@if (session('status'))
-			<x-site.toast variant="success">{{ session('status') }}</x-site.toast>
+			<x-ui.toast variant="success">{{ session('status') }}</x-ui.toast>
 		@endif
 
 		<div>
@@ -45,7 +45,7 @@
 			@if ($user->country && $user->country_code !== 'ch')<br>{{ $user->country->name }}@endif
 		</div>
 		<div><a href="mailto:{{ $user->email }}" class="hover:text-teal">{{ $user->email }}</a></div>
-	</x-site.article>
+	</x-layout.article>
 
 	{{-- 48px above, 64 from `lg` — `.collapsible-container`, as on the student's
 	     profile. --}}
@@ -59,19 +59,19 @@
 			What takes their place is `showBookings` — *12 / 14 Teilnehmer*, the
 			one number an expert opens this page for.
 		--}}
-		<x-site.collapsible title="Bevorstehende Kurse" :expanded="true" :count="$upcoming->count()">
+		<x-ui.collapsible title="Bevorstehende Kurse" :expanded="true" :count="$upcoming->count()">
 			@forelse ($upcoming as $event)
-				<x-site.event-row :event="$event" :showExperts="false" :showFee="false"
+				<x-row.event :event="$event" :showExperts="false" :showFee="false"
 					:bookings="$event->bookings_count">
 					<x-slot:action>
-						<x-site.button href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
-							title="Detail">Detail</x-site.button>
+						<x-ui.button href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
+							title="Detail">Detail</x-ui.button>
 					</x-slot:action>
-				</x-site.event-row>
+				</x-row.event>
 			@empty
 				<p class="mt-16 italic">Du hast keine bevorstehenden Kurse.</p>
 			@endforelse
-		</x-site.collapsible>
+		</x-ui.collapsible>
 
 		{{--
 			*Vergangene Kurse*, shut — and it keeps its *Detail* button, unlike
@@ -79,18 +79,18 @@
 			link. An expert still wants the participant list of a course that has
 			run: it is who was in the room.
 		--}}
-		<x-site.collapsible title="Vergangene Kurse" :expanded="false" :count="$past->count()">
+		<x-ui.collapsible title="Vergangene Kurse" :expanded="false" :count="$past->count()">
 			@forelse ($past as $event)
-				<x-site.event-row :event="$event" :showExperts="false" :showFee="false"
+				<x-row.event :event="$event" :showExperts="false" :showFee="false"
 					:bookings="$event->bookings_count">
 					<x-slot:action>
-						<x-site.button href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
-							title="Detail">Detail</x-site.button>
+						<x-ui.button href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
+							title="Detail">Detail</x-ui.button>
 					</x-slot:action>
-				</x-site.event-row>
+				</x-row.event>
 			@empty
 				<p class="mt-16 italic">Du hast keine abgeschlossenen Kurse.</p>
 			@endforelse
-		</x-site.collapsible>
+		</x-ui.collapsible>
 	</div>
 </x-layout.site>

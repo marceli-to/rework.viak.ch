@@ -31,7 +31,7 @@
 		painting its own validation errors; this posts to Fortify and Laravel
 		paints them, which is the same page with 200 fewer lines behind it.
 	--}}
-	<x-site.article>
+	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Registrieren</h1>
 
@@ -44,18 +44,18 @@
 		</x-slot:aside>
 
 		@if ($errors->any())
-			<x-site.toast>Es ist ein Fehler aufgetreten.</x-site.toast>
+			<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
 		@endif
 
 		<form method="POST" action="{{ route('register') }}">
 			@csrf
 
-			<x-site.select name="gender" label="Geschlecht" :options="$genders" placeholder="Bitte wählen..." required />
+			<x-form.select name="gender" label="Geschlecht" :options="$genders" placeholder="Bitte wählen..." required />
 
-			<x-site.field name="first_name" label="Vorname" required autocomplete="given-name" />
-			<x-site.field name="last_name" label="Nachname" required autocomplete="family-name" />
-			<x-site.field name="company" label="Firma" autocomplete="organization" />
-			<x-site.field name="phone" label="Telefon" type="tel" required autocomplete="tel" />
+			<x-form.field name="first_name" label="Vorname" required autocomplete="given-name" />
+			<x-form.field name="last_name" label="Nachname" required autocomplete="family-name" />
+			<x-form.field name="company" label="Firma" autocomplete="organization" />
+			<x-form.field name="phone" label="Telefon" type="tel" required autocomplete="tel" />
 
 			{{--
 				Street and number share a row from `sm`, **half and half**.
@@ -69,10 +69,10 @@
 			--}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="street" label="Strasse" required autocomplete="address-line1" />
+					<x-form.field name="street" label="Strasse" required autocomplete="address-line1" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="street_no" label="Nr." maxlength="5" />
+					<x-form.field name="street_no" label="Nr." maxlength="5" />
 				</div>
 			</div>
 
@@ -80,14 +80,14 @@
 			     on production, not the 4/8 this carried. --}}
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-6">
-					<x-site.field name="zip" label="PLZ" required maxlength="10" autocomplete="postal-code" />
+					<x-form.field name="zip" label="PLZ" required maxlength="10" autocomplete="postal-code" />
 				</div>
 				<div class="sm:col-span-6">
-					<x-site.field name="city" label="Ort" required autocomplete="address-level2" />
+					<x-form.field name="city" label="Ort" required autocomplete="address-level2" />
 				</div>
 			</div>
 
-			<x-site.select
+			<x-form.select
 				name="country_code"
 				label="Land"
 				:options="\App\Actions\Accounts\RegisterUser::countries()"
@@ -95,13 +95,13 @@
 				required
 			/>
 
-			<x-site.field name="email" label="E-Mail" type="email" required autocomplete="email" />
+			<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" />
 
 			{{-- **Paste is blocked here, as it is on the live site.** A pasted
 			     confirmation confirms the typo rather than the address, and every
 			     password reset for the life of the account goes to whatever was
 			     typed. --}}
-			<x-site.field
+			<x-form.field
 				name="email_confirmation"
 				label="E-Mail wiederholen"
 				type="email"
@@ -110,8 +110,8 @@
 				onpaste="event.preventDefault();"
 			/>
 
-			<x-site.field name="password" label="Passwort" type="password" required autocomplete="new-password" />
-			<x-site.field name="password_confirmation" label="Passwort wiederholen" type="password" required autocomplete="new-password" />
+			<x-form.field name="password" label="Passwort" type="password" required autocomplete="new-password" />
+			<x-form.field name="password_confirmation" label="Passwort wiederholen" type="password" required autocomplete="new-password" />
 
 			{{-- Which machines the student works on. It is what decides whether a
 			     rented laptop is any use to them. --}}
@@ -120,12 +120,12 @@
 
 				<div class="flex flex-col gap-8">
 					@foreach ($operatingSystems as $value => $label)
-						<x-site.checkbox
+						<x-form.checkbox
 							name="operating_systems[]"
 							:id="'os_'.$value"
 							:value="$value"
 							:checked="in_array($value, $chosenSystems, true)"
-						>{{ $label }}</x-site.checkbox>
+						>{{ $label }}</x-form.checkbox>
 					@endforeach
 				</div>
 
@@ -135,20 +135,20 @@
 			</div>
 
 			<div class="mb-16 flex flex-col gap-8 lg:mb-32">
-				<x-site.checkbox name="accept_tos" :checked="(bool) old('accept_tos')">
+				<x-form.checkbox name="accept_tos" :checked="(bool) old('accept_tos')">
 					Ich akzeptiere die AGB *
-				</x-site.checkbox>
+				</x-form.checkbox>
 
-				<x-site.checkbox name="subscribe_newsletter" :checked="(bool) old('subscribe_newsletter')">
+				<x-form.checkbox name="subscribe_newsletter" :checked="(bool) old('subscribe_newsletter')">
 					Ich möchte den Newsletter abonnieren
-				</x-site.checkbox>
+				</x-form.checkbox>
 			</div>
 
 			@error('accept_tos')
 				<div class="mb-16 text-md text-danger lg:text-lg">{{ $message }}</div>
 			@enderror
 
-			<x-site.button type="submit" class="w-full">Registrieren</x-site.button>
+			<x-ui.button type="submit" class="w-full">Registrieren</x-ui.button>
 		</form>
-	</x-site.article>
+	</x-layout.article>
 </x-layout.site>

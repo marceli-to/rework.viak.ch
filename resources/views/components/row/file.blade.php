@@ -64,8 +64,8 @@
 		     directly. --}}
 		<div class="mt-24 sm:col-span-3 sm:mt-0 sm:flex sm:justify-end">
 			<div>
-				<x-site.button href="{{ route('media.download', $file->uuid) }}"
-					class="mb-8" title="{{ $file->original_name }}">Download</x-site.button>
+				<x-ui.button href="{{ route('media.download', $file->uuid) }}"
+					class="mb-8" title="{{ $file->original_name }}">Download</x-ui.button>
 
 				{{ $action }}
 			</div>

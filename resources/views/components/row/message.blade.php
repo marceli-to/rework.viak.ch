@@ -28,7 +28,7 @@
 
 	| | |
 	|---|---|
-	| row | `%stacked-list` — the row `x-site.event-row` draws |
+	| row | `%stacked-list` — the row `x-row.event` draws |
 	| columns | date `span-2`, sender `span-3`, preview `span-4`/`md:5`, button `span-3`/`md:2` |
 	| on a phone | one *date – sender* line instead of the first two, 24px above the button |
 	| overlay | `%lightbox`, white at 90 % |
@@ -37,7 +37,7 @@
 	| footer | the same rule above it, only when there are attachments |
 
 	**The box is the third of three and that is why it is here rather than a
-	variant of `x-site.lightbox`.** `.message__inner` restates the padding, the
+	variant of `x-ui.lightbox`.** `.message__inner` restates the padding, the
 	max-width and the min-width of `%lightbox > div` at a higher specificity —
 	700/480 against 900/600, 8/16 against 12/24 — so a `variant` prop would be
 	three overrides deep on a component whose own docblock already explains why
@@ -74,7 +74,7 @@
 		{{-- `.xs\:mt-6x` — 24px above the button on a phone, where the columns
 		     have stacked; nothing from `sm`. --}}
 		<div class="mt-24 sm:col-span-3 sm:mt-0 lg:col-span-2">
-			<x-site.button @click="open = true" title="Nachricht anzeigen">Anzeigen</x-site.button>
+			<x-ui.button @click="open = true" title="Nachricht anzeigen">Anzeigen</x-ui.button>
 		</div>
 	</div>
 </article>
@@ -85,7 +85,7 @@
 		Escape and the backdrop both close it: `.message.is-visible` sets
 		`cursor: pointer` on the overlay and `cursor: default` on the box, which
 		is the backdrop advertising a close that `Notification.vue`'s dead
-		`addListeners()` never wired ([[x-site.modal]]). Honoured here, as it is
+		`addListeners()` never wired ([[x-ui.modal]]). Honoured here, as it is
 		there.
 	--}}
 	<div x-cloak x-show="open"
@@ -98,7 +98,7 @@
 			{{-- `.icon-lightbox-close` is `position: absolute` 32px in from the
 			     corner of the *overlay*, 16 on a phone — not of the box. It is
 			     the one control legacy draws with feather's `XIcon`; ours is the
-			     site's own cross, as `x-site.lightbox` already does. --}}
+			     site's own cross, as `x-ui.lightbox` already does. --}}
 			<button type="button" @click="open = false"
 				class="absolute top-16 right-16 z-[3001] block transition-colors hover:text-teal sm:top-32 sm:right-32"
 				aria-label="Schliessen">
@@ -123,17 +123,17 @@
 			</header>
 
 			{{-- A bare `<p>` in legacy, so it takes the global paragraph margin —
-			     12px, 16 from `lg`, the same pair `x-site.rich-text` gives the
+			     12px, 16 from `lg`, the same pair `x-ui.rich-text` gives the
 			     body below it. --}}
 			@if ($message->subject)
 				<p class="mb-12 lg:mb-16">{{ $message->subject }}</p>
 			@endif
 
 			{{-- The body is editor HTML from either side — the dashboard's, or
-			     the expert composer's ([[x-site.editor]], cleaned on the way in
+			     the expert composer's ([[x-form.editor]], cleaned on the way in
 			     by [[MessageHtml]]) — and goes out through [[RichText]]'s
 			     allowlist either way. --}}
-			<x-site.rich-text :html="$message->body" />
+			<x-ui.rich-text :html="$message->body" />
 
 			@if ($message->media->isNotEmpty())
 				{{-- *Anhänge* — grey, going lighter on hover, which is the one

@@ -41,7 +41,7 @@
 @endphp
 
 @if ($live)
-	{{-- Empty `x-data`, for the same reason `<x-site.modal>` has one: Alpine 3
+	{{-- Empty `x-data`, for the same reason `<x-ui.modal>` has one: Alpine 3
 	     evaluates a directive only inside a component, `$store` or not. --}}
 	<div x-data x-cloak
 		x-show="$store.toast.open"
