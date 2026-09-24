@@ -16,15 +16,16 @@ use App\Models\User;
  * The dashboard's course form — `/api/admin/courses/{course}` and its
  * neighbours ([[07-dashboard]]).
  *
- * The first four guarantees moved here from `CourseApiTest` with the endpoint:
- * the server assigns the number and never reuses one, and the slug survives a
- * new title. The rest are the form's own: what it loads is what it saves, the
+ * Two guarantees moved here from `CourseApiTest` with the endpoint: a course
+ * number is never reused, and the slug survives a new title. The number itself
+ * is typed now, as in legacy (Marcel, 2026-09-24). The rest are the form's own: what it loads is what it saves, the
  * English stays, the HTML is cleaned, the videos save with it, and a course
  * with bookings cannot be deleted.
  */
 function coursePayload(array $overrides = []): array
 {
 	return [
+		'number' => 77,
 		'title' => 'Rhino Grundkurs',
 		'subtitle' => 'mit Tom Pawlofsky',
 		'fee' => '890',
@@ -48,10 +49,8 @@ it('keeps the form to admins', function () {
 		->assertForbidden();
 });
 
-it('creates a course, assigning the number and slug itself', function () {
-	Course::factory()->create(['number' => 41]);
-
-	$response = $this->actingAs($this->admin)->postJson('/api/admin/courses', coursePayload(['number' => 999]))->assertCreated();
+it('creates a course with the number typed, and derives the slug', function () {
+	$response = $this->actingAs($this->admin)->postJson('/api/admin/courses', coursePayload(['number' => 42]))->assertCreated();
 
 	$course = Course::where('uuid', $response->json('data.uuid'))->first();
 
@@ -60,11 +59,26 @@ it('creates a course, assigning the number and slug itself', function () {
 		->and((string) $course->fee)->toBe('890.00');
 });
 
-it('does not reuse the number of a soft-deleted course', function () {
+it('offers the next free number, counting deleted courses', function () {
 	Course::factory()->create(['number' => 12])->delete();
 
-	$this->actingAs($this->admin)->postJson('/api/admin/courses', coursePayload())->assertJsonPath('data.number', 13);
-	$this->getJson('/api/admin/courses/options')->assertJsonPath('data.next_number', 14);
+	$this->actingAs($this->admin)->getJson('/api/admin/courses/options')->assertJsonPath('data.next_number', 13);
+});
+
+/** Numbers are on invoices through `Event::number()`, so none comes back. */
+it('refuses a number another course has, deleted ones included', function () {
+	Course::factory()->create(['number' => 12])->delete();
+
+	$this->actingAs($this->admin)
+		->postJson('/api/admin/courses', coursePayload(['number' => 12]))
+		->assertJsonPath('errors.number.0', 'Diese Nummer ist bereits vergeben, auch gelöschte Kurse behalten ihre.');
+});
+
+it('lets a course keep its own number, or change it to a free one', function () {
+	$course = Course::factory()->create(['number' => 20]);
+
+	$this->actingAs($this->admin)->putJson("/api/admin/courses/{$course->uuid}", coursePayload(['number' => 20]))->assertOk();
+	$this->putJson("/api/admin/courses/{$course->uuid}", coursePayload(['number' => 21]))->assertJsonPath('data.number', 21);
 });
 
 it('keeps the slug when the title changes', function () {

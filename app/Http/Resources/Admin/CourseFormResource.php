@@ -15,9 +15,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * shape [[SaveCourseRequest]] takes back**, so the form sends what it was
  * given. German strings, taxonomy uuids, three facts, the videos inline.
  *
- * Plus three things the form reads and never sends: the number, which the
- * server assigns; the public URL; and whether any date of it has bookings,
- * which is what decides if it may be deleted.
+ * Plus two things the form reads and never sends: the public URL, and whether
+ * any date of it has bookings, which is what decides if it may be deleted.
  *
  * @mixin Course
  */

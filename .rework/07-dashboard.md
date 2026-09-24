@@ -323,16 +323,20 @@ dashboard; the fields are the site's own (`x-form.field` sizes throughout).
 - **Delete is refused while any date has a booking**, cancelled ones
   included; otherwise the course and its dates are soft-deleted together.
 - **The old public write path is gone** — `POST/PUT/DELETE /api/courses`
-  and their two requests; the guarantees their tests pinned (number assigned
-  and never reused, slug kept on a new title) are tested on the admin
-  endpoints now.
+  and their two requests; the guarantees their tests pinned (a number never
+  reused, the slug kept on a new title) are tested on the admin endpoints now.
+- **The number is typed, as in legacy** (Marcel, 2026-09-24 — it was
+  server-assigned). Prefilled with the next free one, and refused if any
+  course has it, **soft-deleted ones included**: numbers reach invoices
+  through `Event::number()`, so one never comes back. Legacy's duplicates came
+  from checking uniqueness on create only.
 - **The site's confirm dialog, in Vue** (`ui/ConfirmDialog.vue`), for deleting
   and for leaving with unsaved changes; the browser asks on a reload.
 - **Not there yet**: images (step 3, the media admin), and legacy's
   *Rezensionen* box, which held the Elfsight embeds (#18).
 
-Differences from legacy, all deliberate: no DE/EN switch, the number shown
-rather than typed, three toolbar buttons rather than seven.
+Differences from legacy, all deliberate: no DE/EN switch, three toolbar
+buttons rather than seven.
 
 ## A navigation for it
 

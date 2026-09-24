@@ -21,9 +21,14 @@ use Illuminate\Validation\Rule;
  * hands out: German strings for the texts, uuids for the taxonomies, SEO flat,
  * three facts, the videos inline. What the form loads is what it saves.
  *
- * Required as legacy requires it: title, subtitle, short description, and at
- * least one category, language and level. The number is not asked for — the
- * server assigns it and never reuses one ([[CourseNumber]]).
+ * Required as legacy requires it: the number, title, subtitle, short
+ * description, and at least one category, language and level.
+ *
+ * **The number is typed, as in legacy** (Marcel, 2026-09-24 — chunk 02 had made
+ * it server-assigned). What chunk 02 protected still holds: numbers appear on
+ * invoices through `Event::number()`, so one may never be reused — `unique`
+ * checks every row, **soft-deleted courses included** ([[CourseNumber]]). The
+ * form offers the next free one.
  */
 class SaveCourseRequest extends FormRequest
 {
@@ -50,7 +55,10 @@ class SaveCourseRequest extends FormRequest
 
 	public function rules(): array
 	{
+		$course = $this->route('course');
+
 		$rules = [
+			'number' => ['required', 'integer', 'min:1', 'max:65535', Rule::unique('courses', 'number')->ignore($course instanceof Course ? $course->id : null)],
 			'title' => ['required', 'string', 'max:255'],
 			'subtitle' => ['required', 'string', 'max:1000'],
 			'fee' => ['required', 'numeric', 'min:0', 'max:99999.99'],
@@ -88,6 +96,7 @@ class SaveCourseRequest extends FormRequest
 	public function messages(): array
 	{
 		return [
+			'number.unique' => 'Diese Nummer ist bereits vergeben, auch gelöschte Kurse behalten ihre.',
 			'categories.required' => 'Bitte mindestens eine Kategorie wählen.',
 			'languages.required' => 'Bitte mindestens eine Sprache wählen.',
 			'levels.required' => 'Bitte mindestens ein Level wählen.',
@@ -99,6 +108,7 @@ class SaveCourseRequest extends FormRequest
 	public function attributes(): array
 	{
 		return [
+			'number' => 'Nummer',
 			'title' => 'Titel',
 			'subtitle' => 'Subtitel',
 			'fee' => 'Kosten',
@@ -132,6 +142,7 @@ class SaveCourseRequest extends FormRequest
 		$de = fn (?string $value) => ['de' => $value === '' ? null : $value];
 
 		$attributes = [
+			'number' => (int) $data['number'],
 			'title' => $de($data['title']),
 			'subtitle' => $de($data['subtitle']),
 			'seo_description' => $de($data['seo_description'] ?? null),

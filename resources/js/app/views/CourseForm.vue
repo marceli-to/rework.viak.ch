@@ -30,8 +30,9 @@ import Textarea from '@/components/form/Textarea.vue';
  *
  * - **no DE / EN switch** — the admin edits German only, and the English stays
  *   as the port left it (`04-content.md`);
- * - **the number is shown, not typed** — the server assigns it and never
- *   reuses one (chunk 02);
+ * - **the number is prefilled with the next free one** on a new course, and
+ *   refused if any course, deleted ones included, already has it — numbers
+ *   are on invoices and are never reused;
  * - **no *Rezensionen* box** — it held the Elfsight embeds, which are being
  *   replaced by testimonials (`Open-Questions.md` #18);
  * - **the videos save with the form**, where legacy saved each on its own
@@ -47,7 +48,7 @@ const uuid = computed(() => route.params.uuid ?? null);
 const creating = computed(() => uuid.value === null);
 
 const empty = () => ({
-	title: '', subtitle: '', fee: '', online: false, publish: false,
+	number: '', title: '', subtitle: '', fee: '', online: false, publish: false,
 	short_description: '', full_description: '', information_booking: '', information_content: '', summary: '',
 	facts: ['', '', ''],
 	categories: [], languages: [], levels: [], software: [], tags: [],
@@ -66,8 +67,8 @@ let saved = '';
 const dirty = computed(() => form.value !== null && JSON.stringify(form.value) !== saved);
 
 function load(data) {
-	const { uuid: id, number, url, has_bookings, ...fields } = data;
-	meta.value = { uuid: id, number, url, has_bookings };
+	const { uuid: id, url, has_bookings, ...fields } = data;
+	meta.value = { uuid: id, url, has_bookings };
 	form.value = fields;
 	saved = JSON.stringify(fields);
 }
@@ -78,9 +79,9 @@ onMounted(async () => {
 		options.value = choices;
 		if (loaded) load(loaded);
 		else {
-			form.value = empty();
+			form.value = { ...empty(), number: choices.next_number };
 			saved = JSON.stringify(form.value);
-			meta.value = { number: choices.next_number };
+			meta.value = {};
 		}
 	} catch (problem) {
 		failed.value = problem.message;
@@ -153,7 +154,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 				<BackLink :to="{ name: 'courses', query: { modus: 'kurse' } }" />
 			</template>
 
-			<Field :model-value="meta.number" label="Nummer" readonly />
+			<Field v-model="form.number" label="Nummer" type="number" required :error="error('number')" />
 			<Field v-model="form.title" label="Titel" required :error="error('title')" />
 			<Textarea v-model="form.subtitle" label="Subtitel" required :error="error('subtitle')" />
 			<Field v-model="form.fee" label="Kosten" type="number" required :error="error('fee')" />
