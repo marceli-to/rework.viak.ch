@@ -380,13 +380,13 @@ ones. Found building the dashboard; the write-up is in `Todo.md`.
 - **`CreateBookingForUser`** refuses an admin's laptop that is not there rather
   than quietly booking without it.
 
-**One ported booking is over the count**: a rental on the 2026-12-15 date
-(event `eac2d8b5…`) where legacy itself now says the room has none — the count
-was lowered after it was booked. Legacy is in the same state; nothing refuses a
-booking that exists. Worth a look before that date.
+**One ported booking is over the count** — a rental where legacy itself says
+the room has none. A cutover check, not a code question: `Open-Questions.md`,
+*pending actions*.
 
-The other three seat messages are still English and reach the customer that
-way (*This course is fully booked.*) — a separate, small fix.
+**The refusals are German and name the course**, all four, since they reach
+the customer as they are — the other three were English until the same day
+(*This course is fully booked.*). See [[SeatNotAvailable]].
 
 ### Bookmarks stay — decided 2026-09-17
 

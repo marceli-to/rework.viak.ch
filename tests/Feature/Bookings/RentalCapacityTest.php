@@ -82,7 +82,7 @@ it('tells the portal why, in words a customer can read', function () {
 	$this->actingAs($student)
 		->patchJson("/api/bookings/{$booking->uuid}/rental", ['rental' => true])
 		->assertUnprocessable()
-		->assertJsonPath('message', 'Für diesen Kurs sind keine Mietcomputer mehr verfügbar.');
+		->assertJsonPath('message', "Für «{$event->course->title}» sind keine Mietcomputer mehr verfügbar.");
 });
 
 it('refuses an admin booking with a laptop that is not there', function () {
@@ -92,4 +92,19 @@ it('refuses an admin booking with a laptop that is not there', function () {
 		->toThrow(SeatNotAvailable::class);
 
 	expect(app(CreateBookingForUser::class)->execute($event, User::factory()->create())->has_rental)->toBeFalse();
+});
+
+/**
+ * These reach the customer as they are, in a toast. Three were English until
+ * 2026-09-24, and none said which course of a basket was meant.
+ */
+it('tells the customer in German, and names the course', function () {
+	$event = roomWith(0);
+	$event->course->update(['title' => ['de' => 'Blender Einführungskurs']]);
+	$event->refresh();
+
+	expect(SeatNotAvailable::full($event)->getMessage())->toBe('«Blender Einführungskurs»: Kurs ist ausgebucht.')
+		->and(SeatNotAvailable::closed($event)->getMessage())->toBe('«Blender Einführungskurs» kann nicht mehr gebucht werden.')
+		->and(SeatNotAvailable::alreadyBooked($event)->getMessage())->toBe('Du hast bereits eine Buchung für «Blender Einführungskurs».')
+		->and(SeatNotAvailable::noRentalLeft($event)->getMessage())->toBe('Für «Blender Einführungskurs» sind keine Mietcomputer mehr verfügbar.');
 });

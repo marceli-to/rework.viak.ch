@@ -358,6 +358,15 @@ the same breath.
   port copies rather than recomputes — so it comes across as it stands unless
   someone decides otherwise. Raise it with the client before the cutover. See
   `06-bookings.md`.
+- **At cutover, re-check rentals against laptop counts.** On the 2026-09-11
+  copy, one active rental sits on a date whose room legacy says has **no**
+  laptops — event `eac2d8b5-3c87-43a1-a8aa-ab3e2e37fd70`, 2026-12-15; the count
+  was most likely lowered after the booking. Legacy is in the same state and
+  the rework refuses only *new* laptops, so it ports as it stands. Run against
+  the cutover dump — any date where active rentals exceed `rentals_available`
+  — and settle each with VIAK: raise the count, or drop the rental before its
+  invoice is raised. Found 2026-09-24 with the laptop-count fix
+  (`06-bookings.md`, *Laptops are counted*).
 - **A fresh production dump before the cutover rehearsal.** The current copy is
   2026-09-11.
 - **Licence copy at launch.** The mockups are wireframes, so nothing to decide,
