@@ -31,7 +31,7 @@ final class TestimonialSchema extends Schema
 				'Software' => Software::query()->get()
 					->sortBy(fn (Software $software) => $software->getTranslation('title', 'de'), SORT_NATURAL | SORT_FLAG_CASE)
 					->mapWithKeys(fn (Software $software) => ['software:'.$software->uuid => $software->getTranslation('title', 'de')])->all(),
-			])->label('Bezieht sich auf')->with(['placeholder' => 'Allgemein — die VIAK als Ganzes']),
+			])->label('Bezieht sich auf')->with(['placeholder' => 'Allgemein (die VIAK als Ganzes)']),
       Field::row([
 				Field::checkbox('publish')->label('Publizieren'),
 			]),

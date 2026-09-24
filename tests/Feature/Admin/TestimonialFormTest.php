@@ -119,7 +119,7 @@ it('offers the subjects grouped, courses by number, then software', function () 
 
 	$field = collect($this->actingAs($this->admin)->getJson('/api/admin/forms/testimonial')->json('data.fields'))->firstWhere('name', 'subject');
 
-	expect($field['placeholder'])->toBe('Allgemein — die VIAK als Ganzes')
+	expect($field['placeholder'])->toBe('Allgemein (die VIAK als Ganzes)')
 		->and(array_column($field['options'], 'label'))->toBe(['Kurse', 'Software'])
 		->and(array_column($field['options'][0]['options'], 'label'))->toBe(['3 Drei', '20 Zwanzig'])
 		->and(array_column($field['options'][1]['options'], 'label'))->toBe(['Blender', 'Twinmotion']);

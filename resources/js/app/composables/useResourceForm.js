@@ -75,7 +75,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 			if (wasCreating) for (const hook of hooks) missed.push(...((await hook.afterCreate?.(id.value)) ?? []));
 
 			const done = wasCreating ? `${noun} erfasst` : 'Gespeichert';
-			toast(missed.length ? `${done} — nicht hochgeladen: ${missed.join(', ')}` : done, missed.length ? 'error' : 'success');
+			toast(missed.length ? `${done}. Nicht hochgeladen: ${missed.join(', ')}` : done, missed.length ? 'error' : 'success');
 
 			if (!stay) router.push(list);
 			else if (wasCreating) router.replace(edit(id.value));

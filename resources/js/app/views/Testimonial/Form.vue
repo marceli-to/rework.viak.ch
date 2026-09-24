@@ -26,7 +26,7 @@ const used = (meta) => meta.placements.map((place) => place.label).join(', ');
 		:deletion="{
 			title: 'Testimonial löschen',
 			text: 'Mit dieser Aktion wird das Testimonial gelöscht.',
-			question: (form, meta) => (meta.placements?.length ? `${form.name} — wird auch entfernt von: ${used(meta)}` : form.name),
+			question: (form, meta) => (meta.placements?.length ? `${form.name}. Wird auch entfernt von: ${used(meta)}` : form.name),
 		}"
 		:note="(meta) => (meta.placements?.length ? `Verwendet auf: ${used(meta)}` : 'Noch auf keiner Seite verwendet.')"
 		:stay="false"
