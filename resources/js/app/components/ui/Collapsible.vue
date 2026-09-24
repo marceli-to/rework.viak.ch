@@ -18,6 +18,8 @@ import { ref } from 'vue';
 const props = defineProps({
 	expanded: { type: Boolean, default: false },
 	dimmed: { type: Boolean, default: false },
+	// Legacy's `is-invalid`: the title goes red when a field inside failed.
+	invalid: { type: Boolean, default: false },
 });
 
 const open = ref(props.expanded);
@@ -25,7 +27,7 @@ const open = ref(props.expanded);
 
 <template>
 	<section class="relative mb-64 border-t border-gray-600 sm:border-t-2 sm:text-lg lg:text-xl" :class="{ '[&_*]:opacity-80': dimmed }">
-		<h2 class="leading-none font-bold text-gray-600">
+		<h2 class="leading-none font-bold" :class="invalid ? 'text-danger' : 'text-gray-600'">
 			<button
 				type="button"
 				class="relative block w-full pt-16 pb-6 text-left leading-none transition-colors hover:text-gray-400"

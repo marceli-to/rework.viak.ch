@@ -11,10 +11,11 @@ use Illuminate\Support\HtmlString;
  * unescaped, so it goes through a tag allowlist rather than straight out —
  * cheap insurance against a pasted `<script>` or `<iframe>`.
  *
- * Attributes are not filtered here. Message bodies no longer depend on it —
- * the composer's HTML is sanitised on the way in ([[MessageHtml]]) — but the
- * admin-authored fields still do, and when the dashboard's editor moves to
- * tiptap ([[07-editor]]) this should become a proper sanitiser too.
+ * Attributes are not filtered here, and nothing depends on it any more: a
+ * message is sanitised on the way in ([[MessageHtml]]), and so is a course's
+ * copy since the dashboard's editor arrived ([[EditorHtml]], 2026-09-24).
+ * Copy ported from legacy and not yet saved again still leans on this
+ * allowlist.
  */
 final class RichText
 {

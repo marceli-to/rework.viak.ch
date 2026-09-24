@@ -25,10 +25,6 @@ Route::get('events', [EventController::class, 'index']);
 Route::get('events/{event}', [EventController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function (): void {
-	Route::post('courses', [CourseController::class, 'store']);
-	Route::put('courses/{course}', [CourseController::class, 'update']);
-	Route::delete('courses/{course}', [CourseController::class, 'destroy']);
-
 	Route::post('events', [EventController::class, 'store']);
 	Route::put('events/{event}', [EventController::class, 'update']);
 	Route::patch('events/{event}/state', [EventController::class, 'setState']);
@@ -89,6 +85,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 	->group(function (): void {
 		Route::get('courses', [Admin\CourseController::class, 'index']);
 		Route::post('courses/order', [Admin\CourseController::class, 'order']);
+		Route::get('courses/options', [Admin\CourseController::class, 'options']);
+		Route::post('courses', [Admin\CourseController::class, 'store']);
+		Route::get('courses/{course}', [Admin\CourseController::class, 'show']);
+		Route::put('courses/{course}', [Admin\CourseController::class, 'update']);
+		Route::delete('courses/{course}', [Admin\CourseController::class, 'destroy']);
 
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
 	});

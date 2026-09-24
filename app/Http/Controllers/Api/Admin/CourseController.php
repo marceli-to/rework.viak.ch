@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Courses\CreateCourse;
+use App\Actions\Courses\SaveCourseRelations;
+use App\Actions\Courses\UpdateCourse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SaveCourseRequest;
+use App\Http\Resources\Admin\CourseFormResource;
 use App\Http\Resources\Admin\CourseRowResource;
 use App\Models\Course;
+use App\Support\CourseNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -68,5 +74,84 @@ class CourseController extends Controller
 		});
 
 		return response()->json(status: 204);
+	}
+
+	/**
+	 * What the form's pickers offer — every term of the five taxonomies, by
+	 * title, as legacy sorts them — and the number a new course will get.
+	 */
+	public function options(CourseNumber $numbers): JsonResponse
+	{
+		$terms = fn (string $model) => $model::query()->get()
+			->map(fn ($term) => ['uuid' => $term->uuid, 'title' => $term->getTranslation('title', 'de')])
+			->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE)
+			->values();
+
+		return response()->json([
+			'data' => [
+				...collect(SaveCourseRequest::TAXONOMIES)->map($terms)->all(),
+				'next_number' => $numbers->next(),
+			],
+		]);
+	}
+
+	public function show(Course $course): CourseFormResource
+	{
+		return new CourseFormResource($this->loadForForm($course));
+	}
+
+	public function store(SaveCourseRequest $request, CreateCourse $create, SaveCourseRelations $relations): JsonResponse
+	{
+		$course = DB::transaction(function () use ($request, $create, $relations): Course {
+			$course = $create->execute($request->courseAttributes());
+
+			return $relations->execute($course, $request->taxonomies(), $request->videos());
+		});
+
+		return (new CourseFormResource($this->loadForForm($course)))->response()->setStatusCode(201);
+	}
+
+	public function update(SaveCourseRequest $request, Course $course, UpdateCourse $update, SaveCourseRelations $relations): CourseFormResource
+	{
+		$course = DB::transaction(function () use ($request, $course, $update, $relations): Course {
+			$course = $update->execute($course, $request->courseAttributes($course));
+
+			return $relations->execute($course, $request->taxonomies(), $request->videos());
+		});
+
+		return new CourseFormResource($this->loadForForm($course));
+	}
+
+	/**
+	 * **Refused while any of its dates has a booking**, cancelled ones
+	 * included — those carry invoices, and a course is what they are
+	 * invoices *for*. Legacy deleted the course and every date with it and
+	 * checked nothing.
+	 *
+	 * Otherwise the course and its dates are soft-deleted together, so no
+	 * date is left pointing at a course that is gone.
+	 */
+	public function destroy(Course $course): JsonResponse
+	{
+		if ($course->events()->whereHas('bookings')->exists()) {
+			return response()->json([
+				'message' => 'Dieser Kurs hat Buchungen und kann nicht gelöscht werden. Setze ihn stattdessen auf nicht publiziert.',
+			], 422);
+		}
+
+		DB::transaction(function () use ($course): void {
+			$course->events()->delete();
+			$course->delete();
+		});
+
+		return response()->json(status: 204);
+	}
+
+	private function loadForForm(Course $course): Course
+	{
+		return $course->load([
+			'categories', 'languages', 'levels', 'software', 'tags',
+			'videos' => fn ($query) => $query->ordered(),
+		]);
 	}
 }

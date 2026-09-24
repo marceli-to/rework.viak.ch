@@ -20,8 +20,18 @@ const routes = [
 		meta: { title: 'Kurse' },
 	},
 
-	pending('kurs/erfassen', 'course.create', 'Kurs erfassen'),
-	pending('kurs/:uuid', 'course.edit', 'Kurs bearbeiten'),
+	{
+		path: '/dashboard/kurs/erfassen',
+		name: 'course.create',
+		component: () => import('@/views/CourseForm.vue'),
+		meta: { title: 'Kurs erfassen' },
+	},
+	{
+		path: '/dashboard/kurs/:uuid',
+		name: 'course.edit',
+		component: () => import('@/views/CourseForm.vue'),
+		meta: { title: 'Kurs bearbeiten' },
+	},
 	pending('kurs/:uuid/kursdaten', 'course.events', 'Kursdaten'),
 	pending('kurs/:uuid/kursdatum/erfassen', 'event.create', 'Kursdatum erfassen'),
 	pending('kursdatum/:uuid', 'event.show', 'Kursdatum'),

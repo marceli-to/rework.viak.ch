@@ -6,8 +6,8 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 ## Status
 
-**Mapped 2026-09-24. Step 1 built the same day**: the guard, the shell and
-*Kurse* in both modes — see *Step 1*, below. Asked for by Marcel before
+**Mapped 2026-09-24. Steps 1 and 2 built the same day**: the guard, the shell,
+*Kurse* in both modes, and the course form — see *Step 1* and *Step 2*, below. Asked for by Marcel before
 starting the field kit, because the kit is only worth designing against the
 whole set of screens it has to serve.
 
@@ -301,6 +301,38 @@ Talked through with Marcel before step 1, and agreed point by point.
   one click from raising every invoice for a date.
 
 Not measured: phone width.
+
+## Step 2 — the course form, built 2026-09-24
+
+*Kurs erfassen* and *Kurs bearbeiten*, by hand — the first of the field kit's
+two source forms. Measured against legacy's form on the local legacy
+dashboard; the fields are the site's own (`x-form.field` sizes throughout).
+
+- **Its own shape, both ways.** `GET /api/admin/courses/{course}` hands out
+  what `PUT` takes back ([[CourseFormResource]], [[SaveCourseRequest]]):
+  German strings, taxonomy uuids, SEO flat, three facts, the videos inline. A
+  test sends a loaded form straight back and gets the same form.
+- **German only, English kept.** A translatable field is written as
+  `['de' => …]`, which spatie merges; facts carry their `en` over by hand.
+- **The editor is the composer's**, in Vue (`form/Editor.vue`): tiptap, bold,
+  list, link — everything the ported copy uses. **[[EditorHtml]] cleans it on
+  the way in**, keeping `target` and `rel` (63 of 87 links open a new tab) and
+  relative links.
+- **Videos save with the form**, as a list: kept by uuid, added, removed,
+  ordered ([[SaveCourseRelations]]).
+- **Delete is refused while any date has a booking**, cancelled ones
+  included; otherwise the course and its dates are soft-deleted together.
+- **The old public write path is gone** — `POST/PUT/DELETE /api/courses`
+  and their two requests; the guarantees their tests pinned (number assigned
+  and never reused, slug kept on a new title) are tested on the admin
+  endpoints now.
+- **The site's confirm dialog, in Vue** (`ui/ConfirmDialog.vue`), for deleting
+  and for leaving with unsaved changes; the browser asks on a reload.
+- **Not there yet**: images (step 3, the media admin), and legacy's
+  *Rezensionen* box, which held the Elfsight embeds (#18).
+
+Differences from legacy, all deliberate: no DE/EN switch, the number shown
+rather than typed, three toolbar buttons rather than seven.
 
 ## A navigation for it
 

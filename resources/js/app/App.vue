@@ -1,6 +1,7 @@
 <script setup>
 import { RouterView } from 'vue-router';
 import Header from '@/components/layout/Header.vue';
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import Toast from '@/components/ui/Toast.vue';
 
 /**
@@ -16,4 +17,5 @@ import Toast from '@/components/ui/Toast.vue';
 		<RouterView />
 	</main>
 	<Toast />
+	<ConfirmDialog />
 </template>
