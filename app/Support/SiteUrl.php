@@ -6,6 +6,7 @@ namespace App\Support;
 
 use App\Enums\Role;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 /**
  * Builds public URLs with the locale prefix and the locale's own path segments
@@ -37,6 +38,48 @@ final class SiteUrl
 		$locale ??= app()->getLocale();
 
 		return '/'.$locale.'/'.self::segment('course', $locale).'/'.$slug;
+	}
+
+	/** The Experten page — `/de/experten`. */
+	public static function experts(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('experts', $locale);
+	}
+
+	/**
+	 * One expert — `/de/experte/{slug}/{uuid}`.
+	 *
+	 * **Legacy's shape, uuid and all**, unlike the course URL. A course has a
+	 * stored slug to resolve by, so its uuid form could be retired with a 301;
+	 * a person has no slug column, legacy derives it from the name on every
+	 * request, and the uuid is the only half that identifies anyone. So the ten
+	 * indexed URLs stay exactly as they are, and a stale slug — a renamed
+	 * expert — 301s to the current one ([[ExpertController::show]]).
+	 */
+	public static function expert(User $expert, ?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('expert', $locale).'/'.self::expertSlug($expert).'/'.$expert->uuid;
+	}
+
+	/**
+	 * Legacy's `SlugHelper::make()` on the full name: eight German and French
+	 * letters spelled out first — *Nähring* is `naehring`, not `nahring` — and
+	 * `Str::slug()` for the rest, which is what turns *Güneş* into `guenes`.
+	 * Checked against all ten live URLs on 2026-09-24.
+	 */
+	public static function expertSlug(User $expert): string
+	{
+		$name = mb_strtolower(trim("{$expert->first_name} {$expert->last_name}"), 'UTF-8');
+
+		return Str::slug(str_replace(
+			['ä', 'ö', 'ü', 'é', 'è', 'â', 'à', 'ç'],
+			['ae', 'oe', 'ue', 'e', 'e', 'a', 'a', 'c'],
+			$name,
+		));
 	}
 
 	/**

@@ -7,6 +7,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
+use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\StudentAddressController;
 use App\Http\Controllers\Site\StudentPortalController;
@@ -71,6 +72,22 @@ Route::prefix('{locale}')
 			Route::get($segments['course'].'/{slug}/{uuid}', [CourseController::class, 'redirectLegacy'])
 				->whereUuid('uuid')
 				->name("{$locale}.courses.legacy");
+
+			/*
+			 * The Experten page and one expert ([[09-public-site]]), on
+			 * legacy's URLs unchanged — see [[SiteUrl::expert]] for why this one
+			 * keeps its uuid when the course URL did not.
+			 *
+			 * The expert portal lives under the same `experte` segment, at
+			 * `/de/experte/profil/…`, and never collides with this: the second
+			 * segment here must be a uuid, and every portal path's is a word.
+			 */
+			Route::get($segments['experts'], [ExpertController::class, 'index'])
+				->name("{$locale}.experts.index");
+
+			Route::get($segments['expert'].'/{slug}/{uuid}', [ExpertController::class, 'show'])
+				->whereUuid('uuid')
+				->name("{$locale}.experts.show");
 
 			/*
 			 * The checkout, a student's ([[09-public-site]]).

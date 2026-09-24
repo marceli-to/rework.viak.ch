@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\Gender;
 use App\Enums\OperatingSystem;
 use App\Enums\Role;
+use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasUuid;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -48,6 +49,13 @@ class User extends Authenticatable implements MustVerifyEmail
 	/** @use HasFactory<UserFactory> */
 	use HasFactory;
 
+	/*
+	 * An expert's two portraits — the square teaser on the Experten page and
+	 * the 16:9 visual on their own page. The port had written 48 rows against
+	 * `User` since 2026-09-18 with no relation to read them back, which
+	 * `Open-Questions.md` lists under the unfilled morphs.
+	 */
+	use HasMedia;
 	use HasUuid;
 	use Notifiable;
 	use SoftDeletes;

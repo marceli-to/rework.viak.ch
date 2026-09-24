@@ -9,10 +9,9 @@
 	 * 12-column grid of two `span-6` lists — the nav links spread with
 	 * `space-between`, the icons pushed right with `flex-end`.
 	 *
-	 * All three nav items are always shown, as on the live site. Experten and
-	 * Kontakt have no pages in the rework yet (they arrive with chunk 04), so
-	 * they point at `#` rather than being hidden — the design is the thing being
-	 * matched, and a missing item changes it.
+	 * All three nav items are always shown, as on the live site. Kontakt has no
+	 * page in the rework yet, so it points at `#` rather than being hidden — the
+	 * design is the thing being matched, and a missing item changes it.
 	 */
 	$locale = app()->getLocale();
 
@@ -26,12 +25,12 @@
 	 * portal route is named `de.page.expert.profile` and its pattern is
 	 * `page.expert` exactly.
 	 *
-	 * A pattern that matches nothing is simply false, so the two items whose
-	 * pages arrive with chunk 04 need no special case while they point at `#`.
+	 * A pattern that matches nothing is simply false, so Kontakt needs no special
+	 * case while it points at `#`.
 	 */
 	$nav = [
 		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
-		['label' => 'Experten', 'href' => '#', 'match' => "{$locale}.experts.*"],
+		['label' => 'Experten', 'href' => \App\Support\SiteUrl::experts(), 'match' => "{$locale}.experts.*"],
 		['label' => 'Kontakt', 'href' => '#', 'match' => "{$locale}.contact"],
 	];
 

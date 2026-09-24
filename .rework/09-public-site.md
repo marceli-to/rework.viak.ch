@@ -146,8 +146,11 @@ Roughly in the order that unblocks the most.
    check again. See [[03-invoices]] for the pipeline.
 4. ~~The course detail page.~~ **Built 2026-09-21** — see *The course detail
    page*, below.
-5. **Experten, Kontakt, Firmenschulung, the homepage** — chunk 04's pages. The
-   nav lists Experten and Kontakt pointing at `#` until they exist.
+5. **Experten, Kontakt, Firmenschulung, the homepage** — the live site's own
+   pages, rebuilt at parity; the 2026-09-23 mockups of them are phase two
+   (`04-content.md`, *The mockup review*). **Experten is done, 2026-09-24** —
+   the list and the expert page; see *The Experten pages*, below. Kontakt still
+   points at `#`. Firmenschulung is legacy's `/de/individualschulungen`.
 6. ~~The rest of the filter.~~ **Done 2026-09-21** — all seven attributes, the
    three categories as links and the other six as selects.
 
@@ -1421,8 +1424,8 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
   `/de/checkout/…` throughout, and the rebuild follows it. Nothing indexes
   these pages, so it is a naming question rather than an SEO one, but the
   segment sits there unused until it is answered.
-- **Experten and Kontakt** are in the nav pointing at `#`. Fine while they have
-  no pages; worth a decision if that lasts.
+- **Kontakt** is in the nav pointing at `#`. Fine while it has no page;
+  Experten has had one since 2026-09-24.
 - **`meta keywords`** is carried across verbatim. Google has ignored it since
   2009 — removing it is a decision rather than a port, so it waits.
 - **`APP_NAME` is now the short name**, `Visualisierungs-Akademie`, because the
@@ -2127,3 +2130,44 @@ directories.
   `PostMessage` writes the recipient rows; there is no Mailable anywhere in the
   rework yet, on this path or the checkout's. *Die Nachricht wurde erfasst.* is
   the honest sentence until there is one.
+
+## The Experten pages — 2026-09-24
+
+`/de/experten` and `/de/experte/{slug}/{uuid}`, legacy's `ExpertController`
+rebuilt. Measured against production at 1482px on the same day: every card,
+the overlay, the hero and the course list land on production's pixel, save the
+arrow, which is 1px off because the icon is 30px wide and legacy's is 29.924.
+**Phone width is not measured** — the classes carry legacy's breakpoints from
+the SCSS, and `resize_window` cannot be trusted to prove them.
+
+- **The list is the course card without the filter.** Legacy wraps the grid in
+  `<course-filter>`, which draws nothing on this page, so it is one full-width
+  12-column grid: `span-6`, `span-4` from sm. The overlay lists the courses
+  under *Kurse:* as `%unordered-list` — disc, 20px margin on the item — and
+  pushes the arrow to the far edge (`icon-arrow-right:after` is
+  `space-between`).
+- **The expert page is the course page's hero in bold.** The same
+  `content-text-media`; legacy's `is-course` modifier is what makes the course
+  column regular weight, and this page does not carry it.
+- **The URL keeps its uuid.** A person has no slug column — legacy derives it
+  from the name through `SlugHelper` — so the uuid is what resolves, as it
+  does on the live site, and a stale slug 301s to the current one. The slug is
+  legacy's spelling exactly (`daniel-naehring`, `guenes-direk`), checked
+  against all ten live URLs. See [[SiteUrl::expert]].
+- **The course list is legacy's `getCourses()` plus three filters**: published,
+  not cancelled, published course. Legacy lists unpublished and cancelled dates
+  too, which can link to a 404. On the 2026-09-11 data the filters change
+  nothing for any of the ten experts. **Order is by event id**, not date,
+  because legacy reads the pivot unordered and gets entry order — by date,
+  seven of the ten lists come out reshuffled. Checked expert by expert.
+- **`User` finally reads its media.** `port:media` had written 48 rows against
+  `User` since 2026-09-18 — a teaser, a visual and an Open Graph crop for each
+  of 16 people — and nothing could read them back. `User` now uses `HasMedia`.
+  That closes the `User` half of the *count-check the morphs* item in
+  `Open-Questions.md`. The card takes the `is_teaser` row strictly, not
+  `teaser()`, which would fall back to a crop of the 16:9 visual where legacy
+  shows a placeholder.
+- **The local names are not the live ones.** The dev database is pseudonymised
+  (`user6@example.test`, invented names) but keeps the uuids and the order, so
+  compare the two sites by uuid, not by name.
+
