@@ -358,7 +358,7 @@ async function saveCrop() {
 		     The colours are `!`: the cropper's own stylesheet is not in a
 		     cascade layer, and unlayered CSS beats Tailwind's utilities
 		     whatever their specificity. -->
-		<Lightbox v-if="cropping" bare @close="cropping = null">
+		<Lightbox v-if="cropping" wide :close-on-backdrop="false" @close="cropping = null">
 			<div class="flex gap-10">
 				<button
 					v-for="format in FORMATS"
