@@ -1,4 +1,4 @@
-# 07 — The dashboard (mapped, not built)
+# 07 — The dashboard (being built: steps 1–5 done, 6 under way)
 
 The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 `resources/js/vue/backend/dashboard/` — 13 screen groups, about 55 routes and
@@ -6,21 +6,26 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 ## Status
 
-**Mapped 2026-09-24. Steps 1–4 built the same day**: the guard, the shell,
-*Kurse* in both modes, the course form and its images, and testimonials — see
-*Step 1* to *Step 4*, below. **Step 5, the field kit, the same day**, and
-**step 6 began with the course-date form** (*Step 6*, below). Next in step 6:
-the remaining forms, on the kit. Asked for by Marcel before
-starting the field kit, because the kit is only worth designing against the
-whole set of screens it has to serve.
+**Mapped 2026-09-24**, at Marcel's request before any form work, because the
+field kit is only worth designing against the whole set of screens it has to
+serve. **Steps 1–5 were built the same day** (the guard, the shell, *Kurse* in
+both modes, the course form and its images, testimonials, the field kit), and
+**step 6 began with the course-date form**. See *Step 1* to *Step 6* below,
+then *Loading* and *Polish*.
 
-What exists today:
+**Next: the rest of step 6**, the remaining forms on the kit: experts,
+students, discount codes, taxonomies, profile (*Build order*, below). Then
+step 7, which waits on mail (chunk 10).
 
-- `/dashboard/termine` and `/dashboard/kurse`, both read-only lists
-  (`resources/js/app/views/`). No `<input>` anywhere in the SPA.
-- **The shell has no guard.** `Route::view('/dashboard/{any?}')` carries no
-  middleware — the API behind it checks policies, but the page itself loads for
-  anyone. Legacy's is `role:admin`. First thing to fix, before any form.
+What exists at the end of 2026-09-24:
+
+- **The shell is guarded** (`auth`, admin only; a student or expert is sent to
+  their portal), and admin endpoints live under `/api/admin` (*Step 1*).
+- **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
+  *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form).
+  Every other menu entry renders `Pending` under its own title.
+- **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
+  `ResourceForm`) draws every form but the image section.
 - **Most of the domain logic the screens need already exists** — chunks 02, 03
   and 06 built it as Actions: `SetEventState` (confirm/close/cancel, which raise
   the invoices), `CreateBookingForUser`, `CancelBooking`, `SetRental`,
@@ -299,7 +304,8 @@ Talked through with Marcel before step 1, and agreed point by point.
     it with *Bearbeiten* and *Details*, `+` and `→` under each course;
   - drag to reorder, saved as 1…n with *Reihenfolge angepasst*; **off while a
     search is active**, where legacy saved the wrong list;
-  - mode and search in the URL.
+  - mode and search in the URL, and a form goes back to the list as it was
+    left (*Polish*, below).
 - **Not on the list any more: the state buttons.** Legacy confirms, closes
   and cancels on the course date's edit screen, and so will this; they were
   one click from raising every invoice for a date.
@@ -412,15 +418,17 @@ the field kit's two source forms, built by hand like the course form.
   a course, a software, or none for VIAK as a whole (`subject_type` /
   `subject_id`, polymorphic like the placements). The form offers it as a
   grouped select, courses by number then software; the list shows it as a
-  hint (*zu: 14 SketchUp Kurs*), and the pickers will show it the same way
+  hint (*14 SketchUp Kurs*), and the pickers will show it the same way
   and sort a page's own quotes first. This brought **grouped options and a
-  placeholder** to the kit's `select`.
+  placeholder** to the kit's `select`. (The list's hint was *zu: 14 SketchUp
+  Kurs* at first; the *zu:* was dropped the same day.)
 - **The list is legacy's content list**, measured on its News screen: the
-  header with its `+`, then one stacked row each (`list/EditableListItem.vue`),
-  in three columns: the quote over its author, what it is about, where it
-  is used. **Not dragged** (changed 2026-09-24): each page orders its own
-  testimonials in the picker, so `PATCH testimonials/order` is gone.
-  Unpublished rows are grey.
+  header with its `+`, then one stacked row each (`list/EditableListItem.vue`):
+  what it is about under the title, the quote over its author across the rest
+  of the row, then where it is used. **Not dragged** (changed 2026-09-24): each
+  page orders its own testimonials in the picker, so `PATCH testimonials/order`
+  is gone. Unpublished rows are grey; *nicht publiziert* and *Noch nicht
+  verwendet* are badges (*Polish*, below).
 - **The form is the course form's frame**: the fields, *Publizieren*, the
   danger zone, the leave guard.
 
@@ -505,7 +513,35 @@ delete was saving.
   doesn't flash it. *Löschen* is disabled while the delete runs, as
   *Speichern* is while saving.
 
+## Polish, 2026-09-24
+
+Small fixes after step 6, most of them from Marcel using the screens.
+
+- **One overlay** (`ui/Overlay.vue`): the veil, the teleport, Escape heard on
+  the document, and a veil click that only closes when the press began on the
+  veil. The lightbox and the confirm dialog both sit on it. Escape closes only
+  the topmost, so a confirm over the cropper leaves the cropper open, and a
+  crop drag released outside the box no longer closes it. The close cross is
+  fixed at the window's top right on every lightbox, and the cropper ignores
+  veil clicks (`closeOnBackdrop`).
+- **`ui/Badge.vue`**, a coloured border with bold text in the same colour
+  (neutral, success, warning, danger), for course-date states and the
+  testimonial list's *nicht publiziert* and *Noch nicht verwendet*.
+- **Deleting a testimonial asks with the start of its quote and its author**,
+  on lines of their own; the confirm dialog's text keeps line breaks.
+- **A short date in *Kurse*'s chronological column** (`shortDate()`,
+  *24.09.2026*): the long form broke over two lines.
+- **A form goes back to the list as it was left.** The router remembers each
+  screen's last query (`returnTo()` in `router/index.js`); *Zurück*,
+  *Speichern* and *Löschen* use it, so a search or a mode survives an edit.
+  The menu's *Kurse* still opens the plain list.
+- **No long dash in the dashboard's text**: a full stop, comma, parentheses or
+  colon instead.
+
 ## A navigation for it
+
+**Not taken up**: step 1 kept legacy's menu as it is (Kurse, Experten,
+Studenten, the rest behind the burger). What was proposed:
 
 Legacy's top bar holds Kurse, Experten, Studenten; everything else sits in a
 hamburger. Proposed, grouped by what the admin is doing:
@@ -521,14 +557,17 @@ hamburger. Proposed, grouped by what the admin is doing:
 ## Build order
 
 1. **Guard the shell** (`auth`, `role:admin`), and the list/detail/confirm
-   building blocks the operational screens share.
-2. **Course form, by hand** — kit form #1, against the existing API.
+   building blocks the operational screens share. (Built, *Step 1*.)
+2. **Course form, by hand** — kit form #1, against the existing API. (Built,
+   *Step 2*.)
 3. **Media admin** — ported from `forrerzimmermann.ch`, so a form can pick and
-   crop.
-4. **Testimonials, by hand** — kit form #2, and the model with it.
+   crop. (Built for the course's images, *Step 3*; no standalone *Medien*
+   screen yet.)
+4. **Testimonials, by hand** — kit form #2, and the model with it. (Built,
+   *Step 4*.)
 5. **Extract the kit** — `Field::` schemas beside the requests,
-   `GET /api/schema/{type}`, `FormRenderer`, error mapping, leave guard. Move
-   both forms onto it.
+   `GET /api/admin/forms/{form}`, `FormNode`, error mapping, leave guard. Move
+   both forms onto it. (Built, *Step 5*.)
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
    experts, students, discount codes, taxonomies, profile.
 7. **Operational screens, by hand** — the event page, the student page,
