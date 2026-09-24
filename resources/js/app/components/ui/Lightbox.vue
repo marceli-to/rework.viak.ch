@@ -6,10 +6,16 @@ import IconCross from '@/components/icons/Cross.vue';
  * step. A white veil at 90 %, a box with a 2px `#505050` border, 600 to 900px
  * wide from sm; a bold teal title with the close cross beside it, and 24px down
  * to the body. Escape or a click on the veil closes it.
+ *
+ * `bare` is legacy's cropper lightbox (`shared/modules/images`), measured on
+ * its dashboard on 2026-09-24: no title, the body straight on the box's 24px,
+ * a 900px box, and the close cross **fixed 32px from the window's top and right
+ * edges**, outside the box.
  */
 defineProps({
 	title: { type: String, default: null },
 	wide: { type: Boolean, default: false },
+	bare: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['close']);
@@ -25,7 +31,15 @@ const emit = defineEmits(['close']);
 			@click.self="emit('close')"
 			@keydown.esc="emit('close')"
 		>
-			<div class="max-w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:min-w-600 sm:p-24" :class="wide ? 'sm:w-900 sm:max-w-[90%]' : 'sm:max-w-900'">
+			<button v-if="bare" type="button" class="fixed top-32 right-32 transition-colors hover:text-teal" aria-label="Schliessen" @click="emit('close')">
+				<IconCross />
+			</button>
+
+			<div v-if="bare" class="relative w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:w-900 sm:max-w-[90%] sm:p-24">
+				<slot />
+			</div>
+
+			<div v-else class="max-w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:min-w-600 sm:p-24" :class="wide ? 'sm:w-900 sm:max-w-[90%]' : 'sm:max-w-900'">
 				<div class="max-h-[90vh] overflow-y-auto px-4">
 					<header v-if="title" class="flex justify-between">
 						<h1 class="mb-12 font-bold text-teal">{{ title }}</h1>

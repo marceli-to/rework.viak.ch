@@ -53,7 +53,11 @@ const ROLES = [
 ];
 const roleLabel = (role) => ROLES.find((option) => option.value === role)?.label;
 
-/** The crop's shape follows what the image is for: a square card, a 16:9 page. */
+/** Legacy's two formats. It opens on the one the image is for: a square card, a 16:9 page. */
+const FORMATS = [
+	{ label: '16:9', ratio: 16 / 9 },
+	{ label: '1:1', ratio: 1 },
+];
 const ratioFor = (role) => (role === 'teaser' ? 1 : 16 / 9);
 
 /** What a card shows is the crop, else the whole file. */
@@ -257,6 +261,12 @@ async function remove(image) {
 // Crop — vue-advanced-cropper over the file itself, so the numbers are its pixels.
 const cropping = ref(null);
 const cropper = ref(null);
+const aspect = ref(16 / 9);
+const size = ref('');
+
+watch(cropping, (image) => {
+	if (image) aspect.value = ratioFor(image.role);
+});
 
 const cropDefaults = computed(() => {
 	const crop = cropping.value?.crop;
@@ -278,12 +288,6 @@ async function saveCrop() {
 	} catch (problem) {
 		toast(problem.message, 'error');
 	}
-}
-
-async function clearCrop() {
-	await refresh(await cropMedia(cropping.value.uuid, { x: null, y: null, w: null, h: null }));
-	cropping.value = null;
-	toast('Zuschnitt entfernt');
 }
 </script>
 
@@ -343,21 +347,42 @@ async function clearCrop() {
 			</form>
 		</Lightbox>
 
-		<Lightbox v-if="cropping" title="Bild zuschneiden" wide @close="cropping = null">
-			<Cropper
-				ref="cropper"
-				:src="cropping.src"
-				:stencil-props="{ aspectRatio: ratioFor(cropping.role) }"
-				:default-position="cropDefaults ? { left: cropDefaults.left, top: cropDefaults.top } : undefined"
-				:default-size="cropDefaults ? { width: cropDefaults.width, height: cropDefaults.height } : undefined"
-				class="h-[60vh] bg-gray-200"
-			/>
-			<p class="mt-12 text-md text-gray-600 lg:text-lg">
-				{{ cropping.role === 'teaser' ? 'Quadratisch — für die Kurskarte.' : '16:9 — für die Kursseite.' }}
-			</p>
-			<div class="mt-24 flex flex-col gap-12 sm:flex-row">
-				<Button class="sm:flex-1" @click="saveCrop">Speichern</Button>
-				<Button v-if="cropping.crop" variant="secondary" class="sm:flex-1" @click="clearCrop">Zuschnitt entfernen</Button>
+		<!-- Legacy's cropper, measured on its dashboard on 2026-09-24: the two
+		     formats top left, the crop's size in pixels top right, the image
+		     473px high washed out in white outside a teal frame with 10px teal
+		     handles, and *Schliessen* / *Speichern* as two halves 8px below.
+		     The colours are `!`: the cropper's own stylesheet is not in a
+		     cascade layer, and unlayered CSS beats Tailwind's utilities
+		     whatever their specificity. -->
+		<Lightbox v-if="cropping" bare @close="cropping = null">
+			<div class="flex gap-10">
+				<button
+					v-for="format in FORMATS"
+					:key="format.label"
+					type="button"
+					class="h-30 w-50 bg-teal text-md text-white transition-colors hover:bg-black"
+					@click="aspect = format.ratio"
+				>
+					{{ format.label }}
+				</button>
+			</div>
+			<div class="absolute top-16 right-24 text-md text-black">{{ size }}</div>
+
+			<div class="mt-15 h-473">
+				<Cropper
+					ref="cropper"
+					:src="cropping.src"
+					:stencil-props="{ aspectRatio: aspect }"
+					:default-position="cropDefaults ? { left: cropDefaults.left, top: cropDefaults.top } : undefined"
+					:default-size="cropDefaults ? { width: cropDefaults.width, height: cropDefaults.height } : undefined"
+					class="h-full [&_.vue-advanced-cropper\_\_background]:bg-white! [&_.vue-advanced-cropper\_\_foreground]:bg-white! [&_.vue-simple-handler]:bg-teal! [&_.vue-simple-line]:border-teal!"
+					@change="({ coordinates }) => (size = `${Math.round(coordinates.width)} x ${Math.round(coordinates.height)}px`)"
+				/>
+			</div>
+
+			<div class="mt-8 grid grid-cols-2 gap-16 lg:gap-40">
+				<Button variant="secondary" @click="cropping = null">Schliessen</Button>
+				<Button @click="saveCrop">Speichern</Button>
 			</div>
 		</Lightbox>
 	</div>

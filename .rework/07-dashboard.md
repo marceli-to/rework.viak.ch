@@ -356,6 +356,13 @@ on the media subsystem ported from `forrerzimmermann.ch` in chunk 08.
   shape; 16:9 for the rest. In the file's own pixels, as Glide takes them.
   `vue-advanced-cropper`, which legacy and forrerzimmermann both use — the one
   widget not built from scratch.
+- **The crop dialog is legacy's, to the pixel** (measured 2026-09-24): no
+  title, the *16:9* / *1:1* buttons top left and the crop's size in pixels top
+  right, the image 473px high and washed out in white outside a teal frame with
+  10px teal handles, *Schliessen* and *Speichern* as two halves, and the close
+  cross fixed at the window's top right. It opens on the format the image is
+  for. The cropper's colours are marked `!` — its stylesheet is not in a
+  cascade layer, and unlayered CSS beats Tailwind's utilities.
 - **The cards show the crop**, through Glide at 480px, three to a row, drag to
   reorder. The drop box is the site's (`x-form.file-input`), with the 1px
   black line of 2026-09-23 rather than legacy's grey dashes.
