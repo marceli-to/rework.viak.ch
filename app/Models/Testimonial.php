@@ -57,13 +57,13 @@ class Testimonial extends Model
 		};
 	}
 
-	/** The hint a list or a picker shows beside the quote. */
+	/** What it is about, for the dashboard list's own column. */
 	public function subjectLabel(): string
 	{
 		return match (true) {
-			$this->subject instanceof Course => 'zu: '.$this->subject->number.' '.$this->subject->getTranslation('title', 'de'),
-			$this->subject instanceof Software => 'zu: '.$this->subject->getTranslation('title', 'de'),
-			default => 'allgemein',
+			$this->subject instanceof Course => $this->subject->number.' '.$this->subject->getTranslation('title', 'de'),
+			$this->subject instanceof Software => $this->subject->getTranslation('title', 'de'),
+			default => 'Allgemein',
 		};
 	}
 

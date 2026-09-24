@@ -1,9 +1,11 @@
 <script setup>
 import { computed } from 'vue';
+import Badge from '@/components/ui/Badge.vue';
 
 /**
- * `resources/views/components/course/event-state.blade.php` — the italic line
- * that says whether a course date is happening, in the row's own size.
+ * Whether a course date is happening, as a badge. The site says it in an
+ * italic line (`resources/views/components/course/event-state.blade.php`),
+ * which the dashboard drew the same way until 2026-09-24.
  *
  * The dashboard's labels are legacy's `EventState.vue` with `dashboard: true`,
  * which differ from the site's only for the two end states.
@@ -11,15 +13,15 @@ import { computed } from 'vue';
 const props = defineProps({ state: { type: String, required: true } });
 
 const STATES = {
-	closed: ['Kurs abgeschlossen', ''],
-	cancelled: ['Kurs abgesagt', 'text-danger'],
-	confirmed: ['Kurs findet statt', 'text-success'],
-	planned: ['Kurs offen, wird bestätigt', 'text-warning'],
+	closed: ['Kurs abgeschlossen', 'neutral'],
+	cancelled: ['Kurs abgesagt', 'danger'],
+	confirmed: ['Kurs findet statt', 'success'],
+	planned: ['Kurs offen, wird bestätigt', 'warning'],
 };
 
 const state = computed(() => STATES[props.state] ?? STATES.planned);
 </script>
 
 <template>
-	<div :class="state[1]"><em class="italic">{{ state[0] }}</em></div>
+	<div class="mt-4"><Badge :variant="state[1]">{{ state[0] }}</Badge></div>
 </template>

@@ -97,7 +97,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 
 		Route::get('testimonials', [Admin\TestimonialController::class, 'index']);
 		Route::post('testimonials', [Admin\TestimonialController::class, 'store']);
-		Route::patch('testimonials/order', [Admin\TestimonialController::class, 'order']);
 		Route::get('testimonials/{testimonial}', [Admin\TestimonialController::class, 'show']);
 		Route::put('testimonials/{testimonial}', [Admin\TestimonialController::class, 'update']);
 		Route::delete('testimonials/{testimonial}', [Admin\TestimonialController::class, 'destroy']);

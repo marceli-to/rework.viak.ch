@@ -9,13 +9,12 @@ use App\Http\Requests\Admin\SaveTestimonialRequest;
 use App\Http\Resources\Admin\TestimonialFormResource;
 use App\Models\Testimonial;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * *Seiteninhalte → Testimonials* ([[07-dashboard]]). A handful of rows, so the
- * list is whole and drags into order, like legacy's content lists.
+ * list is whole. It is not reordered: each page orders its own testimonials
+ * in the picker.
  */
 class TestimonialController extends Controller
 {
@@ -45,19 +44,6 @@ class TestimonialController extends Controller
 		$testimonial->update($request->testimonialAttributes());
 
 		return new TestimonialFormResource($testimonial->load(['courses', 'software', 'subject']));
-	}
-
-	public function order(Request $request): JsonResponse
-	{
-		$uuids = $request->validate(['testimonials' => ['required', 'array'], 'testimonials.*' => ['string']])['testimonials'];
-
-		DB::transaction(function () use ($uuids): void {
-			foreach (array_values($uuids) as $position => $uuid) {
-				Testimonial::query()->where('uuid', $uuid)->update(['order' => $position + 1]);
-			}
-		});
-
-		return response()->json(status: 204);
 	}
 
 	/** Its placements go with it — the foreign key cascades. */

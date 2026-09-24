@@ -9,10 +9,15 @@ import IconEdit from '@/components/icons/Edit.vue';
  * A 1px black rule, 16px above it and 8 inside, 32 and 16 from sm; 18px at a
  * line height of 1.5, then 1.4; the content in an 8-of-12 column and the
  * pencil on the right, 13px below the rule. `dimmed` is an unpublished row.
+ *
+ * `wide` hands the row's own 12-column grid to the content, for a row with
+ * columns: each child takes its span, and the lines fall where the list
+ * header's do.
  */
 defineProps({
 	edit: { type: [String, Object], required: true },
 	dimmed: { type: Boolean, default: false },
+	wide: { type: Boolean, default: false },
 });
 </script>
 
@@ -22,7 +27,8 @@ defineProps({
 			<IconEdit class="block" />
 		</RouterLink>
 		<div class="grid grid-cols-12 gap-x-16 lg:gap-x-40">
-			<div class="col-span-10 sm:col-span-8"><slot /></div>
+			<slot v-if="wide" />
+			<div v-else class="col-span-10 sm:col-span-8"><slot /></div>
 		</div>
 	</article>
 </template>

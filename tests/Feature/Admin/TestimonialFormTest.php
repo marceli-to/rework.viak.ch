@@ -64,15 +64,15 @@ it('asks for the quote and the name, in German', function () {
 		->assertJsonPath('errors.name.0', 'Name muss ausgefüllt sein.');
 });
 
-it('lists them in their order, and saves a new one', function () {
+it('lists them in the order they were entered', function () {
 	$a = Testimonial::factory()->create(['order' => 1]);
 	$b = Testimonial::factory()->create(['order' => 2]);
 
 	expect(array_column($this->actingAs($this->admin)->getJson('/api/admin/testimonials')->json('data'), 'uuid'))->toBe([$a->uuid, $b->uuid]);
+});
 
-	$this->patchJson('/api/admin/testimonials/order', ['testimonials' => [$b->uuid, $a->uuid]])->assertNoContent();
-
-	expect(array_column($this->getJson('/api/admin/testimonials')->json('data'), 'uuid'))->toBe([$b->uuid, $a->uuid]);
+it('has no order of its own to save', function () {
+	$this->actingAs($this->admin)->patchJson('/api/admin/testimonials/order', ['testimonials' => []])->assertStatus(405);
 });
 
 it('deletes one', function () {
@@ -98,10 +98,10 @@ it('takes a course or a software as its subject, or none', function () {
 	$general = $this->postJson('/api/admin/testimonials', testimonialPayload(['subject' => '']))->json('data');
 
 	expect($aboutCourse['subject'])->toBe("course:{$course->uuid}")
-		->and($aboutCourse['subject_label'])->toBe('zu: 14 SketchUp Kurs')
-		->and($aboutRhino['subject_label'])->toBe('zu: Rhinoceros')
+		->and($aboutCourse['subject_label'])->toBe('14 SketchUp Kurs')
+		->and($aboutRhino['subject_label'])->toBe('Rhinoceros')
 		->and($general['subject'])->toBe('')
-		->and($general['subject_label'])->toBe('allgemein')
+		->and($general['subject_label'])->toBe('Allgemein')
 		->and(Testimonial::where('uuid', $aboutCourse['uuid'])->first()->subject->is($course))->toBeTrue();
 });
 
