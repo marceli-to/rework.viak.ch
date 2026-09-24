@@ -404,6 +404,15 @@ the field kit's two source forms, built by hand like the course form.
   pages; the list and the form already show *Verwendet auf*, and deleting a
   placed testimonial says which pages it leaves. A page that is force-deleted
   detaches itself, since no foreign key reaches a morph.
+- **And what it is about — *Bezieht sich auf*** (Marcel, 2026-09-24). A
+  placement says where a quote is shown; a picker also needs to know which
+  quote belongs to which course. So a testimonial has one optional subject —
+  a course, a software, or none for VIAK as a whole (`subject_type` /
+  `subject_id`, polymorphic like the placements). The form offers it as a
+  grouped select, courses by number then software; the list shows it as a
+  hint (*zu: 14 SketchUp Kurs*), and the pickers will show it the same way
+  and sort a page's own quotes first. This brought **grouped options and a
+  placeholder** to the kit's `select`.
 - **The list is legacy's content list**, measured on its News screen: the
   header with its `+`, then one stacked row each (`list/EditableListItem.vue`),
   dragged into the order the site shows them. Unpublished rows are grey.

@@ -63,7 +63,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<Field v-else-if="field.type === 'number'" v-model="value" type="number" :label="field.label" :required="field.required" :error="error" />
 	<Textarea v-else-if="field.type === 'textarea'" v-model="value" :label="field.label" :required="field.required" :rows="field.rows ?? 2" :mono="field.mono" :error="error" />
 	<Editor v-else-if="field.type === 'richtext'" v-model="value" :label="field.label" :required="field.required" :error="error" />
-	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :error="error" />
+	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :placeholder="field.placeholder" :error="error" />
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :error="error" />
 	<Checkbox v-else-if="field.type === 'checkbox'" v-model="value">{{ field.label }}</Checkbox>
 

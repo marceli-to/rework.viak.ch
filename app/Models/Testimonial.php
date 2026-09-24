@@ -8,6 +8,7 @@ use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Spatie\Translatable\HasTranslations;
 
@@ -21,7 +22,7 @@ class Testimonial extends Model
 	use HasTranslations;
 	use HasUuid;
 
-	protected $fillable = ['quote', 'name', 'context', 'publish', 'order'];
+	protected $fillable = ['quote', 'name', 'context', 'publish', 'order', 'subject_type', 'subject_id'];
 
 	/** @var array<int, string> */
 	public $translatable = ['quote', 'context'];
@@ -32,6 +33,38 @@ class Testimonial extends Model
 			'publish' => 'boolean',
 			'order' => 'integer',
 		];
+	}
+
+	/**
+	 * What it is about: a course, a software, or null for VIAK as a whole.
+	 * Set on the testimonial, once; where it is *shown* is `placements()`.
+	 */
+	public function subject(): MorphTo
+	{
+		return $this->morphTo();
+	}
+
+	/**
+	 * The subject as the form's select names it — `course:{uuid}`,
+	 * `software:{uuid}`, or empty for *Allgemein*.
+	 */
+	public function subjectKey(): string
+	{
+		return match (true) {
+			$this->subject instanceof Course => 'course:'.$this->subject->uuid,
+			$this->subject instanceof Software => 'software:'.$this->subject->uuid,
+			default => '',
+		};
+	}
+
+	/** The hint a list or a picker shows beside the quote. */
+	public function subjectLabel(): string
+	{
+		return match (true) {
+			$this->subject instanceof Course => 'zu: '.$this->subject->number.' '.$this->subject->getTranslation('title', 'de'),
+			$this->subject instanceof Software => 'zu: '.$this->subject->getTranslation('title', 'de'),
+			default => 'allgemein',
+		};
 	}
 
 	/** The courses it stands on ([[HasTestimonials]]). */

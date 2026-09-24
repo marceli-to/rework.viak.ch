@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Course;
+use App\Models\Software;
 use App\Models\Testimonial;
 use App\Models\User;
 
@@ -79,4 +81,46 @@ it('deletes one', function () {
 	$this->actingAs($this->admin)->deleteJson("/api/admin/testimonials/{$testimonial->uuid}")->assertNoContent();
 
 	expect(Testimonial::find($testimonial->id))->toBeNull();
+});
+
+/**
+ * What a testimonial is about — the hint a page's picker shows beside it
+ * (Marcel, 2026-09-24). A course, a software, or nothing: VIAK as a whole.
+ */
+it('takes a course or a software as its subject, or none', function () {
+	$course = Course::factory()->create(['number' => 14, 'title' => ['de' => 'SketchUp Kurs']]);
+	$rhino = Software::create(['title' => ['de' => 'Rhinoceros']]);
+
+	$this->actingAs($this->admin);
+
+	$aboutCourse = $this->postJson('/api/admin/testimonials', testimonialPayload(['subject' => "course:{$course->uuid}"]))->json('data');
+	$aboutRhino = $this->postJson('/api/admin/testimonials', testimonialPayload(['subject' => "software:{$rhino->uuid}"]))->json('data');
+	$general = $this->postJson('/api/admin/testimonials', testimonialPayload(['subject' => '']))->json('data');
+
+	expect($aboutCourse['subject'])->toBe("course:{$course->uuid}")
+		->and($aboutCourse['subject_label'])->toBe('zu: 14 SketchUp Kurs')
+		->and($aboutRhino['subject_label'])->toBe('zu: Rhinoceros')
+		->and($general['subject'])->toBe('')
+		->and($general['subject_label'])->toBe('allgemein')
+		->and(Testimonial::where('uuid', $aboutCourse['uuid'])->first()->subject->is($course))->toBeTrue();
+});
+
+it('refuses a subject that is not on the list', function () {
+	$this->actingAs($this->admin)
+		->postJson('/api/admin/testimonials', testimonialPayload(['subject' => 'course:nicht-da']))
+		->assertJsonValidationErrors('subject');
+});
+
+it('offers the subjects grouped, courses by number, then software', function () {
+	Course::factory()->create(['number' => 20, 'title' => ['de' => 'Zwanzig']]);
+	Course::factory()->create(['number' => 3, 'title' => ['de' => 'Drei']]);
+	Software::create(['title' => ['de' => 'Twinmotion']]);
+	Software::create(['title' => ['de' => 'Blender']]);
+
+	$field = collect($this->actingAs($this->admin)->getJson('/api/admin/forms/testimonial')->json('data.fields'))->firstWhere('name', 'subject');
+
+	expect($field['placeholder'])->toBe('Allgemein — die VIAK als Ganzes')
+		->and(array_column($field['options'], 'label'))->toBe(['Kurse', 'Software'])
+		->and(array_column($field['options'][0]['options'], 'label'))->toBe(['3 Drei', '20 Zwanzig'])
+		->and(array_column($field['options'][1]['options'], 'label'))->toBe(['Blender', 'Twinmotion']);
 });

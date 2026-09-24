@@ -6,6 +6,7 @@ namespace App\Forms;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 use JsonSerializable;
 
 /**
@@ -79,7 +80,7 @@ final class Field implements JsonSerializable
 	 * Several of a list, picked by uuid — the five course taxonomies.
 	 *
 	 * @param  class-string<Model>  $model  whose `uuid` the values must exist as, and whose
-	 *                                       German `title`s are the options, sorted
+	 *                                      German `title`s are the options, sorted
 	 */
 	public static function checkboxes(string $name, string $model): self
 	{
@@ -95,12 +96,47 @@ final class Field implements JsonSerializable
 				->all()]);
 	}
 
-	/** @param  array<string|int, string>  $options  value => label */
-	public static function select(string $name, array $options): self
+	/**
+	 * One of a list. `value => label`, or grouped — `group => [value =>
+	 * label]` draws each group under its heading, as *Bezieht sich auf* lists
+	 * courses and software. A closure is read when the form is served or
+	 * validated, not at boot. Only a listed value passes; an empty one is the
+	 * `placeholder`, if the field has one.
+	 *
+	 * @param  array<string|int, mixed>|Closure(): array<string|int, mixed>  $options
+	 */
+	public static function select(string $name, array|Closure $options): self
 	{
+		$read = fn (): array => $options instanceof Closure ? $options() : $options;
+
 		return (new self('select', $name))
-			->rules(['in:'.implode(',', array_keys($options))])
-			->with(['options' => collect($options)->map(fn ($label, $value) => ['value' => $value, 'label' => $label])->values()->all()]);
+			->rules(fn () => [Rule::in(self::values($read()))])
+			->with(['options' => fn () => self::choices($read())]);
+	}
+
+	/**
+	 * Every value a select offers, its groups flattened.
+	 *
+	 * @param  array<string|int, mixed>  $options
+	 * @return array<int, string|int>
+	 */
+	private static function values(array $options): array
+	{
+		return collect($options)->flatMap(fn ($label, $value) => is_array($label) ? array_keys($label) : [$value])->values()->all();
+	}
+
+	/**
+	 * The options as the dashboard draws them: `{ value, label }`, or a group
+	 * `{ label, options }`.
+	 *
+	 * @param  array<string|int, mixed>  $options
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function choices(array $options): array
+	{
+		return collect($options)->map(fn ($label, $value) => is_array($label)
+			? ['label' => $value, 'options' => self::choices($label)]
+			: ['value' => $value, 'label' => $label])->values()->all();
 	}
 
 	/**

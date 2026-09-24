@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin;
 
 use App\Forms\TestimonialSchema;
+use App\Models\Course;
+use App\Models\Software;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -37,7 +39,16 @@ class SaveTestimonialRequest extends FormRequest
 	{
 		$data = $this->validated();
 
+		[$type, $uuid] = array_pad(explode(':', (string) ($data['subject'] ?? ''), 2), 2, null);
+		$subject = match ($type) {
+			'course' => Course::query()->where('uuid', $uuid)->first(),
+			'software' => Software::query()->where('uuid', $uuid)->first(),
+			default => null,
+		};
+
 		return [
+			'subject_type' => $subject?->getMorphClass(),
+			'subject_id' => $subject?->getKey(),
 			'quote' => ['de' => $data['quote']],
 			'name' => $data['name'],
 			'context' => ['de' => ($data['context'] ?? '') === '' ? null : $data['context']],
