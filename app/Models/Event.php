@@ -60,7 +60,7 @@ class Event extends Model
 			'closed_at' => 'datetime',
 			'state' => EventState::class,
 			'participant_threshold' => ParticipantThreshold::class,
-			'rentals_available' => 'boolean',
+			'rentals_available' => 'integer',
 			'online' => 'boolean',
 			'free_of_charge' => 'boolean',
 			'publish' => 'boolean',
@@ -120,6 +120,33 @@ class Event extends Model
 	public function seatsTaken(): int
 	{
 		return $this->bookings()->active()->count();
+	}
+
+	/**
+	 * Laptops in the room — legacy's count, 0 to 3 on the dates that exist
+	 * ([[06-bookings]]). Zero means the room has none to rent.
+	 */
+	public function offersRental(): bool
+	{
+		return $this->rentals_available > 0;
+	}
+
+	/**
+	 * Laptops still free: the room's count less the active bookings holding
+	 * one. **The one answer everything asks** — the basket, checkout, an admin
+	 * booking, adding a laptop later, and the two places the site offers one.
+	 * Until 2026-09-24 they asked only whether the room had any, so two
+	 * laptops could be rented five times (`Todo.md`, *Rental capacity*).
+	 *
+	 * Uses a `rentals_taken_count` loaded with `withCount()` where a list has
+	 * one, and asks otherwise — the course page draws a row per date.
+	 */
+	public function rentalsLeft(): int
+	{
+		$taken = $this->rentals_taken_count
+			?? $this->bookings()->active()->where('has_rental', true)->count();
+
+		return max(0, $this->rentals_available - $taken);
 	}
 
 	public function isFull(): bool

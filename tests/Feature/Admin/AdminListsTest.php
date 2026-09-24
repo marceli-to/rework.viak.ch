@@ -51,7 +51,7 @@ it('gives each course its upcoming dates only, soonest first', function () {
 });
 
 it('counts active bookings and rented laptops per date, and spells times the site’s way', function () {
-	$event = Event::factory()->create(['max_participants' => 8, 'rentals_available' => true]);
+	$event = Event::factory()->create(['max_participants' => 8, 'rentals_available' => 2]);
 	$event->dates()->create(['date' => $event->date, 'time_start' => '08:30:00', 'time_end' => '17:00:00']);
 	Booking::factory()->for($event)->count(2)->create();
 	Booking::factory()->for($event)->create(['has_rental' => true]);
@@ -61,6 +61,7 @@ it('counts active bookings and rented laptops per date, and spells times the sit
 
 	expect($row['bookings'])->toBe(3)
 		->and($row['rentals'])->toBe(1)
+		->and($row['rentals_available'])->toBe(2)
 		->and($row['max_participants'])->toBe(8)
 		->and($row['dates'][0])->toMatchArray(['time_start' => '08.30', 'time_end' => '17.00']);
 });

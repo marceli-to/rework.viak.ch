@@ -32,6 +32,16 @@ class SeatNotAvailable extends RuntimeException
 		return new self($event, 'This course is no longer open for bookings.');
 	}
 
+	/**
+	 * Every laptop was rented while the basket stood open. **In German**, unlike
+	 * the three above: it reaches the customer as it is, in the summary page's
+	 * toast.
+	 */
+	public static function noRentalLeft(Event $event): self
+	{
+		return new self($event, 'Für diesen Kurs sind keine Mietcomputer mehr verfügbar.');
+	}
+
 	public static function alreadyBooked(Event $event): self
 	{
 		return new self($event, 'You already have a place on this course.');

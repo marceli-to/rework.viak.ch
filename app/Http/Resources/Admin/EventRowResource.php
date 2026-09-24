@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin;
 
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * Times go out as `09.00`, the site's own spelling, so the screen does not
  * reformat a `TIME` column.
  *
- * @mixin \App\Models\Event
+ * @mixin Event
  */
 class EventRowResource extends JsonResource
 {
@@ -42,10 +43,8 @@ class EventRowResource extends JsonResource
 
 			'bookings' => $this->bookings_count,
 			'max_participants' => $this->max_participants,
-			'rentals' => $this->rentals_count,
-			// A switch, not legacy's count of laptops — the port flattened 1, 2
-			// and 3 to `true`, so there is no "0 / 2 Mietcomputer" to show until
-			// the capacity is back (`Todo.md`, *Rental capacity*).
+			// Legacy's *0 / 2 Mietcomputer*: rented, and how many the room has.
+			'rentals' => $this->rentals_taken_count,
 			'rentals_available' => $this->rentals_available,
 		];
 	}

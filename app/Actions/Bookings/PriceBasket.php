@@ -70,11 +70,13 @@ class PriceBasket
 
 	private function item(Event $event, bool $rental, ?User $for): BasketItem
 	{
-		// Both prices are read now and frozen onto the booking. `rentals_available`
-		// is the event's own switch: a course in a room without machines cannot
-		// sell a laptop, and silently dropping the request would bill the
-		// customer for something they asked for and did not get.
-		$wantsRental = $rental && $event->rentals_available;
+		// Both prices are read now and frozen onto the booking. A course in a
+		// room without machines cannot sell a laptop, so the request is dropped
+		// there rather than billed. Whether one is **still free** is not asked
+		// here but at the sale ([[CompleteCheckout::guardSeat]]), so a laptop
+		// taken while the basket stood open is refused by name instead of
+		// surfacing as an unexplained change of total.
+		$wantsRental = $rental && $event->offersRental();
 
 		return new BasketItem(
 			event: $event,

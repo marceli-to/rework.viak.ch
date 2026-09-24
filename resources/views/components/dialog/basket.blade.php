@@ -14,8 +14,8 @@
 
 {{--
 	*Computer mieten*, asked **before** the add, because the rental and its price
-	are frozen onto the booking ([[PriceBasket]]) and an event without
-	`rentals_available` cannot sell one at all.
+	are frozen onto the booking ([[PriceBasket]]) — and only while a laptop is
+	left to rent ([[Event::rentalsLeft]]).
 
 	Legacy's own text, including the `(Du kannst dies auch später noch
 	anpassen)`. In `Basket.vue` that sits behind `\n\n`, which reads as a

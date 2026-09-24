@@ -148,6 +148,11 @@ class CompleteCheckout
 			throw SeatNotAvailable::full($event);
 		}
 
+		// The laptops are counted like the seats, at the moment of sale.
+		if ($item->rental && $event->rentalsLeft() < 1) {
+			throw SeatNotAvailable::noRentalLeft($event);
+		}
+
 		if ($event->bookings()->active()->where('user_id', $user->id)->exists()) {
 			throw SeatNotAvailable::alreadyBooked($event);
 		}

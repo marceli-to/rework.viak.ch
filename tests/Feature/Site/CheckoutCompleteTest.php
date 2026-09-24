@@ -36,7 +36,7 @@ function sellableEvent(string $fee = '499.00'): Event
 {
 	return Event::factory()
 		->for(Course::factory()->create(['fee' => $fee]))
-		->create(['max_participants' => 10, 'rentals_available' => true]);
+		->create(['max_participants' => 10, 'rentals_available' => 2]);
 }
 
 beforeEach(function () {

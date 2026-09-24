@@ -103,7 +103,7 @@ it('honours a validity window that is open at one end', function () {
 });
 
 it('charges VAT on the laptop but never on the course', function () {
-	$event = eventCosting('499.00', ['rentals_available' => true]);
+	$event = eventCosting('499.00', ['rentals_available' => 2]);
 
 	$basket = $this->price->execute([['event' => $event, 'rental' => true]]);
 
@@ -114,7 +114,7 @@ it('charges VAT on the laptop but never on the course', function () {
 });
 
 it('will not sell a laptop for a course that has none', function () {
-	$event = eventCosting('499.00', ['rentals_available' => false]);
+	$event = eventCosting('499.00', ['rentals_available' => 0]);
 
 	$basket = $this->price->execute([['event' => $event, 'rental' => true]]);
 
@@ -123,7 +123,7 @@ it('will not sell a laptop for a course that has none', function () {
 });
 
 it('writes one checkout and a booking per course, freezing both prices', function () {
-	$event = eventCosting('499.00', ['rentals_available' => true]);
+	$event = eventCosting('499.00', ['rentals_available' => 2]);
 	$basket = $this->price->execute([['event' => $event, 'rental' => true]]);
 
 	$checkout = $this->checkout->execute($this->user, $basket);

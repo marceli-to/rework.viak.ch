@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\EventState;
+use App\Models\Booking;
 use App\Models\Course;
 use App\Models\CourseVideo;
 use App\Models\Event;
@@ -211,19 +212,28 @@ it('has no browse pair when the catalogue holds one course', function () {
  */
 it('tells the Buchen button whether the event can sell a laptop', function () {
 	$course = detailCourse();
-	Event::factory()->for($course)->create(['rentals_available' => true]);
+	Event::factory()->for($course)->create(['rentals_available' => 2]);
 
 	coursePage($course)->assertSee('rentals: true }', false);
 
 	$without = detailCourse(['slug' => ['de' => 'ohne-miete'], 'title' => ['de' => 'Ohne Miete']]);
-	Event::factory()->for($without)->create(['rentals_available' => false]);
+	Event::factory()->for($without)->create(['rentals_available' => 0]);
 
 	coursePage($without)->assertSee('rentals: false }', false);
 });
 
+it('stops offering a laptop once every one is rented', function () {
+	$course = detailCourse();
+	$event = Event::factory()->for($course)->create(['rentals_available' => 2]);
+	Booking::factory()->for($event)->count(2)->create(['has_rental' => true]);
+
+	// Legacy's `has_rentals_available`: the room's count less those rented.
+	coursePage($course)->assertSee('rentals: false }', false);
+});
+
 it('carries the rental dialog and the confirmation once, however many events it lists', function () {
 	$course = detailCourse();
-	Event::factory()->for($course)->count(3)->create(['rentals_available' => true]);
+	Event::factory()->for($course)->count(3)->create(['rentals_available' => 2]);
 
 	$page = coursePage($course);
 

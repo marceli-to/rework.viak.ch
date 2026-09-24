@@ -54,7 +54,7 @@ defineProps({
 				<div :class="{ 'text-success': event.bookings >= event.max_participants }">
 					{{ event.bookings }}&thinsp;/&thinsp;{{ event.max_participants }} Teilnehmer
 				</div>
-				<div v-if="event.rentals_available">{{ event.rentals }} Mietcomputer</div>
+				<div v-if="event.rentals_available">{{ event.rentals }}&thinsp;/&thinsp;{{ event.rentals_available }} Mietcomputer</div>
 			</div>
 		</div>
 	</article>

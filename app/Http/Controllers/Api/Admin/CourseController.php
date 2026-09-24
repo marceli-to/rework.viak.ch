@@ -40,7 +40,7 @@ class CourseController extends Controller
 				->with(['dates', 'location', 'experts'])
 				->withCount([
 					'bookings' => fn ($query) => $query->active(),
-					'bookings as rentals_count' => fn ($query) => $query->active()->where('has_rental', true),
+					'bookings as rentals_taken_count' => fn ($query) => $query->active()->where('has_rental', true),
 				]),
 			])
 			->ordered()

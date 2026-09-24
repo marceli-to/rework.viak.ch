@@ -176,7 +176,7 @@ it('does not resurrect a cancelled booking when an admin rebooks', function () {
 });
 
 it('lets the laptop be dropped before the invoice, and not after', function () {
-	$booking = seatDaysOut(30, '600.00', ['rentals_available' => true]);
+	$booking = seatDaysOut(30, '600.00', ['rentals_available' => 2]);
 	app(SetRental::class)->execute($booking, true);
 
 	expect($booking->refresh()->rental_fee)->toBe('80.00');

@@ -338,7 +338,10 @@ class PortCourses extends Command
 				'confirmed_at' => $row->confirmed_at,
 				'cancelled_at' => $row->cancelled_at,
 				'closed_at' => $row->closed_at,
-				'rentals_available' => (bool) $row->rentals_available,
+				// A count of laptops, not a switch — `(bool)` here made every
+				// room with any machines a room with unlimited ones (`Todo.md`,
+				// *Rental capacity*).
+				'rentals_available' => (int) $row->rentals_available,
 				'online' => (bool) $row->online,
 				'free_of_charge' => (bool) $row->free_of_charge,
 				'publish' => (bool) $row->publish,

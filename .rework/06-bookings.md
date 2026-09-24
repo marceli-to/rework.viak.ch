@@ -360,6 +360,34 @@ are cancelled bookings on cancelled courses and two are on a course that has not
 been confirmed yet — all correct — one (000496) was cancelled 22 days out, which
 is the free window, and one (000512, above) is the genuine miss.
 
+### Laptops are counted — fixed 2026-09-24
+
+`events.rentals_available` is **how many laptops the room has**, as in legacy
+(0 on 236 dates, 1 on 17, 2 on 78, 3 on 29), and a laptop is sold only while
+fewer are rented. This chunk had built on a boolean — chunk 01's column,
+`PortCourses` writing `(bool)` — so every room with any machines sold unlimited
+ones. Found building the dashboard; the write-up is in `Todo.md`.
+
+`Event::rentalsLeft()` is the one answer, asked in four places:
+
+- **the site offers the rental dialog** — course page and portal — only while
+  one is left, legacy's `has_rentals_available`;
+- **`PriceBasket` still prices a laptop** whenever the room has any, and
+  **`CompleteCheckout` refuses** one that was taken while the basket stood open,
+  like a seat — *Für diesen Kurs sind keine Mietcomputer mehr verfügbar.*, in
+  German because it reaches the customer as it is;
+- **`SetRental`** refuses to add the next one, and always lets one go;
+- **`CreateBookingForUser`** refuses an admin's laptop that is not there rather
+  than quietly booking without it.
+
+**One ported booking is over the count**: a rental on the 2026-12-15 date
+(event `eac2d8b5…`) where legacy itself now says the room has none — the count
+was lowered after it was booked. Legacy is in the same state; nothing refuses a
+booking that exists. Worth a look before that date.
+
+The other three seat messages are still English and reach the customer that
+way (*This course is fully booked.*) — a separate, small fix.
+
 ### Bookmarks stay — decided 2026-09-17
 
 **Marcel, 2026-09-17: keep them.** So the 17 rows port and the feature is built.

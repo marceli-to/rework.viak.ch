@@ -215,8 +215,8 @@ class DevUsersSeeder extends Seeder
 			return null;
 		}
 
-		// Two of them need laptops to rent; `rentals_available` is the event's
-		// own switch and a course in a room without machines cannot sell one.
+		// Two of them need laptops to rent. `rentals_available` is how many the
+		// room has, and four leaves one free after the student's own.
 		$chosen[1]->update(['rentals_available' => 4]);
 		$chosen[2]->update(['rentals_available' => 4]);
 

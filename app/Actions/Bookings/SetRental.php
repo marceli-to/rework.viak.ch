@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Bookings;
 
+use App\Exceptions\SeatNotAvailable;
 use App\Models\Booking;
 use RuntimeException;
 
@@ -20,8 +21,8 @@ use RuntimeException;
  * raised at confirmation. So the reach into the invoice layer disappears: either
  * the invoice does not exist yet and this is free, or it does and this refuses.
  *
- * `rentals_available` is the event's own switch — a course in a room without
- * machines cannot sell a laptop.
+ * `rentals_available` is how many laptops the room has: none means none to
+ * sell, and once every one is rented the next is refused.
  */
 class SetRental
 {
@@ -31,8 +32,12 @@ class SetRental
 			throw new RuntimeException("Booking {$booking->number} has already been invoiced; the laptop rental cannot be changed without reissuing the invoice, which is an admin's decision and not this action's.");
 		}
 
-		if ($rental && ! $booking->event->rentals_available) {
+		if ($rental && ! $booking->event->offersRental()) {
 			throw new RuntimeException("Event {$booking->event->number()} does not offer laptop rental.");
+		}
+
+		if ($rental && ! $booking->has_rental && $booking->event->rentalsLeft() < 1) {
+			throw SeatNotAvailable::noRentalLeft($booking->event);
 		}
 
 		$booking->forceFill([

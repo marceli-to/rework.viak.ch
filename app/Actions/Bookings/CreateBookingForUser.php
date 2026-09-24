@@ -55,14 +55,20 @@ class CreateBookingForUser
 			throw SeatNotAvailable::alreadyBooked($event);
 		}
 
+		// An admin asking for a laptop that is not there is told so, rather than
+		// getting a booking without one they did not notice.
+		if ($rental && $event->offersRental() && $event->rentalsLeft() < 1) {
+			throw SeatNotAvailable::noRentalLeft($event);
+		}
+
 		$booking = DB::transaction(function () use ($event, $user, $rental): Booking {
 			return Booking::create([
 				'number' => $this->numbers->nextInTransaction(),
 				'event_id' => $event->id,
 				'user_id' => $user->id,
 				'course_fee' => $event->fee(),
-				'has_rental' => $rental && $event->rentals_available,
-				'rental_fee' => $rental && $event->rentals_available
+				'has_rental' => $rental && $event->offersRental(),
+				'rental_fee' => $rental && $event->offersRental()
 					? number_format((float) config('invoice.rental_fee'), 2, '.', '')
 					: '0.00',
 				'booked_at' => now(),

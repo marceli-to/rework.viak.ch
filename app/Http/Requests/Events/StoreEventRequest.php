@@ -38,7 +38,8 @@ class StoreEventRequest extends FormRequest
 
 			'fee' => ['nullable', 'numeric', 'min:0', 'max:99999.99'],
 			'free_of_charge' => ['boolean'],
-			'rentals_available' => ['boolean'],
+			// Laptops in the room; legacy's largest is 3.
+			'rentals_available' => ['integer', 'min:0', 'max:50'],
 			'online' => ['boolean'],
 			'publish' => ['boolean'],
 

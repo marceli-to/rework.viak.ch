@@ -157,7 +157,7 @@ it('records an admin cancellation as an admin cancellation', function () {
 });
 
 it('adds and drops the laptop', function () {
-	$event = bookableEvent('499.00', ['rentals_available' => true]);
+	$event = bookableEvent('499.00', ['rentals_available' => 2]);
 	$booking = Booking::factory()->for($event)->for($this->student)->create();
 
 	$this->actingAs($this->student)

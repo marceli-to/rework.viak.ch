@@ -114,7 +114,12 @@ export default {
 
 			if (!response.ok) {
 				this.busy = false;
-				Alpine.store('toast').show('Es ist ein Fehler aufgetreten.', 'error');
+
+				// A 422 is a refusal with a reason the customer can act on —
+				// *keine Mietcomputer mehr verfügbar* — so it is shown as sent.
+				// Anything else is a fault, and says so without detail.
+				const reason = response.status === 422 ? (await response.json().catch(() => ({}))).message : null;
+				Alpine.store('toast').show(reason ?? 'Es ist ein Fehler aufgetreten.', 'error');
 
 				return;
 			}

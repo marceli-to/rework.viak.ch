@@ -228,11 +228,12 @@
 					     adds, and one that first asks whether to rent a laptop
 					     at CHF 80 excl. VAT. The question has to come first,
 					     because the rental is frozen onto the booking with its
-					     price ([[PriceBasket]]), and `rentals_available` is the
-					     event's own switch: a course in a room without machines
-					     cannot sell one. The dialog itself is
+					     price ([[PriceBasket]]) — and it is asked **only while a
+					     laptop is left**, legacy's `has_rentals_available`: the
+					     room's count less those already rented
+					     ([[Event::rentalsLeft]]). The dialog itself is
 					     `<x-dialog.basket />`, once per page. --}}
-					<div x-data="{ uuid: @js($event->uuid), rentals: @js((bool) $event->rentals_available) }">
+					<div x-data="{ uuid: @js($event->uuid), rentals: @js($event->rentalsLeft() > 0) }">
 						{{-- *Buchen* renders without `x-cloak`, so it is what a
 						     visitor with no JavaScript is left holding, and the
 						     common case never flashes. Only *Entfernen* has to

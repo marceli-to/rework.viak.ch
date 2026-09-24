@@ -101,7 +101,7 @@
 
 					<x-slot:action>
 						@if ($event->isBookable())
-							<div x-data="{ uuid: @js($event->uuid), rentals: @js((bool) $event->rentals_available) }">
+							<div x-data="{ uuid: @js($event->uuid), rentals: @js($event->rentalsLeft() > 0) }">
 								<x-ui.button x-show="! $store.basket.has(uuid)"
 									@click="$store.basket.book(uuid, rentals)">Buchen</x-ui.button>
 								<x-ui.button variant="secondary" x-cloak x-show="$store.basket.has(uuid)"
@@ -174,7 +174,7 @@
 					     hardcoded in the sentence — `Event::rental_fee` is the
 					     one the booking would actually freeze
 					     ([[PriceBasket]]), so the sentence reads it. --}}
-					@if (! $booking->has_rental && $booking->event->rentals_available && $booking->isEditable())
+					@if (! $booking->has_rental && $booking->event->rentalsLeft() > 0 && $booking->isEditable())
 						<x-slot:rentalPrompt>
 							<div class="sm:flex sm:items-start sm:justify-between">
 								<div class="sm:pr-40 lg:pr-80">

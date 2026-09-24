@@ -472,7 +472,11 @@ items that are ours rather than the client's.
 
 ---
 
-## Rental capacity was flattened to a yes/no in the port
+## ~~Rental capacity was flattened to a yes/no in the port~~
+
+**Fixed 2026-09-24** — `06-bookings.md`, *Laptops are counted*. The column is a
+count again, the port carries it, and `Event::rentalsLeft()` is enforced at
+every sale. Kept below as found.
 
 **Found 2026-09-24, building the dashboard's course list. A defect in built
 code (chunk 06), not a dashboard question.**

@@ -75,7 +75,10 @@ class CourseController extends Controller
 				'software', 'categories', 'levels', 'media',
 				'videos' => fn ($query) => $query->published()->ordered(),
 				'events' => fn ($query) => $query->published()->active()->upcoming()
-					->with(['dates', 'location', 'experts']),
+					->with(['dates', 'location', 'experts'])
+					// Each row asks how many laptops are left; one count here
+					// instead of a query per row ([[Event::rentalsLeft]]).
+					->withCount(['bookings as rentals_taken_count' => fn ($query) => $query->active()->where('has_rental', true)]),
 			])
 			->firstOrFail();
 
