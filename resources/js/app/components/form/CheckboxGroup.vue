@@ -15,7 +15,7 @@ defineProps({
 	options: { type: Array, required: true },
 	required: { type: Boolean, default: false },
 	error: { type: String, default: null },
-	columns: { type: Boolean, default: false },
+	columns: { type: [Boolean, Number], default: false },
 });
 </script>
 
@@ -25,8 +25,8 @@ defineProps({
 			{{ label }}<template v-if="required"> *</template>
 		</legend>
 		<div class="clear-both" :class="columns ? 'grid grid-cols-2 gap-x-16 lg:gap-x-40' : ''">
-			<div v-for="option in options" :key="option.uuid" class="mb-12 last:mb-0" :class="{ 'last:mb-12': columns }">
-				<Checkbox v-model="model" :value="option.uuid">{{ option.title }}</Checkbox>
+			<div v-for="option in options" :key="option.value" class="mb-12 last:mb-0" :class="{ 'last:mb-12': columns }">
+				<Checkbox v-model="model" :value="option.value">{{ option.label }}</Checkbox>
 			</div>
 		</div>
 		<div v-if="error" class="pt-8 text-md text-danger lg:text-lg">{{ error }}</div>

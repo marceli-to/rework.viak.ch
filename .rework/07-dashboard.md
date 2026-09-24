@@ -8,7 +8,8 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 **Mapped 2026-09-24. Steps 1–4 built the same day**: the guard, the shell,
 *Kurse* in both modes, the course form and its images, and testimonials — see
-*Step 1* to *Step 4*, below. Next is step 5, extracting the field kit. Asked for by Marcel before
+*Step 1* to *Step 4*, below. **Step 5, the field kit, the same day.** Next is
+step 6: the remaining forms, on the kit. Asked for by Marcel before
 starting the field kit, because the kit is only worth designing against the
 whole set of screens it has to serve.
 
@@ -396,6 +397,34 @@ the field kit's two source forms, built by hand like the course form.
   dragged into the order the site shows them. Unpublished rows are grey.
 - **The form is the course form's frame**: the fields, *Publizieren* and *Auf
   der Startseite*, the two save buttons, the danger zone, the leave guard.
+
+## Step 5 — the field kit, extracted 2026-09-24
+
+From the course and testimonial forms, once both existed by hand — the
+`04-content.md` plan, *Build it from two forms, not zero*.
+
+- **A form is declared once, in PHP** — `app/Forms/`: a [[Schema]] of [[Field]]s
+  beside the request it validates. **The request takes its rules, messages and
+  German attribute names from it**, and the dashboard draws it from
+  `GET /api/admin/forms/{form}`. A test walks every schema and checks that
+  what the form marks required is exactly what the server requires.
+- **The inventory stayed closed**: text, number, textarea, richtext, checkbox,
+  checkboxes, select, repeater, section, row, custom — plus **hidden**, which
+  the kit needed on first contact: a repeater row's `uuid` is not drawn, and
+  without a rule validation dropped it and every saved video came back as new.
+- **What a form *does* stays in its request** — German written as
+  `['de' => …]`, HTML cleaned, relations synced. That genuinely differs.
+- **`defaults` is a new record**: every field the form sends, so create and
+  edit have one shape. It carries the next course number, which retired
+  `/courses/options`.
+- **The Vue half**: `FormNode` draws any schema with the twin components;
+  `useResourceForm` holds what both forms repeated — load, *what it loads is
+  what it saves* (the schema's keys are the form, the rest is `meta`), the two
+  save buttons, the leave guard, errors by path (`videos.0.code`), a section
+  turning red; `ResourceForm` is the frame. The course form is now 20 lines,
+  the testimonial form 20.
+- **Custom parts plug in by name** and take part through hooks: the image
+  section reports what it holds, and uploads it once a new course exists.
 
 ## A navigation for it
 

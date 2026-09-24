@@ -208,6 +208,13 @@ Everything in the mockups sorts into one of three, and the sorting is the plan:
 
 ## The field kit
 
+**Built 2026-09-24**, extracted from the course and testimonial forms as planned
+below — `app/Forms/` and `07-dashboard.md`, *Step 5*. What changed from the plan:
+the schema serves the dashboard *and* validates the request (the plan colocated
+them; now they are one declaration), `hidden` joined the inventory, and the
+media field is a `custom` part with hooks rather than a `Field::image()`,
+because images save on their own.
+
 This is the decision the chunk turns on.
 
 ### Why it is the decision

@@ -12,7 +12,6 @@ use App\Http\Requests\Admin\SaveCourseRequest;
 use App\Http\Resources\Admin\CourseFormResource;
 use App\Http\Resources\Admin\CourseRowResource;
 use App\Models\Course;
-use App\Support\CourseNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -74,25 +73,6 @@ class CourseController extends Controller
 		});
 
 		return response()->json(status: 204);
-	}
-
-	/**
-	 * What the form's pickers offer — every term of the five taxonomies, by
-	 * title, as legacy sorts them — and the number a new course will get.
-	 */
-	public function options(CourseNumber $numbers): JsonResponse
-	{
-		$terms = fn (string $model) => $model::query()->get()
-			->map(fn ($term) => ['uuid' => $term->uuid, 'title' => $term->getTranslation('title', 'de')])
-			->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE)
-			->values();
-
-		return response()->json([
-			'data' => [
-				...collect(SaveCourseRequest::TAXONOMIES)->map($terms)->all(),
-				'next_number' => $numbers->next(),
-			],
-		]);
 	}
 
 	public function show(Course $course): CourseFormResource

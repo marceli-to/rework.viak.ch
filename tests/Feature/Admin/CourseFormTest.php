@@ -62,7 +62,7 @@ it('creates a course with the number typed, and derives the slug', function () {
 it('offers the next free number, counting deleted courses', function () {
 	Course::factory()->create(['number' => 12])->delete();
 
-	$this->actingAs($this->admin)->getJson('/api/admin/courses/options')->assertJsonPath('data.next_number', 13);
+	$this->actingAs($this->admin)->getJson('/api/admin/forms/course')->assertJsonPath('data.defaults.number', 13);
 });
 
 /** Numbers are on invoices through `Event::number()`, so none comes back. */
@@ -195,6 +195,8 @@ it('offers every term of the five taxonomies, by title', function () {
 	Software::create(['title' => ['de' => 'Twinmotion']]);
 	Software::create(['title' => ['de' => 'Blender']]);
 
-	expect(array_column($this->actingAs($this->admin)->getJson('/api/admin/courses/options')->json('data.software'), 'title'))
-		->toBe(['Blender', 'Twinmotion']);
+	$fields = collect($this->actingAs($this->admin)->getJson('/api/admin/forms/course')->json('data.fields'))
+		->flatMap(fn ($field) => $field['fields'] ?? [$field]);
+
+	expect(array_column($fields->firstWhere('name', 'software')['options'], 'label'))->toBe(['Blender', 'Twinmotion']);
 });

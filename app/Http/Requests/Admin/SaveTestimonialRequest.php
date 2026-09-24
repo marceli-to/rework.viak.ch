@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
+use App\Forms\TestimonialSchema;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -20,20 +21,15 @@ class SaveTestimonialRequest extends FormRequest
 		return $this->user()?->isAdmin() ?? false;
 	}
 
+	/** From [[TestimonialSchema]], the form's one declaration. */
 	public function rules(): array
 	{
-		return [
-			'quote' => ['required', 'string', 'max:1000'],
-			'name' => ['required', 'string', 'max:255'],
-			'context' => ['nullable', 'string', 'max:255'],
-			'featured' => ['boolean'],
-			'publish' => ['boolean'],
-		];
+		return (new TestimonialSchema)->rules();
 	}
 
 	public function attributes(): array
 	{
-		return ['quote' => 'Zitat', 'name' => 'Name', 'context' => 'Firma, Ort'];
+		return (new TestimonialSchema)->attributes();
 	}
 
 	/** @return array<string, mixed> */

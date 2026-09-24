@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
+use App\Forms\CourseSchema;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Language;
@@ -12,7 +13,6 @@ use App\Models\Software;
 use App\Models\Tag;
 use App\Support\EditorHtml;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 /**
  * The dashboard's course form, create and edit alike ([[07-dashboard]]).
@@ -21,14 +21,9 @@ use Illuminate\Validation\Rule;
  * hands out: German strings for the texts, uuids for the taxonomies, SEO flat,
  * three facts, the videos inline. What the form loads is what it saves.
  *
- * Required as legacy requires it: the number, title, subtitle, short
- * description, and at least one category, language and level.
- *
- * **The number is typed, as in legacy** (Marcel, 2026-09-24 — chunk 02 had made
- * it server-assigned). What chunk 02 protected still holds: numbers appear on
- * invoices through `Event::number()`, so one may never be reused — `unique`
- * checks every row, **soft-deleted courses included** ([[CourseNumber]]). The
- * form offers the next free one.
+ * **What is valid is declared in [[CourseSchema]]**, with the labels the
+ * messages use — the field kit's one place for them. This request keeps what
+ * only it knows: how the values are written.
  */
 class SaveCourseRequest extends FormRequest
 {
@@ -53,77 +48,25 @@ class SaveCourseRequest extends FormRequest
 			: $this->user()?->can('create', Course::class) ?? false;
 	}
 
+	/** From [[CourseSchema]], the form's one declaration. */
 	public function rules(): array
 	{
-		$course = $this->route('course');
-
-		$rules = [
-			'number' => ['required', 'integer', 'min:1', 'max:65535', Rule::unique('courses', 'number')->ignore($course instanceof Course ? $course->id : null)],
-			'title' => ['required', 'string', 'max:255'],
-			'subtitle' => ['required', 'string', 'max:1000'],
-			'fee' => ['required', 'numeric', 'min:0', 'max:99999.99'],
-			'online' => ['boolean'],
-			'publish' => ['boolean'],
-
-			'short_description' => ['required', 'string'],
-			'full_description' => ['nullable', 'string'],
-			'information_booking' => ['nullable', 'string'],
-			'information_content' => ['nullable', 'string'],
-			'summary' => ['nullable', 'string'],
-
-			'facts' => ['array', 'max:3'],
-			'facts.*' => ['nullable', 'string'],
-
-			'seo_description' => ['nullable', 'string', 'max:1000'],
-			'seo_tags' => ['nullable', 'string', 'max:1000'],
-
-			'videos' => ['array'],
-			'videos.*.uuid' => ['nullable', 'string'],
-			'videos.*.title' => ['nullable', 'string', 'max:255'],
-			'videos.*.code' => ['required', 'string'],
-			'videos.*.publish' => ['boolean'],
-		];
-
-		foreach (self::TAXONOMIES as $relation => $model) {
-			$required = in_array($relation, ['categories', 'languages', 'levels'], true);
-			$rules[$relation] = $required ? ['required', 'array', 'min:1'] : ['array'];
-			$rules["{$relation}.*"] = ['string', Rule::exists((new $model)->getTable(), 'uuid')];
-		}
-
-		return $rules;
+		return $this->schema()->rules($this->route('course') instanceof Course ? $this->route('course') : null);
 	}
 
 	public function messages(): array
 	{
-		return [
-			'number.unique' => 'Diese Nummer ist bereits vergeben, auch gelöschte Kurse behalten ihre.',
-			'categories.required' => 'Bitte mindestens eine Kategorie wählen.',
-			'languages.required' => 'Bitte mindestens eine Sprache wählen.',
-			'levels.required' => 'Bitte mindestens ein Level wählen.',
-			'videos.*.code.required' => 'Ein Video braucht einen Code.',
-		];
+		return $this->schema()->messages();
 	}
 
-	/** The form's labels, so a message says *Subtitel*, not *subtitle*. */
 	public function attributes(): array
 	{
-		return [
-			'number' => 'Nummer',
-			'title' => 'Titel',
-			'subtitle' => 'Subtitel',
-			'fee' => 'Kosten',
-			'short_description' => 'Kurzbeschrieb',
-			'full_description' => 'Detailbeschrieb',
-			'information_booking' => 'Weitere Informationen',
-			'information_content' => 'Weitere Informationen',
-			'summary' => 'Kursbeschreibung (PDF)',
-			'facts.*' => 'Facts',
-			'seo_description' => 'SEO - Beschreibung',
-			'seo_tags' => 'SEO - Keywords',
-			'videos.*.title' => 'Titel',
-			'software' => 'Software',
-			'tags' => 'Tags',
-		];
+		return $this->schema()->attributes();
+	}
+
+	private function schema(): CourseSchema
+	{
+		return new CourseSchema;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 import { cropMedia, deleteMedia, fetchCourseMedia, orderCourseMedia, setMediaRole, updateMedia, uploadCourseMedia } from '@/api/media';
@@ -165,6 +165,10 @@ watch(() => props.course, async (course) => {
 const pending = computed(() => images.value.filter((item) => item.staged).length);
 
 defineExpose({ flush, pending });
+
+// Inside the field kit's form, it tells the form what it holds and uploads
+// what it staged once a new course exists ([[useResourceForm]]).
+inject('formHooks', null)?.register({ afterCreate: flush, pending: () => pending.value });
 
 /** Swap in the server's answer; a role change can also move a flag off a sibling, so those reload. */
 async function refresh(changed, siblings = false) {

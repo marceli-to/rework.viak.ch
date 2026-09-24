@@ -83,9 +83,10 @@ Route::middleware('auth:sanctum')->group(function (): void {
 Route::middleware(['auth:sanctum', 'role:admin'])
 	->prefix('admin')
 	->group(function (): void {
+		Route::get('forms/{form}', [Admin\FormController::class, 'show']);
+
 		Route::get('courses', [Admin\CourseController::class, 'index']);
 		Route::post('courses/order', [Admin\CourseController::class, 'order']);
-		Route::get('courses/options', [Admin\CourseController::class, 'options']);
 		Route::post('courses', [Admin\CourseController::class, 'store']);
 		Route::get('courses/{course}', [Admin\CourseController::class, 'show']);
 		Route::put('courses/{course}', [Admin\CourseController::class, 'update']);
