@@ -56,7 +56,6 @@ const { dragging, handlers } = useSortable(items, async (list) => {
 		>
 			{{ item.name }}
 			<span v-if="item.context" class="text-lg">({{ item.context }})</span>
-			<span v-if="item.featured" class="ml-4 text-lg text-teal">Startseite</span>
 			<span v-if="!item.publish" class="ml-4 text-lg">nicht publiziert</span>
 		</StackedListItem>
 	</section>

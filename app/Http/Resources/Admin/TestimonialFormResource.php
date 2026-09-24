@@ -23,7 +23,6 @@ class TestimonialFormResource extends JsonResource
 			'quote' => $this->getTranslation('quote', 'de', false) ?: '',
 			'name' => $this->name,
 			'context' => $this->getTranslation('context', 'de', false) ?: '',
-			'featured' => $this->featured,
 			'publish' => $this->publish,
 		];
 	}

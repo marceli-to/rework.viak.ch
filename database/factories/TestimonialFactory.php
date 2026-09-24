@@ -19,7 +19,6 @@ class TestimonialFactory extends Factory
 			'quote' => ['de' => fake()->sentence(14)],
 			'name' => fake()->name(),
 			'context' => ['de' => fake()->company().', '.fake()->city()],
-			'featured' => false,
 			'publish' => true,
 			'order' => 0,
 		];

@@ -16,20 +16,20 @@ const routes = [
 	{
 		path: '/dashboard/kurse',
 		name: 'courses',
-		component: () => import('@/views/Courses.vue'),
+		component: () => import('@/views/Course/Index.vue'),
 		meta: { title: 'Kurse' },
 	},
 
 	{
 		path: '/dashboard/kurs/erfassen',
 		name: 'course.create',
-		component: () => import('@/views/CourseForm.vue'),
+		component: () => import('@/views/Course/Form.vue'),
 		meta: { title: 'Kurs erfassen' },
 	},
 	{
 		path: '/dashboard/kurs/:uuid',
 		name: 'course.edit',
-		component: () => import('@/views/CourseForm.vue'),
+		component: () => import('@/views/Course/Form.vue'),
 		meta: { title: 'Kurs bearbeiten' },
 	},
 	pending('kurs/:uuid/kursdaten', 'course.events', 'Kursdaten'),
@@ -45,19 +45,19 @@ const routes = [
 	{
 		path: '/dashboard/testimonials',
 		name: 'content.testimonials',
-		component: () => import('@/views/Testimonials.vue'),
+		component: () => import('@/views/Testimonial/Index.vue'),
 		meta: { title: 'Testimonials' },
 	},
 	{
 		path: '/dashboard/testimonial/erfassen',
 		name: 'content.testimonial.create',
-		component: () => import('@/views/TestimonialForm.vue'),
+		component: () => import('@/views/Testimonial/Form.vue'),
 		meta: { title: 'Testimonial erfassen' },
 	},
 	{
 		path: '/dashboard/testimonial/:uuid',
 		name: 'content.testimonial.edit',
-		component: () => import('@/views/TestimonialForm.vue'),
+		component: () => import('@/views/Testimonial/Form.vue'),
 		meta: { title: 'Testimonial bearbeiten' },
 	},
 	pending('news', 'content.news', 'News'),

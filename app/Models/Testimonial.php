@@ -20,7 +20,7 @@ class Testimonial extends Model
 	use HasTranslations;
 	use HasUuid;
 
-	protected $fillable = ['quote', 'name', 'context', 'featured', 'publish', 'order'];
+	protected $fillable = ['quote', 'name', 'context', 'publish', 'order'];
 
 	/** @var array<int, string> */
 	public $translatable = ['quote', 'context'];
@@ -28,7 +28,6 @@ class Testimonial extends Model
 	protected function casts(): array
 	{
 		return [
-			'featured' => 'boolean',
 			'publish' => 'boolean',
 			'order' => 'integer',
 		];

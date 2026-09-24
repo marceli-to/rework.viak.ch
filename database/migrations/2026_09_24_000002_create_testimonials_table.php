@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Schema;
  *
  * What the mockups show of one: the quote, a name, and one line of context —
  * *Architekturbüro, Zürich*. No photo. Where they appear (the homepage,
- * Firmenschulung, the software pages) waits on those pages; `featured` is the
- * one placement already decided, the homepage's.
+ * Firmenschulung, the software pages) is chosen by those pages, not stored
+ * here — the `featured` column this created is dropped by the next migration.
  *
  * The quote and the context are translatable like every other content text,
  * although the admin writes German only (`04-content.md`).

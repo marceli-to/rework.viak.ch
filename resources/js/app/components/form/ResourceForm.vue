@@ -25,6 +25,8 @@ const props = defineProps({
 	titles: { type: Object, required: true },
 	deletion: { type: Object, required: true },
 	blocked: { type: Function, default: () => null },
+	// *Speichern und Weiterbearbeiten* — for a form long enough to come back to.
+	stay: { type: Boolean, default: true },
 });
 
 const { schema, form, meta, id, errors, saving, failed, creating, submit, destroy } = useResourceForm(props);
@@ -44,7 +46,7 @@ const { schema, form, meta, id, errors, saving, failed, creating, submit, destro
 			<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" />
 
 			<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
-			<Button variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
+			<Button v-if="stay" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
 
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->
 			<div v-if="!creating" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">

@@ -37,7 +37,7 @@ state transitions, policies, a data port — appears here once.
 | Controllers | `Api\CourseController`, `Api\EventController`, `Site\CourseController` |
 | Support | `Slug`, `CourseNumber`, `RichText` |
 | Port | `port:courses` |
-| SPA | `views/Courses.vue`, `views/Events.vue`, `stores/events.js`, `api/` |
+| SPA | replaced by the dashboard — `views/Course/Index.vue` and `Form.vue`, see `07-dashboard.md` |
 | Public | `site/courses/{index,show}.blade.php` + site components |
 
 ## Decisions

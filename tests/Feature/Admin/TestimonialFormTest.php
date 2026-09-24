@@ -19,7 +19,6 @@ function testimonialPayload(array $overrides = []): array
 		'quote' => 'Der Rhino-Kurs hat mir gezeigt, wie ich meine Ideen professionell umsetze.',
 		'name' => 'Anna Muster',
 		'context' => 'Architekturbüro, Zürich',
-		'featured' => true,
 		'publish' => true,
 		...$overrides,
 	];
@@ -37,7 +36,6 @@ it('creates one at the end of the list', function () {
 
 	expect(Testimonial::where('uuid', $uuid)->first())
 		->order->toBe(5)
-		->featured->toBeTrue()
 		->and(Testimonial::where('uuid', $uuid)->first()->getTranslation('quote', 'de'))->toStartWith('Der Rhino-Kurs');
 });
 

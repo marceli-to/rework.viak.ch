@@ -41,7 +41,6 @@ class SaveTestimonialRequest extends FormRequest
 			'quote' => ['de' => $data['quote']],
 			'name' => $data['name'],
 			'context' => ['de' => ($data['context'] ?? '') === '' ? null : $data['context']],
-			'featured' => (bool) ($data['featured'] ?? false),
 			'publish' => (bool) ($data['publish'] ?? false),
 		];
 	}

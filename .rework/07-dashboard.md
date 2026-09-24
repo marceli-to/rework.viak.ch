@@ -178,7 +178,7 @@ screen there.
 | Heroes | **drop** — confirmed | Legacy's homepage slider draws from them, but the mockups have no slider |
 | Team | **new, later** — confirmed | Not carried across; team members are introduced with the phase-two Team page, as whatever that page needs |
 | News | **change** | Five items, still in use — becomes `Article` if Aktuelles/the blog goes ahead (#22) |
-| — | **new: Testimonials** | Quote, name, role, image, featured, order. Kit form #2 |
+| — | **new: Testimonials** | Quote, name, context, published, order — no photo, no placement flag. Kit form #2 |
 | — | **new: Media** | The forrerzimmermann grid/uploader/cropper, which the image field picks from |
 
 ### The rest
@@ -389,14 +389,17 @@ the field kit's two source forms, built by hand like the course form.
   context (*Architekturbüro, Zürich*). No photo, so the image field the kit
   matrix above pencilled in is not needed. Quote and context are
   translatable, the admin writes German.
-- **`featured` — *Auf der Startseite* — is the one placement decided** (homepage
-  marker 10). Firmenschulung and the software pages will want theirs; they
-  are added when those pages are, not guessed now.
+- **A testimonial does not say where it appears** (Marcel, 2026-09-24). The
+  page that shows them picks them: a testimonial picker on the course form
+  and on the homepage form still to come. The `featured` flag this step first
+  had was dropped the same day.
+- **One save button**: a testimonial is three lines, so the form has no
+  *Speichern und Weiterbearbeiten* (`ResourceForm`'s `stay`).
 - **The list is legacy's content list**, measured on its News screen: the
   header with its `+`, then one stacked row each (`list/StackedListItem.vue`),
   dragged into the order the site shows them. Unpublished rows are grey.
-- **The form is the course form's frame**: the fields, *Publizieren* and *Auf
-  der Startseite*, the two save buttons, the danger zone, the leave guard.
+- **The form is the course form's frame**: the fields, *Publizieren*, the
+  danger zone, the leave guard.
 
 ## Step 5 — the field kit, extracted 2026-09-24
 
