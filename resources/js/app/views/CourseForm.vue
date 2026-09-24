@@ -12,6 +12,7 @@ import Checkbox from '@/components/form/Checkbox.vue';
 import CheckboxGroup from '@/components/form/CheckboxGroup.vue';
 import Editor from '@/components/form/Editor.vue';
 import Field from '@/components/form/Field.vue';
+import ImageSection from '@/components/media/ImageSection.vue';
 import Textarea from '@/components/form/Textarea.vue';
 
 /**
@@ -39,7 +40,8 @@ import Textarea from '@/components/form/Textarea.vue';
  *   button;
  * - **deleting is refused while a date has bookings** — legacy deleted the
  *   course and every date with it;
- * - **images** arrive with the media admin, step 3.
+ * - **images save on their own**, each action at once, as legacy's do
+ *   ([[ImageSection]]) — so they are not part of what this form sends.
  */
 const route = useRoute();
 const router = useRouter();
@@ -186,8 +188,9 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 
 			<Collapsible>
 				<template #title>Bilder</template>
-				<p class="mt-8 text-md text-danger sm:mt-16 lg:text-lg">
-					<em>Bilder werden mit der Medienverwaltung ergänzt, dem nächsten Schritt.</em>
+				<ImageSection v-if="meta.uuid" :course="meta.uuid" />
+				<p v-else class="mt-8 text-md text-danger sm:mt-16 lg:text-lg">
+					<em>Bilder können erst nach dem Speichern hochgeladen werden …</em>
 				</p>
 			</Collapsible>
 

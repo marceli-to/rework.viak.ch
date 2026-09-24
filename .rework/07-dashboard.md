@@ -6,8 +6,9 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 ## Status
 
-**Mapped 2026-09-24. Steps 1 and 2 built the same day**: the guard, the shell,
-*Kurse* in both modes, and the course form — see *Step 1* and *Step 2*, below. Asked for by Marcel before
+**Mapped 2026-09-24. Steps 1–3 built the same day**: the guard, the shell,
+*Kurse* in both modes, the course form and its images — see *Step 1* to
+*Step 3*, below. Asked for by Marcel before
 starting the field kit, because the kit is only worth designing against the
 whole set of screens it has to serve.
 
@@ -337,6 +338,30 @@ dashboard; the fields are the site's own (`x-form.field` sizes throughout).
 
 Differences from legacy, all deliberate: no DE/EN switch, three toolbar
 buttons rather than seven.
+
+## Step 3 — the course's images, built 2026-09-24
+
+*Bilder* on the course form: legacy's image module, measured on its dashboard,
+on the media subsystem ported from `forrerzimmermann.ch` in chunk 08.
+
+- **Every action saves at once**, as legacy's does — upload, type, alt text
+  and caption, crop, order, delete — so the course form never sends its images
+  and its round trip is untouched. `/api/admin/courses/{course}/media` lists,
+  uploads and orders; `/api/admin/media/{media}` edits, crops and deletes.
+- **One teaser and one OpenGraph image per course**, as the ported data has
+  them (40 teasers on 41 courses, never two): making one the teaser takes the
+  flag off the other ([[SetMediaRole]]). The first image a course gets
+  becomes its teaser.
+- **The crop's shape follows the type**: square for the teaser, the card's
+  shape; 16:9 for the rest. In the file's own pixels, as Glide takes them.
+  `vue-advanced-cropper`, which legacy and forrerzimmermann both use — the one
+  widget not built from scratch.
+- **The cards show the crop**, through Glide at 480px, three to a row, drag to
+  reorder. The drop box is the site's (`x-form.file-input`), with the 1px
+  black line of 2026-09-23 rather than legacy's grey dashes.
+- **Left out, on the numbers**: legacy's eye icon — one of its 333 images was
+  ever hidden, so an unwanted image is deleted — its *Listen Ansicht*, and
+  forrerzimmermann's art-directed mobile variant.
 
 ## A navigation for it
 

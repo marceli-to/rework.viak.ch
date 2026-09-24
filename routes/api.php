@@ -91,5 +91,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('courses/{course}', [Admin\CourseController::class, 'update']);
 		Route::delete('courses/{course}', [Admin\CourseController::class, 'destroy']);
 
+		Route::get('courses/{course}/media', [Admin\MediaController::class, 'index']);
+		Route::post('courses/{course}/media', [Admin\MediaController::class, 'store']);
+		Route::patch('courses/{course}/media/order', [Admin\MediaController::class, 'order']);
+		Route::put('media/{media:uuid}', [Admin\MediaController::class, 'update']);
+		Route::patch('media/{media:uuid}/role', [Admin\MediaController::class, 'role']);
+		Route::patch('media/{media:uuid}/crop', [Admin\MediaController::class, 'crop']);
+		Route::delete('media/{media:uuid}', [Admin\MediaController::class, 'destroy']);
+
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
 	});
