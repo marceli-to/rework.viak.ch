@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 /**
  * Legacy shipped three separate bundles (dashboard / expert / student). They
- * collapse into this one router; role gating lands with [[11-auth]].
+ * collapse into this one router; role gating lands with [[07-dashboard]].
  */
 const routes = [
 	{ path: '/dashboard', redirect: { name: 'events.index' } },
