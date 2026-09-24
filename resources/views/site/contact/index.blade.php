@@ -5,9 +5,9 @@
 	An `article.content-text` — *Get in touch* in the aside, the address and the
 	map in the column, all of it bold teal — then three collapsibles: Anreise
 	open, Über uns and Impressum shut. The copy is legacy's, carried across
-	verbatim from its partials into `_directions`, `_about` and `_imprint`,
-	including a missing space in *Escher-Wyss-PlatzWer*: parity, and the text is
-	the client's to correct.
+	verbatim from its partials into `_directions`, `_about` and `_imprint` — save
+	one fix: legacy's *Escher-Wyss-PlatzWer* is two sentences run together, and
+	reads *Escher-Wyss-Platz. Wer* here (Marcel, 2026-09-24).
 
 	**Legacy has a fourth block, Team, and it has never rendered**: it shows
 	`team_members` with `publish` set, and the table is empty. It is left out

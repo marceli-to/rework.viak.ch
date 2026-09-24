@@ -2189,8 +2189,9 @@ measured, as with Experten.
   table for chunk 04; the review gives the team its own page in phase two.
 - **The copy is legacy's partials, converted by script** — `__('…')` unwrapped,
   and the `<h2>`s legacy leaves open inside its asides closed. Carried
-  verbatim otherwise, including *Escher-Wyss-PlatzWer*, which is missing a
-  space; that is the client's to fix, not the port's. `x-site.card-text` is
+  verbatim otherwise, save one fix: legacy's *Escher-Wyss-PlatzWer* runs two
+  sentences together and reads *Escher-Wyss-Platz. Wer* here (Marcel,
+  2026-09-24). The live site still has the typo. `x-site.card-text` is
   `article.card-text`, with a `privacy` flag for the one card that has its own
   headings.
 - **The AGB is a file in `public/media/downloads/`**, at legacy's path,

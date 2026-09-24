@@ -2,7 +2,7 @@
 	<x-slot:aside>
 		<h2>Anreise ÖV</h2>
 	</x-slot:aside>
-	<p>Tramhaltestelle Zürich, Escher-Wyss-PlatzWer via Fernfernverkehr über Zürich HB anreist: Vom Zürich HB aus via Tramhaltestelle Zürich, Sihlquai/HB mit Tramlinien 4, 13 oder 17 bis Zürich, Escher-Wyss-Platz</p>
+	<p>Tramhaltestelle Zürich, Escher-Wyss-Platz. Wer via Fernfernverkehr über Zürich HB anreist: Vom Zürich HB aus via Tramhaltestelle Zürich, Sihlquai/HB mit Tramlinien 4, 13 oder 17 bis Zürich, Escher-Wyss-Platz</p>
 </x-site.card-text>
 
 <x-site.card-text>
