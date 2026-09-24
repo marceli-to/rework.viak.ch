@@ -3,7 +3,7 @@ import { RouterLink } from 'vue-router';
 import EventState from './EventState.vue';
 import IconEdit from '@/components/icons/Edit.vue';
 import IconArrowRight from '@/components/icons/ArrowRight.vue';
-import { longDate } from '@/support/format';
+import { shortDate } from '@/support/format';
 
 /**
  * One course date in *Kurse*'s chronological mode — legacy's
@@ -35,7 +35,7 @@ defineProps({
 
 		<div class="max-sm:pr-40 sm:grid sm:grid-cols-12 sm:gap-x-16 lg:gap-x-40">
 			<div class="sm:col-span-2">
-				<strong class="font-bold">{{ longDate(event.dates[0]?.date ?? event.date) }}</strong>
+				<strong class="font-bold">{{ shortDate(event.dates[0]?.date ?? event.date) }}</strong>
 				<template v-if="event.dates[0]?.time_start">
 					<br />{{ event.dates[0].time_start }} – {{ event.dates[0].time_end }} Uhr
 				</template>

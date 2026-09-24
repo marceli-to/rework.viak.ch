@@ -11,6 +11,14 @@ export function longDate(iso) {
 }
 
 /**
+ * The short form, *24.09.2026* — where the long one breaks over two lines,
+ * as it did in the date column of *Kurse* by date (Marcel, 2026-09-24).
+ */
+export function shortDate(iso) {
+	return iso ? iso.split('-').reverse().join('.') : '';
+}
+
+/**
  * Lower-case, accents gone — so *fuhrung* finds *Führung*, the way an admin
  * types into a search box.
  */
