@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { done, start } from '@/composables/useProgress';
 
 /**
  * Session-cookie auth against the same endpoints the public site uses.
- * Errors are normalised here so views never unpack an axios error shape.
+ * Errors are normalised here so views never unpack an axios error shape, and
+ * every request runs the bar across the top while it is out.
  */
 const client = axios.create({
 	baseURL: '/api',
@@ -10,9 +12,18 @@ const client = axios.create({
 	withCredentials: true,
 });
 
+client.interceptors.request.use((config) => {
+	start();
+	return config;
+});
+
 client.interceptors.response.use(
-	(response) => response,
+	(response) => {
+		done();
+		return response;
+	},
 	(error) => {
+		done();
 		const { response } = error;
 
 		return Promise.reject({

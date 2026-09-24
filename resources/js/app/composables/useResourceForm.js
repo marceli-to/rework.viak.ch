@@ -30,6 +30,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	const id = ref(null);
 	const errors = ref({});
 	const saving = ref(false);
+	const deleting = ref(false);
 	const failed = ref(null);
 
 	const creating = computed(() => !route.params.uuid);
@@ -90,6 +91,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	async function destroy(question) {
 		if (!(await confirm('Bitte Löschen bestätigen!', question))) return;
 
+		deleting.value = true;
 		try {
 			await remove(id.value);
 			saved = JSON.stringify(form.value);
@@ -97,6 +99,8 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 			router.push(list);
 		} catch (problem) {
 			toast(problem.message, 'error');
+		} finally {
+			deleting.value = false;
 		}
 	}
 
@@ -108,5 +112,5 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	window.addEventListener('beforeunload', warn);
 	onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 
-	return { schema, form, meta, id, errors, saving, failed, creating, submit, destroy };
+	return { schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy };
 }

@@ -447,6 +447,25 @@ From the course and testimonial forms, once both existed by hand — the
 - **Custom parts plug in by name** and take part through hooks: the image
   section reports what it holds, and uploads it once a new course exists.
 
+## Loading, built 2026-09-24
+
+Each screen had its own *Wird geladen …* and nothing else. Nothing showed
+while a screen's code loaded on first open, or while the new order or a
+delete was saving.
+
+- **Legacy's bar**: NProgress, 2px teal across the top, spinner off
+  (`_progress.scss`). Legacy started and stopped it by hand in 38 files. Here
+  it is a count (`useProgress`): the API client counts every request and the
+  router counts a navigation, so no screen calls it.
+- **It waits 150ms before showing**, and finishing waits one turn of the
+  event loop, so a screen's navigation and its data load are one run of the
+  bar. Checked in the browser: a real request under 150ms never draws it.
+- **Skeletons and `<Suspense>` were considered and not used.** Legacy had
+  neither, and Suspense would change how every screen loads.
+- *Wird geladen …* is now `<Loading>`, shown after 200ms so a fast load
+  doesn't flash it. *Löschen* is disabled while the delete runs, as
+  *Speichern* is while saving.
+
 ## A navigation for it
 
 Legacy's top bar holds Kurse, Experten, Studenten; everything else sits in a

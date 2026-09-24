@@ -6,6 +6,7 @@ import { useSortable } from '@/composables/useSortable';
 import { toast } from '@/composables/useToast';
 import { fold } from '@/support/format';
 import Collapsible from '@/components/ui/Collapsible.vue';
+import Loading from '@/components/ui/Loading.vue';
 import EventLine from '@/components/course/EventLine.vue';
 import EventRow from '@/components/course/EventRow.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
@@ -107,7 +108,7 @@ onMounted(async () => {
 		</div>
 
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
-		<p v-else-if="loading" class="mt-32">Wird geladen …</p>
+		<Loading v-else-if="loading" class="mt-32" />
 
 		<template v-else-if="mode === 'chronological'">
 			<EventLine v-for="{ event, course } in events" :key="event.uuid" :event="event" :course="course" />

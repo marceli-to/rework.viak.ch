@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router';
 import Header from '@/components/layout/Header.vue';
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
+import Progress from '@/components/ui/Progress.vue';
 import Toast from '@/components/ui/Toast.vue';
 
 /**
@@ -12,6 +13,7 @@ import Toast from '@/components/ui/Toast.vue';
 </script>
 
 <template>
+	<Progress />
 	<Header />
 	<main class="pb-24 sm:pb-32">
 		<RouterView />

@@ -4,6 +4,7 @@ import { fetchTestimonials, orderTestimonials } from '@/api/testimonials';
 import { useSortable } from '@/composables/useSortable';
 import { toast } from '@/composables/useToast';
 import ListHeader from '@/components/list/ListHeader.vue';
+import Loading from '@/components/ui/Loading.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 
 /**
@@ -41,7 +42,7 @@ const { dragging, handlers } = useSortable(items, async (list) => {
 		<ListHeader title="Testimonials" :create="{ name: 'content.testimonial.create' }" />
 
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
-		<p v-else-if="loading" class="mt-32">Wird geladen …</p>
+		<Loading v-else-if="loading" class="mt-32" />
 		<p v-else-if="!items.length" class="mt-32">Noch keine Testimonials erfasst.</p>
 
 		<EditableListItem

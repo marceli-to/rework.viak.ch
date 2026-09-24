@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button.vue';
 import DropBox from '@/components/form/DropBox.vue';
 import Field from '@/components/form/Field.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
+import Loading from '@/components/ui/Loading.vue';
 import Select from '@/components/form/Select.vue';
 // Legacy's own three: feather's, at 18px (`shared/modules/images/components/Actions.vue`).
 import IconCrop from '@/components/icons/feather/Crop.vue';
@@ -309,7 +310,7 @@ async function saveCrop() {
 			</li>
 		</ul>
 
-		<p v-if="loading" class="mt-24">Wird geladen …</p>
+		<Loading v-if="loading" class="mt-24" />
 
 		<div v-else-if="images.length" class="mt-24 grid grid-cols-2 items-start gap-16 sm:grid-cols-3 lg:gap-24">
 			<article

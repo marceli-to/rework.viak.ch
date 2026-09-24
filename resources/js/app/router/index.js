@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { done, start } from '@/composables/useProgress';
 
 const Pending = () => import('@/views/Pending.vue');
 
@@ -74,7 +75,24 @@ const router = createRouter({
 	scrollBehavior: () => ({ top: 0 }),
 });
 
+/*
+ * The bar across the top while a screen's code is on its way. A flag, not a
+ * count: a navigation a guard redirects starts again without ending first.
+ */
+let navigating = false;
+const arrived = () => {
+	if (navigating) done();
+	navigating = false;
+};
+
+router.beforeEach(() => {
+	if (!navigating) start();
+	navigating = true;
+});
+router.onError(arrived);
+
 router.afterEach((to) => {
+	arrived();
 	document.title = `${to.meta.title ?? 'Dashboard'} • Visualisierungs-Akademie`;
 });
 

@@ -3,6 +3,7 @@ import { useResourceForm } from '@/composables/useResourceForm';
 import ArticleText from '@/components/layout/ArticleText.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Button from '@/components/ui/Button.vue';
+import Loading from '@/components/ui/Loading.vue';
 import FormNode from './FormNode.vue';
 
 /**
@@ -31,12 +32,12 @@ const props = defineProps({
 	note: { type: Function, default: () => null },
 });
 
-const { schema, form, meta, id, errors, saving, failed, creating, submit, destroy } = useResourceForm(props);
+const { schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
 </script>
 
 <template>
 	<p v-if="failed" class="text-danger">{{ failed }}</p>
-	<p v-else-if="!form">Wird geladen …</p>
+	<Loading v-else-if="!form" />
 
 	<form v-else novalidate @submit.prevent="submit()">
 		<ArticleText>
@@ -59,7 +60,7 @@ const { schema, form, meta, id, errors, saving, failed, creating, submit, destro
 				<template v-else>
 					<p class="mb-12 lg:mb-16">{{ deletion.text }}</p>
 					<div class="mt-12 sm:mt-24">
-						<Button variant="danger" class="w-full" @click="destroy(deletion.question(form, meta))">Löschen</Button>
+						<Button variant="danger" class="w-full" :disabled="deleting" @click="destroy(deletion.question(form, meta))">{{ deleting ? 'Wird gelöscht …' : 'Löschen' }}</Button>
 					</div>
 				</template>
 			</div>
