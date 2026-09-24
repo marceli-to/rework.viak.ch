@@ -359,6 +359,15 @@ on the media subsystem ported from `forrerzimmermann.ch` in chunk 08.
 - **The cards show the crop**, through Glide at 480px, three to a row, drag to
   reorder. The drop box is the site's (`x-form.file-input`), with the 1px
   black line of 2026-09-23 rather than legacy's grey dashes.
+- **A new course takes images too** (Marcel, 2026-09-24 — legacy said *Bilder
+  können erst nach dem Speichern hochgeladen werden*). They wait in the browser
+  as cards with their type, alt text, caption and order, and go up in that
+  order right after the course is created. **Cropping waits for the upload**:
+  a large file is scaled down on the server, and a crop drawn on the
+  original's pixels would land in the wrong place.
+- **Two save buttons**: *Speichern* saves and goes back to the list;
+  *Speichern und Weiterbearbeiten*, secondary, below it, saves and stays — on a
+  new course, by opening it for editing.
 - **Left out, on the numbers**: legacy's eye icon — one of its 333 images was
   ever hidden, so an unwanted image is deleted — its *Listen Ansicht*, and
   forrerzimmermann's art-directed mobile variant.

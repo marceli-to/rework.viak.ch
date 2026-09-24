@@ -41,7 +41,9 @@ import Textarea from '@/components/form/Textarea.vue';
  * - **deleting is refused while a date has bookings** — legacy deleted the
  *   course and every date with it;
  * - **images save on their own**, each action at once, as legacy's do
- *   ([[ImageSection]]) — so they are not part of what this form sends.
+ *   ([[ImageSection]]) — so they are not part of what this form sends. On a
+ *   new course they wait in the browser and go up right after *Speichern*,
+ *   where legacy said they could only come after it.
  */
 const route = useRoute();
 const router = useRouter();
@@ -66,7 +68,9 @@ const saving = ref(false);
 const failed = ref(null);
 
 let saved = '';
-const dirty = computed(() => form.value !== null && JSON.stringify(form.value) !== saved);
+const imageSection = ref(null);
+// Images waiting to be uploaded with a new course are unsaved changes too.
+const dirty = computed(() => form.value !== null && (JSON.stringify(form.value) !== saved || imageSection.value?.pending > 0));
 
 function load(data) {
 	const { uuid: id, url, has_bookings, ...fields } = data;
@@ -94,20 +98,31 @@ onMounted(async () => {
 const error = (key) => errors.value[key]?.[0] ?? null;
 const failedUnder = (...prefixes) => Object.keys(errors.value).some((key) => prefixes.some((prefix) => key === prefix || key.startsWith(`${prefix}.`)));
 
-async function submit() {
+/**
+ * *Speichern* saves and goes back to the list; *Speichern und
+ * Weiterbearbeiten* saves and stays — on a new course, by opening it for
+ * editing (Marcel, 2026-09-24; legacy's pair was *Speichern und schliessen* and
+ * *Speichern*, on the create screen only).
+ */
+async function submit(stay = false) {
 	saving.value = true;
 	errors.value = {};
+
+	const wasCreating = creating.value;
 
 	try {
 		const data = await saveCourse(meta.value.uuid, form.value);
 		load(data);
 
-		if (creating.value) {
-			toast('Kurs erfasst');
-			router.replace({ name: 'course.edit', params: { uuid: data.uuid } });
-		} else {
-			toast('Gespeichert');
+		// A new course exists now, so the images held for it go up.
+		const failed = wasCreating ? ((await imageSection.value?.flush(data.uuid)) ?? []) : [];
+		const done = wasCreating ? 'Kurs erfasst' : 'Gespeichert';
+		toast(failed.length ? `${done} — nicht hochgeladen: ${failed.join(', ')}` : done, failed.length ? 'error' : 'success');
+
+		if (!stay) {
 			router.push({ name: 'courses', query: { modus: 'kurse' } });
+		} else if (wasCreating) {
+			router.replace({ name: 'course.edit', params: { uuid: data.uuid } });
 		}
 	} catch (problem) {
 		errors.value = problem.errors ?? {};
@@ -149,7 +164,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 	<p v-if="failed" class="text-danger">{{ failed }}</p>
 	<p v-else-if="!form">Wird geladen …</p>
 
-	<form v-else novalidate @submit.prevent="submit">
+	<form v-else novalidate @submit.prevent="submit()">
 		<ArticleText>
 			<template #aside>
 				<h1 class="font-bold text-teal max-sm:hidden">{{ creating ? 'Kurs erfassen' : 'Kurs bearbeiten' }}</h1>
@@ -188,10 +203,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 
 			<Collapsible>
 				<template #title>Bilder</template>
-				<ImageSection v-if="meta.uuid" :course="meta.uuid" />
-				<p v-else class="mt-8 text-md text-danger sm:mt-16 lg:text-lg">
-					<em>Bilder können erst nach dem Speichern hochgeladen werden …</em>
-				</p>
+				<ImageSection ref="imageSection" :course="meta.uuid ?? null" />
 			</Collapsible>
 
 			<Collapsible :invalid="failedUnder('videos')">
@@ -221,6 +233,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 			</Collapsible>
 
 			<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
+			<Button variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
 
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->
 			<div v-if="!creating" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">

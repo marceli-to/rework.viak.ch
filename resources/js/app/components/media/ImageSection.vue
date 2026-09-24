@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 import { cropMedia, deleteMedia, fetchCourseMedia, orderCourseMedia, setMediaRole, updateMedia, uploadCourseMedia } from '@/api/media';
@@ -28,10 +28,22 @@ import IconTrash from '@/components/icons/Trash.vue';
  * **Every action saves at once**, as legacy's does — this section is not part
  * of the course form's save.
  *
+ * **On a course not yet saved, the images wait in the browser** (Marcel,
+ * 2026-09-24 — legacy said *Bilder können erst nach dem Speichern hochgeladen
+ * werden*). They show as cards at once and take their type, alt text, caption
+ * and order; the form's *Speichern* creates the course and then calls
+ * `flush()`, which uploads them in that order and applies the rest. **Cropping
+ * waits for the upload**: a large file is scaled down on the server, and a
+ * crop drawn on the original's pixels would land in the wrong place.
+ *
  * Left out, both on the numbers: legacy's eye icon (one of 333 images was ever
  * hidden) and its *Listen Ansicht*.
  */
-const props = defineProps({ course: { type: String, required: true } });
+const props = defineProps({ course: { type: String, default: null } });
+
+const staging = computed(() => props.course === null);
+const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_BYTES = 16 * 1024 * 1024;
 
 const ROLES = [
 	{ value: 'teaser', label: 'Vorschau' },
@@ -51,12 +63,103 @@ const uploads = ref([]);
 const loading = ref(true);
 
 onMounted(async () => {
+	if (staging.value) {
+		loading.value = false;
+		return;
+	}
+
 	try {
 		images.value = await fetchCourseMedia(props.course);
 	} finally {
 		loading.value = false;
 	}
 });
+
+let staged = 0;
+
+/** Held in the browser until the course exists; checked here as the server would check them. */
+function stage(files) {
+	for (const file of files) {
+		if (!ACCEPTED.includes(file.type)) {
+			uploads.value.push({ name: file.name, progress: 0, error: 'Nur JPG, PNG oder WebP.' });
+			continue;
+		}
+		if (file.size > MAX_BYTES) {
+			uploads.value.push({ name: file.name, progress: 0, error: 'Höchstens 16 MB.' });
+			continue;
+		}
+
+		const image = {
+			uuid: `neu-${++staged}`,
+			staged: true,
+			file,
+			name: file.name,
+			src: URL.createObjectURL(file),
+			crop: null,
+			width: null,
+			height: null,
+			role: images.value.some((item) => item.role === 'teaser') ? 'visual' : 'teaser',
+			alt: '',
+			caption: '',
+		};
+		image.preview = image.src;
+		images.value.push(image);
+
+		// Its shape, once the browser has read it.
+		const probe = new Image();
+		probe.onload = () => {
+			const item = images.value.find((entry) => entry.uuid === image.uuid);
+			if (item) Object.assign(item, { width: probe.naturalWidth, height: probe.naturalHeight });
+		};
+		probe.src = image.src;
+	}
+}
+
+/** One teaser and one OpenGraph image, kept so in the browser as the server keeps it. */
+function applyRole(image, role) {
+	if (role === 'teaser' || role === 'og') {
+		for (const other of images.value) if (other !== image && other.role === role) other.role = 'visual';
+	}
+	image.role = role;
+}
+
+/**
+ * Uploads what was staged, in order, onto the course just created, then gives
+ * each its type, alt text and caption. Answers the names that did not make it.
+ */
+let flushing = false;
+
+async function flush(course) {
+	flushing = true;
+	const failed = [];
+
+	for (const image of images.value.filter((item) => item.staged)) {
+		try {
+			let media = await uploadCourseMedia(course, image.file);
+			if (image.alt || image.caption) media = await updateMedia(media.uuid, { alt: image.alt, caption: image.caption });
+			if (media.role !== image.role) await setMediaRole(media.uuid, image.role);
+		} catch {
+			failed.push(image.name);
+		}
+		URL.revokeObjectURL(image.src);
+	}
+
+	images.value = await fetchCourseMedia(course);
+	flushing = false;
+
+	return failed;
+}
+
+// *Kurs erfassen* becomes *Kurs bearbeiten* on the same component, so the
+// section is told its course; it reads the course's images then — unless it is
+// uploading them itself, which reads them when it is done.
+watch(() => props.course, async (course) => {
+	if (course && !flushing) images.value = await fetchCourseMedia(course);
+});
+
+const pending = computed(() => images.value.filter((item) => item.staged).length);
+
+defineExpose({ flush, pending });
 
 /** Swap in the server's answer; a role change can also move a flag off a sibling, so those reload. */
 async function refresh(changed, siblings = false) {
@@ -70,6 +173,8 @@ async function refresh(changed, siblings = false) {
 
 // Uploads — one request per file, one after another, each with its bar.
 async function upload(files) {
+	if (staging.value) return stage(files);
+
 	for (const file of files) {
 		const entry = ref({ name: file.name, progress: 0, error: null });
 		uploads.value.push(entry.value);
@@ -87,6 +192,8 @@ async function upload(files) {
 }
 
 const { dragging, handlers } = useSortable(images, async (list) => {
+	if (staging.value) return;
+
 	try {
 		await orderCourseMedia(props.course, list.map((image) => image.uuid));
 		toast('Reihenfolge angepasst');
@@ -105,6 +212,14 @@ function edit(image) {
 async function saveEdit() {
 	const { uuid, role, alt, caption, was } = editing.value;
 
+	if (staging.value) {
+		const image = images.value.find((item) => item.uuid === uuid);
+		Object.assign(image, { alt, caption });
+		applyRole(image, role);
+		editing.value = null;
+		return;
+	}
+
 	try {
 		const updated = await updateMedia(uuid, { alt, caption });
 		if (role !== was) {
@@ -122,6 +237,12 @@ async function saveEdit() {
 
 async function remove(image) {
 	if (!(await confirm('Bitte Löschen bestätigen!', image.name))) return;
+
+	if (image.staged) {
+		URL.revokeObjectURL(image.src);
+		images.value.splice(images.value.indexOf(image), 1);
+		return;
+	}
 
 	try {
 		await deleteMedia(image.uuid);
@@ -199,7 +320,15 @@ async function clearCrop() {
 				<div class="mt-10 flex gap-12">
 					<button type="button" title="Bearbeiten" class="size-18 hover:text-teal" @click="edit(image)"><IconEdit class="block" /></button>
 					<button type="button" title="Löschen" class="size-18 hover:text-teal" @click="remove(image)"><IconTrash class="block" /></button>
-					<button type="button" title="Zuschneiden" class="size-18 hover:text-teal" @click="cropping = image"><IconCrop class="block" /></button>
+					<button
+						type="button"
+						:title="image.staged ? 'Zuschneiden nach dem Speichern' : 'Zuschneiden'"
+						:disabled="image.staged"
+						class="size-18 hover:text-teal disabled:cursor-not-allowed disabled:text-gray-400"
+						@click="cropping = image"
+					>
+						<IconCrop class="block" />
+					</button>
 				</div>
 			</article>
 		</div>
