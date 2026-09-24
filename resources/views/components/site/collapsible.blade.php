@@ -1,4 +1,4 @@
-@props(['title', 'expanded' => true, 'count' => null])
+@props(['title', 'expanded' => true, 'count' => null, 'last' => false])
 
 {{--
 	`components/_collapsible.scss` and `components/lists/_global.scss:53`
@@ -32,7 +32,11 @@
 	a button — it takes focus, it answers the space bar, and `aria-expanded`
 	means something on it. Nothing visual changes.
 --}}
-<section {{ $attributes->class(['mb-64 border-t border-gray-600 sm:border-t-2 sm:text-lg lg:text-xl']) }} x-data="{ open: @js($expanded) }">
+{{-- `last` is legacy's `.container:last-of-type { margin-bottom: 0 }` — the
+     final block on the page takes no 64px under it. A prop rather than a
+     `last-of-type:` variant, because on the course page the last collapsible
+     is followed by the browse pair, and there it keeps its margin. --}}
+<section {{ $attributes->class(['border-t border-gray-600 sm:border-t-2 sm:text-lg lg:text-xl', $last ? 'mb-0' : 'mb-64']) }} x-data="{ open: @js($expanded) }">
 	<h2 class="mb-4 text-md leading-none font-bold text-gray-600 sm:text-lg lg:text-xl">
 		<button type="button"
 			class="relative block w-full py-8 pb-12 text-left transition-colors hover:text-gray-400 sm:py-16 sm:pb-24"
@@ -66,8 +70,10 @@
 		</button>
 	</h2>
 
-	{{-- No `x-cloak`: the block renders open, so there is nothing to hide
-	     before Alpine starts — and without JavaScript it stays open, which is
-	     the readable outcome. --}}
-	<div x-show="open">{{ $slot }}</div>
+	{{-- An open block has no `x-cloak`: there is nothing to hide before Alpine
+	     starts, and without JavaScript it stays open, which is the readable
+	     outcome. **A shut one does**, or it paints open and then snaps closed —
+	     which on Kontakt is the whole Datenschutzerklärung, 14,000px of it,
+	     for a frame. --}}
+	<div x-show="open" @unless ($expanded) x-cloak @endunless>{{ $slot }}</div>
 </section>

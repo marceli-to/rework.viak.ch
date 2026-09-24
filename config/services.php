@@ -14,6 +14,16 @@ return [
 	|
 	*/
 
+	/*
+	 * The map on the Kontakt page ([[09-public-site]]). Legacy's variable name,
+	 * unchanged, so the production .env carries across as it is. Empty locally:
+	 * the key is the client's and restricted to the live site, and without one
+	 * the page draws a grey box of the map's size instead.
+	 */
+	'google_maps' => [
+		'key' => env('GOOGLEMAPS_APIKEY'),
+	],
+
 	'postmark' => [
 		'key' => env('POSTMARK_API_KEY'),
 	],

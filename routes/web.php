@@ -90,6 +90,14 @@ Route::prefix('{locale}')
 				->name("{$locale}.experts.show");
 
 			/*
+			 * Kontakt — static copy and a map, so a view and no controller.
+			 * Legacy's controller existed only to hand the page its team
+			 * members, and there are none ([[09-public-site]]).
+			 */
+			Route::view($segments['contact'], 'site.contact.index')
+				->name("{$locale}.contact");
+
+			/*
 			 * The checkout, a student's ([[09-public-site]]).
 			 *
 			 * **Legacy's own URLs**, English step names inside a German path —

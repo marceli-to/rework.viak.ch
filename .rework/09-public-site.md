@@ -149,8 +149,9 @@ Roughly in the order that unblocks the most.
 5. **Experten, Kontakt, Firmenschulung, the homepage** — the live site's own
    pages, rebuilt at parity; the 2026-09-23 mockups of them are phase two
    (`04-content.md`, *The mockup review*). **Experten is done, 2026-09-24** —
-   the list and the expert page; see *The Experten pages*, below. Kontakt still
-   points at `#`. Firmenschulung is legacy's `/de/individualschulungen`.
+   the list and the expert page; see *The Experten pages*, below. **So is
+   Kontakt, the same day** — see *The Kontakt page*. Left: Firmenschulung,
+   which is legacy's `/de/individualschulungen`, and the homepage.
 6. ~~The rest of the filter.~~ **Done 2026-09-21** — all seven attributes, the
    three categories as links and the other six as selects.
 
@@ -1424,8 +1425,6 @@ Vite tree-shakes it, so four broken Vue icons compiled clean. Run them through
   `/de/checkout/…` throughout, and the rebuild follows it. Nothing indexes
   these pages, so it is a naming question rather than an SEO one, but the
   segment sits there unused until it is answered.
-- **Kontakt** is in the nav pointing at `#`. Fine while it has no page;
-  Experten has had one since 2026-09-24.
 - **`meta keywords`** is carried across verbatim. Google has ignored it since
   2009 — removing it is a decision rather than a port, so it waits.
 - **`APP_NAME` is now the short name**, `Visualisierungs-Akademie`, because the
@@ -2170,4 +2169,38 @@ the SCSS, and `resize_window` cannot be trusted to prove them.
 - **The local names are not the live ones.** The dev database is pseudonymised
   (`user6@example.test`, invented names) but keeps the uuids and the order, so
   compare the two sites by uuid, not by name.
+
+## The Kontakt page — 2026-09-24
+
+`/de/kontakt`, a `Route::view` — legacy's controller existed only to hand the
+page its team members. Measured against production at 1482px the same day:
+every block, heading and card lands on production's pixel, the
+Datenschutzerklärung included (14,845px, element by element). Phone width not
+measured, as with Experten.
+
+- **Team is not built, because it has never rendered.** Legacy shows
+  `team_members` with `publish` set and the table is **empty** — so the
+  collapsible has never appeared on the live site. `08-accounts.md` lists the
+  table for chunk 04; the review gives the team its own page in phase two.
+- **The copy is legacy's partials, converted by script** — `__('…')` unwrapped,
+  and the `<h2>`s legacy leaves open inside its asides closed. Carried
+  verbatim otherwise, including *Escher-Wyss-PlatzWer*, which is missing a
+  space; that is the client's to fix, not the port's. `x-site.card-text` is
+  `article.card-text`, with a `privacy` flag for the one card that has its own
+  headings.
+- **The AGB is a file in `public/media/downloads/`**, at legacy's path,
+  because the Impressum links it there. Legacy's same folder holds two older
+  Datenschutzerklärung PDFs that nothing on the site links; they were left
+  behind.
+- **The map loads Google only with a key.** `GOOGLEMAPS_APIKEY`, legacy's
+  name, into `services.google_maps.key`. The key is the client's and belongs
+  to production; without it the page draws the map's 16:10 grey box, so the
+  layout holds locally and in tests. Loading Google on page view is the same
+  consent question as the Elfsight widgets, and legacy asks nothing.
+- **Two changes to `x-site.collapsible`**, both for this page and both
+  harmless to the others: `last` drops the 64px under the final block
+  (`.container:last-of-type`), and a block that starts **shut** is now
+  `x-cloak`ed. Without it the 14,000px Datenschutzerklärung painted open for
+  a frame before Alpine closed it. The two student-portal blocks that start
+  shut get the same fix.
 

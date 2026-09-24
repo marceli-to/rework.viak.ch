@@ -82,6 +82,14 @@ final class SiteUrl
 		));
 	}
 
+	/** The Kontakt page — `/de/kontakt`. */
+	public static function contact(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('contact', $locale);
+	}
+
 	/**
 	 * A checkout step — `/de/checkout/basket`.
 	 *
