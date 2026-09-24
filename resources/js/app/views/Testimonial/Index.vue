@@ -57,6 +57,9 @@ const { dragging, handlers } = useSortable(items, async (list) => {
 			{{ item.name }}
 			<span v-if="item.context" class="text-lg">({{ item.context }})</span>
 			<span v-if="!item.publish" class="ml-4 text-lg">nicht publiziert</span>
+			<span class="block text-lg text-gray-600">
+				{{ item.placements.length ? `Verwendet auf: ${item.placements.map((place) => place.label).join(', ')}` : 'Noch auf keiner Seite verwendet' }}
+			</span>
 		</StackedListItem>
 	</section>
 </template>

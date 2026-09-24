@@ -27,6 +27,8 @@ const props = defineProps({
 	blocked: { type: Function, default: () => null },
 	// *Speichern und Weiterbearbeiten* — for a form long enough to come back to.
 	stay: { type: Boolean, default: true },
+	// A line about the record that is not a field — where a testimonial is used.
+	note: { type: Function, default: () => null },
 });
 
 const { schema, form, meta, id, errors, saving, failed, creating, submit, destroy } = useResourceForm(props);
@@ -45,6 +47,8 @@ const { schema, form, meta, id, errors, saving, failed, creating, submit, destro
 
 			<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" />
 
+			<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>
+
 			<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 			<Button v-if="stay" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
 
@@ -55,7 +59,7 @@ const { schema, form, meta, id, errors, saving, failed, creating, submit, destro
 				<template v-else>
 					<p class="mb-12 lg:mb-16">{{ deletion.text }}</p>
 					<div class="mt-12 sm:mt-24">
-						<Button variant="danger" class="w-full" @click="destroy(deletion.question(form))">Löschen</Button>
+						<Button variant="danger" class="w-full" @click="destroy(deletion.question(form, meta))">Löschen</Button>
 					</div>
 				</template>
 			</div>

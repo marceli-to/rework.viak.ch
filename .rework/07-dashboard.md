@@ -395,6 +395,15 @@ the field kit's two source forms, built by hand like the course form.
   had was dropped the same day.
 - **One save button**: a testimonial is three lines, so the form has no
   *Speichern und Weiterbearbeiten* (`ResourceForm`'s `stay`).
+- **Where it stands is a placement table**, `testimonial_placements`
+  (Marcel, 2026-09-24) — not a foreign key on the testimonial, because one
+  quote can stand on the Rhino course, Rhinoceros and the homepage at once,
+  each page in its own order. Polymorphic: a course or a software today
+  ([[HasTestimonials]]), the homepage once it has a record, any new kind of
+  page without a schema change. The pickers that write it come with the
+  pages; the list and the form already show *Verwendet auf*, and deleting a
+  placed testimonial says which pages it leaves. A page that is force-deleted
+  detaches itself, since no foreign key reaches a morph.
 - **The list is legacy's content list**, measured on its News screen: the
   header with its `+`, then one stacked row each (`list/StackedListItem.vue`),
   dragged into the order the site shows them. Unpublished rows are grey.

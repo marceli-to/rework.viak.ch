@@ -24,6 +24,10 @@ class TestimonialFormResource extends JsonResource
 			'name' => $this->name,
 			'context' => $this->getTranslation('context', 'de', false) ?: '',
 			'publish' => $this->publish,
+
+			// Read, never sent: where it stands. The form keeps anything that is
+			// not a schema field as `meta` ([[useResourceForm]]).
+			'placements' => $this->placements(),
 		];
 	}
 }

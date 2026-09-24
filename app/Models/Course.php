@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasMedia;
+use App\Models\Concerns\HasTestimonials;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,7 @@ class Course extends Model
 {
 	use HasFactory;
 	use HasMedia;
+	use HasTestimonials;
 	use HasTranslations;
 	use HasUuid;
 	use SoftDeletes;

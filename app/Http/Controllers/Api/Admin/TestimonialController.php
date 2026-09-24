@@ -21,12 +21,12 @@ class TestimonialController extends Controller
 {
 	public function index(): AnonymousResourceCollection
 	{
-		return TestimonialFormResource::collection(Testimonial::query()->ordered()->get());
+		return TestimonialFormResource::collection(Testimonial::query()->with(['courses', 'software'])->ordered()->get());
 	}
 
 	public function show(Testimonial $testimonial): TestimonialFormResource
 	{
-		return new TestimonialFormResource($testimonial);
+		return new TestimonialFormResource($testimonial->load(['courses', 'software']));
 	}
 
 	/** A new one goes to the end of the list. */
@@ -44,7 +44,7 @@ class TestimonialController extends Controller
 	{
 		$testimonial->update($request->testimonialAttributes());
 
-		return new TestimonialFormResource($testimonial);
+		return new TestimonialFormResource($testimonial->load(['courses', 'software']));
 	}
 
 	public function order(Request $request): JsonResponse
@@ -60,6 +60,7 @@ class TestimonialController extends Controller
 		return response()->json(status: 204);
 	}
 
+	/** Its placements go with it — the foreign key cascades. */
 	public function destroy(Testimonial $testimonial): JsonResponse
 	{
 		$testimonial->delete();
