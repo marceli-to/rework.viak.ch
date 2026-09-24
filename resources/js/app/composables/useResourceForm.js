@@ -3,6 +3,7 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { fetchForm } from '@/api/forms';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
+import { returnTo } from '@/router';
 
 /**
  * Everything a dashboard form does besides drawing its fields — the part of
@@ -16,6 +17,7 @@ import { toast } from '@/composables/useToast';
  *   and never sent.
  * - **Saves**: *Speichern* goes back to the list, *Speichern und
  *   Weiterbearbeiten* stays — on a new record, by opening it for editing.
+ *   Back to the list means back to it as it was left, search and all.
  * - **Guards unsaved changes** on the way out and on a reload.
  * - **Hooks** let a custom part of the form take part: the image section
  *   reports what it is holding and uploads it once a new course exists.
@@ -34,6 +36,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	const failed = ref(null);
 
 	const creating = computed(() => !route.params.uuid);
+	const back = returnTo(list);
 
 	const hooks = [];
 	provide('formHooks', { register: (hook) => hooks.push(hook) });
@@ -78,7 +81,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 			const done = wasCreating ? `${noun} erfasst` : 'Gespeichert';
 			toast(missed.length ? `${done}. Nicht hochgeladen: ${missed.join(', ')}` : done, missed.length ? 'error' : 'success');
 
-			if (!stay) router.push(list);
+			if (!stay) router.push(back);
 			else if (wasCreating) router.replace(edit(id.value));
 		} catch (problem) {
 			errors.value = problem.errors ?? {};
@@ -96,7 +99,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 			await remove(id.value);
 			saved = JSON.stringify(form.value);
 			toast(`${noun} gelöscht`);
-			router.push(list);
+			router.push(back);
 		} catch (problem) {
 			toast(problem.message, 'error');
 		} finally {
@@ -112,5 +115,5 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	window.addEventListener('beforeunload', warn);
 	onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 
-	return { schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy };
+	return { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy };
 }

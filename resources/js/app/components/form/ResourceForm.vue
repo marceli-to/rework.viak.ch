@@ -35,7 +35,7 @@ const props = defineProps({
 	locked: { type: Function, default: () => false },
 });
 
-const { schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
+const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
 
 // A title may read the record: *Veranstaltung für* and the course's.
 const title = (which) => (typeof props.titles[which] === 'function' ? props.titles[which](meta.value) : props.titles[which]);
@@ -49,7 +49,7 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 		<ArticleText>
 			<template #aside>
 				<h1 class="font-bold whitespace-pre-line text-teal max-sm:hidden">{{ title(creating ? 'create' : 'edit') }}</h1>
-				<BackLink :to="list" />
+				<BackLink :to="back" />
 			</template>
 
 			<fieldset class="min-w-0" :disabled="!creating && locked(meta)" :class="{ 'pointer-events-none opacity-40 select-none': !creating && locked(meta) }">

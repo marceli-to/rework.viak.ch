@@ -102,8 +102,18 @@ router.beforeEach(() => {
 });
 router.onError(arrived);
 
+/*
+ * Each screen's last query, so a form's way back lands on the list as it was
+ * left: a search, a mode. Without it, *Zurück* and *Speichern* dropped them.
+ */
+const lastQuery = {};
+
+/** Where a form goes back to: `list`, with the query that list last had. */
+export const returnTo = (list) => (lastQuery[list.name] ? { name: list.name, query: lastQuery[list.name] } : list);
+
 router.afterEach((to) => {
 	arrived();
+	if (to.name) lastQuery[to.name] = to.query;
 	document.title = `${to.meta.title ?? 'Dashboard'} • Visualisierungs-Akademie`;
 });
 
