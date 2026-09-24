@@ -6,9 +6,9 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 ## Status
 
-**Mapped 2026-09-24. Steps 1–3 built the same day**: the guard, the shell,
-*Kurse* in both modes, the course form and its images — see *Step 1* to
-*Step 3*, below. Asked for by Marcel before
+**Mapped 2026-09-24. Steps 1–4 built the same day**: the guard, the shell,
+*Kurse* in both modes, the course form and its images, and testimonials — see
+*Step 1* to *Step 4*, below. Next is step 5, extracting the field kit. Asked for by Marcel before
 starting the field kit, because the kit is only worth designing against the
 whole set of screens it has to serve.
 
@@ -378,6 +378,24 @@ on the media subsystem ported from `forrerzimmermann.ch` in chunk 08.
 - **Left out, on the numbers**: legacy's eye icon — one of its 333 images was
   ever hidden, so an unwanted image is deleted — its *Listen Ansicht*, and
   forrerzimmermann's art-directed mobile variant.
+
+## Step 4 — testimonials, built 2026-09-24
+
+*Seiteninhalte → Testimonials*: the model, a list and a form — the second of
+the field kit's two source forms, built by hand like the course form.
+
+- **What one holds is what the mockups show**: the quote, a name, one line of
+  context (*Architekturbüro, Zürich*). No photo, so the image field the kit
+  matrix above pencilled in is not needed. Quote and context are
+  translatable, the admin writes German.
+- **`featured` — *Auf der Startseite* — is the one placement decided** (homepage
+  marker 10). Firmenschulung and the software pages will want theirs; they
+  are added when those pages are, not guessed now.
+- **The list is legacy's content list**, measured on its News screen: the
+  header with its `+`, then one stacked row each (`list/StackedListItem.vue`),
+  dragged into the order the site shows them. Unpublished rows are grey.
+- **The form is the course form's frame**: the fields, *Publizieren* and *Auf
+  der Startseite*, the two save buttons, the danger zone, the leave guard.
 
 ## A navigation for it
 

@@ -99,5 +99,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::patch('media/{media:uuid}/crop', [Admin\MediaController::class, 'crop']);
 		Route::delete('media/{media:uuid}', [Admin\MediaController::class, 'destroy']);
 
+		Route::get('testimonials', [Admin\TestimonialController::class, 'index']);
+		Route::post('testimonials', [Admin\TestimonialController::class, 'store']);
+		Route::patch('testimonials/order', [Admin\TestimonialController::class, 'order']);
+		Route::get('testimonials/{testimonial}', [Admin\TestimonialController::class, 'show']);
+		Route::put('testimonials/{testimonial}', [Admin\TestimonialController::class, 'update']);
+		Route::delete('testimonials/{testimonial}', [Admin\TestimonialController::class, 'destroy']);
+
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
 	});
