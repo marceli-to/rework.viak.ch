@@ -11,9 +11,10 @@ import DropBox from '@/components/form/DropBox.vue';
 import Field from '@/components/form/Field.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
 import Select from '@/components/form/Select.vue';
-import IconCrop from '@/components/icons/Crop.vue';
-import IconEdit from '@/components/icons/Edit.vue';
-import IconTrash from '@/components/icons/Trash.vue';
+// Legacy's own three: feather's, at 18px (`shared/modules/images/components/Actions.vue`).
+import IconCrop from '@/components/icons/feather/Crop.vue';
+import IconEdit from '@/components/icons/feather/Edit.vue';
+import IconTrash from '@/components/icons/feather/Trash.vue';
 
 /**
  * *Bilder* on the course form — legacy's `shared/modules/images`, measured on
@@ -317,9 +318,9 @@ async function clearCrop() {
 					<img :src="image.preview" :alt="image.alt" class="block w-full bg-gray-200" :style="{ aspectRatio: shape(image) }" draggable="false" />
 					<span class="absolute top-8 right-8 bg-gray-400 px-12 py-8 text-md leading-[1.3] text-white">{{ roleLabel(image.role) }}</span>
 				</div>
-				<div class="mt-10 flex gap-12">
-					<button type="button" title="Bearbeiten" class="size-18 hover:text-teal" @click="edit(image)"><IconEdit class="block" /></button>
-					<button type="button" title="Löschen" class="size-18 hover:text-teal" @click="remove(image)"><IconTrash class="block" /></button>
+				<div class="mt-11 flex gap-12">
+					<button type="button" title="Bearbeiten" class="size-18 hover:text-teal" @click="edit(image)"><IconEdit /></button>
+					<button type="button" title="Löschen" class="size-18 hover:text-teal" @click="remove(image)"><IconTrash /></button>
 					<button
 						type="button"
 						:title="image.staged ? 'Zuschneiden nach dem Speichern' : 'Zuschneiden'"
@@ -327,7 +328,7 @@ async function clearCrop() {
 						class="size-18 hover:text-teal disabled:cursor-not-allowed disabled:text-gray-400"
 						@click="cropping = image"
 					>
-						<IconCrop class="block" />
+						<IconCrop />
 					</button>
 				</div>
 			</article>
