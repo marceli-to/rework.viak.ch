@@ -117,6 +117,13 @@ class DevUsersSeeder extends Seeder
 			'deleted_at' => null,
 		]);
 
+		// `HasUuid` fills it on create only, and these two rows were found,
+		// not created: without one the dev expert could not be picked on a
+		// course date's form.
+		if (blank($user->uuid)) {
+			$user->forceFill(['uuid' => (string) Str::uuid()])->save();
+		}
+
 		foreach ($roles as $role) {
 			DB::table('role_user')->insertOrIgnore(['user_id' => $user->id, 'role' => $role]);
 		}

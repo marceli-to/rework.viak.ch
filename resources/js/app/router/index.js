@@ -34,9 +34,20 @@ const routes = [
 		meta: { title: 'Kurs bearbeiten' },
 	},
 	pending('kurs/:uuid/kursdaten', 'course.events', 'Kursdaten'),
-	pending('kurs/:uuid/kursdatum/erfassen', 'event.create', 'Kursdatum erfassen'),
+	{
+		// `:course`, not `:uuid`: the form is creating when it has no `uuid`.
+		path: '/dashboard/kurs/:course/kursdatum/erfassen',
+		name: 'event.create',
+		component: () => import('@/views/Event/Form.vue'),
+		meta: { title: 'Kursdatum erfassen' },
+	},
 	pending('kursdatum/:uuid', 'event.show', 'Kursdatum'),
-	pending('kursdatum/:uuid/bearbeiten', 'event.edit', 'Kursdatum bearbeiten'),
+	{
+		path: '/dashboard/kursdatum/:uuid/bearbeiten',
+		name: 'event.edit',
+		component: () => import('@/views/Event/Form.vue'),
+		meta: { title: 'Kursdatum bearbeiten' },
+	},
 
 	pending('experten', 'experts', 'Experten'),
 	pending('studenten', 'students', 'Studenten'),

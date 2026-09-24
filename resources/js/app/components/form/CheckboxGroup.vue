@@ -16,12 +16,15 @@ defineProps({
 	required: { type: Boolean, default: false },
 	error: { type: String, default: null },
 	columns: { type: [Boolean, Number], default: false },
+	// The event form's *Experten*: legacy's `<h3><strong>`, bold where the
+	// course form's headings are not.
+	strong: { type: Boolean, default: false },
 });
 </script>
 
 <template>
 	<fieldset class="mb-32 border-b border-black pb-24">
-		<legend class="mb-16 float-left w-full sm:text-lg lg:text-xl" :class="{ 'text-danger': error }">
+		<legend class="mb-16 float-left w-full sm:text-lg lg:text-xl" :class="{ 'text-danger': error, 'font-bold': strong }">
 			{{ label }}<template v-if="required"> *</template>
 		</legend>
 		<div class="clear-both" :class="columns ? 'grid grid-cols-2 gap-x-16 lg:gap-x-40' : ''">

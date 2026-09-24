@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Forms\CourseSchema;
+use App\Forms\EventSchema;
 use App\Forms\Schema;
 use App\Forms\TestimonialSchema;
 use App\Http\Controllers\Controller;
@@ -21,6 +22,7 @@ class FormController extends Controller
 	private const FORMS = [
 		'course' => CourseSchema::class,
 		'testimonial' => TestimonialSchema::class,
+		'event' => EventSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

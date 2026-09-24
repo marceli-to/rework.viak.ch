@@ -139,7 +139,7 @@ onMounted(async () => {
 				<p v-if="!course.events.length" class="mt-16 sm:mt-32">Es sind keine Veranstaltungen vorhanden.</p>
 
 				<div class="mt-24 flex items-center justify-between">
-					<RouterLink :to="{ name: 'event.create', params: { uuid: course.uuid } }" title="Neues Kursdatum" class="block hover:text-teal">
+					<RouterLink :to="{ name: 'event.create', params: { course: course.uuid } }" title="Neues Kursdatum" class="block hover:text-teal">
 						<IconPlus size="lg" class="block" />
 					</RouterLink>
 					<RouterLink :to="{ name: 'course.events', params: { uuid: course.uuid } }" title="Alle Kursdaten" class="block hover:text-teal">

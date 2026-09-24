@@ -22,11 +22,12 @@ use JsonSerializable;
  * two source forms — course and testimonial — actually use; `07-dashboard.md`
  * checks it against every form still to come:
  *
- *   text · number · textarea · richtext · checkbox · checkboxes · select ·
- *   repeater · section · row · custom · hidden
+ *   text · number · date · time · textarea · richtext · checkbox ·
+ *   checkboxes · select · repeater · section · row · custom · hidden
  *
  * `section` is a collapsible, `row` lays fields side by side, `custom` hands a
- * spot to a component the kit does not know — the course's images.
+ * spot to a component the kit does not know — the course's images. A course
+ * date's days are a repeater drawn `inline`, one line per day.
  */
 final class Field implements JsonSerializable
 {
@@ -77,23 +78,44 @@ final class Field implements JsonSerializable
 	}
 
 	/**
-	 * Several of a list, picked by uuid — the five course taxonomies.
+	 * Several of a list, picked by uuid.
 	 *
-	 * @param  class-string<Model>  $model  whose `uuid` the values must exist as, and whose
-	 *                                      German `title`s are the options, sorted
+	 * Given a model, the options are all of its rows by German `title` — the
+	 * five course taxonomies. Given a closure, they are whatever it returns as
+	 * `uuid => label`, and only those pass — a course date's experts, who are
+	 * users holding the Expert role and not just any user.
+	 *
+	 * @param  class-string<Model>|Closure(): array<string, string>  $source
 	 */
-	public static function checkboxes(string $name, string $model): self
+	public static function checkboxes(string $name, string|Closure $source): self
 	{
-		$table = (new $model)->getTable();
+		$read = $source instanceof Closure
+			? $source
+			: fn (): array => $source::query()->get()
+				->mapWithKeys(fn ($term) => [$term->uuid => $term->getTranslation('title', 'de')])
+				->sortBy(fn ($label) => $label, SORT_NATURAL | SORT_FLAG_CASE)
+				->all();
 
 		return (new self('checkboxes', $name))
 			->rules(['array'])
-			->eachRule(['string', "exists:{$table},uuid"])
-			->with(['options' => fn () => $model::query()->get()
-				->map(fn ($term) => ['value' => $term->uuid, 'label' => $term->getTranslation('title', 'de')])
-				->sortBy('label', SORT_NATURAL | SORT_FLAG_CASE)
-				->values()
-				->all()]);
+			->with(['each' => fn () => ['string', Rule::in(array_keys($read()))]], false)
+			->with(['options' => fn () => collect($read())->map(fn ($label, $value) => ['value' => $value, 'label' => $label])->values()->all()]);
+	}
+
+	/**
+	 * A calendar day — *Deadline Anmeldung*. Typed as legacy has it,
+	 * `TT.MM.JJJJ`, and sent as `Y-m-d`; a day half typed goes as typed, so it
+	 * fails here and not silently.
+	 */
+	public static function date(string $name): self
+	{
+		return (new self('date', $name))->rules(['date_format:Y-m-d']);
+	}
+
+	/** A time of day — a course day's *von* and *bis*. Typed `hh.mm`, sent `H:i`. */
+	public static function time(string $name): self
+	{
+		return (new self('time', $name))->rules(['date_format:H:i']);
 	}
 
 	/**
@@ -283,7 +305,8 @@ final class Field implements JsonSerializable
 		}
 
 		if (isset($this->props['_each'])) {
-			$rules["{$path}.*"] = $this->props['_each'];
+			$each = $this->props['_each'];
+			$rules["{$path}.*"] = $each instanceof Closure ? $each() : $each;
 		}
 
 		foreach ($this->children as $child) {
@@ -309,6 +332,11 @@ final class Field implements JsonSerializable
 	{
 		$childPrefix = $this->type === 'repeater' ? "{$prefix}{$this->name}.*." : $prefix;
 		$own = $this->name !== null && $this->label !== null ? [$prefix.$this->name => $this->label] : [];
+
+		// One box of a group is named after the group: *Experten*, not `experts.0`.
+		if ($own !== [] && $this->type === 'checkboxes') {
+			$own["{$prefix}{$this->name}.*"] = $this->label;
+		}
 
 		return array_merge($own, ...array_map(fn (Field $child) => $child->attributes($childPrefix), $this->children));
 	}

@@ -209,5 +209,17 @@ guessing. Not installed on production.
 5. Telescope, once there is enough happening that reading the inbox is not
    enough.
 
+**Waiting on this chunk: the course-date form's three state boxes**
+([[07-dashboard]], *Step 6*). Legacy's green *Veranstaltung bestätigen*, green
+*Veranstaltung abschliessen* (once the date is past) and orange *Veranstaltung
+absagen* sit between *Speichern* and the delete box, each behind a confirm,
+and turn into *bestätigt am …* / *abgeschlossen am …* / *abgesagt am …* once
+done. Their text promises mail, so they were left out of the form on
+2026-09-24 (Marcel agreed) and land with confirmed, closed and cancelled in
+step 4. The server half exists: `SetEventState` and `PATCH
+/api/admin/events/{event}/state`; `setEventState` in `api/events.js` is already
+there for the screen. Also then: the delete box's *N Buchung(en)* links to the
+date's page, once the event page (dashboard step 7) exists.
+
 Registration and password reset come in step 4 too: they send Laravel's stock
 mail today, and legacy's `StudentRegistered` is VIAK's own.

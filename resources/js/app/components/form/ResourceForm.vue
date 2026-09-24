@@ -30,9 +30,15 @@ const props = defineProps({
 	stay: { type: Boolean, default: true },
 	// A line about the record that is not a field — where a testimonial is used.
 	note: { type: Function, default: () => null },
+	// A record past changing — a course date that has run. Legacy's
+	// `form.is-disabled`: the fields and *Speichern* at 40%, deleting gone.
+	locked: { type: Function, default: () => false },
 });
 
 const { schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
+
+// A title may read the record: *Veranstaltung für* and the course's.
+const title = (which) => (typeof props.titles[which] === 'function' ? props.titles[which](meta.value) : props.titles[which]);
 </script>
 
 <template>
@@ -42,19 +48,21 @@ const { schema, form, meta, id, errors, saving, deleting, failed, creating, subm
 	<form v-else novalidate @submit.prevent="submit()">
 		<ArticleText>
 			<template #aside>
-				<h1 class="font-bold text-teal max-sm:hidden">{{ creating ? titles.create : titles.edit }}</h1>
+				<h1 class="font-bold whitespace-pre-line text-teal max-sm:hidden">{{ title(creating ? 'create' : 'edit') }}</h1>
 				<BackLink :to="list" />
 			</template>
 
-			<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" />
+			<fieldset class="min-w-0" :disabled="!creating && locked(meta)" :class="{ 'pointer-events-none opacity-40 select-none': !creating && locked(meta) }">
+				<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" />
 
-			<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>
+				<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>
 
-			<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
-			<Button v-if="stay" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
+				<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
+				<Button v-if="stay" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
+			</fieldset>
 
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->
-			<div v-if="!creating" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
+			<div v-if="!creating && !locked(meta)" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
 				<h2 class="mb-8 font-bold sm:mb-16">{{ deletion.title }}</h2>
 				<p v-if="blocked(meta)">{{ blocked(meta) }}</p>
 				<template v-else>

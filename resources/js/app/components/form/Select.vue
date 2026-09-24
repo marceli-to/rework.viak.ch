@@ -15,6 +15,7 @@ defineProps({
 	label: { type: String, default: null },
 	options: { type: Array, required: true },
 	placeholder: { type: String, default: null },
+	required: { type: Boolean, default: false },
 	error: { type: String, default: null },
 });
 
@@ -23,7 +24,7 @@ const id = useId();
 
 <template>
 	<div class="relative mb-16 lg:mb-32">
-		<label v-if="label" :for="id" class="mb-4 block text-md sm:text-lg lg:text-xl">{{ label }}</label>
+		<label v-if="label" :for="id" class="mb-4 block text-md sm:text-lg lg:text-xl">{{ label }}<template v-if="required"> *</template></label>
 		<div class="select-chevron relative flex w-full items-center border-b py-8" :class="error ? 'border-danger' : 'border-black'">
 			<select
 				:id="id"

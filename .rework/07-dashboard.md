@@ -8,8 +8,9 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 **Mapped 2026-09-24. Steps 1–4 built the same day**: the guard, the shell,
 *Kurse* in both modes, the course form and its images, and testimonials — see
-*Step 1* to *Step 4*, below. **Step 5, the field kit, the same day.** Next is
-step 6: the remaining forms, on the kit. Asked for by Marcel before
+*Step 1* to *Step 4*, below. **Step 5, the field kit, the same day**, and
+**step 6 began with the course-date form** (*Step 6*, below). Next in step 6:
+the remaining forms, on the kit. Asked for by Marcel before
 starting the field kit, because the kit is only worth designing against the
 whole set of screens it has to serve.
 
@@ -81,9 +82,9 @@ list, an event form, and an **event page** that is the operational screen.
   A sortable list, not a form field. Server: missing.
 - **Event form** — min/max participants, rental laptops, fee override, online,
   free, publish, location, **the date builder** (rows of day + start + end),
-  experts (at least one), registration deadline. → kit form with the date
-  builder as the first `Field::custom()` — `04-content.md` named it as the
-  escape hatch on day one. Server: exists (`StoreEventRequest`).
+  experts (at least one), registration deadline. → **Built 2026-09-24** (*Step
+  6*): the date builder turned out to be a repeater drawn inline, not a custom
+  part.
 - **Event lifecycle** — *bestätigen*, *abschliessen*, *absagen*, *löschen*, each
   behind a confirm. **Confirming is what raises the invoices** and mails every
   participant; closing mails the participation confirmations; cancelling mails
@@ -210,7 +211,8 @@ form above, checked:
 **It holds.** No form needs a thirteenth component. What does not belong in the
 kit is just as clear:
 
-- **ordering** happens on lists (courses, experts, testimonials), so it is a
+- **ordering** happens on lists (courses, experts) and in the testimonial
+  picker, so it is a
   sortable-list component beside the kit, not a field;
 - **the event page, the student page and the invoice lists** are operational
   screens with actions, not forms — built by hand, from a small set of list,
@@ -415,7 +417,10 @@ the field kit's two source forms, built by hand like the course form.
   placeholder** to the kit's `select`.
 - **The list is legacy's content list**, measured on its News screen: the
   header with its `+`, then one stacked row each (`list/EditableListItem.vue`),
-  dragged into the order the site shows them. Unpublished rows are grey.
+  in three columns: the quote over its author, what it is about, where it
+  is used. **Not dragged** (changed 2026-09-24): each page orders its own
+  testimonials in the picker, so `PATCH testimonials/order` is gone.
+  Unpublished rows are grey.
 - **The form is the course form's frame**: the fields, *Publizieren*, the
   danger zone, the leave guard.
 
@@ -446,6 +451,40 @@ From the course and testimonial forms, once both existed by hand — the
   the testimonial form 20.
 - **Custom parts plug in by name** and take part through hooks: the image
   section reports what it holds, and uploads it once a new course exists.
+
+## Step 6 — the course-date form, built 2026-09-24
+
+*Kursdatum erfassen* / *bearbeiten*, legacy's form in its order, measured
+against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
+
+- **The public API's event writes moved to `/api/admin`**: `POST
+  courses/{course}/events`, `GET`/`PUT`/`DELETE events/{event}`, beside the
+  state change already there. `StoreEventRequest` is gone; its rules and
+  `EventApiTest`'s guarantees live on in `SaveEventRequest` and
+  `tests/Feature/Admin/EventFormTest.php`, in German. The public side reads
+  only.
+- **The kit grew two types and no custom part**: `date` and `time`, typed
+  `TT.MM.JJJJ` / `hh.mm` with the dots put in as legacy's mask did, sent
+  `Y-m-d` / `H:i`. A half-typed day is sent as typed, so the server refuses
+  it by name: *mit vierstelligem Jahr* (the two-digit-year bug that hid 14
+  events in 2025). **The date builder is a repeater drawn `inline`**, not the
+  `Field::custom()` planned above — it is exactly a list of the same small
+  form. `row` takes `columns: 2` for *min.* / *max. Teilnehmer*.
+- **Rules legacy had and the API had lost**: *Ort* and at least one expert
+  are required. **Experts are checkboxes over the Expert role only**, so a
+  student's uuid fails validation instead of being quietly dropped.
+- **Cross-checks wait only for their own fields**: max below min is reported
+  even when a day is mistyped.
+- **A past date is locked**, as legacy's `form.is-disabled`: fields and
+  *Speichern* at 40%, no delete box (`locked` on [[ResourceForm]]). Past means
+  the first day has gone by, as legacy has it: a date running today is locked.
+- **Deleting is refused while any booking exists**, cancelled ones included:
+  they carry invoices, as the course form already rules.
+- **Not built: *Bestätigen*, *Schliessen*, *Absagen*.** Each mails the
+  participants; they wait for chunk 10.
+- Found on the way: the dev expert and dev admin had no uuid (the seeder
+  found their rows, so `HasUuid`'s create hook never ran), so the dev expert
+  could not be ticked. The seeder fills it now.
 
 ## Loading, built 2026-09-24
 
@@ -490,8 +529,8 @@ hamburger. Proposed, grouped by what the admin is doing:
 5. **Extract the kit** — `Field::` schemas beside the requests,
    `GET /api/schema/{type}`, `FormRenderer`, error mapping, leave guard. Move
    both forms onto it.
-6. **The CRUD that remains, on the kit** — event form (date builder as the
-   first custom field), experts, students, discount codes, taxonomies, profile.
+6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
+   experts, students, discount codes, taxonomies, profile.
 7. **Operational screens, by hand** — the event page, the student page,
    invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.

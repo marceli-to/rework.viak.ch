@@ -25,11 +25,6 @@ Route::get('events', [EventController::class, 'index']);
 Route::get('events/{event}', [EventController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function (): void {
-	Route::post('events', [EventController::class, 'store']);
-	Route::put('events/{event}', [EventController::class, 'update']);
-	Route::patch('events/{event}/state', [EventController::class, 'setState']);
-	Route::delete('events/{event}', [EventController::class, 'destroy']);
-
 	/*
 	 * Basket and checkout ([[06-bookings]]).
 	 *
@@ -78,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function (): void {
  * uses lives here, behind the role on the whole group — the rule Marcel and I
  * settled on 2026-09-24, where legacy drew the same line with `/api/dashboard`.
  * The public and portal endpoints above stay where they are; the course and
- * event writes move in here as their forms are built.
+ * event writes moved in here with their forms.
  */
 Route::middleware(['auth:sanctum', 'role:admin'])
 	->prefix('admin')
@@ -107,5 +102,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('testimonials/{testimonial}', [Admin\TestimonialController::class, 'update']);
 		Route::delete('testimonials/{testimonial}', [Admin\TestimonialController::class, 'destroy']);
 
+		Route::post('courses/{course}/events', [Admin\EventController::class, 'store']);
+		Route::get('events/{event}', [Admin\EventController::class, 'show']);
+		Route::put('events/{event}', [Admin\EventController::class, 'update']);
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
+		Route::delete('events/{event}', [Admin\EventController::class, 'destroy']);
 	});
