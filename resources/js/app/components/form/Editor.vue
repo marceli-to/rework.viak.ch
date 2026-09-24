@@ -129,7 +129,9 @@ const buttons = [
 
 <template>
 	<div class="relative mb-16 lg:mb-32">
-		<label v-if="label" :id="`${id}-label`" class="mb-4 block text-md sm:text-lg lg:text-xl" @click="content?.querySelector('[contenteditable]')?.focus()">
+		<!-- 8px under the label, where a field has 4: the editor's box needs
+		     the room (Marcel, 2026-09-24). Both editors, kept in step. -->
+		<label v-if="label" :id="`${id}-label`" class="mb-8 block text-md sm:text-lg lg:text-xl" @click="content?.querySelector('[contenteditable]')?.focus()">
 			{{ label }}<template v-if="required"> *</template>
 		</label>
 

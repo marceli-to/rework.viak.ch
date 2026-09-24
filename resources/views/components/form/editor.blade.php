@@ -41,7 +41,9 @@
 --}}
 <div class="relative mb-16 lg:mb-32" x-data="editor">
 	@if ($label)
-		<label id="{{ $name }}-label" for="{{ $name }}" class="mb-4 block text-md sm:text-lg lg:text-xl"
+		{{-- 8px under the label, where a field has 4: the editor's box needs
+		     the room (Marcel, 2026-09-24). Both editors, kept in step. --}}
+		<label id="{{ $name }}-label" for="{{ $name }}" class="mb-8 block text-md sm:text-lg lg:text-xl"
 			x-on:click="$refs.content.querySelector('[contenteditable]')?.focus()">
 			{{ $label }}@if ($required) *@endif
 		</label>
