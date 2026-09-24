@@ -25,12 +25,14 @@ it('does not load the dead neuzeit-grotesk Typekit kit', function () {
 });
 
 it('ships Alpine on the public site and no Vue', function () {
-	// Vite hashes the filenames, so match the entry rather than the asset:
-	// `assets/site-*.js` is the Alpine bundle, `assets/app-*.js` is the Vue SPA.
+	// Match the entry, built or served: `assets/site-*.js` once Vite has
+	// hashed it, `resources/js/site/site.js` while `npm run dev` is running
+	// and `public/hot` points every page at the dev server — which is how
+	// this test failed on 2026-09-24 with nothing wrong.
 	$html = $this->get('/de')->getContent();
 
-	expect($html)->toMatch('#assets/site-[^"]+\.js#')
-		->not->toMatch('#assets/app-[^"]+\.js#');
+	expect($html)->toMatch('#(assets/site-[^"]+|resources/js/site/site)\.js#')
+		->not->toMatch('#(assets/app-[^"]+|resources/js/app/app)\.js#');
 });
 
 it('shows the basket count from the shared store', function () {
