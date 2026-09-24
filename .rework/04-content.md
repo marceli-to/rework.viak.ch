@@ -52,6 +52,28 @@ talked about*, not *disputed*.
   and it is the first public form that sends a mail to VIAK rather than to the
   customer. It waits on mail, which does not exist yet.
 - **Firmenschulung** — show reviews. That is the `Testimonial` model below.
+
+  **Built from the mockup, not rebuilt at parity** (Marcel, 2026-09-24). Legacy's
+  page is `/de/individualschulungen`: a six-image slider and five paragraphs
+  of *Individualschulungen für Firmen und Einzelpersonen*, no form. It is
+  **not** carried across. The new page is `Firmenschulung.html`: title, a lead
+  paragraph, an *Anfrage senden* box (Firma, Ansprechperson, E-Mail, a message
+  prompted *Gewünschte Software, Teamgrösse, Zeitrahmen…*), and reviews under
+  it (marker 1).
+
+  What it hangs on:
+  - **mail**, for the enquiry, which is the same form question as Kontakt's
+    (`Open-Questions.md` #24);
+  - **`Testimonial`**, for the reviews;
+  - **copy** — the mockup's lead is filler until VIAK says otherwise;
+  - **the old URL.** `/de/individualschulungen` is indexed and must 301 to the
+    new page once it exists ([[00-foundation]], *Public URLs*). The new page's
+    own path is not decided; `/de/firmenschulung` is the obvious one.
+
+  It also feeds two other screens: Kontakt links to it (Kontakt marker 1), and
+  the homepage carries its teaser with a form (homepage marker 4). It is not a
+  menu item (homepage marker 8), which matches the live nav today, where
+  Individualschulungen is not in the menu either.
 - **Räume visualisieren** — the Vorhaben are **pages with a title and text**; the
   tools box beside the headline can go, and so can *Andere Vorhaben* at the
   foot. Which makes the template cheaper than the plan above: the offer list is

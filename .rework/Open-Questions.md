@@ -43,7 +43,8 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
 | ~~22~~ | ~~Deleting an event with active bookings tells nobody?~~ — **withdrawn 2026-09-24: the premise was wrong.** Legacy's dashboard refuses the delete while active bookings exist; only the server-side check is missing, in both. Now a rule in `10-mail.md`, *Oddities* | — | — |
 | ~~23~~ | ~~A late booker gets every earlier course message, one mail each — keep, digest, or drop?~~ — **answered 2026-09-24 by Marcel: keep it as legacy does.** See `10-mail.md`, *Oddities* | — | — |
-| 24 | Where does the new Kontakt form send, and what does it keep? | Marcel | The phase-two Kontakt page. Needs mail first |
+| 24 | Where do the new Kontakt and Firmenschulung forms send, and what do they keep? | Marcel | The phase-two Kontakt and Firmenschulung pages. Needs mail first |
+| 25 | Firmenschulung's URL, and does it launch before cutover? | Marcel | The 301 for the indexed `/de/individualschulungen` — without the new page it has nowhere to go |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 | 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |
 | 23 | A late booker gets every earlier course message, one mail each — keep, digest, or drop? | Marcel | Chunk 10's message mails. See `10-mail.md`, *Oddities* |
@@ -301,7 +302,22 @@ the widget and declare it; the most work is to ask the client for real quotes.
 Answered 2026-09-21 — see 18.
 Ours to answer by looking, not a client question.
 
-### 24. Where does the new Kontakt form send, and what does it keep?
+### 25. Firmenschulung's URL, and does it launch before cutover?
+
+Decided 2026-09-24 that Firmenschulung is built from the mockup and legacy's
+`/de/individualschulungen` is not rebuilt (`04-content.md`). That leaves the
+indexed legacy URL needing a target. If the new page is not ready at cutover,
+the choice is a 301 to Kontakt, or a temporary parity page.
+
+**Decides:** the redirect map at cutover, and whether Firmenschulung is on the
+cutover's critical path.
+
+### 24. Where do the new Kontakt and Firmenschulung forms send, and what do they keep?
+
+**Firmenschulung has one too** (added 2026-09-24): an *Anfrage senden* box with
+Firma, Ansprechperson, E-Mail and a message. Same recipient question, same
+spam question — worth answering once for both.
+
 
 The review approved the Kontakt mockup with a form on it (marker 2,
 "Hinzufügen"). Legacy's Kontakt page has none. It is the first public form that

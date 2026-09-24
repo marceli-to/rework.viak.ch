@@ -150,8 +150,13 @@ Roughly in the order that unblocks the most.
    pages, rebuilt at parity; the 2026-09-23 mockups of them are phase two
    (`04-content.md`, *The mockup review*). **Experten is done, 2026-09-24** —
    the list and the expert page; see *The Experten pages*, below. **So is
-   Kontakt, the same day** — see *The Kontakt page*. Left: Firmenschulung,
-   which is legacy's `/de/individualschulungen`, and the homepage.
+   Kontakt, the same day** — see *The Kontakt page*. Left: the homepage.
+
+   **Firmenschulung is not rebuilt at parity** (Marcel, 2026-09-24). Legacy's
+   `/de/individualschulungen` is replaced by the mockup's page, which is phase
+   two and waits on mail and `Testimonial` — see `04-content.md`, *The mockup
+   review*. Until it exists the old URL keeps serving nothing in the rework,
+   and at cutover it must 301 somewhere.
 6. ~~The rest of the filter.~~ **Done 2026-09-21** — all seven attributes, the
    three categories as links and the other six as selects.
 
