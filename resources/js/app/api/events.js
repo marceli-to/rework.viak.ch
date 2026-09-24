@@ -1,5 +1,5 @@
 import client from './client';
 
-export const fetchEvents = (params = {}) => client.get('/events', { params }).then((r) => r.data.data);
+/** Confirm, close or cancel a course date — for its edit screen ([[07-dashboard]]). */
 export const setEventState = (uuid, state) =>
-	client.patch(`/events/${uuid}/state`, { state }).then((r) => r.data.data);
+	client.patch(`/admin/events/${uuid}/state`, { state }).then((r) => r.data.data);

@@ -6,9 +6,10 @@ The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 
 ## Status
 
-**Mapped 2026-09-24, nothing built beyond two read-only lists.** Asked for by
-Marcel before starting the field kit, because the kit is only worth designing
-against the whole set of screens it has to serve.
+**Mapped 2026-09-24. Step 1 built the same day**: the guard, the shell and
+*Kurse* in both modes — see *Step 1*, below. Asked for by Marcel before
+starting the field kit, because the kit is only worth designing against the
+whole set of screens it has to serve.
 
 What exists today:
 
@@ -24,9 +25,9 @@ What exists today:
   **The dashboard is mostly UI over logic that is already tested.** What is
   missing server-side is listed per group below.
 
-Design is free here — the dashboard is not held to parity
-(`resources/css/README.md`, *Which half am I in?*). Legacy's behaviour is the
-reference for *what* an admin can do, not for how it looks.
+**The look is legacy's dashboard, in the site's classes** (Marcel,
+2026-09-24 — see decision 4 below). Legacy's behaviour is the reference for
+*what* an admin can do, and its dashboard for how that looks.
 
 ## What is actually used
 
@@ -233,15 +234,24 @@ Talked through with Marcel before step 1, and agreed point by point.
    today and get fixed on the way: course taxonomies go out as uuids and come
    back as ids, and SEO is nested in `CourseResource` and flat in the request.
    The field kit only stays simple if a form can PUT back what it got.
-4. **The look is a working admin, not the site.** Dense and grey, built for
-   scanning long lists — 360 course dates, 578 people — with the site's
-   typeface and teal. Desktop first; it works on a phone but is not designed
-   for one.
+4. **The look is legacy's dashboard, drawn with the site's classes.**
+   ~~A dense grey working admin~~ was built first and **rejected by Marcel on
+   sight** as outdated-looking. Legacy's dashboard is the site's own design —
+   the site header with a dashboard menu, collapsibles, stacked rows — and the
+   rework already has all of it as Blade components. So every Vue component
+   is the twin of a Blade one, with the same Tailwind classes and the Blade
+   file named in a comment. Duplicating the classes is accepted: "only 2
+   places". Measured against the local legacy dashboard at `viak.ch.test`.
 5. **The stack is the one chunk 00 set: Vue 3, Vue Router, Pinia, Tailwind 4.**
    Nothing from legacy's dashboard comes across — it is Vue 2, Vuex,
    `vue2-dropzone`, `vue-the-mask`, TinyMCE, `vue-moment`, none of which runs on
    Vue 3. Legacy says *what* each screen does; every component is new.
-6. **Components: Reka UI underneath, ours on top.** Reka is the Vue port of
+6. ~~**Components: Reka UI underneath, ours on top.**~~ **Dropped with 4**:
+   copying the site's controls leaves nothing for a headless library to do —
+   legacy picks taxonomies and experts from checkbox lists, not comboboxes,
+   and dialogs, toasts and collapsibles are a few lines each. Built from
+   scratch; the one hard widget, the student search in *Teilnehmer
+   hinzufügen*, is built by hand when it comes. What was recorded: Reka is the Vue port of
    Radix — dialog, combobox, select, checkbox, switch, popover, date picker,
    toast, tabs — and ships no styles, so everything is drawn in Tailwind in the
    look above while focus, keyboard and ARIA come from the library. That is the
@@ -252,14 +262,45 @@ Talked through with Marcel before step 1, and agreed point by point.
    look and theming would fight the Tailwind conventions.
 7. **Around it, proven pieces**: tiptap (already here), Uppy and
    `vue-advanced-cropper` 2 (both from `forrerzimmermann.ch`, whose media
-   screens are ported as planned), `vuedraggable` 4 or `vue-draggable-plus`
-   for sortable lists. **The list is ours** — server-paginated, simple
-   columns; a table library would be more machinery than it saves.
-8. **Lists search and paginate on the server**, where legacy loaded
-   everything: people and invoices outgrow that.
+   screens are ported as planned). **Sorting is the browser's own drag and
+   drop** (`useSortable`), not `vuedraggable` — one list needs it so far.
+8. **Lists that grow search and paginate on the server** — people and
+   invoices. *Kurse* does not: both its modes are views of the catalogue (41
+   courses, ~30 upcoming dates), and the accordion can only be dragged into
+   order when every course is on the page. It loads whole and searches in the
+   browser, as legacy does.
 9. **Tests**: Pest for every endpoint, as now, and every screen driven in a
    browser. Vitest arrives with the field kit (step 5), because the renderer
    is the first piece of the SPA with logic worth testing on its own.
+
+## Step 1 — built 2026-09-24
+
+- **The guard.** `DashboardController` behind `auth`: an admin gets the shell,
+  a student or expert is sent to their portal, a guest to the login.
+  `Home::for()` sends an expert to the expert portal after signing in — it
+  sent them to the dashboard, which is admins-only now.
+- **`/api/admin`**, `role:admin` on the group: `GET courses` (the whole
+  catalogue, each course with its upcoming, uncancelled dates),
+  `POST courses/order`, `PATCH events/{event}/state`.
+- **The shell** — `components/layout/Header.vue`, the twin of
+  `x-layout.header` with legacy's dashboard menu: Kurse, Experten, Studenten
+  left, 48px apart; the profile icon and a burger right; a 240px panel with
+  the rest. **Every menu entry is routed**; what is not built renders
+  `Pending` under its own title, so the layout is true from the first screen.
+- **Kurse, both modes**, measured against legacy to the pixel at 1482px:
+  - chronological — `EventLine.vue`, the 2 / 6 / 4 row with the pencil and
+    the arrow;
+  - courses — `Collapsible.vue` in legacy's `is-course-events` variant (a 40px
+    heading, the pencil 48px down, unpublished at 80 %), `EventRow.vue` inside
+    it with *Bearbeiten* and *Details*, `+` and `→` under each course;
+  - drag to reorder, saved as 1…n with *Reihenfolge angepasst*; **off while a
+    search is active**, where legacy saved the wrong list;
+  - mode and search in the URL.
+- **Not on the list any more: the state buttons.** Legacy confirms, closes
+  and cancels on the course date's edit screen, and so will this; they were
+  one click from raising every invoice for a date.
+
+Not measured: phone width.
 
 ## A navigation for it
 

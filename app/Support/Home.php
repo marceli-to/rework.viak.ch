@@ -18,8 +18,11 @@ use App\Models\User;
  * shell. So a student who was already logged in and opened the login page
  * landed in the admin dashboard, which then redirected to `/dashboard/termine`.
  *
- * The dashboard is for admins and experts. A student goes to the public site,
- * and will go to their portal once `08-accounts.md`'s screens exist.
+ * **The dashboard is for admins only** since 2026-09-24 ([[07-dashboard]]),
+ * so an expert lands in the expert portal, which exists now. A student still
+ * lands on the public site, as on legacy. An account holding Admin goes to the
+ * dashboard whatever else it holds — the three real ones that hold all three
+ * roles are staff first.
  */
 class Home
 {
@@ -29,8 +32,10 @@ class Home
 			return SiteUrl::home();
 		}
 
-		$staff = $user->hasRole(Role::Admin) || $user->hasRole(Role::Expert);
-
-		return $staff ? route('dashboard') : SiteUrl::home();
+		return match (true) {
+			$user->hasRole(Role::Admin) => route('dashboard'),
+			$user->hasRole(Role::Expert) => SiteUrl::expertPortal(),
+			default => SiteUrl::home(),
+		};
 	}
 }

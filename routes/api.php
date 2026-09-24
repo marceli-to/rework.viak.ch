@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Api\BasketController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\BookmarkController;
@@ -75,3 +76,19 @@ Route::middleware('auth:sanctum')->group(function (): void {
 	Route::put('bookmarks/{event}', [BookmarkController::class, 'store']);
 	Route::delete('bookmarks/{event}', [BookmarkController::class, 'destroy']);
 });
+
+/*
+ * The dashboard's own endpoints ([[07-dashboard]]). Everything only an admin
+ * uses lives here, behind the role on the whole group — the rule Marcel and I
+ * settled on 2026-09-24, where legacy drew the same line with `/api/dashboard`.
+ * The public and portal endpoints above stay where they are; the course and
+ * event writes move in here as their forms are built.
+ */
+Route::middleware(['auth:sanctum', 'role:admin'])
+	->prefix('admin')
+	->group(function (): void {
+		Route::get('courses', [Admin\CourseController::class, 'index']);
+		Route::post('courses/order', [Admin\CourseController::class, 'order']);
+
+		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
+	});

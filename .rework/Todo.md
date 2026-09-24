@@ -469,3 +469,27 @@ items that are ours rather than the client's.
 - ~~Does the client want to build pages we have not designed?~~ —
   **answered 2026-09-16: no.** The no-Statamic decision in `04-content.md` is
   settled rather than assumed.
+
+---
+
+## Rental capacity was flattened to a yes/no in the port
+
+**Found 2026-09-24, building the dashboard's course list. A defect in built
+code (chunk 06), not a dashboard question.**
+
+Legacy's `events.rentals_available` is a **count of laptops**: 0 on 236 dates,
+1 on 17, 2 on 78, 3 on 29. Legacy offers a rental only while fewer than that
+many are booked (`Event::getHasRentalsAvailableAttribute()`), and its dashboard
+shows *0 / 2 Mietcomputer*.
+
+The rework's column is a `boolean`, and `PortCourses` writes
+`(bool) $row->rentals_available` — so 1, 2 and 3 all became `true`.
+`PriceBasket`, `CreateBookingForUser` and `SetRental` then offer a rental on any
+date that has one **with no limit**: a room with two laptops can be booked for
+five.
+
+The fix: the column back to an unsigned small integer, the port carrying the
+number, and one `Event::rentalsLeft()` that the three actions and the basket's
+rental dialog ask. The dashboard rows then show *x / y* as legacy does; until
+then they show how many are booked.
+

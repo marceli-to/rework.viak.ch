@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
@@ -336,8 +337,10 @@ Route::get('/medien/{media:uuid}', [MediaController::class, 'download'])
 	->middleware('auth')
 	->name('media.download');
 
-// SPA shell — the dashboard router takes over client-side.
-Route::view('/dashboard/{any?}', 'components.layout.app')
+// SPA shell — the dashboard router takes over client-side. Admins only; anyone
+// else is sent to their own portal ([[DashboardController]]).
+Route::get('/dashboard/{any?}', DashboardController::class)
+	->middleware('auth')
 	->where('any', '.*')
 	->name('dashboard');
 
