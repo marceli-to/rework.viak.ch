@@ -4,7 +4,7 @@ import { fetchTestimonials, orderTestimonials } from '@/api/testimonials';
 import { useSortable } from '@/composables/useSortable';
 import { toast } from '@/composables/useToast';
 import ListHeader from '@/components/list/ListHeader.vue';
-import StackedListItem from '@/components/list/StackedListItem.vue';
+import EditableListItem from '@/components/list/EditableListItem.vue';
 
 /**
  * *Seiteninhalte → Testimonials* ([[07-dashboard]]). New — legacy has no such
@@ -44,7 +44,7 @@ const { dragging, handlers } = useSortable(items, async (list) => {
 		<p v-else-if="loading" class="mt-32">Wird geladen …</p>
 		<p v-else-if="!items.length" class="mt-32">Noch keine Testimonials erfasst.</p>
 
-		<StackedListItem
+		<EditableListItem
 			v-for="(item, index) in items"
 			:key="item.uuid"
 			:edit="{ name: 'content.testimonial.edit', params: { uuid: item.uuid } }"
@@ -57,9 +57,10 @@ const { dragging, handlers } = useSortable(items, async (list) => {
 			{{ item.name }}
 			<span v-if="item.context" class="text-lg">({{ item.context }})</span>
 			<span v-if="!item.publish" class="ml-4 text-lg">nicht publiziert</span>
+			<span class="block text-lg text-gray-600">{{ item.subject_label }}</span>
 			<span class="block text-lg text-gray-600">
 				{{ item.placements.length ? `Verwendet auf: ${item.placements.map((place) => place.label).join(', ')}` : 'Noch auf keiner Seite verwendet' }}
 			</span>
-		</StackedListItem>
+		</EditableListItem>
 	</section>
 </template>

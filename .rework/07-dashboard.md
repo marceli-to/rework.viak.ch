@@ -405,7 +405,7 @@ the field kit's two source forms, built by hand like the course form.
   placed testimonial says which pages it leaves. A page that is force-deleted
   detaches itself, since no foreign key reaches a morph.
 - **The list is legacy's content list**, measured on its News screen: the
-  header with its `+`, then one stacked row each (`list/StackedListItem.vue`),
+  header with its `+`, then one stacked row each (`list/EditableListItem.vue`),
   dragged into the order the site shows them. Unpublished rows are grey.
 - **The form is the course form's frame**: the fields, *Publizieren*, the
   danger zone, the leave guard.
