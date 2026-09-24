@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { provide, ref } from 'vue';
 
 /**
  * `resources/views/components/ui/collapsible.blade.php` in legacy's dashboard
@@ -23,6 +23,10 @@ const props = defineProps({
 });
 
 const open = ref(props.expanded);
+
+// What is inside may need to know when it is shown — a textarea sizes itself
+// to its text and cannot while it is hidden ([[Textarea]]).
+provide('collapsibleOpen', open);
 </script>
 
 <template>

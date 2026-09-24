@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, ref, useId, watch } from 'vue';
+import { inject, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 
 /**
  * Legacy's dashboard textarea — `textarea.is-small.has-autosize` — measured on
@@ -21,15 +21,42 @@ defineProps({
 const id = useId();
 const box = ref(null);
 
+/**
+ * Sized to its text. **Not while it is hidden**: inside a shut collapsible it
+ * measures 0 and would be pinned at 1px, which is what happened under
+ * *Metatags + SEO* (Marcel, 2026-09-24). So it measures again when the
+ * collapsible around it opens — told directly, rather than waiting for a
+ * `ResizeObserver`, which only reports on a painted frame — and the observer is
+ * kept for what it is good at: the column's width changing the wrapping.
+ */
 async function grow() {
 	await nextTick();
-	if (!box.value) return;
-	box.value.style.height = 'auto';
-	box.value.style.height = `${box.value.scrollHeight + 1}px`;
+	const el = box.value;
+	if (!el || el.offsetParent === null) return;
+	el.style.height = 'auto';
+	el.style.height = `${el.scrollHeight + 1}px`;
 }
 
+let observer = null;
+let width = 0;
+
+onMounted(() => {
+	grow();
+	observer = new ResizeObserver(([entry]) => {
+		// Only a change of width can change the wrapping; reacting to height
+		// would answer its own resize.
+		if (entry.contentRect.width === width) return;
+		width = entry.contentRect.width;
+		grow();
+	});
+	observer.observe(box.value);
+});
+
+onBeforeUnmount(() => observer?.disconnect());
 watch(model, grow);
-onMounted(grow);
+
+const shown = inject('collapsibleOpen', null);
+if (shown) watch(shown, (open) => open && grow());
 </script>
 
 <template>
