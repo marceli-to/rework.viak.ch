@@ -106,14 +106,20 @@ file-remove button removes the wrong file.
   ~200 a year, so **server-side search and pagination**, not legacy's load-all.
 - **Student page** — booked, attended, documents (invoices and certificates),
   and **Annullieren** per booking with the penalty shown. `CancelBooking` +
-  `RaiseCancellationPenalty` exist; whether an admin cancellation charges is
-  `Open-Questions.md` #14.
+  `RaiseCancellationPenalty` exist. **The admin decides, per cancellation,
+  whether the penalty is charged** (#14, decided): the dialog shows the amount
+  and asks. Server: `BookingCancellationReason::Administrator` charges
+  unconditionally today, so the cancel endpoint needs the admin's answer as an
+  input and `chargesPenalty()` has to take it.
 - **Edit** — gender, names, phone, address, country, newsletter; invoice
   addresses (create/edit/delete). Kit form.
-- **Create** — legacy has the admin **type the student's password**. Change:
-  send the same set-your-password invite experts get (#26).
-- **Delete** — soft-delete, or strip the role if they hold several. #16 decides
-  what happens with financial history.
+- **Create** — legacy has the admin **type the student's password**. Changed:
+  the student gets the same set-your-password invite experts get (#26,
+  decided). Needs mail.
+- **Delete** — **there is none: an account is deactivated, never deleted** (#16,
+  decided). Invoices, bookings and documents keep pointing at a real person,
+  and a deactivated account cannot sign in or book. Legacy soft-deleted, or
+  stripped the role when there were several.
 
 ### Experts — keep
 
@@ -151,11 +157,13 @@ the model; the CRUD endpoints are missing.
   mailing list or accounting routine. Server: missing (`maatwebsite/excel` or a
   CSV).
 
-### Settings — keep, shrink
+### Settings — keep, all of them
 
 Categories, languages, levels, tags (a translatable title each), locations
-(title, address, map URL). Untouched for two years — one generic taxonomy
-schema in the kit, not six screens. **Software leaves this group**: chunk 05
+(title, address, map URL). **They stay** (Marcel, 2026-09-24): they are what
+the course filter and the course pages are built on, even if the lists rarely
+change. Rarely edited is a reason to build them cheaply — one generic taxonomy
+schema in the kit rather than five hand-made screens — not to drop them. **Software leaves this group**: chunk 05
 turns it into an entity with variants and a manufacturer, and it gets its own
 screen there.
 
@@ -163,18 +171,18 @@ screen there.
 
 | Legacy | Verdict | Why |
 |---|---|---|
-| Startseite (the grid) | **drop** | The homepage is rebuilt from the mockup; its editable parts become a `HomeSchema` once #23 is answered |
-| Heroes | **drop** | One row, never edited; the new homepage has no hero slider |
-| Team | **drop** | Zero rows. The team comes back with the phase-two Team page, as whatever that page needs |
+| Startseite (the grid) | **drop** — confirmed | The homepage is built differently, from the mockup; its editable parts become a `HomeSchema` once #23 is answered |
+| Heroes | **drop** — confirmed | Legacy's homepage slider draws from them, but the mockups have no slider |
+| Team | **new, later** — confirmed | Not carried across; team members are introduced with the phase-two Team page, as whatever that page needs |
 | News | **change** | Five items, still in use — becomes `Article` if Aktuelles/the blog goes ahead (#22) |
 | — | **new: Testimonials** | Quote, name, role, image, featured, order. Kit form #2 |
 | — | **new: Media** | The forrerzimmermann grid/uploader/cropper, which the image field picks from |
 
 ### The rest
 
-- **Landing page** — legacy's says *Hallo {Vorname}* and nothing else. Worth
-  making useful: events waiting for confirmation, open and overdue invoices,
-  the next dates (#27).
+- **Landing page** — legacy's says *Hallo {Vorname}* and nothing else. **Left
+  empty** (#27, decided): not in use, so `/dashboard` goes straight to the
+  course dates, as it does today.
 - **Own profile** — names, address, e-mail, password. Small kit form; changing
   e-mail should verify, as it does for students.
 
@@ -212,7 +220,6 @@ kit is just as clear:
 Legacy's top bar holds Kurse, Experten, Studenten; everything else sits in a
 hamburger. Proposed, grouped by what the admin is doing:
 
-- **Übersicht** — the landing page
 - **Kurse** — courses, and each course's dates; **Kursdaten** — every date,
   chronologically (today's `/dashboard/termine`)
 - **Personen** — Studierende, Experten
@@ -235,7 +242,7 @@ hamburger. Proposed, grouped by what the admin is doing:
 6. **The CRUD that remains, on the kit** — event form (date builder as the
    first custom field), experts, students, discount codes, taxonomies, profile.
 7. **Operational screens, by hand** — the event page, the student page,
-   invoices, export, the landing page.
+   invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.
 
 **Mail (chunk 10) runs alongside, and gates step 7.** Confirming an event raises
@@ -243,12 +250,17 @@ invoices and must tell participants; an admin booking must confirm itself to the
 student. Built before mail exists, those buttons would do half their job
 silently. Steps 1–6 do not depend on it.
 
-## Open
+## Decided — 2026-09-24
 
-- **#14** — does an admin cancellation charge the penalty? (Marcel)
-- **#16** — is a user with financial history ever deleted? (Marcel)
-- **#26** — admin-created students: invite with a set-password link, as
-  experts get, instead of the admin typing a password? (Marcel)
-- **#27** — what belongs on the landing page? (Marcel, then VIAK)
-- **Confirm the drops**: the homepage grid, heroes and team members are not
-  rebuilt (Marcel).
+Marcel, on the questions this map raised:
+
+- **#14 — the admin decides** whether an admin cancellation charges the
+  penalty, each time.
+- **#16 — deactivate, never delete** a user.
+- **#26 — invite** admin-created students to set their own password.
+- **#27 — no landing page** for now.
+- **The homepage grid and heroes are not built**; team members arrive with the
+  new Team page; **the settings taxonomies stay**.
+
+Nothing in this chunk is waiting on an answer. What it waits on is mail
+(chunk 10), for step 7.

@@ -34,9 +34,9 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 11 | What PHP does production run? | Marcel | Deploy |
 | ~~12~~ | ~~What is actually in `courses.reviews`?~~ — **answered 2026-09-21: an Elfsight widget embed**, on all 32 non-empty rows, 23 distinct widget ids. Not testimonial data at all. Replaced by 18 | — | — |
 | 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
-| 14 | Should an admin cancelling for a student charge the penalty? | Marcel | **Nothing** — chunk 06 is built. `BookingCancellationReason::Administrator` exists and currently charges, as legacy did. Flipping it is one line in `chargesPenalty()`, and the reason is now recorded either way |
+| ~~14~~ | ~~Should an admin cancelling for a student charge the penalty?~~ — **answered 2026-09-24: the admin decides, per cancellation.** See `07-dashboard.md` | — | — |
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
-| 16 | Is a user with financial history ever deleted, or only deactivated? | Marcel | Chunk 08's **admin user screens**, which are not built. Nothing else |
+| ~~16~~ | ~~Is a user with financial history ever deleted, or only deactivated?~~ — **answered 2026-09-24: deactivated.** See `07-dashboard.md` | — | — |
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? — **mostly answered 2026-09-23: replaced** by a `Testimonial` backend module. Left: does the course page's column move to it too? | Marcel, then the client | The Kundenmeinungen column on the course page |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
@@ -44,8 +44,8 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~22~~ | ~~Deleting an event with active bookings tells nobody?~~ — **withdrawn 2026-09-24: the premise was wrong.** Legacy's dashboard refuses the delete while active bookings exist; only the server-side check is missing, in both. Now a rule in `10-mail.md`, *Oddities* | — | — |
 | ~~23~~ | ~~A late booker gets every earlier course message, one mail each — keep, digest, or drop?~~ — **answered 2026-09-24 by Marcel: keep it as legacy does.** See `10-mail.md`, *Oddities* | — | — |
 | 24 | Where do the new Kontakt and Firmenschulung forms send, and what do they keep? | Marcel | The phase-two Kontakt and Firmenschulung pages. Needs mail first |
-| 26 | Admin-created students: a set-password invite instead of the admin typing a password? | Marcel | The student create screen, `07-dashboard.md`. Needs mail |
-| 27 | What belongs on the dashboard's landing page? | Marcel, then VIAK | Nothing — legacy's says *Hallo* and nothing else |
+| ~~26~~ | ~~Admin-created students: a set-password invite?~~ — **answered 2026-09-24: yes.** See `07-dashboard.md` | — | — |
+| ~~27~~ | ~~What belongs on the dashboard's landing page?~~ — **answered 2026-09-24: nothing yet; it stays empty.** | — | — |
 | 25 | Firmenschulung's URL, and does it launch before cutover? | Marcel | The 301 for the indexed `/de/individualschulungen` — without the new page it has nowhere to go |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 | 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |

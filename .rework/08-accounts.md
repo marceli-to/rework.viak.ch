@@ -76,7 +76,8 @@ should not wait for this chunk — the two profile defects below are now fixed
 - **Fortify's own routes and views** — login, registration, password reset.
   `User` now implements `MustVerifyEmail` and the profile flows are correct;
   wiring the screens is frontend work.
-- **Open question 16** — is a user with financial history ever deleted, or only
+- ~~**Open question 16**~~ — **answered 2026-09-24: deactivated, never deleted**
+  (`07-dashboard.md`). Was: is a user with financial history ever deleted, or only
   deactivated? Still Marcel's, and it blocks only the admin screens above.
 
 ## Why it exists
