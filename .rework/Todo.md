@@ -292,6 +292,39 @@ Both come from the expert portal's upload forms ([[09-public-site]]).
   libmagic versions differ on old Office files. Both passed on macOS on
   2026-09-23.
 
+## With the admin dashboard's event screens: refuse deleting a booked event
+
+**Do this when the dashboard's event form gets its delete button.** Found
+2026-09-24 while scoping `10-mail.md`.
+
+Legacy only lets an admin delete an event that nobody is booked on. The event
+form (`../viak.ch/resources/js/vue/backend/dashboard/views/course/event/Form.vue:212`)
+hides *Löschen* and shows *"Diese Veranstaltung kann nicht gelöscht werden, da
+N Buchung(en) vorhanden sind"* when the event has active bookings
+(`Event::bookings()` is `notFlagged('isCancelled')`), and past events show no
+delete at all (`v-if="!data.is_past"`). Because of that, deleting never needs a
+mail: an event with people on it has to be cancelled, and cancelling is what
+tells them.
+
+**The gap is on the server, in both apps:**
+
+- **Legacy:** `Api/Dashboard/EventController::destroy()` detaches the experts
+  and deletes, without checking anything. The rule only exists in the Vue
+  template.
+- **Rework:** `Api/EventController::destroy` checks only `EventPolicy::delete`,
+  which is `isAdmin()`. No rework screen calls it yet, but the route is live,
+  so a direct API call deletes an event people are booked on.
+
+**What to build:**
+
+- Refuse the delete on the server while the event has active bookings, and for
+  past events. A policy `Response::deny()` with legacy's wording, so the
+  dashboard can show the server's reason.
+- Show the same message on the dashboard's event form in place of the button,
+  linking to the bookings.
+- Tests: refused with an active booking, allowed once every booking is
+  cancelled, refused for a past event.
+
 ## Other open questions
 
 **Live questions now live in `Open-Questions.md`** — what is still unanswered,

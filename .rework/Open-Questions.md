@@ -41,10 +41,12 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? — **mostly answered 2026-09-23: replaced** by a `Testimonial` backend module. Left: does the course page's column move to it too? | Marcel, then the client | The Kundenmeinungen column on the course page |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
-| 22 | Is there a blog, and is Aktuelles its front page? | Client | Aktuelles, and `Article` in chunk 04 |
-| 23 | The homepage: what is on it? | Client | The phase-two homepage. Eleven markers from the review, still marked open |
+| ~~22~~ | ~~Deleting an event with active bookings tells nobody?~~ — **withdrawn 2026-09-24: the premise was wrong.** Legacy's dashboard refuses the delete while active bookings exist; only the server-side check is missing, in both. Now a rule in `10-mail.md`, *Oddities* | — | — |
+| ~~23~~ | ~~A late booker gets every earlier course message, one mail each — keep, digest, or drop?~~ — **answered 2026-09-24 by Marcel: keep it as legacy does.** See `10-mail.md`, *Oddities* | — | — |
 | 24 | Where does the new Kontakt form send, and what does it keep? | Marcel | The phase-two Kontakt page. Needs mail first |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
+| 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |
+| 23 | A late booker gets every earlier course message, one mail each — keep, digest, or drop? | Marcel | Chunk 10's message mails. See `10-mail.md`, *Oddities* |
 
 ### ~~21. Who signs a participation confirmation?~~
 
