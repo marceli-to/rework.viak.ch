@@ -48,6 +48,47 @@ it('uploads an image straight onto the course, and makes the first one its tease
 	expect($this->course->media()->count())->toBe(2);
 });
 
+/**
+ * A JPEG as a phone writes a portrait photo: landscape pixels, and an EXIF
+ * Orientation of 6 ("rotate 90° clockwise") saying which way is up. The APP1
+ * segment is built by hand because Imagick will not write the flag itself.
+ */
+function sidewaysPhoto(int $width, int $height): UploadedFile
+{
+	$image = new Imagick;
+	$image->newImage($width, $height, 'red');
+	$image->setImageFormat('jpeg');
+	$jpeg = $image->getImageBlob();
+
+	$tiff = "MM\x00\x2A\x00\x00\x00\x08"      // big-endian header, IFD at 8
+		."\x00\x01"                              // one entry
+		."\x01\x12\x00\x03\x00\x00\x00\x01\x00\x06\x00\x00" // Orientation, SHORT, 6
+		."\x00\x00\x00\x00";                     // no next IFD
+	$app1 = "Exif\x00\x00".$tiff;
+	$segment = "\xFF\xE1".pack('n', strlen($app1) + 2).$app1;
+
+	$path = tempnam(sys_get_temp_dir(), 'exif');
+	file_put_contents($path, substr($jpeg, 0, 2).$segment.substr($jpeg, 2));
+
+	return new UploadedFile($path, 'IMG_5949.jpeg', 'image/jpeg', null, true);
+}
+
+it('stands a phone photo upright, however large', function (int $width, int $height, int $expectedWidth, int $expectedHeight) {
+	$data = $this->actingAs($this->admin)
+		->postJson("/api/admin/courses/{$this->course->uuid}/media", ['file' => sidewaysPhoto($width, $height)])
+		->assertCreated()
+		->json('data');
+
+	$stored = new Imagick(Storage::disk('public')->path(str_replace('/storage/', '', $data['src'])));
+
+	expect([$data['width'], $data['height']])->toBe([$expectedWidth, $expectedHeight])
+		->and([$stored->getImageWidth(), $stored->getImageHeight()])->toBe([$expectedWidth, $expectedHeight])
+		->and($stored->getImageOrientation())->toBeIn([Imagick::ORIENTATION_UNDEFINED, Imagick::ORIENTATION_TOPLEFT]);
+})->with([
+	'small enough to keep' => [400, 300, 300, 400],
+	'shrunk as well' => [4032, 3024, 2400, 3200],
+]);
+
 it('refuses what is not an image, and anything over 16 MB', function () {
 	$this->actingAs($this->admin)
 		->postJson("/api/admin/courses/{$this->course->uuid}/media", ['file' => UploadedFile::fake()->create('plan.pdf', 100, 'application/pdf')])

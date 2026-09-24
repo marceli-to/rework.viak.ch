@@ -26,6 +26,20 @@ use Throwable;
  * `null` on failure. Whatever holds a crop for this file must multiply by it.
  * [[PortMedia]] does; so must anything else that calls this on a file that
  * already has one.
+ *
+ * ## Orientation
+ *
+ * A phone stores a portrait photo as landscape pixels plus an EXIF flag saying
+ * "rotate 90° clockwise". Browsers honour the flag; stripping the metadata
+ * throws it away and leaves the photo on its side. So the rotation is baked
+ * into the pixels first — and a file with the flag set is rewritten even when
+ * it is small enough to keep, because Glide and the cropper would otherwise
+ * disagree with the stored width and height about which way is up.
+ *
+ * A rotation moves a crop just as a rescale does, and this does not correct
+ * for it. It does not need to: uploads have no crop yet, and **none of the
+ * 371 legacy sources carries a flag other than upright** (257 upright, 114
+ * without EXIF), so [[PortMedia]] never hits it.
  */
 class NormalizeImage
 {
@@ -45,15 +59,18 @@ class NormalizeImage
 			return null;
 		}
 
-		[$width, $height] = $size;
-		$longest = max($width, $height);
+		$longest = max($size[0], $size[1]);
 
-		if ($longest <= self::MAX_EDGE) {
+		if ($longest <= self::MAX_EDGE && $this->isUpright($absolutePath)) {
 			return 1.0;
 		}
 
 		try {
 			$image = new Imagick($absolutePath);
+
+			// Before the strip below, which is what would lose the flag.
+			$image->autoOrient();
+			$image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
 
 			// Strip metadata but keep the colour profile. Without the profile a
 			// photograph shot in Adobe RGB comes out visibly flat, which looks
@@ -65,9 +82,11 @@ class NormalizeImage
 				$image->profileImage('icc', $profiles['icc']);
 			}
 
-			$width >= $height
-				? $image->thumbnailImage(self::MAX_EDGE, 0)
-				: $image->thumbnailImage(0, self::MAX_EDGE);
+			if ($longest > self::MAX_EDGE) {
+				$image->getImageWidth() >= $image->getImageHeight()
+					? $image->thumbnailImage(self::MAX_EDGE, 0)
+					: $image->thumbnailImage(0, self::MAX_EDGE);
+			}
 
 			$image->setImageCompressionQuality(90);
 			$image->writeImage($absolutePath);
@@ -80,6 +99,21 @@ class NormalizeImage
 			return null;
 		}
 
-		return self::MAX_EDGE / $longest;
+		return min(1.0, self::MAX_EDGE / $longest);
+	}
+
+	/** Read from the header alone; a missing or unreadable flag counts as upright. */
+	private function isUpright(string $absolutePath): bool
+	{
+		try {
+			$image = new Imagick;
+			$image->pingImage($absolutePath);
+			$orientation = $image->getImageOrientation();
+			$image->clear();
+		} catch (Throwable) {
+			return true;
+		}
+
+		return in_array($orientation, [Imagick::ORIENTATION_UNDEFINED, Imagick::ORIENTATION_TOPLEFT], true);
 	}
 }
