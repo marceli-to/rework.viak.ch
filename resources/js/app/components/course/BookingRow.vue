@@ -1,7 +1,6 @@
 <script setup>
 import EventState from './EventState.vue';
 import Badge from '@/components/ui/Badge.vue';
-import Button from '@/components/ui/Button.vue';
 import { longDate } from '@/support/format';
 
 /**
@@ -10,11 +9,10 @@ import { longDate } from '@/support/format';
  * `span-4` columns. The course and its days on the left, where the date row
  * has only the days; the place, the expert and the state in the middle; what
  * is particular to this seat on the right, with the actions against the far
- * edge. The `badges` slot sits beside the state badge. *Details* opens the
- * course date's page.
+ * edge. The `badges` slot sits beside the state badge. **No *Details***
+ * (Marcel, 2026-09-29): the student page is about the student.
  */
-// `details` off where the seat is history: *Absolvierte* and *Annullierte Kurse* (Marcel, 2026-09-29).
-defineProps({ booking: { type: Object, required: true }, details: { type: Boolean, default: true } });
+defineProps({ booking: { type: Object, required: true } });
 </script>
 
 <template>
@@ -45,7 +43,6 @@ defineProps({ booking: { type: Object, required: true }, details: { type: Boolea
 				<div><slot name="facts" /></div>
 				<div class="mt-24 sm:mt-0 [&>*+*]:mt-12">
 					<slot name="actions" />
-					<Button v-if="details && !booking.deleted" :to="{ name: 'event.show', params: { uuid: booking.event.uuid } }" variant="secondary">Details</Button>
 				</div>
 			</div>
 		</div>

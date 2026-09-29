@@ -800,16 +800,15 @@ then four collapsibles:
 - ***Gebuchte Kurse*** and ***Absolvierte Kurse*** **split on the course's date**,
   as the portal splits them, not on legacy's flags (which keep 67 seats on
   courses long over under *Gebuchte Kurse*, each with a live *Annullieren*).
-  The row is [[BookingRow]], on [[EventRow]]'s geometry, with *Details* to the
-  course date's page. A past seat says *Teilgenommen*, or *Nicht teilgenommen*
+  The row is [[BookingRow]], on [[EventRow]]'s geometry. A past seat says *Teilgenommen*, or *Nicht teilgenommen*
   once the date is closed.
 - ***Annullierte Kurse*** is new: when (in the badge, *Annulliert am …*), and by whom (student, VIAK, VIAK without
   cost, the course called off). Shown only when there is one.
 - ***Dokumente***: all of them, in the portal's 4 / 3 / 5 row with legacy's
   teal *Download* button (Marcel, 2026-09-29, from legacy's page), where
   legacy showed five and linked the rest.
-- The heading is legacy's *Profil Student*, not the name; *Absolvierte* and
-  *Annullierte Kurse* have no *Details* (Marcel, 2026-09-29).
+- The heading is legacy's *Profil Student*, not the name; no row has *Details*,
+  and *Annullieren* is the red danger button (Marcel, 2026-09-29).
 - ***Annullieren* asks whether the cost is charged (#14)** when
   [[CancellationPenalty]] finds one today: the dialog names the amount and the
   rate and offers *Mit Kosten annullieren* and *Ohne Kosten annullieren*

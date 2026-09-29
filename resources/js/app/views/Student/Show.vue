@@ -109,7 +109,7 @@ async function cancel(booking) {
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
 					</template>
 					<template #actions>
-						<Button v-if="!booking.deleted" variant="outline" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
+						<Button v-if="!booking.deleted" variant="danger" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
 					</template>
 				</BookingRow>
 				<p v-if="!page.booked.length" class="mt-16 sm:mt-32">Student hat noch keine gebuchten Kurse.</p>
@@ -117,7 +117,7 @@ async function cancel(booking) {
 
 			<Collapsible>
 				<template #title>Absolvierte Kurse<Badge v-if="page.past.length" variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
-				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking" :details="false">
+				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
 					<template #badges>
 						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 					</template>
@@ -127,7 +127,7 @@ async function cancel(booking) {
 
 			<Collapsible v-if="page.cancelled.length">
 				<template #title>Annullierte Kurse<Badge v-if="page.cancelled.length" variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
-				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking" :details="false">
+				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
 					<template #badges>
 						<Badge variant="danger">Annulliert am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}</Badge>
 					</template>
