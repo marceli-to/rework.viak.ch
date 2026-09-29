@@ -95,15 +95,16 @@
 							class="hover:text-teal">{{ $event->course->getTranslation('title', $locale) }}</a>
 					</h2>
 
-					{{-- One block for all the days, broken with `<br>`: a
-					     `<div>` per day rounds each line box separately and
-					     makes a two-day row a pixel taller. On a phone the day
-					     and its hours share a line, as they do on the course
-					     page and in the basket (Marcel, 2026-09-22). --}}
+					{{-- Each day on one line with its hours, not bold — the dashboard's
+					     `BookingRow.vue`, which reads better than legacy's bold date
+					     over its hours (Marcel, 2026-09-29). The course's name is the
+					     one bold line. No course number, which the dashboard shows:
+					     it is VIAK's internal reference and the public site never
+					     prints it. One block broken with `<br>`, because a `<div>`
+					     per day rounds each line box separately. --}}
 					<div>
 						@foreach ($event->dates as $date)
-							<strong class="font-bold">{{ $date->date->translatedFormat('d. F Y') }}</strong><span class="sm:hidden">,</span><br class="max-sm:hidden">
-							{{ $time($date->time_start) }} – {{ $time($date->time_end) }} Uhr
+							{{ $date->date->translatedFormat('d. F Y') }}, {{ $time($date->time_start) }} – {{ $time($date->time_end) }} Uhr
 							@if (! $loop->last)<br>@endif
 						@endforeach
 					</div>

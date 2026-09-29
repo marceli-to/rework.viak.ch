@@ -2258,6 +2258,13 @@ and stays 1:1.
 - The expert's *Teilnehmer*: the dashboard's 2/2/2 columns with the email column
   left empty (the expert still gets no address), badges at the far edge, open by
   default; *Teilnehmerliste* with the download icon on the right.
+- **Course, date and time as `BookingRow.vue` has them**: the name bold, then
+  one plain line per day, *26. Oktober 2026, 09.00 – 16.00 Uhr*. Legacy's bold
+  date over its hours is gone. The dashboard's course number is left off: it is
+  VIAK's internal reference and the site never prints it.
+- **No checkmark** on *Gebuchte Kurse* and *Absolvierte Kurse*: every row had
+  it, so it said only what the title says. The *Merkliste* heart stays, it is a
+  button.
 - Empty lists through `x-ui.no-results` (`ui/NoResults.vue`), same wording as the
   dashboard; the 20px plus.
 

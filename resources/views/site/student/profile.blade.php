@@ -118,13 +118,6 @@
 		<x-ui.collapsible title="Gebuchte Kurse" :expanded="true" :count="$upcoming->count()">
 			@forelse ($upcoming as $booking)
 				<x-row.event :event="$booking->event" :booking="$booking">
-					{{-- **Teal**, which is the icon's own colour in legacy —
-					     `Checkmark.vue` hardcodes `fill="#46baba"`. The Blade
-					     set normalises every icon to `currentColor` so a
-					     `text-*` can reach it (`resources/css/README.md`), which
-					     is right and means the colour has to be said here
-					     instead of being smuggled in with the artwork. --}}
-					<x-slot:icon><x-icon.checkmark class="text-teal" /></x-slot:icon>
 
 					<x-slot:action>
 						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
@@ -214,13 +207,6 @@
 		<x-ui.collapsible title="Absolvierte Kurse" :expanded="false" :count="$past->count()">
 			@forelse ($past as $booking)
 				<x-row.event :event="$booking->event" :booking="$booking">
-					{{-- **Teal**, which is the icon's own colour in legacy —
-					     `Checkmark.vue` hardcodes `fill="#46baba"`. The Blade
-					     set normalises every icon to `currentColor` so a
-					     `text-*` can reach it (`resources/css/README.md`), which
-					     is right and means the colour has to be said here
-					     instead of being smuggled in with the artwork. --}}
-					<x-slot:icon><x-icon.checkmark class="text-teal" /></x-slot:icon>
 					{{-- Whether the seat attended, as the dashboard's student
 					     page shows it under *Absolvierte Kurse*. --}}
 					<x-slot:badges>
