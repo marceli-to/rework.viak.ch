@@ -14,7 +14,8 @@ import { longDate } from '@/support/format';
  * the middle; the seats and laptops on the right, with *Bearbeiten* and
  * *Details* stacked against the far edge, 12px apart.
  */
-defineProps({ event: { type: Object, required: true } });
+// `details` off on the date's own page, where the link would lead back to itself.
+defineProps({ event: { type: Object, required: true }, details: { type: Boolean, default: true } });
 </script>
 
 <template>
@@ -44,8 +45,8 @@ defineProps({ event: { type: Object, required: true } });
 					<div v-if="event.rentals_available" class="mt-8"><Badge>{{ event.rentals }}&thinsp;/&thinsp;{{ event.rentals_available }} Mietcomputer</Badge></div>
 				</div>
 				<div class="mt-24 sm:mt-0">
-					<Button :to="{ name: 'event.edit', params: { uuid: event.uuid } }" class="mb-12">Bearbeiten</Button>
-					<Button :to="{ name: 'event.show', params: { uuid: event.uuid } }" variant="secondary">Details</Button>
+					<Button :to="{ name: 'event.edit', params: { uuid: event.uuid } }" :class="{ 'mb-12': details }">Bearbeiten</Button>
+					<Button v-if="details" :to="{ name: 'event.show', params: { uuid: event.uuid } }" variant="secondary">Details</Button>
 				</div>
 			</div>
 		</div>

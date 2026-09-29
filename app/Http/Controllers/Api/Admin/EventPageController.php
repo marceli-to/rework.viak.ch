@@ -22,6 +22,7 @@ use App\Models\Event;
 use App\Models\Media;
 use App\Models\Message;
 use App\Models\User;
+use App\Support\DocumentTypes;
 use App\Support\MessageHtml;
 use App\Support\RichText;
 use Illuminate\Http\JsonResponse;
@@ -84,6 +85,8 @@ class EventPageController extends Controller
 					'attachments' => $message->media->map(fn (Media $media) => $this->file($media))->all(),
 				]),
 			'files' => $event->media->map(fn (Media $media) => $this->file($media)),
+			// The drop box's limits, as the expert portal states them ([[DocumentTypes]]).
+			'uploads' => ['accept' => DocumentTypes::accept(), 'restrictions' => DocumentTypes::RESTRICTIONS],
 		]]);
 	}
 

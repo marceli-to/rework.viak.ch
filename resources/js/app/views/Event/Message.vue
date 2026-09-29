@@ -7,6 +7,8 @@ import ArticleText from '@/components/layout/ArticleText.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
+import DropBox from '@/components/form/DropBox.vue';
+import IconCross from '@/components/icons/Cross.vue';
 import Editor from '@/components/form/Editor.vue';
 import Field from '@/components/form/Field.vue';
 import Loading from '@/components/ui/Loading.vue';
@@ -41,10 +43,7 @@ onMounted(async () => {
 	}
 });
 
-function pick(event) {
-	attachments.value = [...attachments.value, ...event.target.files];
-	event.target.value = '';
-}
+const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`);
 
 // Laravel names each file's error `attachments.0`; shown under the list, once.
 const fileError = () => Object.entries(errors.value).find(([key]) => key.startsWith('attachments'))?.[1]?.[0];
@@ -81,19 +80,21 @@ async function send() {
 			<Field v-model="subject" label="Betreff" required :error="errors.subject?.[0]" />
 			<Editor v-model="body" label="Nachricht" required :error="errors.body?.[0]" class="mt-24" />
 
-			<div class="mt-24">
+			<!-- The expert composer's `x-form.file-input`: the drop box, its limits under it,
+			     and the chosen files listed under a black rule each. Nothing leaves before *Senden*. -->
+			<div class="mt-24 pb-16 sm:pb-32">
 				<div class="mb-4 text-md sm:text-lg lg:text-xl">Anhänge</div>
-				<ul v-if="attachments.length" class="mb-12">
-					<li v-for="(file, index) in attachments" :key="`${file.name}-${index}`" class="flex justify-between border-b border-gray-400 py-4">
+				<DropBox class="mt-8 sm:mt-16" :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" @files="(files) => attachments.push(...files)" />
+				<p v-if="fileError()" class="pt-8 text-md text-danger lg:text-lg">{{ fileError() }}</p>
+				<ul v-if="attachments.length" class="mt-16 sm:mt-24">
+					<li v-for="(file, index) in attachments" :key="`${file.name}-${file.size}-${file.lastModified}`" class="flex items-center justify-between gap-16 border-t border-black py-8 text-xs sm:text-md lg:text-lg">
 						<span class="min-w-0 truncate">{{ file.name }}</span>
-						<button type="button" class="ml-16 hover:text-teal" @click="attachments.splice(index, 1)">Entfernen</button>
+						<span class="flex shrink-0 items-center gap-16">
+							<span class="text-gray-400">{{ size(file.size) }}</span>
+							<button type="button" class="transition-colors hover:text-teal" :aria-label="`Entfernen: ${file.name}`" @click="attachments.splice(index, 1)"><IconCross size="sm" /></button>
+						</span>
 					</li>
 				</ul>
-				<label class="cursor-pointer underline hover:text-teal">
-					Dateien auswählen
-					<input type="file" multiple class="sr-only" @change="pick" />
-				</label>
-				<div v-if="fileError()" class="mt-8 text-md text-danger lg:text-lg">{{ fileError() }}</div>
 			</div>
 
 			<Checkbox v-model="copyToMe" class="mt-24">Kopie an mich</Checkbox>

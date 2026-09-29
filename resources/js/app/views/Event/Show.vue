@@ -12,6 +12,7 @@ import BackLink from '@/components/ui/BackLink.vue';
 import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
+import DropBox from '@/components/form/DropBox.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EventRow from '@/components/course/EventRow.vue';
 import IconArrowRight from '@/components/icons/ArrowRight.vue';
@@ -33,9 +34,9 @@ import SearchField from '@/components/list/SearchField.vue';
  * - *Nachrichten*, legacy's messages module: a row per note that opens it in
  *   a lightbox, and the plus to *Nachricht erfassen*. Only with participants,
  *   as legacy.
- * - *Kurs-Dokumente*: the course materials, a download each and a bin, and the
- *   plus picks files and uploads them straight away (legacy had a screen for
- *   it).
+ * - *Kurs-Dokumente*: the course materials, a download each and a bin, and
+ *   the expert portal's drop box under them, which uploads what is dropped
+ *   straight away (legacy had a screen for it).
  *
  * *Teilnehmer hinzufügen* searches as *Studenten* does, on the server, and
  * books with one click; legacy's select box under a search field was two.
@@ -134,10 +135,7 @@ const preview = (html) => {
 // Kurs-Dokumente
 const uploading = ref(false);
 
-async function upload(event) {
-	const files = [...event.target.files];
-	event.target.value = '';
-	if (!files.length) return;
+async function upload(files) {
 
 	uploading.value = true;
 	try {
@@ -182,7 +180,7 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 		<div class="mt-32 sm:mt-48">
 			<Collapsible expanded>
 				<template #title>Informationen</template>
-				<EventRow :event="page.event" />
+				<EventRow :event="page.event" :details="false" />
 			</Collapsible>
 
 			<Collapsible expanded>
@@ -270,12 +268,10 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 				</article>
 				<p v-if="!page.files.length" class="mt-16 sm:mt-32">Es sind keine Dokumente vorhanden.</p>
 
-				<div class="mt-24 flex">
-					<label title="Dokumente hochladen" class="block cursor-pointer hover:text-teal" :class="{ 'pointer-events-none opacity-50': uploading }">
-						<IconPlus size="lg" class="block" />
-						<input type="file" multiple class="sr-only" @change="upload" />
-					</label>
-					<span v-if="uploading" class="ml-16">Wird hochgeladen …</span>
+				<!-- The expert portal's upload box; here a drop uploads at once, as there is no form around it. -->
+				<div class="mt-24 sm:mt-48">
+					<DropBox :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" :class="{ 'pointer-events-none opacity-50': uploading }" @files="upload" />
+					<p v-if="uploading" class="pt-8">Wird hochgeladen …</p>
 				</div>
 			</Collapsible>
 		</div>
