@@ -45,7 +45,7 @@ it('lists booked, past and cancelled seats apart, with what cancelling would cos
 		->assertJsonPath('data.booked.1.penalty.applies', false)
 		->assertJsonPath('data.past.0.uuid', $past->uuid)
 		->assertJsonPath('data.cancelled.0.uuid', $gone->uuid)
-		->assertJsonPath('data.cancelled.0.reason', 'vom Studenten');
+		->assertJsonPath('data.cancelled.0.reason', 'Durch Student');
 });
 
 it('charges the cost when the admin says so', function () {

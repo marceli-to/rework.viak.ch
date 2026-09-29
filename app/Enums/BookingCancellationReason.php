@@ -65,14 +65,17 @@ enum BookingCancellationReason: string
 		};
 	}
 
-	/** Who cancelled, as the dashboard's student page says it. */
-	public function label(): string
+	/**
+	 * Who cancelled, as a badge on the dashboard's student page. None when the
+	 * course was called off: the event's own *Kurs abgesagt* says it.
+	 */
+	public function label(): ?string
 	{
 		return match ($this) {
-			self::Student => 'vom Studenten',
-			self::Administrator => 'von VIAK',
-			self::AdministratorWaived => 'von VIAK, ohne Kosten',
-			self::EventCancelled => 'weil der Kurs abgesagt wurde',
+			self::Student => 'Durch Student',
+			self::Administrator => 'Durch VIAK',
+			self::AdministratorWaived => 'Durch VIAK, ohne Kosten',
+			self::EventCancelled => null,
 		};
 	}
 

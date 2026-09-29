@@ -802,8 +802,9 @@ then four collapsibles:
   courses long over under *Gebuchte Kurse*, each with a live *Annullieren*).
   The row is [[BookingRow]], on [[EventRow]]'s geometry. A past seat says *Teilgenommen*, or *Nicht teilgenommen*
   once the date is closed.
-- ***Annullierte Kurse*** is new: when (in the badge, *Annulliert am …*), and by whom (student, VIAK, VIAK without
-  cost, the course called off). Shown only when there is one.
+- ***Annullierte Kurse*** is new: when (*Annulliert am …*) and by whom
+  (*Durch Student*, *Durch VIAK*, *Durch VIAK, ohne Kosten*), both badges;
+  a course called off says so in its own state badge. Shown only when there is one.
 - ***Dokumente***: all of them, in the portal's 4 / 3 / 5 row with legacy's
   teal *Download* button (Marcel, 2026-09-29, from legacy's page), where
   legacy showed five and linked the rest.
