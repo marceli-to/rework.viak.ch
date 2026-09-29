@@ -834,7 +834,10 @@ the edit form, two screens for one decision):
   booked and past seats.
 - **Closing asks who attended.** The edit form's *Veranstaltung abschliessen*
   box (button now *Abschliessen*) opens a lightbox, *Teilnehmer «Kursname»*,
-  listing the live seats **all ticked** (Marcel: untick the no-shows).
+  listing the live seats **none ticked** (Marcel, on second thought: tick
+  who came), and **at least one** is wanted where there are seats: the
+  lightbox says *Bitte mindestens einen Teilnehmer auswählen.*, and the
+  server refuses it too.
   *Abschliessen und Bestätigungen senden* is one request,
   `POST /api/admin/events/{event}/close` with the attended booking uuids
   ([[EventPageController::close]]): the ticks and the close in one

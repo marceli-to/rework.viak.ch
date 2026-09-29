@@ -30,6 +30,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 /**
  * A course date's own page on the dashboard ([[07-dashboard]], step 7) —
@@ -94,8 +95,9 @@ class EventPageController extends Controller
 
 	/**
 	 * *Veranstaltung abschliessen*, **with who attended, in one step** (Marcel,
-	 * 2026-09-29). The edit form's lightbox lists the live seats, all ticked,
-	 * and sends the ones left ticked; this records exactly those as attended and
+	 * 2026-09-29). The edit form's lightbox lists the live seats, none ticked,
+	 * and sends the ones ticked, **at least one** where there are seats: a
+	 * course that ran had somebody there, and an empty list is a slip; this records exactly those as attended and
 	 * every other seat as not, then closes the date, in one transaction, so a
 	 * tick and the close can never disagree. Closing is what mails the
 	 * participation confirmation, to the attended seats only
@@ -113,6 +115,10 @@ class EventPageController extends Controller
 
 		abort_if(in_array($event->state, [EventState::Closed, EventState::Cancelled], true), 422, 'Diese Veranstaltung ist bereits abgeschlossen oder abgesagt.');
 		abort_unless($event->date->lt(today()), 422, 'Eine Veranstaltung wird abgeschlossen, wenn sie stattgefunden hat.');
+
+		if ($event->bookings()->active()->exists() && ! $event->bookings()->active()->whereIn('uuid', $attended)->exists()) {
+			throw ValidationException::withMessages(['attended' => 'Bitte mindestens einen Teilnehmer auswählen.']);
+		}
 
 		DB::transaction(function () use ($event, $attended, $setState): void {
 			$seats = $event->bookings()->active();

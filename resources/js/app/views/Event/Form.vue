@@ -20,7 +20,8 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * *abgesagt am …* once done. Each mails the participants and experts
  * ([[SendConfirmationMails]], [[SendEventCancelMails]]). Once the date has
  * run, green *Veranstaltung abschliessen*, which **asks who attended first**
- * (Marcel, 2026-09-29): a lightbox, *Teilnehmer «Kurs»*, lists the seats, every one ticked, and
+ * (Marcel, 2026-09-29): a lightbox, *Teilnehmer «Kurs»*, lists the seats, none ticked
+ * and at least one wanted, and
  * *Abschliessen und Bestätigungen senden* records the ticks and closes in one
  * request ([[EventPageController::close]]). The ticked seats get the
  * participation confirmation ([[SendClosingMails]]); the date's page then
@@ -58,7 +59,7 @@ async function startClosing(meta, patchMeta) {
 	busy.value = true;
 	try {
 		const { participants } = await fetchEventPage(meta.uuid);
-		closing.value = { meta, patchMeta, participants, attended: participants.map((participant) => participant.uuid) };
+		closing.value = { meta, patchMeta, participants, attended: [], error: null };
 	} catch (problem) {
 		toast(problem.message, 'error');
 	} finally {
@@ -67,7 +68,14 @@ async function startClosing(meta, patchMeta) {
 }
 
 async function close() {
-	const { meta, patchMeta, attended } = closing.value;
+	const { meta, patchMeta, attended, participants } = closing.value;
+
+	// Said here before the server says it ([[EventPageController::close]]).
+	if (participants.length && !attended.length) {
+		closing.value.error = 'Bitte mindestens einen Teilnehmer auswählen.';
+		return;
+	}
+
 	busy.value = true;
 	try {
 		await closeEvent(meta.uuid, attended);
@@ -76,7 +84,8 @@ async function close() {
 		closing.value = null;
 		toast('Veranstaltung abgeschlossen');
 	} catch (problem) {
-		toast(problem.message, 'error');
+		if (problem.errors?.attended) closing.value.error = problem.errors.attended[0];
+		else toast(problem.message, 'error');
 	} finally {
 		busy.value = false;
 	}
@@ -151,7 +160,7 @@ async function close() {
 		</template>
 	</ResourceForm>
 
-	<!-- Who attended, asked at the moment it matters: every seat ticked, the no-shows unticked. -->
+	<!-- Who attended, asked at the moment it matters: nobody ticked, at least one wanted. -->
 	<!-- The course in the title; the text at the checkboxes' own size; each row
 	     clickable across its width, the label stretched over it. -->
 	<Lightbox v-if="closing" :title="`Teilnehmer «${closing.meta.course.title}»`" @close="closing = null">
@@ -165,6 +174,7 @@ async function close() {
 			</li>
 		</ul>
 		<p v-else class="mt-24 text-md sm:text-lg lg:text-xl">Diese Veranstaltung hat keine Teilnehmer.</p>
+		<p v-if="closing.error && !closing.attended.length" class="mt-16 text-md text-danger lg:text-lg">{{ closing.error }}</p>
 
 		<div class="mt-32 flex flex-col items-center [&>*]:w-full [&>*]:max-w-400 [&>*+*]:mt-12">
 			<Button :disabled="busy" @click="close">{{ closing.participants.length ? 'Abschliessen und Bestätigungen senden' : 'Abschliessen' }}</Button>

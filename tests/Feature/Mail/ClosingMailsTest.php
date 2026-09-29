@@ -12,6 +12,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * *Event closed* ([[10-mail]]): the participation confirmation, with its PDF,
@@ -50,24 +51,37 @@ it('closes with who attended, in one step', function () {
 	Mail::assertQueued(EventClosedStudent::class, fn ($mail) => $mail->hasTo($this->came->email));
 });
 
-it('closes with nobody attended when the list comes back empty', function () {
+it('wants at least one attendee where there are seats', function () {
 	Mail::fake();
+
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])
+		->assertJsonValidationErrors(['attended' => 'Bitte mindestens einen Teilnehmer auswählen.']);
+	// A uuid from somewhere else is not an attendee either.
+	$this->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => [(string) Str::uuid()]])
+		->assertJsonValidationErrors('attended');
+
+	expect($this->event->refresh()->state)->not->toBe(EventState::Closed);
+	Mail::assertNothingQueued();
+});
+
+it('closes a date nobody booked with an empty list', function () {
+	$this->event->bookings()->update(['cancelled_at' => now()]);
 
 	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertOk();
 
 	expect($this->event->refresh()->state)->toBe(EventState::Closed);
-	Mail::assertNotQueued(EventClosedStudent::class);
 });
 
 it('closes only a date that has run, only once, and only for admins', function () {
-	$this->actingAs($this->came)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertForbidden();
+	$attended = ['attended' => [$this->came->bookings()->first()->uuid]];
+	$this->actingAs($this->came)->postJson("/api/admin/events/{$this->event->uuid}/close", $attended)->assertForbidden();
 
 	$this->event->update(['date' => now()->addDay()->toDateString()]);
-	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertStatus(422);
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", $attended)->assertStatus(422);
 
 	$this->event->update(['date' => now()->subDay()->toDateString()]);
-	$this->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertOk();
-	$this->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertStatus(422);
+	$this->postJson("/api/admin/events/{$this->event->uuid}/close", $attended)->assertOk();
+	$this->postJson("/api/admin/events/{$this->event->uuid}/close", $attended)->assertStatus(422);
 });
 
 it('does not close through the plain state switch, which knows nothing of attendance', function () {
