@@ -127,7 +127,7 @@ async function cancel(booking) {
 
 			<Collapsible v-if="page.cancelled.length">
 				<template #title>Annullierte Kurse<Badge v-if="page.cancelled.length" variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
-				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
+				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking" :details="false">
 					<template #badges>
 						<Badge variant="danger">Annulliert am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}</Badge>
 					</template>

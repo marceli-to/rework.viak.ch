@@ -13,7 +13,7 @@ import { longDate } from '@/support/format';
  * edge. The `badges` slot sits beside the state badge. *Details* opens the
  * course date's page.
  */
-// `details` off where the seat is history: *Absolvierte Kurse* (Marcel, 2026-09-29).
+// `details` off where the seat is history: *Absolvierte* and *Annullierte Kurse* (Marcel, 2026-09-29).
 defineProps({ booking: { type: Object, required: true }, details: { type: Boolean, default: true } });
 </script>
 
