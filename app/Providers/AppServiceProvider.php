@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Support\Accounting\AccountingSystem;
 use App\Support\Accounting\FakeAccountingSystem;
 use App\Support\Accounting\RunMyAccounts;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -53,6 +54,29 @@ class AppServiceProvider extends ServiceProvider
 	 */
 	public function boot(): void
 	{
-		//
+		$this->catchMailOutsideProduction();
+	}
+
+	/**
+	 * **Outside production, every mail goes to one address** ([[10-mail]]).
+	 *
+	 * The ported database holds VIAK's real students and experts, so a
+	 * prototype that mails from it would mail VIAK's customers. Same rule as
+	 * the accounting system above: mocked until cutover. Legacy had it twice
+	 * (`Mail::alwaysTo(env('MAIL_TO'))` and `Tasks/Job` swapping recipients);
+	 * here it is once, for mailables and notifications alike, in every process,
+	 * the queue worker's included.
+	 *
+	 * With no `MAIL_CATCH_ALL` set, mail goes to an address under `.test`,
+	 * which by definition reaches nobody: forgetting the setting cannot mail a
+	 * customer. Locally the mailer points at MailHog as well.
+	 */
+	private function catchMailOutsideProduction(): void
+	{
+		if ($this->app->isProduction()) {
+			return;
+		}
+
+		Mail::alwaysTo(config('mail.catch_all') ?: 'catch-all@viak.test');
 	}
 }

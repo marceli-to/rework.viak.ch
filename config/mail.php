@@ -130,4 +130,17 @@ return [
 
 	'admin' => env('MAIL_ADMIN_ADDRESS'),
 
+	/*
+	|--------------------------------------------------------------------------
+	| Everything, outside production
+	|--------------------------------------------------------------------------
+	|
+	| Outside production every mail goes here and nowhere else, whoever it was
+	| for: the database holds real customers ([[AppServiceProvider]],
+	| [[10-mail]]). Unset, it is an address under `.test`, which reaches nobody.
+	|
+	*/
+
+	'catch_all' => env('MAIL_CATCH_ALL'),
+
 ];
