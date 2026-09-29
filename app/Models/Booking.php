@@ -135,4 +135,17 @@ class Booking extends Model
 			->whereHas('invoice', fn (Builder $query) => $query->where('status', '!=', InvoiceStatus::Cancelled))
 			->exists();
 	}
+
+	/**
+	 * The invoice that stands for this seat: the latest one not cancelled.
+	 * What the course confirmation attaches ([[10-mail]]).
+	 */
+	public function invoice(): ?Invoice
+	{
+		return Invoice::query()
+			->where('status', '!=', InvoiceStatus::Cancelled)
+			->whereHas('items', fn (Builder $query) => $query->where('itemable_type', $this->getMorphClass())->where('itemable_id', $this->getKey()))
+			->latest('id')
+			->first();
+	}
 }

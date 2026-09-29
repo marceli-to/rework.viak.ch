@@ -59,12 +59,12 @@ in a scenario (below).
 |---|---|---|---|---|---|
 | Student registers | `StudentRegistered` | student | — | Bestätigung Anmeldung | Fortify's stock verification mail only |
 | Admin creates an expert | `ExpertCreated` | expert | — | Dein VIAK-Zugang | The screen exists (2026-09-29) and creates the account silently; until this mail, a new expert cannot sign in ([[07-dashboard]]) |
-| Booking made | `BookingCompleted` | student | — | Buchungsbestätigung – *course* | `BookingMade` fires, nothing listens for mail |
-| | `BookingCreatedInfoExpert` | each expert | — | Neue Anmeldung für *course* | ″ |
-| | `BookingCreatedInfoAdmin` | admin | — | Neue Anmeldung für *course* | ″ |
-| | `RentalAddedInfoAdmin` | admin, if rental | — | Buchung Mietcomputer für *course* | ″ |
-| | `EventConfirmationStudent` | student, **if event already confirmed** | invoice (+ rental invoice) | Kursbestätigung – *course* | ″ — invoice is raised at checkout, not mailed |
-| | `EventMessageStudent` × every earlier message | student, late booker | — (files linked in the body) | the message's subject | Not ported — kept as is, see *Oddities* |
+| Booking made | `BookingCompleted` | student | — | Buchungsbestätigung – *course* | **Built 2026-09-29** ([[SendBookingMails]]) |
+| | `BookingCreatedInfoExpert` | each expert | — | Neue Anmeldung für *course* | **Built**, as `BookingCreatedInfo` (one class for both) |
+| | `BookingCreatedInfoAdmin` | admin | — | Neue Anmeldung für *course* | **Built**, to `config('mail.admin')` |
+| | `RentalAddedInfoAdmin` | admin, if rental | — | Buchung Mietcomputer für *course* | **Built** |
+| | `EventConfirmationStudent` | student, **if event already confirmed** | invoice (+ rental invoice) | Kursbestätigung – *course* | **Built**: the booking raises the invoice (it did not until b6c866e), [[SendCourseConfirmation]] renders its PDF, the mail attaches it. One invoice with a rental line, so one PDF |
+| | `EventMessageStudent` × every earlier message | student, late booker | — (files linked in the body) | the message's subject | **Built**, one mail each, recorded as recipients; files link to the gated download |
 | Student cancels, no penalty | `BookingCancelled` | student | — | Annullationsbestätigung – *course* | `BookingCancelled` fires, nothing mailed |
 | | `BookingCancelledInfoAdmin` | admin | — | Abmeldung für *course* | ″ |
 | Student cancels, with penalty | `BookingCancelledWithPenalty` | student | penalty invoice | Annullationsbestätigung – *course* | Penalty invoice raised, not mailed |
@@ -198,6 +198,18 @@ guessing. Not installed on production.
   link each. For design parity with legacy's markdown mails
   (`../viak.ch/resources/views/mail/`) the way the PDFs were measured against
   prod ([[03-invoices]]) — side by side, not from the source.
+
+## Built so far
+
+- **2026-09-29**: steps 1 to 3 (the guard, MailHog locally on 1025 with the
+  inbox at http://localhost:8025, legacy's layout and theme), and the *booking
+  made* rows. Every mail is a queued [[VIAKMail]], sent after the commit.
+  Checked in MailHog from real ported bookings: the look is legacy's, the
+  invoice PDF is attached.
+- **The course confirmation's *Zahlung per Kreditkarte*** goes to a placeholder
+  page on legacy's URL (`Todo.md`, `Open-Questions.md` #28).
+- **Found on the way**: a seat bought on an already-confirmed course was never
+  invoiced, though `CompleteCheckout` said it was (fixed in b6c866e).
 
 ## Build order
 
