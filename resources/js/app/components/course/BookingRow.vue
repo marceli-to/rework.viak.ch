@@ -30,9 +30,10 @@ defineProps({ booking: { type: Object, required: true } });
 				<div v-else>{{ booking.event.location }}</div>
 				<div v-if="booking.event.experts.length">mit {{ booking.event.experts.join(', ') }}</div>
 				<!-- The seat's own badges beside the date's state, on one line (Marcel, 2026-09-29). -->
-				<div class="flex flex-wrap gap-x-8">
-					<EventState :state="booking.event.state" />
-					<div v-if="$slots.badges" class="mt-4 flex flex-wrap gap-8"><slot name="badges" /></div>
+				<!-- Both as flex items at their own height: an inline badge sits in a 1.4 line box and a stretched one fills it, which drew them at different heights. -->
+				<div class="flex flex-wrap items-start gap-x-8">
+					<EventState :state="booking.event.state" class="flex" />
+					<div v-if="$slots.badges" class="mt-4 flex flex-wrap items-start gap-8"><slot name="badges" /></div>
 				</div>
 			</div>
 
