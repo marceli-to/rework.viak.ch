@@ -805,8 +805,11 @@ then four collapsibles:
   once the date is closed.
 - ***Annullierte Kurse*** is new: when (in the badge, *Annulliert am …*), and by whom (student, VIAK, VIAK without
   cost, the course called off). Shown only when there is one.
-- ***Dokumente***: all of them, in the portal's 4 / 3 / 5 row with the download
-  icon, where legacy showed five and linked the rest.
+- ***Dokumente***: all of them, in the portal's 4 / 3 / 5 row with legacy's
+  teal *Download* button (Marcel, 2026-09-29, from legacy's page), where
+  legacy showed five and linked the rest.
+- The heading is legacy's *Profil Student*, not the name; *Absolvierte Kurse*
+  has no *Details* (Marcel, 2026-09-29).
 - ***Annullieren* asks whether the cost is charged (#14)** when
   [[CancellationPenalty]] finds one today: the dialog names the amount and the
   rate and offers *Mit Kosten annullieren* and *Ohne Kosten annullieren*

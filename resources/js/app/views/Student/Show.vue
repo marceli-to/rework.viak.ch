@@ -13,7 +13,6 @@ import Badge from '@/components/ui/Badge.vue';
 import BookingRow from '@/components/course/BookingRow.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
-import EditableListItem from '@/components/list/EditableListItem.vue';
 import Loading from '@/components/ui/Loading.vue';
 
 /**
@@ -83,7 +82,7 @@ async function cancel(booking) {
 	<section v-else>
 		<ArticleText>
 			<template #aside>
-				<h1 class="font-bold text-teal">{{ page.student.name }}</h1>
+				<h1 class="font-bold text-teal">Profil Student</h1>
 				<BackLink :to="returnTo({ name: 'students' })" />
 			</template>
 
@@ -118,7 +117,7 @@ async function cancel(booking) {
 
 			<Collapsible>
 				<template #title>Absolvierte Kurse<Badge v-if="page.past.length" variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
-				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
+				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking" :details="false">
 					<template #badges>
 						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 					</template>
@@ -140,19 +139,24 @@ async function cancel(booking) {
 
 			<Collapsible>
 				<template #title>Dokumente<Badge v-if="page.documents.length" variant="solid" class="ml-12">{{ page.documents.length }}</Badge></template>
-				<!-- The portal's document row (`row/document.blade.php`), 4 / 3 / 5. -->
-				<EditableListItem v-for="document in page.documents" :key="document.uuid" :download="document.url" wide>
-					<div class="col-span-12 sm:col-span-4">
-						<strong class="font-bold">{{ document.course ?? document.type }}</strong><br />
-						{{ shortDate(document.event_date ?? document.date) }}
+				<!-- The portal's document row (`row/document.blade.php`), 4 / 3 / 5, with legacy's teal *Download* at the end. -->
+				<article v-for="document in page.documents" :key="document.uuid" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
+					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+						<div class="sm:col-span-4">
+							<strong class="font-bold">{{ document.course ?? document.type }}</strong><br />
+							{{ shortDate(document.event_date ?? document.date) }}
+						</div>
+						<div class="sm:col-span-3">{{ document.type }} {{ document.number }}</div>
+						<div class="flex items-start justify-between gap-16 sm:col-span-5">
+							<div>
+								<template v-if="document.grand_total">{{ chf(document.grand_total) }}</template>
+								<!-- Beside the amount it qualifies, not on a line of its own (Marcel, 2026-09-29). -->
+								<Badge v-if="document.status" :variant="STATUS_TONES[document.status]" class="ml-8 align-middle">{{ document.status }}</Badge>
+							</div>
+							<Button :href="document.url" target="_blank" class="shrink-0">Download</Button>
+						</div>
 					</div>
-					<div class="col-span-12 sm:col-span-3">{{ document.type }} {{ document.number }}</div>
-					<div class="col-span-12 pr-40 sm:col-span-5">
-						<template v-if="document.grand_total">{{ chf(document.grand_total) }}</template>
-						<!-- Beside the amount it qualifies, not on a line of its own (Marcel, 2026-09-29). -->
-						<Badge v-if="document.status" :variant="STATUS_TONES[document.status]" class="ml-8 align-middle">{{ document.status }}</Badge>
-					</div>
-				</EditableListItem>
+				</article>
 				<p v-if="!page.documents.length" class="mt-16 sm:mt-32">Es sind noch keine Dokumente vorhanden.</p>
 			</Collapsible>
 		</div>

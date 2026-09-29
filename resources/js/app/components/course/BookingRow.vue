@@ -13,7 +13,8 @@ import { longDate } from '@/support/format';
  * edge. The `badges` slot sits beside the state badge. *Details* opens the
  * course date's page.
  */
-defineProps({ booking: { type: Object, required: true } });
+// `details` off where the seat is history: *Absolvierte Kurse* (Marcel, 2026-09-29).
+defineProps({ booking: { type: Object, required: true }, details: { type: Boolean, default: true } });
 </script>
 
 <template>
@@ -44,7 +45,7 @@ defineProps({ booking: { type: Object, required: true } });
 				<div><slot name="facts" /></div>
 				<div class="mt-24 sm:mt-0 [&>*+*]:mt-12">
 					<slot name="actions" />
-					<Button v-if="!booking.deleted" :to="{ name: 'event.show', params: { uuid: booking.event.uuid } }" variant="secondary">Details</Button>
+					<Button v-if="details && !booking.deleted" :to="{ name: 'event.show', params: { uuid: booking.event.uuid } }" variant="secondary">Details</Button>
 				</div>
 			</div>
 		</div>
