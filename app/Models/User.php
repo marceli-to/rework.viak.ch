@@ -68,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	{
 		return [
 			'email_verified_at' => 'datetime',
+			'deactivated_at' => 'datetime',
 			'password' => 'hashed',
 			'gender' => Gender::class,
 			'operating_systems' => AsEnumCollection::class.':'.OperatingSystem::class,
@@ -218,6 +219,15 @@ class User extends Authenticatable implements MustVerifyEmail
 		return $this->eventsAsExpert()->exists()
 			|| collect(['bookings', 'invoices', 'user_documents', 'messages', 'checkouts'])
 				->contains(fn (string $table) => DB::table($table)->where('user_id', $this->getKey())->exists());
+	}
+
+	/**
+	 * Deactivated, never deleted (#16): cannot sign in, and a session already
+	 * open is ended on its next request ([[SignOutDeactivated]]).
+	 */
+	public function isDeactivated(): bool
+	{
+		return $this->deactivated_at !== null;
 	}
 
 	public function isAdmin(): bool

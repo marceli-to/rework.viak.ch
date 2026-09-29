@@ -19,12 +19,14 @@ const props = defineProps({
 	schema: { type: String, required: true },
 	load: { type: Function, required: true },
 	save: { type: Function, required: true },
-	remove: { type: Function, required: true },
+	// A record that is never deleted (a student, #16) leaves these out and
+	// fills the `danger` slot instead.
+	remove: { type: Function, default: null },
 	list: { type: Object, required: true },
 	edit: { type: Function, required: true },
 	noun: { type: String, required: true },
 	titles: { type: Object, required: true },
-	deletion: { type: Object, required: true },
+	deletion: { type: Object, default: null },
 	blocked: { type: Function, default: () => null },
 	// *Speichern und Weiterbearbeiten* — for a form long enough to come back to.
 	stay: { type: Boolean, default: true },
@@ -36,6 +38,9 @@ const props = defineProps({
 });
 
 const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
+
+// What the `danger` slot changes about the record without saving the form.
+const patchMeta = (changes) => Object.assign(meta.value, changes);
 
 // A title may read the record: *Veranstaltung für* and the course's.
 const title = (which) => (typeof props.titles[which] === 'function' ? props.titles[which](meta.value) : props.titles[which]);
@@ -62,15 +67,17 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 			</fieldset>
 
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->
-			<div v-if="!creating && !locked(meta)" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
-				<h2 class="mb-8 font-bold sm:mb-16">{{ deletion.title }}</h2>
-				<p v-if="blocked(meta)">{{ blocked(meta) }}</p>
-				<template v-else>
-					<p class="mb-12 lg:mb-16">{{ deletion.text }}</p>
-					<div class="mt-12 sm:mt-24">
-						<Button variant="danger" class="w-full" :disabled="deleting" @click="destroy(deletion.question(form, meta))">{{ deleting ? 'Wird gelöscht …' : 'Löschen' }}</Button>
-					</div>
-				</template>
+			<div v-if="!creating && !locked(meta) && (deletion || $slots.danger)" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
+				<slot name="danger" :form="form" :meta="meta" :patch-meta="patchMeta">
+					<h2 class="mb-8 font-bold sm:mb-16">{{ deletion.title }}</h2>
+					<p v-if="blocked(meta)">{{ blocked(meta) }}</p>
+					<template v-else>
+						<p class="mb-12 lg:mb-16">{{ deletion.text }}</p>
+						<div class="mt-12 sm:mt-24">
+							<Button variant="danger" class="w-full" :disabled="deleting" @click="destroy(deletion.question(form, meta))">{{ deleting ? 'Wird gelöscht …' : 'Löschen' }}</Button>
+						</div>
+					</template>
+				</slot>
 			</div>
 		</ArticleText>
 	</form>

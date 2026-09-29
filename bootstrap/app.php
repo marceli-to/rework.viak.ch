@@ -4,6 +4,7 @@ use App\Exceptions\BasketPriceChanged;
 use App\Exceptions\DiscountCodeNotRedeemable;
 use App\Exceptions\SeatNotAvailable;
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\SignOutDeactivated;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -38,6 +39,11 @@ return Application::configure(basePath: dirname(__DIR__))
 		// Legacy's `role:student`, which the whole checkout sits behind
 		// ([[EnsureUserHasRole]]).
 		$middleware->alias(['role' => EnsureUserHasRole::class]);
+
+		// A session open when its account was deactivated ends on its next
+		// request, on the site and on the API alike (#16).
+		$middleware->appendToGroup('web', SignOutDeactivated::class);
+		$middleware->appendToGroup('api', SignOutDeactivated::class);
 	})
 	->withExceptions(function (Exceptions $exceptions): void {
 		$exceptions->shouldRenderJsonWhen(

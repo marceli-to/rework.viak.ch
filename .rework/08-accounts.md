@@ -77,7 +77,9 @@ should not wait for this chunk — the two profile defects below are now fixed
   `User` now implements `MustVerifyEmail` and the profile flows are correct;
   wiring the screens is frontend work.
 - ~~**Open question 16**~~ — **answered 2026-09-24: deactivated, never deleted**
-  (`07-dashboard.md`). Was: is a user with financial history ever deleted, or only
+  (`07-dashboard.md`). **Built 2026-09-29**: `users.deactivated_at`, the login
+  refuses the account, an open session ends on its next request
+  ([[SignOutDeactivated]]); `07-dashboard.md`, *Step 6 — students*. Was: is a user with financial history ever deleted, or only
   deactivated? Still Marcel's, and it blocks only the admin screens above.
 
 ## Why it exists

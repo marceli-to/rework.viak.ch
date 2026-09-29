@@ -13,9 +13,10 @@ both modes, the course form and its images, testimonials, the field kit), and
 **step 6 began with the course-date form**. See *Step 1* to *Step 6* below,
 then *Loading* and *Polish*.
 
-**Next: the rest of step 6**, the remaining forms on the kit: students,
-discount codes, taxonomies, profile (*Build order*, below). Experts were built
-on 2026-09-29 (*Step 6 — experts*). Then step 7, which waits on mail (chunk 10).
+**Next: the rest of step 6**, the remaining forms on the kit: discount codes,
+taxonomies, profile (*Build order*, below). Experts and students were built on
+2026-09-29 (*Step 6 — experts*, *Step 6 — students*). Then step 7, which waits
+on mail (chunk 10).
 
 What exists at the end of 2026-09-24:
 
@@ -23,7 +24,7 @@ What exists at the end of 2026-09-24:
   their portal), and admin endpoints live under `/api/admin` (*Step 1*).
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
-  *Experten* (list and form, 2026-09-29).
+  *Experten* and *Studenten* (lists and forms, 2026-09-29).
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -130,6 +131,8 @@ file-remove button removes the wrong file.
   decided). Invoices, bookings and documents keep pointing at a real person,
   and a deactivated account cannot sign in or book. Legacy soft-deleted, or
   stripped the role when there were several.
+- → **List, edit, create and deactivate built 2026-09-29** (*Step 6 —
+  students*); the student page and the invite are still to come.
 
 ### Experts — keep
 
@@ -551,6 +554,56 @@ against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
   defaulted to `CH`, which MySQL matched and `Rule::in` refused; a test now
   checks that the default is one of the offered options.
 
+## Step 6 — students, built 2026-09-29
+
+*Studenten*, *Student hinzufügen / bearbeiten*, and deactivating:
+[[StudentSchema]], `views/Student/`, `/api/admin/students`. The student
+*page* (bookings, documents, *Annullieren*) is step 7; the arrow on each row
+leads to its `Pending` for now.
+
+- **The list is legacy's row** (name and city, e-mail, phone, pencil, and the
+  arrow under it 40px down, `icon-arrow-right.is-absolute`) **searched and
+  paged on the server**: 50 at a time with *Weitere laden (50 von 570)*. Every
+  word of the search must match one of name, e-mail, city, phone, company, so
+  *achermann basel* finds one person. `%` and `_` are taken literally.
+  *Deaktivierte Studenten* below, whole, opening when a search finds someone
+  there.
+- **The form is legacy's, with three changes.** *Firma* is on it (259 students
+  have one, and legacy's admin form could not show it). *E-Mail* is on edit as
+  well as create, unique across every account. Legacy's admin-typed password
+  is gone: the student sets their own through the invite (#26), which is
+  chunk 10, so for now the account is created silently
+  ([[CreateAccount]], shared with the expert form, is where the invite goes).
+  Legacy's required fields stay, phone included; five of 570 students lack one
+  and are asked for it on their first edit.
+- **Roles, as on the expert form**, with the same guard against removing your
+  own Admin role. Gender, e-mail, country and roles are declared once in
+  [[Schema]] and shared by both forms, and so is the request
+  ([[SavePersonRequest]]).
+- **Invoice addresses are rows of the form** (*Rechnungsadressen*), where
+  legacy had two sub-screens. They take the portal's rule, not legacy's: a pair
+  of names or a firm ([[StoreAddressRequest]]). A row left out is
+  soft-deleted, as the portal deletes; a uuid that belongs to someone else is
+  ignored, not updated. Invoices keep their own copy of the address, so
+  editing one changes no invoice. The repeater gained *Entfernen* for rows
+  with no checkbox to stand beside.
+- **Deactivating (#16)** is new: `users.deactivated_at`.
+  - The red box on the form says *Konto deaktivieren* where legacy's said
+    *Student löschen*, asks first, and turns into *Konto reaktivieren*. The
+    form notes since when. You cannot deactivate yourself.
+  - **The login refuses a deactivated account** and says why, but only after
+    the password matched, so it tells nobody else the account exists
+    ([[FortifyServiceProvider]]).
+  - **A session already open ends on its next request** ([[SignOutDeactivated]],
+    on the `web` and `api` groups): the site redirects to the login with the
+    message, the API answers 401.
+  - `ResourceForm` takes a `danger` slot for this, in place of the delete box.
+- **Not enforced yet, and where it will be**: an admin booking for a
+  deactivated student must refuse (step 7, *Teilnehmer hinzufügen*); a
+  deactivated expert can still be ticked on a course date (`EventSchema`), and
+  the expert form cannot deactivate anyone yet, it only switches the public
+  profile off.
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed
@@ -626,8 +679,8 @@ hamburger. Proposed, grouped by what the admin is doing:
    `GET /api/admin/forms/{form}`, `FormNode`, error mapping, leave guard. Move
    both forms onto it. (Built, *Step 5*.)
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
-   ~~experts~~ (built, *Step 6 — experts*), students, discount codes,
-   taxonomies, profile.
+   ~~experts~~, ~~students~~ (built, *Step 6 — experts* / *students*),
+   discount codes, taxonomies, profile.
 7. **Operational screens, by hand** — the event page, the student page,
    invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.

@@ -45,7 +45,7 @@ function expertPayload(array $overrides = []): array
 	];
 }
 
-function expert(array $profile = [], array $user = []): User
+function expertAccount(array $profile = [], array $user = []): User
 {
 	// A whole address, as all twenty real experts have one.
 	$expert = User::factory()->expert()->create([
@@ -80,7 +80,7 @@ it('creates an expert: the account, the profile, the roles', function () {
 });
 
 it('sends back exactly what it loads', function () {
-	$expert = expert();
+	$expert = expertAccount();
 	$form = $this->actingAs($this->admin)->getJson("/api/admin/experts/{$expert->uuid}")->json('data');
 
 	expect($this->putJson("/api/admin/experts/{$expert->uuid}", $form)->assertOk()->json('data'))->toBe($form);
@@ -103,7 +103,7 @@ it('refuses an address another account already has, deleted ones too', function 
 });
 
 it('keeps an expert their own address on save', function () {
-	$expert = expert(user: ['email' => 'eigene@example.test']);
+	$expert = expertAccount(user: ['email' => 'eigene@example.test']);
 
 	$this->actingAs($this->admin)
 		->putJson("/api/admin/experts/{$expert->uuid}", expertPayload(['email' => 'eigene@example.test']))
@@ -111,7 +111,7 @@ it('keeps an expert their own address on save', function () {
 });
 
 it('sets the roles exactly, Admin included', function () {
-	$expert = expert();
+	$expert = expertAccount();
 	$expert->syncRoles([Role::Expert, Role::Student]);
 
 	$this->actingAs($this->admin)->putJson("/api/admin/experts/{$expert->uuid}", expertPayload(['roles' => ['admin', 'expert']]))->assertOk();
@@ -138,7 +138,7 @@ it('will not let an admin take their own Admin role away', function () {
 });
 
 it('cleans the bio as the course texts are cleaned', function () {
-	$expert = expert();
+	$expert = expertAccount();
 
 	$this->actingAs($this->admin)->putJson("/api/admin/experts/{$expert->uuid}", expertPayload(['description' => '<p>Hallo<script>alert(1)</script></p>']));
 
@@ -152,9 +152,9 @@ it('binds experts only', function () {
 });
 
 it('lists every expert in the Experten page order, unpublished ones too', function () {
-	$b = expert(['order' => 2, 'publish' => true]);
-	$a = expert(['order' => 1, 'publish' => true]);
-	$off = expert(['order' => 3, 'publish' => false]);
+	$b = expertAccount(['order' => 2, 'publish' => true]);
+	$a = expertAccount(['order' => 1, 'publish' => true]);
+	$off = expertAccount(['order' => 3, 'publish' => false]);
 	User::factory()->student()->create();
 
 	$rows = $this->actingAs($this->admin)->getJson('/api/admin/experts')->json('data');
@@ -165,8 +165,8 @@ it('lists every expert in the Experten page order, unpublished ones too', functi
 });
 
 it('saves the order the list was dragged into', function () {
-	$a = expert(['order' => 1]);
-	$b = expert(['order' => 2]);
+	$a = expertAccount(['order' => 1]);
+	$b = expertAccount(['order' => 2]);
 
 	$this->actingAs($this->admin)->postJson('/api/admin/experts/order', ['experts' => [$b->uuid, $a->uuid]])->assertNoContent();
 
@@ -176,7 +176,7 @@ it('saves the order the list was dragged into', function () {
 
 it('deletes an expert nothing points at, portraits and all', function () {
 	Storage::fake('public');
-	$expert = expert();
+	$expert = expertAccount();
 	$portrait = Media::factory()->for($expert, 'mediable')->create();
 
 	$this->actingAs($this->admin)->getJson("/api/admin/experts/{$expert->uuid}")->assertJsonPath('data.has_history', false);
@@ -188,9 +188,9 @@ it('deletes an expert nothing points at, portraits and all', function () {
 });
 
 it('refuses to delete someone who has taught a date or booked one (#16)', function () {
-	$teacher = expert();
+	$teacher = expertAccount();
 	Event::factory()->create()->experts()->attach($teacher);
-	$booker = expert();
+	$booker = expertAccount();
 	Booking::factory()->create(['user_id' => $booker->id]);
 
 	$this->actingAs($this->admin)->getJson("/api/admin/experts/{$teacher->uuid}")->assertJsonPath('data.has_history', true);
@@ -210,7 +210,7 @@ it('refuses to delete your own account', function () {
 
 it('takes portraits on the expert, the first as the teaser', function () {
 	Storage::fake('public');
-	$expert = expert();
+	$expert = expertAccount();
 
 	$this->actingAs($this->admin)
 		->postJson("/api/admin/experts/{$expert->uuid}/media", ['file' => UploadedFile::fake()->image('portrait.jpg', 1200, 1200)])

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Forms\CourseSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
+use App\Forms\StudentSchema;
 use App\Forms\TestimonialSchema;
 use App\Models\User;
 
@@ -38,6 +39,7 @@ it('draws what it validates: every required field is marked, every marked one re
 	[TestimonialSchema::class, 'testimonial'],
 	[EventSchema::class, 'event'],
 	[ExpertSchema::class, 'expert'],
+	[StudentSchema::class, 'student'],
 ]);
 
 it('gives every form field a starting value, so create and edit have one shape', function (string $schema) {
@@ -47,7 +49,7 @@ it('gives every form field a starting value, so create and edit have one shape',
 		->unique()->sort()->values()->all();
 
 	expect(collect((new $schema)->defaults())->keys()->sort()->values()->all())->toBe($names);
-})->with([CourseSchema::class, TestimonialSchema::class, EventSchema::class, ExpertSchema::class]);
+})->with([CourseSchema::class, TestimonialSchema::class, EventSchema::class, ExpertSchema::class, StudentSchema::class]);
 
 it('names a repeater row’s fields for the messages', function () {
 	expect((new CourseSchema)->attributes())->toMatchArray(['videos.*.title' => 'Titel', 'subtitle' => 'Subtitel'])

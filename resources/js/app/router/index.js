@@ -67,7 +67,26 @@ const routes = [
 		component: () => import('@/views/Expert/Form.vue'),
 		meta: { title: 'Experte bearbeiten' },
 	},
-	pending('studenten', 'students', 'Studenten'),
+	{
+		path: '/dashboard/studenten',
+		name: 'students',
+		component: () => import('@/views/Student/Index.vue'),
+		meta: { title: 'Studenten' },
+	},
+	{
+		path: '/dashboard/student/erfassen',
+		name: 'student.create',
+		component: () => import('@/views/Student/Form.vue'),
+		meta: { title: 'Student hinzufügen' },
+	},
+	{
+		path: '/dashboard/student/:uuid/bearbeiten',
+		name: 'student.edit',
+		component: () => import('@/views/Student/Form.vue'),
+		meta: { title: 'Student bearbeiten' },
+	},
+	// Bookings, documents, cancelling: an operational screen, step 7.
+	pending('student/:uuid', 'student.show', 'Student'),
 	pending('rechnungen', 'backoffice.invoices', 'Rechnungen'),
 	pending('exporte', 'backoffice.exports', 'Exporte'),
 	pending('rabatt-codes', 'discount-codes', 'Rabatt-Codes'),

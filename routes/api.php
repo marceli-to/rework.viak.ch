@@ -77,8 +77,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
  * The public and portal endpoints above stay where they are; the course and
  * event writes moved in here with their forms.
  */
-// `{expert}` is a person holding the Expert role, by uuid, and nobody else.
+// `{expert}` and `{student}` are people holding that role, by uuid, and nobody else.
 Route::bind('expert', fn (string $uuid) => User::query()->withRole(Role::Expert)->where('uuid', $uuid)->firstOrFail());
+Route::bind('student', fn (string $uuid) => User::query()->withRole(Role::Student)->where('uuid', $uuid)->firstOrFail());
 
 Route::middleware(['auth:sanctum', 'role:admin'])
 	->prefix('admin')
@@ -115,6 +116,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('experts/{expert}/media', [Admin\MediaController::class, 'expertIndex']);
 		Route::post('experts/{expert}/media', [Admin\MediaController::class, 'expertStore']);
 		Route::patch('experts/{expert}/media/order', [Admin\MediaController::class, 'expertOrder']);
+
+		Route::get('students', [Admin\StudentController::class, 'index']);
+		Route::post('students', [Admin\StudentController::class, 'store']);
+		Route::get('students/{student}', [Admin\StudentController::class, 'show']);
+		Route::put('students/{student}', [Admin\StudentController::class, 'update']);
+		Route::patch('students/{student}/state', [Admin\StudentController::class, 'state']);
 
 		Route::post('courses/{course}/events', [Admin\EventController::class, 'store']);
 		Route::get('events/{event}', [Admin\EventController::class, 'show']);

@@ -8,6 +8,7 @@ use App\Forms\CourseSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
 use App\Forms\Schema;
+use App\Forms\StudentSchema;
 use App\Forms\TestimonialSchema;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -25,6 +26,7 @@ class FormController extends Controller
 		'testimonial' => TestimonialSchema::class,
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,
+		'student' => StudentSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

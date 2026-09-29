@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Actions\Accounts\RegisterUser;
+use App\Http\Middleware\SignOutDeactivated;
 use App\Http\Responses\LoginResponse;
 use App\Http\Responses\RegisterResponse;
+use App\Models\User;
 use App\Support\Home;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Laravel\Fortify\Fortify;
@@ -39,6 +43,25 @@ class FortifyServiceProvider extends ServiceProvider
 		Fortify::registerView(fn () => view('site.auth.register'));
 
 		Fortify::createUsersUsing(RegisterUser::class);
+
+		/*
+		 * Fortify's own check, plus one: **a deactivated account does not sign
+		 * in** (#16, [[07-dashboard]]). Said only after the password matched,
+		 * so it tells nobody but the owner that the account exists.
+		 */
+		Fortify::authenticateUsing(function (Request $request): ?User {
+			$user = User::query()->where(Fortify::username(), $request->input(Fortify::username()))->first();
+
+			if (! $user || ! Hash::check((string) $request->input('password'), $user->password)) {
+				return null;
+			}
+
+			if ($user->isDeactivated()) {
+				throw ValidationException::withMessages([Fortify::username() => SignOutDeactivated::MESSAGE]);
+			}
+
+			return $user;
+		});
 
 		$this->app->singleton(LoginResponseContract::class, LoginResponse::class);
 		$this->app->singleton(RegisterResponseContract::class, RegisterResponse::class);

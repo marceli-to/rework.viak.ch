@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Accounts\CreateAccount;
 use App\Actions\Media\DeleteMedia;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
@@ -16,8 +17,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 /**
@@ -49,27 +48,17 @@ class ExpertController extends Controller
 		return new ExpertFormResource($expert->load('expertProfile'));
 	}
 
-	/**
-	 * **No invite yet.** Legacy mails *Dein VIAK-Zugang* with a signed link to
-	 * set a password; that mail is chunk 10. Until then the account exists with
-	 * a password nobody knows. The address counts as verified, as legacy has
-	 * it: the admin typed it, and the invite will be what proves it.
-	 */
-	public function store(SaveExpertRequest $request): JsonResponse
+	/** Without the invite for now ([[CreateAccount]]). */
+	public function store(SaveExpertRequest $request, CreateAccount $create): JsonResponse
 	{
-		$expert = DB::transaction(function () use ($request): User {
-			$expert = new User($request->userAttributes());
-			$expert->forceFill([
-				'password' => Hash::make(Str::random(40)),
-				'email_verified_at' => now(),
-			])->save();
+		$expert = DB::transaction(function () use ($request, $create): User {
+			$expert = $create->execute($request->userAttributes(), $request->roles());
 
 			// The end of the Experten page, as a new testimonial goes to the end of its list.
 			$expert->expertProfile()->create([
 				...$request->profileAttributes(),
 				'order' => (int) ExpertProfile::max('order') + 1,
 			]);
-			$expert->syncRoles($request->roles());
 
 			return $expert;
 		});

@@ -135,6 +135,10 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 				</div>
 				<FormNode v-else :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
 			</template>
+			<!-- A row with no checkbox to sit beside (an invoice address) takes it on a line of its own. -->
+			<div v-if="!field.fields.some((child) => child.type === 'checkbox')" class="flex justify-end">
+				<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
+			</div>
 		</div>
 		<button type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="add">
 			{{ field.add ?? 'Hinzufügen' }}
