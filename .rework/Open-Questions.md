@@ -52,7 +52,6 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 30 | Which ad networks, exactly? Google Ads and Meta today; LinkedIn, ChatGPT, others planned? | Client | Nothing in code; which tags go into GTM |
 | 31 | The answer options for *Wie wurdest du auf uns aufmerksam?*, and is it optional? | Client | `11-tracking.md` step 4 |
 | 32 | That question as a popup (as asked) or a field on the summary step (recommended)? | Client | `11-tracking.md` step 4 |
-| 33 | Fix the live site's GTM and banner now (findings 1 to 3: bookings never counted, `ads` consent impossible, Meta pixel without consent), or only at cutover? | Client | Nothing in the rework; the quality of VIAK's ad data until then |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 | 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |
 | 23 | A late booker gets every earlier course message, one mail each — keep, digest, or drop? | Marcel | Chunk 10's message mails. See `10-mail.md`, *Oddities* |

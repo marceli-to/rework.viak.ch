@@ -84,9 +84,10 @@ configuration.
    `chamgroup.ch`, the privacy link to a February 2023 PDF, and one section
    links `href="#"`.
 
-Findings 1 to 3 are worth telling the client now, independent of the rework:
-they can be fixed in the GTM container and the banner config on the live site
-this week, and every week they stay makes the ad data VIAK is looking at wrong.
+**The live site is not fixed.** These findings are what the rework must not
+carry across; they are fixed in the rework and at cutover, nowhere else. The
+client should still hear them, because they explain why the ad numbers VIAK is
+looking at today do not add up.
 
 ## What to build
 
@@ -138,6 +139,11 @@ Then in GTM, not in code: the Ads conversion moves from *form submit* to the
 `purchase` event with dynamic value, the Meta pixel moves to Meta's consent-aware
 template and gets `Purchase`, the UA tags go. **Whoever holds the GTM account
 does this**; see questions.
+
+The live site and the rework share one container, and a published change
+applies to both at once. So the new setup is prepared in a separate workspace
+(or a GTM environment pointed at the rework's staging host) and **published at
+cutover**, not before; the live site keeps running on today's version untouched.
 
 ### Step 3 — First-party attribution, stored with the checkout
 
@@ -197,16 +203,17 @@ step 3 records them.
 
 ## Order of work
 
-1. Tell the client findings 1 to 3 now; they can be fixed on the live site.
-2. Step 1 (parity) and step 3 (attribution capture): no client input needed
+1. Step 1 (parity) and step 3 (attribution capture): no client input needed
    except the GTM access question.
-3. Step 2's `purchase` event, then the GTM changes by whoever holds the account.
-4. Step 4 once the client sends the option list.
-5. Step 5.
+2. Step 2's `purchase` event, then the container changes by whoever holds the
+   account, prepared unpublished.
+3. Step 4 once the client sends the option list.
+4. Step 5.
+5. At cutover: publish the new container version together with the switch.
 
 ## Questions for the client
 
-Also in `Open-Questions.md` as #29 to #33.
+Also in `Open-Questions.md` as #29 to #32.
 
 - **#29 Who manages the GTM container and the ad accounts** (VIAK, or an
   agency)? The container changes in step 2 need edit access, and campaigns need
@@ -216,8 +223,6 @@ Also in `Open-Questions.md` as #29 to #33.
 - **#31 The answer options** for *Wie wurdest du auf uns aufmerksam?*, and
   whether it is optional.
 - **#32 Popup, or a field in the last checkout step?** Recommendation: the field.
-- **#33 Is the live-site GTM fixed now** (findings 1 to 3), or only at cutover?
-  Every week before the fix is ad data measured wrong.
 
 Kurzfassung für den Kunden, zum Weiterleiten:
 
@@ -225,8 +230,8 @@ Kurzfassung für den Kunden, zum Weiterleiten:
 > Ads zählt stattdessen jedes abgeschickte Formular (Login, Registrierung,
 > Newsletter) pauschal mit CHF 100. Zudem kann niemand Werbe-Cookies zulassen,
 > weil der Cookie-Banner diese Kategorie gar nicht anbietet, und das Meta Pixel
-> lädt ohne Einwilligung. Das lässt sich im Tag Manager kurzfristig korrigieren.
-> Für die neue Website: echte Kauf-Events mit Betrag, eigene Erfassung der
+> lädt ohne Einwilligung. Die heutige Website bleibt so, wie sie ist; korrigiert
+> wird das mit der neuen Website. Dort: echte Kauf-Events mit Betrag, eigene Erfassung der
 > Herkunft (UTM, Klick-IDs) bei jeder Buchung, die Frage «Wie wurdest du auf uns
 > aufmerksam?» im letzten Buchungsschritt und eine Auswertung im Dashboard.
 > Wir brauchen: Zugang zum Tag Manager (oder die Agentur), die Liste der
