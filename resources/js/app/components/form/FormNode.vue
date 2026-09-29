@@ -69,7 +69,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 </script>
 
 <template>
-	<Field v-if="field.type === 'text'" v-model="value" :label="field.label" :required="field.required" :error="error" />
+	<Field v-if="field.type === 'text'" v-model="value" :type="field.input ?? 'text'" :label="field.label" :required="field.required" :error="error" />
 	<Field v-else-if="field.type === 'number'" v-model="value" type="number" :label="field.label" :required="field.required" :error="error" />
 	<MaskedField v-else-if="field.type === 'date' || field.type === 'time'" v-model="value" :kind="field.type" :label="field.label" :required="field.required" :error="error" />
 	<Textarea v-else-if="field.type === 'textarea'" v-model="value" :label="field.label" :required="field.required" :rows="field.rows ?? 2" :mono="field.mono" :error="error" />
@@ -141,5 +141,5 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		</button>
 	</div>
 
-	<component :is="CUSTOM[field.component]" v-else-if="field.type === 'custom'" :course="record" />
+	<component :is="CUSTOM[field.component]" v-else-if="field.type === 'custom'" :record="record" :owner="field.owner" />
 </template>

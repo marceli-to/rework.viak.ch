@@ -89,6 +89,21 @@ class User extends Authenticatable implements MustVerifyEmail
 			->map(fn (string $role) => Role::from($role));
 	}
 
+	/**
+	 * Exactly these roles, no others — the dashboard's *Benutzer-Rollen*.
+	 *
+	 * @param  array<int, Role>  $roles
+	 */
+	public function syncRoles(array $roles): void
+	{
+		DB::transaction(function () use ($roles): void {
+			DB::table('role_user')->where('user_id', $this->getKey())->delete();
+			DB::table('role_user')->insert(array_map(fn (Role $role) => ['user_id' => $this->getKey(), 'role' => $role->value], $roles));
+		});
+
+		$this->roleNames = null;
+	}
+
 	public function hasRole(Role $role): bool
 	{
 		return $this->roles()->contains($role);
@@ -183,6 +198,26 @@ class User extends Authenticatable implements MustVerifyEmail
 			->where('expert_profiles.visible', true)
 			->orderBy('expert_profiles.order')
 			->select('users.*');
+	}
+
+	/** Everyone holding `$role` — the dashboard's Experten list, a course date's experts. */
+	public function scopeWithRole(Builder $query, Role $role): void
+	{
+		$query->whereIn('users.id', fn ($q) => $q->select('user_id')->from('role_user')->where('role', $role->value));
+	}
+
+	/**
+	 * Does anything on record point at this person — a date they taught, a
+	 * booking, an invoice, a document, a message, a checkout? Then they are
+	 * deactivated, never deleted (#16, [[07-dashboard]]): all of it has to
+	 * keep pointing at a real person. The tables restrict the delete anyway;
+	 * this asks first, so the dashboard can say why.
+	 */
+	public function hasHistory(): bool
+	{
+		return $this->eventsAsExpert()->exists()
+			|| collect(['bookings', 'invoices', 'user_documents', 'messages', 'checkouts'])
+				->contains(fn (string $table) => DB::table($table)->where('user_id', $this->getKey())->exists());
 	}
 
 	public function isAdmin(): bool

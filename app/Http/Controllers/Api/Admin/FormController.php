@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Forms\CourseSchema;
 use App\Forms\EventSchema;
+use App\Forms\ExpertSchema;
 use App\Forms\Schema;
 use App\Forms\TestimonialSchema;
 use App\Http\Controllers\Controller;
@@ -23,6 +24,7 @@ class FormController extends Controller
 		'course' => CourseSchema::class,
 		'testimonial' => TestimonialSchema::class,
 		'event' => EventSchema::class,
+		'expert' => ExpertSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

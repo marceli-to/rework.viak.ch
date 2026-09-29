@@ -56,7 +56,7 @@ in a scenario (below).
 | Trigger | Legacy mailable | To | Attaches | Subject | Rework today |
 |---|---|---|---|---|---|
 | Student registers | `StudentRegistered` | student | — | Bestätigung Anmeldung | Fortify's stock verification mail only |
-| Admin creates an expert | `ExpertCreated` | expert | — | Dein VIAK-Zugang | No admin expert screen yet ([[08-accounts]]) |
+| Admin creates an expert | `ExpertCreated` | expert | — | Dein VIAK-Zugang | The screen exists (2026-09-29) and creates the account silently; until this mail, a new expert cannot sign in ([[07-dashboard]]) |
 | Booking made | `BookingCompleted` | student | — | Buchungsbestätigung – *course* | `BookingMade` fires, nothing listens for mail |
 | | `BookingCreatedInfoExpert` | each expert | — | Neue Anmeldung für *course* | ″ |
 | | `BookingCreatedInfoAdmin` | admin | — | Neue Anmeldung für *course* | ″ |

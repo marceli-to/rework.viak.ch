@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\Role;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Api\BasketController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -75,6 +77,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
  * The public and portal endpoints above stay where they are; the course and
  * event writes moved in here with their forms.
  */
+// `{expert}` is a person holding the Expert role, by uuid, and nobody else.
+Route::bind('expert', fn (string $uuid) => User::query()->withRole(Role::Expert)->where('uuid', $uuid)->firstOrFail());
+
 Route::middleware(['auth:sanctum', 'role:admin'])
 	->prefix('admin')
 	->group(function (): void {
@@ -100,6 +105,16 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('testimonials/{testimonial}', [Admin\TestimonialController::class, 'show']);
 		Route::put('testimonials/{testimonial}', [Admin\TestimonialController::class, 'update']);
 		Route::delete('testimonials/{testimonial}', [Admin\TestimonialController::class, 'destroy']);
+
+		Route::get('experts', [Admin\ExpertController::class, 'index']);
+		Route::post('experts/order', [Admin\ExpertController::class, 'order']);
+		Route::post('experts', [Admin\ExpertController::class, 'store']);
+		Route::get('experts/{expert}', [Admin\ExpertController::class, 'show']);
+		Route::put('experts/{expert}', [Admin\ExpertController::class, 'update']);
+		Route::delete('experts/{expert}', [Admin\ExpertController::class, 'destroy']);
+		Route::get('experts/{expert}/media', [Admin\MediaController::class, 'expertIndex']);
+		Route::post('experts/{expert}/media', [Admin\MediaController::class, 'expertStore']);
+		Route::patch('experts/{expert}/media/order', [Admin\MediaController::class, 'expertOrder']);
 
 		Route::post('courses/{course}/events', [Admin\EventController::class, 'store']);
 		Route::get('events/{event}', [Admin\EventController::class, 'show']);

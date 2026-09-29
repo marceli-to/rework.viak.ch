@@ -13,16 +13,17 @@ both modes, the course form and its images, testimonials, the field kit), and
 **step 6 began with the course-date form**. See *Step 1* to *Step 6* below,
 then *Loading* and *Polish*.
 
-**Next: the rest of step 6**, the remaining forms on the kit: experts,
-students, discount codes, taxonomies, profile (*Build order*, below). Then
-step 7, which waits on mail (chunk 10).
+**Next: the rest of step 6**, the remaining forms on the kit: students,
+discount codes, taxonomies, profile (*Build order*, below). Experts were built
+on 2026-09-29 (*Step 6 — experts*). Then step 7, which waits on mail (chunk 10).
 
 What exists at the end of 2026-09-24:
 
 - **The shell is guarded** (`auth`, admin only; a student or expert is sent to
   their portal), and admin endpoints live under `/api/admin` (*Step 1*).
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
-  *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form).
+  *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
+  *Experten* (list and form, 2026-09-29).
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -140,6 +141,7 @@ file-remove button removes the wrong file.
 - **Create** sends an invite (*Dein VIAK-Zugang*, a signed 72-hour link).
   Mail, chunk 10.
 - Legacy lets the e-mail change with no uniqueness check. Don't.
+- → **Built 2026-09-29**, invite aside (*Step 6 — experts*).
 
 **Role management should not live on the expert form.** It is the only place
 legacy can make someone an admin; the rework puts roles on the person, wherever
@@ -494,6 +496,61 @@ against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
   found their rows, so `HasUuid`'s create hook never ran), so the dev expert
   could not be ticked. The seeder fills it now.
 
+## Step 6 — experts, built 2026-09-29
+
+*Experten* and *Experte hinzufügen / bearbeiten*, legacy's
+`views/expert/Index.vue` and `Form.vue`: [[ExpertSchema]],
+`views/Expert/`, `/api/admin/experts`.
+
+- **The list is legacy's**: *Aktive Experten* open and **dragged into the
+  Experten page's order** (`expert_profiles.order`), *Inaktive Experten*
+  closed unless a search finds someone in it, greyed. A row is *name, city*
+  and the address as a `mailto:`. Twenty people, so it loads whole and
+  searches in the browser (name, e-mail, city); dragging is off while a
+  search is active, as on *Kurse*. Active means *Experte aktiv*
+  (`publish`), as legacy splits it.
+- **The form, in legacy's order**: gender, names, company, e-mail, phone,
+  address, country, newsletter; *Experte anzeigen* / *Experte aktiv*;
+  *Benutzer-Rollen*; *Über* (title, bio in the editor); *Profilbild*.
+  **Legacy's required fields are kept**: all 20 experts have gender, street,
+  ZIP, city and country (checked 2026-09-29), so no edit forces anyone to
+  invent one. Legacy's collapsible around the three role boxes, always open,
+  is a plain checkbox group (four to a row, as its `span-3`).
+- **The two flags stay two.** On the 2026-09-11 data they are always equal
+  (10 both on, 7 both off), but the Experten page reads both and a merge is
+  a data change, not a form change.
+- **Roles are on the form** (Admin, Experte, Student) — they belong to the
+  person, wherever the person is edited, and the student form will carry
+  the same group. At least one. **An admin cannot take their own Admin role
+  away**: nobody could give it back from a screen they can no longer open.
+  Taking the Expert role away takes the person off this list; `{expert}`
+  binds only Expert-role users.
+- **E-mail is unique across every account, deleted ones too**, with a German
+  message. Legacy let two people share one. An address the admin changes
+  stays verified, as legacy has it: the admin is not an unproven session,
+  which is what the portal's own e-mail change guards against.
+- **No invite yet.** Creating an expert makes the account with a password
+  nobody knows, verified as legacy does; *Dein VIAK-Zugang* is chunk 10's
+  (`10-mail.md`). Until then a new expert cannot sign in.
+- **Deleting is for someone nothing points at** (#16): refused when the
+  person has taught a date, booked, been invoiced, has a document, a message
+  or a checkout (`User::hasHistory()`), or is you. That leaves four of
+  today's twenty. What remains is a hard delete, portraits and all, so the
+  address can be used again; legacy soft-deleted and kept it taken. Anyone
+  else is switched off instead, and the danger zone says so.
+- **The portraits are the course's image section**, told whose images they
+  are (`owner`): teaser, visual and OpenGraph, as all 20 experts have
+  today. The media Actions already took any owner; `MediaController` got
+  expert entry points beside the course ones. A new expert's portraits wait
+  in the browser until the first save, as a new course's do (legacy said
+  *Bilder können erst nach dem Speichern hochgeladen werden*).
+- **The bio goes through `EditorHtml`**, as the course texts do. Checked on
+  the 17 real bios: the text and the tags survive; eight are reserialised
+  (`<br />`, `&amp;`) and five lose a trailing empty paragraph.
+- Found on the way: **country codes are lowercase** (`ch`). The form first
+  defaulted to `CH`, which MySQL matched and `Rule::in` refused; a test now
+  checks that the default is one of the offered options.
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed
@@ -569,7 +626,8 @@ hamburger. Proposed, grouped by what the admin is doing:
    `GET /api/admin/forms/{form}`, `FormNode`, error mapping, leave guard. Move
    both forms onto it. (Built, *Step 5*.)
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
-   experts, students, discount codes, taxonomies, profile.
+   ~~experts~~ (built, *Step 6 — experts*), students, discount codes,
+   taxonomies, profile.
 7. **Operational screens, by hand** — the event page, the student page,
    invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.

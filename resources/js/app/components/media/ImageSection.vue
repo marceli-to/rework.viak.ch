@@ -2,7 +2,7 @@
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
-import { cropMedia, deleteMedia, fetchCourseMedia, orderCourseMedia, setMediaRole, updateMedia, uploadCourseMedia } from '@/api/media';
+import { cropMedia, deleteMedia, fetchMedia, orderMedia, setMediaRole, updateMedia, uploadMedia } from '@/api/media';
 import { confirm } from '@/composables/useConfirm';
 import { useSortable } from '@/composables/useSortable';
 import { toast } from '@/composables/useToast';
@@ -41,9 +41,16 @@ import IconTrash from '@/components/icons/feather/Trash.vue';
  * Left out, both on the numbers: legacy's eye icon (one of 333 images was ever
  * hidden) and its *Listen Ansicht*.
  */
-const props = defineProps({ course: { type: String, default: null } });
+const props = defineProps({
+	// The record's uuid; null while it is not saved yet.
+	record: { type: String, default: null },
+	// Whose images: `courses` or `experts` — an expert's two portraits are the same section.
+	owner: { type: String, default: 'courses' },
+});
 
-const staging = computed(() => props.course === null);
+const at = (uuid) => `${props.owner}/${uuid}`;
+
+const staging = computed(() => props.record === null);
 const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_BYTES = 16 * 1024 * 1024;
 
@@ -75,7 +82,7 @@ onMounted(async () => {
 	}
 
 	try {
-		images.value = await fetchCourseMedia(props.course);
+		images.value = await fetchMedia(at(props.record));
 	} finally {
 		loading.value = false;
 	}
@@ -135,13 +142,13 @@ function applyRole(image, role) {
  */
 let flushing = false;
 
-async function flush(course) {
+async function flush(record) {
 	flushing = true;
 	const failed = [];
 
 	for (const image of images.value.filter((item) => item.staged)) {
 		try {
-			let media = await uploadCourseMedia(course, image.file);
+			let media = await uploadMedia(at(record), image.file);
 			if (image.alt || image.caption) media = await updateMedia(media.uuid, { alt: image.alt, caption: image.caption });
 			if (media.role !== image.role) await setMediaRole(media.uuid, image.role);
 		} catch {
@@ -150,7 +157,7 @@ async function flush(course) {
 		URL.revokeObjectURL(image.src);
 	}
 
-	images.value = await fetchCourseMedia(course);
+	images.value = await fetchMedia(at(record));
 	flushing = false;
 
 	return failed;
@@ -159,8 +166,8 @@ async function flush(course) {
 // *Kurs erfassen* becomes *Kurs bearbeiten* on the same component, so the
 // section is told its course; it reads the course's images then — unless it is
 // uploading them itself, which reads them when it is done.
-watch(() => props.course, async (course) => {
-	if (course && !flushing) images.value = await fetchCourseMedia(course);
+watch(() => props.record, async (record) => {
+	if (record && !flushing) images.value = await fetchMedia(at(record));
 });
 
 const pending = computed(() => images.value.filter((item) => item.staged).length);
@@ -174,7 +181,7 @@ inject('formHooks', null)?.register({ afterCreate: flush, pending: () => pending
 /** Swap in the server's answer; a role change can also move a flag off a sibling, so those reload. */
 async function refresh(changed, siblings = false) {
 	if (siblings) {
-		images.value = await fetchCourseMedia(props.course);
+		images.value = await fetchMedia(at(props.record));
 		return;
 	}
 	const index = images.value.findIndex((image) => image.uuid === changed.uuid);
@@ -190,7 +197,7 @@ async function upload(files) {
 		uploads.value.push(entry.value);
 
 		try {
-			const image = await uploadCourseMedia(props.course, file, (progress) => (entry.value.progress = progress));
+			const image = await uploadMedia(at(props.record), file, (progress) => (entry.value.progress = progress));
 			images.value.push(image);
 			uploads.value.splice(uploads.value.indexOf(entry.value), 1);
 		} catch (problem) {
@@ -198,14 +205,14 @@ async function upload(files) {
 		}
 	}
 
-	if (images.value.some((image) => image.role === 'teaser')) images.value = await fetchCourseMedia(props.course);
+	if (images.value.some((image) => image.role === 'teaser')) images.value = await fetchMedia(at(props.record));
 }
 
 const { dragging, handlers } = useSortable(images, async (list) => {
 	if (staging.value) return;
 
 	try {
-		await orderCourseMedia(props.course, list.map((image) => image.uuid));
+		await orderMedia(at(props.record), list.map((image) => image.uuid));
 		toast('Reihenfolge angepasst');
 	} catch (problem) {
 		toast(problem.message, 'error');

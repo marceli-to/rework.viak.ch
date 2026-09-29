@@ -14,6 +14,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\MediaResource;
 use App\Models\Course;
 use App\Models\Media;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -32,35 +34,30 @@ use Illuminate\Validation\Rule;
  * 333 images was ever hidden (checked 2026-09-24), so an image that should not
  * show is deleted; and the **art-directed mobile variant** forrerzimmermann
  * offers, which nothing on this site asks for.
+ *
+ * **A course's images, and an expert's portraits** — the same section, the
+ * same Actions; only the owner differs, so each route has a one-line door.
  */
 class MediaController extends Controller
 {
 	public function index(Course $course): AnonymousResourceCollection
 	{
-		return MediaResource::collection($course->media()->get()->filter->isImage()->values());
+		return $this->images($course);
 	}
 
-	/**
-	 * Uploaded and attached in one step: the course exists, so the file goes
-	 * straight to it. The first image a course gets becomes its teaser, as a
-	 * card needs one.
-	 */
+	public function expertIndex(User $expert): AnonymousResourceCollection
+	{
+		return $this->images($expert);
+	}
+
 	public function store(Request $request, Course $course, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
-		$request->validate([
-			'file' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:16384'],
-		], [
-			'file.mimes' => 'Nur JPG, PNG oder WebP.',
-			'file.max' => 'Höchstens 16 MB.',
-		]);
+		return $this->upload($request, $course, $upload, $attach, $role);
+	}
 
-		[$media] = $attach->execute([$upload->execute($request->file('file'))], $course);
-
-		if (! $course->media()->where('is_teaser', true)->exists()) {
-			$media = $role->execute($media, 'teaser');
-		}
-
-		return new MediaResource($media);
+	public function expertStore(Request $request, User $expert, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
+	{
+		return $this->upload($request, $expert, $upload, $attach, $role);
 	}
 
 	/** Alt text and caption — legacy's *Bildbeschreibung* and *Bildlegende*. */
@@ -96,16 +93,54 @@ class MediaController extends Controller
 
 	public function order(Request $request, Course $course, ReorderMedia $reorder): JsonResponse
 	{
-		$data = $request->validate(['media' => ['required', 'array'], 'media.*' => ['string']]);
+		return $this->reorder($request, $course, $reorder);
+	}
 
-		$reorder->execute($course, $data['media']);
-
-		return response()->json(status: 204);
+	public function expertOrder(Request $request, User $expert, ReorderMedia $reorder): JsonResponse
+	{
+		return $this->reorder($request, $expert, $reorder);
 	}
 
 	public function destroy(Media $media, DeleteMedia $delete): JsonResponse
 	{
 		$delete->execute($media);
+
+		return response()->json(status: 204);
+	}
+
+	private function images(Model $owner): AnonymousResourceCollection
+	{
+		return MediaResource::collection($owner->media()->get()->filter->isImage()->values());
+	}
+
+	/**
+	 * Uploaded and attached in one step: the owner exists, so the file goes
+	 * straight to it. The first image it gets becomes its teaser, as a card
+	 * needs one.
+	 */
+	private function upload(Request $request, Model $owner, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
+	{
+		$request->validate([
+			'file' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:16384'],
+		], [
+			'file.mimes' => 'Nur JPG, PNG oder WebP.',
+			'file.max' => 'Höchstens 16 MB.',
+		]);
+
+		[$media] = $attach->execute([$upload->execute($request->file('file'))], $owner);
+
+		if (! $owner->media()->where('is_teaser', true)->exists()) {
+			$media = $role->execute($media, 'teaser');
+		}
+
+		return new MediaResource($media);
+	}
+
+	private function reorder(Request $request, Model $owner, ReorderMedia $reorder): JsonResponse
+	{
+		$data = $request->validate(['media' => ['required', 'array'], 'media.*' => ['string']]);
+
+		$reorder->execute($owner, $data['media']);
 
 		return response()->json(status: 204);
 	}

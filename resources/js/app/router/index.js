@@ -49,7 +49,24 @@ const routes = [
 		meta: { title: 'Kursdatum bearbeiten' },
 	},
 
-	pending('experten', 'experts', 'Experten'),
+	{
+		path: '/dashboard/experten',
+		name: 'experts',
+		component: () => import('@/views/Expert/Index.vue'),
+		meta: { title: 'Experten' },
+	},
+	{
+		path: '/dashboard/experte/erfassen',
+		name: 'expert.create',
+		component: () => import('@/views/Expert/Form.vue'),
+		meta: { title: 'Experte hinzufügen' },
+	},
+	{
+		path: '/dashboard/experte/:uuid',
+		name: 'expert.edit',
+		component: () => import('@/views/Expert/Form.vue'),
+		meta: { title: 'Experte bearbeiten' },
+	},
 	pending('studenten', 'students', 'Studenten'),
 	pending('rechnungen', 'backoffice.invoices', 'Rechnungen'),
 	pending('exporte', 'backoffice.exports', 'Exporte'),

@@ -60,7 +60,7 @@ final class EventSchema extends Schema
 
 			// The Expert role, not just anyone: several admins do not teach.
 			Field::checkboxes('experts', fn () => User::query()
-				->whereIn('id', fn ($query) => $query->select('user_id')->from('role_user')->where('role', Role::Expert->value))
+				->withRole(Role::Expert)
 				->get()
 				->sortBy(fn (User $user) => "{$user->first_name} {$user->last_name}", SORT_NATURAL | SORT_FLAG_CASE)
 				->mapWithKeys(fn (User $user) => [$user->uuid => trim("{$user->first_name} {$user->last_name}")])

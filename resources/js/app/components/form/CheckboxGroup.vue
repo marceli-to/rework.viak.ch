@@ -6,7 +6,8 @@ import Checkbox from './Checkbox.vue';
  * `form-group-header` + `form-group.line-after` on its course form, measured
  * 2026-09-24: an 18px heading 16px above the first box, 12px between boxes,
  * then 24px, the rule, and 32px to the next group. `columns` puts the boxes in
- * two, as legacy does for the 21 tags.
+ * two, as legacy does for the 21 tags, or in four, as its expert form's roles
+ * (`span-3` each).
  */
 const model = defineModel({ type: Array, default: () => [] });
 
@@ -27,7 +28,7 @@ defineProps({
 		<legend class="mb-16 float-left w-full sm:text-lg lg:text-xl" :class="{ 'text-danger': error, 'font-bold': strong }">
 			{{ label }}<template v-if="required"> *</template>
 		</legend>
-		<div class="clear-both" :class="columns ? 'grid grid-cols-2 gap-x-16 lg:gap-x-40' : ''">
+		<div class="clear-both" :class="columns ? ['grid gap-x-16 lg:gap-x-40', columns === 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2'] : ''">
 			<div v-for="option in options" :key="option.value" class="mb-12 last:mb-0" :class="{ 'last:mb-12': columns }">
 				<Checkbox v-model="model" :value="option.value">{{ option.label }}</Checkbox>
 			</div>
