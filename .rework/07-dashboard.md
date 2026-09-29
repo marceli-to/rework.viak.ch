@@ -780,11 +780,15 @@ participation confirmation, so attendance has to be recorded):
     multipart POST, and the mails on [[MessagePosted]]. The body is cleaned by
     [[MessageHtml]] whatever `body_format` says, and shown through
     [[RichText]].
-  - ***Kurs-Dokumente***: name (the download), size and a bin, and under them
-    the expert portal's drop box ([[DropBox]], `x-form.file-input`'s port),
-    which uploads what is dropped at once, where legacy had a screen. The
-    composer's *Anhänge* is the same box, with the chosen files listed as the
-    portal lists them. The date's row here has no *Details*, which would lead
+  - ***Kurs-Dokumente***: legacy's rows (Marcel, 2026-09-29, from legacy's
+    page), [[FileRow]], the Vue port of the portal's `row/file`: the name
+    (caption and file name where there is a caption), uploaded, size,
+    *Download* over *Löschen*. The plus opens ***Dokumente hochladen***
+    (`/dashboard/veranstaltung/{uuid}/dokumente`), a screen of its own as
+    legacy has it and as the expert portal rebuilt it: the drop box
+    ([[DropBox]]), the chosen files listed, a full-width *Speichern*, and
+    **nothing uploaded before *Speichern*** (legacy uploaded on drop). No
+    *Bezeichnung*, as on the portal. The composer's *Anhänge* is the same box. The date's row here has no *Details*, which would lead
     back to the page. A message's
     attachment cannot be removed here (404).
   - **Checked in the browser** on the dev fixtures: a student added, a message

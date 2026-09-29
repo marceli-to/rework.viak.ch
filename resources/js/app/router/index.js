@@ -54,6 +54,12 @@ const routes = [
 		meta: { title: 'Nachricht erfassen' },
 	},
 	{
+		path: '/dashboard/veranstaltung/:uuid/dokumente',
+		name: 'event.upload',
+		component: () => import('@/views/Event/Upload.vue'),
+		meta: { title: 'Dokumente hochladen' },
+	},
+	{
 		path: '/dashboard/veranstaltung/:uuid/bearbeiten',
 		name: 'event.edit',
 		component: () => import('@/views/Event/Form.vue'),

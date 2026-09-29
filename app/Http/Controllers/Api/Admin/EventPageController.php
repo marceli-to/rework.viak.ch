@@ -213,12 +213,19 @@ class EventPageController extends Controller
 		return response()->json(status: 204);
 	}
 
-	/** @return array{uuid: string, name: string, size: int, url: string} */
+	/**
+	 * What the portal's file row shows (`row/file.blade.php`): the caption with
+	 * the file name, when it was uploaded, its size.
+	 *
+	 * @return array{uuid: string, name: string, caption: ?string, uploaded_at: ?string, size: int, url: string}
+	 */
 	private function file(Media $media): array
 	{
 		return [
 			'uuid' => $media->uuid,
 			'name' => $media->original_name,
+			'caption' => $media->caption,
+			'uploaded_at' => $media->created_at?->format('d.m.Y, H:i'),
 			'size' => $media->size,
 			'url' => route('media.download', $media),
 		];

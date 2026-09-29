@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { bookStudent, downloadParticipants, fetchEventPage, removeFile, uploadFiles } from '@/api/events';
+import { bookStudent, downloadParticipants, fetchEventPage, removeFile } from '@/api/events';
 import { fetchStudents } from '@/api/students';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
@@ -12,12 +12,11 @@ import AttendanceBadge from '@/components/course/AttendanceBadge.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
-import DropBox from '@/components/form/DropBox.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EventRow from '@/components/course/EventRow.vue';
+import FileRow from '@/components/list/FileRow.vue';
 import IconDownload from '@/components/icons/Download.vue';
 import IconPlus from '@/components/icons/Plus.vue';
-import IconTrash from '@/components/icons/Trash.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
@@ -36,9 +35,9 @@ import NoResults from '@/components/ui/NoResults.vue';
  * - *Nachrichten*, legacy's messages module: a row per note that opens it in
  *   a lightbox, and the plus to *Nachricht erfassen*. Only with participants,
  *   as legacy.
- * - *Kurs-Dokumente*: the course materials, a download each and a bin, and
- *   the expert portal's drop box under them, which uploads what is dropped
- *   straight away (legacy had a screen for it).
+ * - *Kurs-Dokumente*: legacy's rows ([[FileRow]], the portal's
+ *   `row/file`), *Download* over *Löschen*, and the plus to *Dokumente
+ *   hochladen*, a screen of its own as legacy has it.
  *
  * *Teilnehmer hinzufügen* searches as *Studenten* does, on the server, and
  * books with one click; legacy's select box under a search field was two.
@@ -124,22 +123,6 @@ const preview = (html) => {
 };
 
 // Kurs-Dokumente
-const uploading = ref(false);
-
-async function upload(files) {
-
-	uploading.value = true;
-	try {
-		await uploadFiles(page.value.event.uuid, files);
-		toast(files.length === 1 ? 'Das Dokument wurde hochgeladen.' : 'Die Dokumente wurden hochgeladen.');
-		await load();
-	} catch (problem) {
-		toast(Object.values(problem.errors)[0]?.[0] ?? problem.message, 'error');
-	} finally {
-		uploading.value = false;
-	}
-}
-
 async function remove(file) {
 	if (!(await confirm('Bitte Löschen bestätigen!', `${file.name} wird entfernt.`))) return;
 
@@ -152,7 +135,6 @@ async function remove(file) {
 	}
 }
 
-const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`);
 </script>
 
 <template>
@@ -243,21 +225,19 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 			<Collapsible>
 				<template #title>Kurs-Dokumente<Badge v-if="page.files.length" variant="solid" class="ml-12">{{ page.files.length }}</Badge></template>
 
-				<article v-for="file in page.files" :key="file.uuid" class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
-					<div class="flex items-start justify-between gap-16">
-						<a :href="file.url" target="_blank" class="min-w-0 truncate hover:text-teal">{{ file.name }}</a>
-						<div class="flex shrink-0 items-center gap-16">
-							<span>{{ size(file.size) }}</span>
-							<button type="button" title="Löschen" class="size-18 hover:text-teal" @click="remove(file)"><IconTrash /></button>
-						</div>
-					</div>
-				</article>
+				<!-- The portal's file row ([[FileRow]]): name, uploaded, size, *Download* over *Löschen*. -->
+				<FileRow v-for="file in page.files" :key="file.uuid" :file="file">
+					<template #action>
+						<Button variant="secondary" class="w-full" @click="remove(file)">Löschen</Button>
+					</template>
+				</FileRow>
 				<NoResults v-if="!page.files.length">Es sind keine Dokumente vorhanden.</NoResults>
 
-				<!-- The expert portal's upload box; here a drop uploads at once, as there is no form around it. -->
-				<div class="mt-24 sm:mt-48">
-					<DropBox :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" :class="{ 'pointer-events-none opacity-50': uploading }" @files="upload" />
-					<p v-if="uploading" class="pt-8">Wird hochgeladen …</p>
+				<!-- Legacy's plus to *Dokumente hochladen*, a screen of its own. -->
+				<div class="mt-24 flex">
+					<RouterLink :to="{ name: 'event.upload', params: { uuid: page.event.uuid } }" title="Dokumente hochladen" class="block hover:text-teal">
+						<IconPlus size="lg" class="block" />
+					</RouterLink>
 				</div>
 			</Collapsible>
 		</div>
