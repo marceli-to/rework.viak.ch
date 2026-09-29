@@ -5,8 +5,9 @@
  * state line (`components/course/event-state.blade.php`).
  *
  * The outline button's shape (`Button.vue`, `outline`): a 1px border and bold
- * text in the border's colour, but with `rounded-sm` corners (Marcel,
- * 2026-09-29). Always on a line of its own inside a list row. Not filled:
+ * text in the border's colour, **square like everything else** (Marcel,
+ * 2026-09-29: `rounded-sm` was tried and dropped). Badges about one row sit
+ * together on one line; one that qualifies a value sits right after it. Not filled:
  * white on `warning` or `success` is too faint to read at 14px. `neutral` is
  * a state that is neither good nor bad. `solid` (`gray-600`, white text) is the
  * one filled tone: the total in a collapsible title (Marcel, 2026-09-29).
@@ -25,5 +26,5 @@ const TONES = {
 </script>
 
 <template>
-	<span class="inline-block rounded-sm border px-4 py-1 text-md leading-[1.2] font-bold" :class="TONES[variant] ?? TONES.neutral"><slot /></span>
+	<span class="inline-block border px-4 py-1 text-md leading-[1.2] font-bold" :class="TONES[variant] ?? TONES.neutral"><slot /></span>
 </template>
