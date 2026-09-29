@@ -90,8 +90,12 @@ const routes = [
 		component: () => import('@/views/Student/Form.vue'),
 		meta: { title: 'Student bearbeiten' },
 	},
-	// Bookings, documents, cancelling: an operational screen, step 7.
-	pending('student/:uuid', 'student.show', 'Student'),
+	{
+		path: '/dashboard/student/:uuid',
+		name: 'student.show',
+		component: () => import('@/views/Student/Show.vue'),
+		meta: { title: 'Student' },
+	},
 	{
 		path: '/dashboard/rechnungen',
 		name: 'backoffice.invoices',

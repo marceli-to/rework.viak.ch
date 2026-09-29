@@ -1,0 +1,169 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Api\Admin;
+
+use App\Actions\Bookings\CancelBooking;
+use App\Enums\BookingCancellationReason;
+use App\Enums\InvoiceStatus;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\EventRowResource;
+use App\Models\Booking;
+use App\Models\User;
+use App\Models\UserDocument;
+use App\Support\CancellationPenalty;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+/**
+ * A student's own page on the dashboard ([[07-dashboard]], step 7) — legacy's
+ * `student/Show.vue`: the address, the booked and the past courses, the
+ * documents, and *Annullieren* on each booked seat.
+ *
+ * **Split on the event's date**, as the student portal splits them
+ * ([[StudentPortalController]]), not on legacy's flags, which kept 67 seats on
+ * courses long over under *Gebuchte Kurse* with a live *Annullieren*.
+ * Cancelled seats are listed too, which legacy's page did not: an admin who has
+ * just cancelled one should see where it went, and why.
+ */
+class StudentPageController extends Controller
+{
+	public function show(User $student, CancellationPenalty $penalty): JsonResponse
+	{
+		$student->load('country');
+
+		$bookings = $student->bookings()
+			->with(['event.course', 'event.dates', 'event.location', 'event.experts'])
+			->get();
+
+		$row = fn (Booking $booking) => [
+			'uuid' => $booking->uuid,
+			'course' => [
+				'number' => $booking->event->course->number,
+				'title' => $booking->event->course->getTranslation('title', 'de'),
+			],
+			'event' => $this->eventRow($booking),
+			'has_rental' => $booking->has_rental,
+			'participated' => $booking->hasParticipated(),
+		];
+
+		return response()->json(['data' => [
+			'student' => [
+				'uuid' => $student->uuid,
+				'name' => $student->name,
+				'company' => $student->company,
+				'street' => trim("{$student->street} {$student->street_no}"),
+				'city' => trim("{$student->zip} {$student->city}"),
+				'country' => strtolower((string) $student->country_code) !== 'ch' ? $student->country?->getTranslation('name', 'de') : null,
+				'email' => $student->email,
+				'phone' => $student->phone,
+				'deactivated_at' => $student->deactivated_at?->toIso8601String(),
+			],
+			'booked' => $bookings->reject->isCancelled()->filter($this->upcoming(...))
+				->sortBy(fn (Booking $booking) => $booking->event->date)->values()
+				->map(fn (Booking $booking) => [...$row($booking), 'penalty' => $this->penalty($booking, $penalty)]),
+			'past' => $bookings->reject->isCancelled()->reject($this->upcoming(...))
+				->sortByDesc(fn (Booking $booking) => $booking->event->date)->values()
+				->map($row),
+			'cancelled' => $bookings->filter->isCancelled()
+				->sortByDesc('cancelled_at')->values()
+				->map(fn (Booking $booking) => [
+					...$row($booking),
+					'cancelled_at' => $booking->cancelled_at->toIso8601String(),
+					'reason' => $booking->cancellation_reason?->label(),
+				]),
+			'documents' => $student->documents()->with('documentable')->latest('date')->get()
+				->map(fn (UserDocument $document) => $this->document($document)),
+		]]);
+	}
+
+	/**
+	 * *Annullieren*, and **the admin says whether the cost is charged** (#14).
+	 * `charge_penalty` is asked for every time; it only matters when
+	 * [[CancellationPenalty]] finds a cost today, and only then is a waiver
+	 * written down as one ([[BookingCancellationReason]]).
+	 *
+	 * Only a seat on a course still to come, as in the portal: cancelling one
+	 * that has run would bill the full fee for a course the student sat.
+	 */
+	public function cancel(Request $request, Booking $booking, CancelBooking $cancel, CancellationPenalty $penalty): JsonResponse
+	{
+		$charge = $request->validate(['charge_penalty' => ['required', 'boolean']])['charge_penalty'];
+
+		abort_if($booking->isCancelled(), 422, 'Diese Buchung ist bereits annulliert.');
+		abort_if(! $this->upcoming($booking), 422, 'Dieser Kurs hat bereits stattgefunden.');
+
+		$reason = $penalty->applies($booking) && ! $charge
+			? BookingCancellationReason::AdministratorWaived
+			: BookingCancellationReason::Administrator;
+
+		$invoice = $cancel->execute($booking, $reason);
+
+		return response()->json(['data' => [
+			'uuid' => $booking->uuid,
+			'reason' => $reason->value,
+			'penalty' => $invoice === null ? null : [
+				'number' => $invoice->number,
+				'grand_total' => $invoice->grand_total,
+			],
+		]]);
+	}
+
+	/** Today counts as still to come, as `Event::scopeUpcoming` has it. */
+	private function upcoming(Booking $booking): bool
+	{
+		return $booking->event->date->isToday() || $booking->event->date->isFuture();
+	}
+
+	/**
+	 * What cancelling would cost today, before it is cancelled: the same
+	 * figures, from the same class, as the bill ([[RaiseCancellationPenalty]]).
+	 *
+	 * @return array{applies: bool, amount: string, rate: int}
+	 */
+	private function penalty(Booking $booking, CancellationPenalty $penalty): array
+	{
+		return [
+			'applies' => $penalty->applies($booking),
+			'amount' => $penalty->amount($booking),
+			'rate' => (int) round((float) $penalty->rate($booking) * 100),
+		];
+	}
+
+	/** The date as *Kurse* lists it, without the counts the row has no use for here. */
+	private function eventRow(Booking $booking): array
+	{
+		$event = $booking->event->setAttribute('bookings_count', null)->setAttribute('rentals_taken_count', null);
+
+		return (new EventRowResource($event))->resolve();
+	}
+
+	/**
+	 * One row of *Dokumente*, as the portal's `row/document` draws it: the
+	 * course, what the document is, the amount and its status.
+	 */
+	private function document(UserDocument $document): array
+	{
+		$invoice = $document->invoice();
+		$event = $document->relatedBooking()?->event;
+
+		return [
+			'uuid' => $document->uuid,
+			'type' => $document->type->label(),
+			'date' => $document->date?->toDateString(),
+			'course' => $event?->course->getTranslation('title', 'de'),
+			'event_date' => $event?->date->toDateString(),
+			'number' => $invoice?->number,
+			'grand_total' => $invoice?->grand_total,
+			'status' => match ($invoice?->status) {
+				InvoiceStatus::Paid => 'bezahlt',
+				InvoiceStatus::Open => 'offen',
+				InvoiceStatus::Overdue => 'fällig',
+				InvoiceStatus::Cancelled => 'storniert',
+				default => null,
+			},
+			'url' => route('documents.show', $document->uuid),
+		];
+	}
+}

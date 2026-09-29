@@ -18,6 +18,9 @@ import { answer, confirmState as state } from '@/composables/useConfirm';
  * - **The text keeps its line breaks**: the testimonial form asks with the
  *   quote and its author on lines of their own.
  *
+ * Each of the asker's `choices` is a button above *Abbrechen*; the default
+ * is the one, *Bestätigen*.
+ *
  * *Abbrechen* takes the focus when it opens, so an Enter pressed out of habit
  * does not delete anything.
  */
@@ -37,7 +40,7 @@ watch(() => state.open, async (open) => {
 			<div v-if="state.text" class="mt-16 text-center text-lg whitespace-pre-line">{{ state.text }}</div>
 
 			<div class="mt-32 flex w-full flex-col items-center [&>*]:w-full [&>*]:max-w-240 [&>*+*]:mt-12">
-				<Button variant="gray" @click="answer(true)">Bestätigen</Button>
+				<Button v-for="choice in state.choices" :key="choice.label" variant="gray" @click="answer(choice.value)">{{ choice.label }}</Button>
 				<Button ref="cancel" variant="gray-outline" @click="answer(false)">Abbrechen</Button>
 			</div>
 		</div>

@@ -31,14 +31,22 @@ enum BookingCancellationReason: string
 	case Student = 'student';
 
 	/**
-	 * An admin cancelled on the student's behalf — a phone call, usually.
+	 * An admin cancelled on the student's behalf — a phone call, usually —
+	 * and the penalty window applies, as for `Student`.
 	 *
-	 * **Open question 14: does this charge the penalty?** Until Marcel says
-	 * otherwise it behaves like `Student`, which is what legacy did, because
-	 * the two shared a route. The difference is that the rework now *records*
-	 * which one happened, so the answer can change without rewriting history.
+	 * **The admin decides, per cancellation** (#14, 2026-09-24): the student
+	 * page asks whenever there is a cost. This is the answer *charge it*, and
+	 * also any admin cancellation that costs nothing.
 	 */
 	case Administrator = 'administrator';
+
+	/**
+	 * An admin cancelled on the student's behalf and **let the cost go** (#14).
+	 * Recorded as a reason of its own, only when there was a cost to let go,
+	 * so the waiver stays readable in the data. At 20 characters it fills the
+	 * column exactly.
+	 */
+	case AdministratorWaived = 'administrator_waived';
 
 	/** VIAK called the course off. Never a penalty — the student did nothing. */
 	case EventCancelled = 'event_cancelled';
@@ -53,7 +61,18 @@ enum BookingCancellationReason: string
 	{
 		return match ($this) {
 			self::Student, self::Administrator => true,
-			self::EventCancelled => false,
+			self::AdministratorWaived, self::EventCancelled => false,
+		};
+	}
+
+	/** Who cancelled, as the dashboard's student page says it. */
+	public function label(): string
+	{
+		return match ($this) {
+			self::Student => 'vom Studenten',
+			self::Administrator => 'von VIAK',
+			self::AdministratorWaived => 'von VIAK, ohne Kosten',
+			self::EventCancelled => 'weil der Kurs abgesagt wurde',
 		};
 	}
 

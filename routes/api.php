@@ -122,6 +122,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('students/{student}', [Admin\StudentController::class, 'show']);
 		Route::put('students/{student}', [Admin\StudentController::class, 'update']);
 		Route::patch('students/{student}/state', [Admin\StudentController::class, 'state']);
+		Route::get('students/{student}/page', [Admin\StudentPageController::class, 'show']);
+		Route::patch('bookings/{booking}/cancel', [Admin\StudentPageController::class, 'cancel']);
 
 		Route::get('discount-codes', [Admin\DiscountCodeController::class, 'index']);
 		Route::post('discount-codes', [Admin\DiscountCodeController::class, 'store']);

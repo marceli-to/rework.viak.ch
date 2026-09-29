@@ -26,8 +26,8 @@ What exists at the end of 2026-09-24:
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
   *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen*, *Mein Profil*
-  (2026-09-29), *Rechnungen* and *Exporte* (step 7, same day). Only the
-  student page and the event page still render `Pending`.
+  (2026-09-29), *Rechnungen* and *Exporte* (step 7, same day), the student
+  page (step 7, same day). The event page is built as far as attendance.
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -135,7 +135,7 @@ file-remove button removes the wrong file.
   and a deactivated account cannot sign in or book. Legacy soft-deleted, or
   stripped the role when there were several.
 - → **List, edit, create and deactivate built 2026-09-29** (*Step 6 —
-  students*); the student page and the invite are still to come.
+  students*); **the student page the same day** (*Step 7 — the student page*).
 
 ### Experts — keep
 
@@ -750,6 +750,37 @@ participation confirmation, so attendance has to be recorded):
 - **Still to build from legacy's page**: *Nachrichten*, *Kurs-Dokumente*,
   *Teilnehmer hinzufügen* (the student search), the participant list as PDF.
 
+## Step 7 — the student page, built 2026-09-29
+
+`/dashboard/student/{uuid}`, legacy's `student/Show.vue` ([[StudentPageController]],
+`views/Student/Show.vue`). The address and contact beside the name, *Bearbeiten*,
+then four collapsibles:
+
+- ***Gebuchte Kurse*** and ***Absolvierte Kurse*** **split on the course's date**,
+  as the portal splits them, not on legacy's flags (which keep 67 seats on
+  courses long over under *Gebuchte Kurse*, each with a live *Annullieren*).
+  The row is [[BookingRow]], on [[EventRow]]'s geometry, with *Details* to the
+  course date's page. A past seat says *Teilgenommen*, or *Nicht teilgenommen*
+  once the date is closed.
+- ***Annullierte Kurse*** is new: when, and by whom (student, VIAK, VIAK without
+  cost, the course called off). Shown only when there is one.
+- ***Dokumente***: all of them, in the portal's 4 / 3 / 5 row with the download
+  icon, where legacy showed five and linked the rest.
+- ***Annullieren* asks whether the cost is charged (#14)** when
+  [[CancellationPenalty]] finds one today: the dialog names the amount and the
+  rate and offers *Mit Kosten annullieren* and *Ohne Kosten annullieren*
+  (`confirm()` gained `choices`). Outside the window it only asks.
+  `PATCH /api/admin/bookings/{booking}/cancel` with `charge_penalty`. A waiver
+  is **its own reason**, `administrator_waived`, written only when there was a
+  cost to waive, so it stays readable in the data; it charges nothing, withdraws
+  an unpaid invoice and credits a paid one, like a free cancellation. Only seats
+  on courses still to come, as in the portal.
+- **Checked in the browser** on the dev fixtures: a waived late cancellation
+  moved to *Annullierte Kurse* with no invoice.
+- Not built: legacy's separate *Alle Dokumente* screen (not needed, the list
+  is whole). The old `/api/bookings/{booking}/cancel` still charges when an
+  admin uses it on someone else's seat; the dashboard no longer does.
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed
@@ -827,7 +858,7 @@ hamburger. Proposed, grouped by what the admin is doing:
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
    ~~experts~~, ~~students~~, ~~discount codes~~, ~~taxonomies~~,
    ~~profile~~ (built, *Step 6 — …*).
-7. **Operational screens, by hand** — the event page, the student page,
+7. **Operational screens, by hand** — the event page, ~~the student page~~,
    ~~invoices, export~~ (built, *Step 7 — invoices and export*).
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.
 

@@ -1,0 +1,153 @@
+<script setup>
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { cancelBooking, fetchStudentPage } from '@/api/students';
+import { confirm } from '@/composables/useConfirm';
+import { toast } from '@/composables/useToast';
+import { returnTo } from '@/router';
+import { shortDate } from '@/support/format';
+import ArticleText from '@/components/layout/ArticleText.vue';
+import BackLink from '@/components/ui/BackLink.vue';
+import Badge from '@/components/ui/Badge.vue';
+import BookingRow from '@/components/course/BookingRow.vue';
+import Button from '@/components/ui/Button.vue';
+import Collapsible from '@/components/ui/Collapsible.vue';
+import EditableListItem from '@/components/list/EditableListItem.vue';
+import Loading from '@/components/ui/Loading.vue';
+
+/**
+ * A student's own page — legacy's `student/Show.vue` ([[07-dashboard]], step 7):
+ * the address, *Gebuchte Kurse* with *Annullieren*, *Absolvierte Kurse*,
+ * *Dokumente*. What changed ([[StudentPageController]]):
+ *
+ * - **The lists split on the course's date**, not legacy's flags, so a course
+ *   that has run never keeps a live *Annullieren*.
+ * - ***Annullierte Kurse*** is new, with who cancelled.
+ * - **The admin decides whether a late cancellation costs** (#14): the dialog
+ *   names the amount and offers both. Outside the window it only asks.
+ * - Every document on the page, where legacy showed five and linked the rest.
+ */
+const route = useRoute();
+const page = ref(null);
+const error = ref(null);
+const busy = ref(null);
+
+async function load() {
+	try {
+		page.value = await fetchStudentPage(route.params.uuid);
+	} catch (problem) {
+		error.value = problem.message;
+	}
+}
+
+onMounted(load);
+
+const chf = (value) => `CHF ${Number(value).toFixed(2)}`;
+
+async function cancel(booking) {
+	const { penalty } = booking;
+	const who = `${page.value.student.name} wird von ${booking.course.title} (${shortDate(booking.event.date)}) abgemeldet.`;
+
+	const answer = penalty.applies
+		? await confirm('Bitte Annullation bestätigen!', `${who}\n\nDie kurzfristige Annullation kostet gemäss AGB ${chf(penalty.amount)} (${penalty.rate} % der Kurskosten, abzüglich allfälliger Rabatte). Soll das verrechnet werden?`, {
+				choices: [
+					{ label: 'Mit Kosten annullieren', value: 'charge' },
+					{ label: 'Ohne Kosten annullieren', value: 'waive' },
+				],
+			})
+		: await confirm('Bitte Annullation bestätigen!', who) && 'waive';
+
+	if (!answer) return;
+
+	busy.value = booking.uuid;
+	try {
+		const done = await cancelBooking(booking.uuid, answer === 'charge');
+		toast(done.penalty ? `Die Buchung wurde annulliert. Rechnung ${done.penalty.number} über ${chf(done.penalty.grand_total)} ist erstellt.` : 'Die Buchung wurde annulliert.');
+		await load();
+	} catch (problem) {
+		toast(problem.message, 'error');
+	} finally {
+		busy.value = null;
+	}
+}
+</script>
+
+<template>
+	<p v-if="error" class="text-danger">{{ error }}</p>
+	<Loading v-else-if="!page" />
+
+	<section v-else>
+		<ArticleText>
+			<template #aside>
+				<h1 class="font-bold text-teal">{{ page.student.name }}</h1>
+				<BackLink :to="returnTo({ name: 'students' })" />
+			</template>
+
+			<p>
+				<template v-if="page.student.company">{{ page.student.company }}<br /></template>
+				{{ page.student.name }}<br />
+				<template v-if="page.student.street">{{ page.student.street }}<br /></template>
+				{{ page.student.city }}<template v-if="page.student.country"><br />{{ page.student.country }}</template>
+			</p>
+			<p class="mt-16">
+				<a :href="`mailto:${page.student.email}`" class="hover:text-teal">{{ page.student.email }}</a><br />
+				<a v-if="page.student.phone" :href="`tel:${page.student.phone}`" class="hover:text-teal">{{ page.student.phone }}</a>
+			</p>
+			<p v-if="page.student.deactivated_at" class="mt-16"><Badge variant="danger">Konto deaktiviert seit {{ shortDate(page.student.deactivated_at.slice(0, 10)) }}</Badge></p>
+			<div class="mt-24 sm:flex"><Button :to="{ name: 'student.edit', params: { uuid: page.student.uuid } }">Bearbeiten</Button></div>
+		</ArticleText>
+
+		<div class="mt-32 sm:mt-48">
+			<Collapsible expanded>
+				<template #title>Gebuchte Kurse<Badge variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
+				<BookingRow v-for="booking in page.booked" :key="booking.uuid" :booking="booking">
+					<template #facts>
+						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
+					</template>
+					<template #actions>
+						<Button variant="outline" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
+					</template>
+				</BookingRow>
+				<p v-if="!page.booked.length" class="mt-16 sm:mt-32">Student hat noch keine gebuchten Kurse.</p>
+			</Collapsible>
+
+			<Collapsible>
+				<template #title>Absolvierte Kurse<Badge variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
+				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
+					<template #facts>
+						<Badge v-if="booking.participated" variant="success">Teilgenommen</Badge>
+						<Badge v-else-if="booking.event.state === 'closed'">Nicht teilgenommen</Badge>
+					</template>
+				</BookingRow>
+				<p v-if="!page.past.length" class="mt-16 sm:mt-32">Student hat noch keine absolvierten Kurse.</p>
+			</Collapsible>
+
+			<Collapsible v-if="page.cancelled.length">
+				<template #title>Annullierte Kurse<Badge variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
+				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
+					<template #facts>
+						<Badge variant="danger">Annulliert</Badge>
+						<div class="mt-8">am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}<template v-if="booking.reason"><br />{{ booking.reason }}</template></div>
+					</template>
+				</BookingRow>
+			</Collapsible>
+
+			<Collapsible>
+				<template #title>Dokumente<Badge variant="solid" class="ml-12">{{ page.documents.length }}</Badge></template>
+				<!-- The portal's document row (`row/document.blade.php`), 4 / 3 / 5. -->
+				<EditableListItem v-for="document in page.documents" :key="document.uuid" :download="document.url" wide>
+					<div class="col-span-12 sm:col-span-4">
+						<strong class="font-bold">{{ document.course ?? document.type }}</strong><br />
+						{{ shortDate(document.event_date ?? document.date) }}
+					</div>
+					<div class="col-span-12 sm:col-span-3">{{ document.type }} {{ document.number }}</div>
+					<div class="col-span-12 pr-40 sm:col-span-5">
+						<template v-if="document.grand_total">{{ chf(document.grand_total) }}</template>
+						<em v-if="document.status" class="ml-8 italic" :class="{ 'text-success': document.status === 'bezahlt', 'text-danger': document.status === 'fällig' }">({{ document.status }})</em>
+					</div>
+				</EditableListItem>
+				<p v-if="!page.documents.length" class="mt-16 sm:mt-32">Es sind noch keine Dokumente vorhanden.</p>
+			</Collapsible>
+		</div>
+	</section>
+</template>
