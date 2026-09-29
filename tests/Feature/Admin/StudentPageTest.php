@@ -97,3 +97,18 @@ it('keeps the page and the cancel to admins', function () {
 	$this->patchJson("/api/admin/bookings/{$booking->uuid}/cancel", ['charge_penalty' => false])->assertForbidden();
 	expect($booking->refresh()->isCancelled())->toBeFalse();
 });
+
+it('shows a seat on an event legacy deleted, and does not cancel it', function () {
+	$booking = studentSeat($this->student, -40);
+	$booking->event->delete();
+	$gone = studentSeat($this->student, 30);
+	$gone->event->course->delete();
+
+	$this->actingAs($this->admin)->getJson("/api/admin/students/{$this->student->uuid}/page")
+		->assertOk()
+		->assertJsonPath('data.past.0.uuid', $booking->uuid)
+		->assertJsonPath('data.past.0.deleted', true)
+		->assertJsonPath('data.booked.0.deleted', true);
+
+	$this->patchJson("/api/admin/bookings/{$booking->uuid}/cancel", ['charge_penalty' => false])->assertStatus(422);
+});

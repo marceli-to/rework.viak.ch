@@ -110,7 +110,7 @@ async function cancel(booking) {
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
 					</template>
 					<template #actions>
-						<Button variant="outline" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
+						<Button v-if="!booking.deleted" variant="outline" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
 					</template>
 				</BookingRow>
 				<p v-if="!page.booked.length" class="mt-16 sm:mt-32">Student hat noch keine gebuchten Kurse.</p>

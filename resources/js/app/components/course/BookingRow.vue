@@ -1,5 +1,6 @@
 <script setup>
 import EventState from './EventState.vue';
+import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import { longDate } from '@/support/format';
 
@@ -33,6 +34,8 @@ defineProps({ booking: { type: Object, required: true } });
 				<!-- Both as flex items at their own height: an inline badge sits in a 1.4 line box and a stretched one fills it, which drew them at different heights. -->
 				<div class="flex flex-wrap items-start gap-x-8">
 					<EventState :state="booking.event.state" class="flex" />
+					<!-- A seat on an event legacy deleted: kept as history, not opened ([[StudentPageController]]). -->
+					<div v-if="booking.deleted" class="mt-4 flex"><Badge variant="danger">Veranstaltung gelöscht</Badge></div>
 					<div v-if="$slots.badges" class="mt-4 flex flex-wrap items-start gap-8"><slot name="badges" /></div>
 				</div>
 			</div>
@@ -41,7 +44,7 @@ defineProps({ booking: { type: Object, required: true } });
 				<div><slot name="facts" /></div>
 				<div class="mt-24 sm:mt-0 [&>*+*]:mt-12">
 					<slot name="actions" />
-					<Button :to="{ name: 'event.show', params: { uuid: booking.event.uuid } }" variant="secondary">Details</Button>
+					<Button v-if="!booking.deleted" :to="{ name: 'event.show', params: { uuid: booking.event.uuid } }" variant="secondary">Details</Button>
 				</div>
 			</div>
 		</div>

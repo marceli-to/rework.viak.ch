@@ -33,12 +33,24 @@ class StudentPageController extends Controller
 	{
 		$student->load('country');
 
+		/*
+		 * **Deleted events and courses included.** Legacy deleted events that
+		 * held bookings, and the port kept both soft-deleted: the seat is still
+		 * the student's history, and without `withTrashed()` its event is null
+		 * and the page fails (Marcel, 2026-09-29, on a ported student). Such a
+		 * seat is marked `deleted`, and gets no *Details* and no *Annullieren*.
+		 */
 		$bookings = $student->bookings()
-			->with(['event.course', 'event.dates', 'event.location', 'event.experts'])
+			->with([
+				'event' => fn ($query) => $query->withTrashed(),
+				'event.course' => fn ($query) => $query->withTrashed(),
+				'event.dates', 'event.location', 'event.experts',
+			])
 			->get();
 
 		$row = fn (Booking $booking) => [
 			'uuid' => $booking->uuid,
+			'deleted' => $booking->event->trashed() || $booking->event->course->trashed(),
 			'course' => [
 				'number' => $booking->event->course->number,
 				'title' => $booking->event->course->getTranslation('title', 'de'),
@@ -92,6 +104,7 @@ class StudentPageController extends Controller
 		$charge = $request->validate(['charge_penalty' => ['required', 'boolean']])['charge_penalty'];
 
 		abort_if($booking->isCancelled(), 422, 'Diese Buchung ist bereits annulliert.');
+		abort_if($booking->event === null, 422, 'Diese Veranstaltung wurde gelöscht.');
 		abort_if(! $this->upcoming($booking), 422, 'Dieser Kurs hat bereits stattgefunden.');
 
 		$reason = $penalty->applies($booking) && ! $charge
