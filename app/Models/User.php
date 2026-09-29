@@ -8,6 +8,7 @@ use App\Enums\Gender;
 use App\Enums\OperatingSystem;
 use App\Enums\Role;
 use App\Mail\EmailVerification;
+use App\Mail\PasswordReset;
 use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasUuid;
 use Database\Factories\UserFactory;
@@ -115,6 +116,12 @@ class User extends Authenticatable implements MustVerifyEmail
 	public function sendEmailVerificationNotification(): void
 	{
 		Mail::to($this)->send(new EmailVerification($this));
+	}
+
+	/** *Passwort zurücksetzen* in German, not Laravel's English stock ([[PasswordReset]]). */
+	public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+	{
+		Mail::to($this)->send(new PasswordReset($this, $token));
 	}
 
 	public function hasRole(Role $role): bool

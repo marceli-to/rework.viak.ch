@@ -91,16 +91,18 @@ in a scenario (below).
 
 ### Open, 2026-09-29
 
-- **Attendance, for *Event closed*.** Legacy's participation confirmation
+- **Attendance, for *Event closed*: decided 2026-09-29 (Marcel), non-participants
+  get no confirmation, so attendance is recorded; being built.** Legacy's participation confirmation
   goes only to seats an admin or expert ticked as attended
   (`hasParticipated`, on the event page, `POST /booking/participation`).
   Nothing in the rework records attendance. Options: a `bookings.attended_at`
   column, ported from the flag, ticked on the event page (step 7) and read by
   the close mail; or confirm every seat still booked when the course closes.
   Marcel's call. *Abschliessen* on the course-date form waits on it too.
-- **The password-reset mail is Laravel's stock one, in English, on legacy
-  too**: legacy has no German strings for it. The rework sends the same, on
-  VIAK's theme. A German version would be new, not parity.
+- ~~**The password-reset mail is Laravel's stock one, in English, on legacy
+  too.**~~ **Translated 2026-09-29 (Marcel)**: `PasswordReset`, VIAK's own German
+  mail in the verification mail's words, sent from
+  `User::sendPasswordResetNotification`.
 
 ### Oddities worth deciding rather than copying
 
