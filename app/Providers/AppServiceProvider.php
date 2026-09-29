@@ -16,6 +16,20 @@ class AppServiceProvider extends ServiceProvider
 	public function register(): void
 	{
 		$this->registerAccountingSystem();
+		$this->registerTelescopeLocally();
+	}
+
+	/**
+	 * Telescope on a laptop and nowhere else ([[TelescopeServiceProvider]]).
+	 * `class_exists` because it is a dev dependency: a `--no-dev` install has
+	 * no such class, and must not need one.
+	 */
+	private function registerTelescopeLocally(): void
+	{
+		if ($this->app->isLocal() && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
+			$this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+			$this->app->register(TelescopeServiceProvider::class);
+		}
 	}
 
 	/**

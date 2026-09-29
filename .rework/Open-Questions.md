@@ -336,6 +336,17 @@ the widget and declare it; the most work is to ask the client for real quotes.
 Answered 2026-09-21 — see 18.
 Ours to answer by looking, not a client question.
 
+### 34. Should the office hear *Min. Teilnehmerzahl unterschritten* for a date it cancelled itself?
+
+Found 2026-09-29 by `scenario:play cancel` (`10-mail.md`, layer 3). Cancelling
+a date gives up its seats through the same path a student's cancellation
+takes, so the threshold listener sees the count fall and mails the office.
+Legacy did not: its handler flagged the rows directly. The office has just
+done it, so the mail says nothing new.
+
+**Decides:** whether `NotifyParticipantThreshold` stays quiet for seats given
+up by `CancelBookingsForEvent`. A one-line guard; not built until decided.
+
 ### 25. Firmenschulung's URL, and does it launch before cutover?
 
 Decided 2026-09-24 that Firmenschulung is built from the mockup and legacy's

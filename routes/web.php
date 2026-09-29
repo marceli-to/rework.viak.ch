@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Dev\MailPreviewController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
@@ -375,3 +376,13 @@ Route::get('/dashboard/{any?}', DashboardController::class)
  * has to catch the unprefixed one.
  */
 Route::redirect('/register', '/de/registration', 301);
+
+/*
+ * Dev tools, never in production ([[10-mail]]): every mail rendered from
+ * fixtures ([[MailPreviewController]]). Telescope, the other one, registers
+ * its own routes, locally only ([[TelescopeServiceProvider]]).
+ */
+if (app()->environment('local', 'testing')) {
+	Route::get('/dev/mails', [MailPreviewController::class, 'index'])->name('dev.mails.index');
+	Route::get('/dev/mails/{key}', [MailPreviewController::class, 'show'])->name('dev.mails.show');
+}

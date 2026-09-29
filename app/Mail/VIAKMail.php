@@ -29,8 +29,30 @@ abstract class VIAKMail extends Mailable implements ShouldQueue
 	use Queueable;
 	use SerializesModels;
 
+	/** Who a mail was for, on every mail outside production (below). */
+	public const INTENDED_TO = 'X-VIAK-Intended-To';
+
 	public function __construct()
 	{
 		$this->afterCommit();
+	}
+
+	/**
+	 * **Outside production the catch-all rewrites every recipient**, and a
+	 * scenario's twelve mails in one inbox are then twelve mails to one person
+	 * ([[AppServiceProvider]]). The addresses they were for go in a header
+	 * first: Laravel builds the recipients before it applies `alwaysTo`, so this
+	 * still sees them. MailHog shows it, and `scenario:play` prints it.
+	 */
+	protected function buildRecipients($message)
+	{
+		parent::buildRecipients($message);
+
+		if (! app()->isProduction() && $this->to !== []) {
+			$message->getSymfonyMessage()->getHeaders()
+				->addTextHeader(self::INTENDED_TO, implode(', ', array_column($this->to, 'address')));
+		}
+
+		return $this;
 	}
 }

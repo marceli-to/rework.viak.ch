@@ -21,7 +21,12 @@ use Illuminate\Support\Facades\Mail;
  */
 class RemindUndecidedEvents extends Command
 {
-	protected $signature = 'events:remind';
+	/*
+	 * `--event` narrows the run to some dates, for the reminder scenario
+	 * ([[Reminder]]): without it, a scenario would remind the office of every
+	 * ported date that happens to be ten days out as well.
+	 */
+	protected $signature = 'events:remind {--event=* : Only these course dates, by uuid}';
 
 	protected $description = 'Remind the office of planned course dates ten days away or less';
 
@@ -42,6 +47,7 @@ class RemindUndecidedEvents extends Command
 			->whereNull('reminded_at')
 			->whereDate('date', '>=', today())
 			->whereDate('date', '<=', today()->addDays(self::DAYS))
+			->when($this->option('event'), fn ($query, array $uuids) => $query->whereIn('uuid', $uuids))
 			->with(['course', 'dates', 'experts'])
 			->get();
 

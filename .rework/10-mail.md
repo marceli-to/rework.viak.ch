@@ -192,6 +192,32 @@ The scenarios, one per branch of the table:
 around afterwards; otherwise the scenario cleans up after itself. The clock is
 moved with `Carbon::setTestNow()`, so the reminder does not wait ten days.
 
+**Built 2026-09-29** (`app/Console/Scenarios/`, [[PlayScenario]]), all but
+`paid`, which waits for the card-payment page like its mails. As built:
+
+- Each step prints the mails it sent: subject, who it was **for**, and the
+  attachments. Outside production every [[VIAKMail]] carries
+  `X-VIAK-Intended-To` with the recipients the catch-all overwrote, so MailHog
+  says it too.
+- Mail is sent **in-process** for the run (`queue.default = sync`): a step's
+  mails are in MailHog when it ends, no worker needed.
+- People are `szenario-{run}-{name}@viak.test` with the dev password
+  ([[Test-Users]]); students in `confirm` and `cancel` register through
+  [[RegisterUser]], so they get *Bestätigung Anmeldung* too.
+- `reminder` runs `events:remind --event={uuid}`, an option added for it, so
+  the ported dates ten days out are not reminded along with it.
+- `student-cancels` has Anna book again after the free cancellation and then
+  cancel **five days out** (the full-fee window).
+- Local and testing only, like `DevUsersSeeder`. Ctrl-C mid-run skips the
+  clean-up; the leftovers are the `szenario-` users and the *Szenario …* course.
+
+**Found by playing `cancel`**: when the office cancels a date, it also gets
+*Min. Teilnehmerzahl unterschritten* for it. `CancelBookingsForEvent` goes
+through [[CancelBooking]], which announces `BookingCancelled`, and
+[[NotifyParticipantThreshold]] sees the band drop. Legacy's handler flagged
+the rows directly and never did. Noise rather than harm; **not changed,
+Marcel to decide** (`Open-Questions.md` #34).
+
 ### 4. Telescope, local only
 
 `laravel/telescope` as a dev dependency, registered only when
@@ -199,6 +225,11 @@ moved with `Carbon::setTestNow()`, so the reminder does not wait ten days.
 listeners ran, what was queued, which mails went out and which failed. It
 answers *"I confirmed the event — why is there no invoice mail?"* without
 guessing. Not installed on production.
+
+**Built 2026-09-29**: at `/telescope` ([[TelescopeServiceProvider]]). Kept
+out of package discovery and registered from [[AppServiceProvider]] only when
+`app()->isLocal()`; its migration is loaded from the vendor directory, not
+published, so production gets no `telescope_entries` table.
 
 ### 5. Tests, and a preview page
 
@@ -210,9 +241,16 @@ guessing. Not installed on production.
   link each. For design parity with legacy's markdown mails
   (`../viak.ch/resources/views/mail/`) the way the PDFs were measured against
   prod ([[03-invoices]]) — side by side, not from the source.
+  **Built 2026-09-29** ([[MailPreviewController]], [[MailPreviews]]): 27
+  entries, one per branch a view takes (with and without a credit code,
+  penalty paid or not, confirmation with and without an invoice). The
+  fixtures are written and rolled back on each request, so nothing is left
+  and nothing is sent. Registered in `local` and `testing` only.
 
 ## Built so far
 
+- **2026-09-29, later**: layers 3 to 5's tools, scenarios, Telescope and
+  `/dev/mails` (above).
 - **2026-09-29**: steps 1 to 3 (the guard, MailHog locally on 1025 with the
   inbox at http://localhost:8025, legacy's layout and theme), and the *booking
   made*, *cancels*, *confirmed*, *cancelled*, *message*, threshold, rental and
