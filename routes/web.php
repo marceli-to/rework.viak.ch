@@ -99,6 +99,16 @@ Route::prefix('{locale}')
 				->name("{$locale}.contact");
 
 			/*
+			 * Paying an invoice by card — the course confirmation mail links
+			 * here, on legacy's URL. **A placeholder** until the Stripe page is
+			 * rebuilt ([[SiteUrl::invoicePayment]], `Todo.md`). It says nothing
+			 * about the invoice, so it needs no sign-in.
+			 */
+			Route::view($segments['payment'].'/'.$segments['invoice'].'/{uuid}', 'site.payment.placeholder')
+				->whereUuid('uuid')
+				->name("{$locale}.payment.invoice");
+
+			/*
 			 * The checkout, a student's ([[09-public-site]]).
 			 *
 			 * **Legacy's own URLs**, English step names inside a German path —

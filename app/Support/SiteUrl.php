@@ -82,6 +82,22 @@ final class SiteUrl
 		));
 	}
 
+	/**
+	 * Paying an invoice by card — `/de/zahlung/rechnung/{uuid}`, legacy's URL,
+	 * linked from the course confirmation mail ([[10-mail]]).
+	 *
+	 * **A placeholder page for now.** Legacy's is a Stripe checkout session
+	 * (`PaymentController`), not rebuilt yet; the mail carries the button
+	 * already so it does not have to change when the page arrives (`Todo.md`,
+	 * `Open-Questions.md` #28).
+	 */
+	public static function invoicePayment(string $uuid, ?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('payment', $locale).'/'.self::segment('invoice', $locale).'/'.$uuid;
+	}
+
 	/** The Kontakt page — `/de/kontakt`. */
 	public static function contact(?string $locale = null): string
 	{

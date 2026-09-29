@@ -46,6 +46,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 24 | Where do the new Kontakt and Firmenschulung forms send, and what do they keep? | Marcel | The phase-two Kontakt and Firmenschulung pages. Needs mail first |
 | ~~26~~ | ~~Admin-created students: a set-password invite?~~ — **answered 2026-09-24: yes.** See `07-dashboard.md` | — | — |
 | ~~27~~ | ~~What belongs on the dashboard's landing page?~~ — **answered 2026-09-24: nothing yet; it stays empty.** | — | — |
+| 28 | **Card payment for an invoice**: legacy's `/de/zahlung/rechnung/{uuid}` (Stripe). Still wanted? The course confirmation mail links to it; the rework serves a placeholder there (2026-09-29) | Marcel, then the client | Cutover: the page, or the mail's button |
 | 25 | Firmenschulung's URL, and does it launch before cutover? | Marcel | The 301 for the indexed `/de/individualschulungen` — without the new page it has nowhere to go |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 | 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |

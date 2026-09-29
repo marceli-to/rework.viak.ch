@@ -498,3 +498,12 @@ number, and one `Event::rentalsLeft()` that the three actions and the basket's
 rental dialog ask. The dashboard rows then show *x / y* as legacy does; until
 then they show how many are booked.
 
+## Before cutover
+
+- **Rebuild the invoice card-payment page, or drop its button** (Marcel,
+  2026-09-29: *"make sure to not forget this one"*). Legacy's
+  `/de/zahlung/rechnung/{uuid}` is a Stripe checkout session
+  (`PaymentController`). The course confirmation mail already carries the
+  *Zahlung per Kreditkarte* button ([[SiteUrl::invoicePayment]]); the URL serves
+  a placeholder page (`site/payment/placeholder.blade.php`). `Open-Questions.md`
+  #28 asks whether card payment is still wanted.

@@ -50,6 +50,12 @@ return [
 			'account' => 'konto',
 			'documents' => 'dokumente',
 
+			// Paying an invoice by card, legacy's `/de/zahlung/rechnung/{uuid}`,
+			// linked from the course confirmation mail. A placeholder until the
+			// Stripe page is rebuilt (`Todo.md`).
+			'payment' => 'zahlung',
+			'invoice' => 'rechnung',
+
 			/*
 			 * The portals ([[08-accounts]]). Legacy's own two trees —
 			 * `/de/student/profil` and `/de/experte/profil` — kept whole,

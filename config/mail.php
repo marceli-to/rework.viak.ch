@@ -143,4 +143,20 @@ return [
 
 	'catch_all' => env('MAIL_CATCH_ALL'),
 
+	/*
+	|--------------------------------------------------------------------------
+	| The mails' look — legacy's, ported as it is
+	|--------------------------------------------------------------------------
+	|
+	| `resources/views/vendor/mail` is legacy's own: its layout, header with
+	| the logo, the address footer, and the teal theme (`themes/viak.css`, its
+	| `default.css` renamed) ([[10-mail]]).
+	|
+	*/
+
+	'markdown' => [
+		'theme' => 'viak',
+		'paths' => [resource_path('views/vendor/mail')],
+	],
+
 ];
