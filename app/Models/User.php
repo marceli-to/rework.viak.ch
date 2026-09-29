@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\Gender;
 use App\Enums\OperatingSystem;
 use App\Enums\Role;
+use App\Mail\EmailVerification;
 use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasUuid;
 use Database\Factories\UserFactory;
@@ -26,6 +27,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -103,6 +105,16 @@ class User extends Authenticatable implements MustVerifyEmail
 		});
 
 		$this->roleNames = null;
+	}
+
+	/**
+	 * VIAK's own *Bestätigung Anmeldung* instead of Laravel's stock mail
+	 * ([[EmailVerification]], [[10-mail]]). Called on registration and when an
+	 * address changes ([[UpdateProfile]]).
+	 */
+	public function sendEmailVerificationNotification(): void
+	{
+		Mail::to($this)->send(new EmailVerification($this));
 	}
 
 	public function hasRole(Role $role): bool

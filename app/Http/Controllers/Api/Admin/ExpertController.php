@@ -48,7 +48,7 @@ class ExpertController extends Controller
 		return new ExpertFormResource($expert->load('expertProfile'));
 	}
 
-	/** Without the invite for now ([[CreateAccount]]). */
+	/** Invited to set their own password ([[CreateAccount]]). */
 	public function store(SaveExpertRequest $request, CreateAccount $create): JsonResponse
 	{
 		$expert = DB::transaction(function () use ($request, $create): User {

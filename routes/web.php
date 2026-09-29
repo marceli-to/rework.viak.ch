@@ -10,6 +10,7 @@ use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
 use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
+use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\StudentAddressController;
 use App\Http\Controllers\Site\StudentPortalController;
 use App\Http\Middleware\SetLocaleFromUrl;
@@ -349,6 +350,16 @@ Route::get('/medien/{media:uuid}', [MediaController::class, 'download'])
 
 // SPA shell — the dashboard router takes over client-side. Admins only; anyone
 // else is sent to their own portal ([[DashboardController]]).
+/*
+ * *Passwort festlegen* — the link in *Dein VIAK-Zugang*, for an account an
+ * admin created ([[AccountInvite]]). Beside `/login`, not under a locale:
+ * signed, and good once.
+ */
+Route::middleware('signed')->group(function (): void {
+	Route::get('/zugang/{uuid}', [InviteController::class, 'show'])->whereUuid('uuid')->name('invite.show');
+	Route::post('/zugang/{uuid}', [InviteController::class, 'store'])->whereUuid('uuid')->name('invite.store');
+});
+
 Route::get('/dashboard/{any?}', DashboardController::class)
 	->middleware('auth')
 	->where('any', '.*')

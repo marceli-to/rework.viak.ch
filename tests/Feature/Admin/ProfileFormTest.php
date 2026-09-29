@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Mail\EmailVerification;
 use App\Models\Country;
 use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * *Mein Profil* on the dashboard — `/api/admin/profile` ([[07-dashboard]],
@@ -59,12 +59,12 @@ it('changes the password with the current one', function () {
 });
 
 it('has a new address confirmed again', function () {
-	Notification::fake();
+	Mail::fake();
 	$form = $this->actingAs($this->admin)->getJson('/api/admin/profile')->json('data');
 
 	$this->putJson('/api/admin/profile', [...$form, 'email' => 'neu@example.test', 'current_password' => 'altes-passwort'])
 		->assertOk()
 		->assertJsonPath('data.email_verified', false);
 
-	Notification::assertSentTo($this->admin->refresh(), VerifyEmail::class);
+	Mail::assertQueued(EmailVerification::class, fn ($mail) => $mail->hasTo('neu@example.test'));
 });

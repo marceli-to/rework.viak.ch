@@ -57,8 +57,8 @@ in a scenario (below).
 
 | Trigger | Legacy mailable | To | Attaches | Subject | Rework today |
 |---|---|---|---|---|---|
-| Student registers | `StudentRegistered` | student | — | Bestätigung Anmeldung | Fortify's stock verification mail only |
-| Admin creates an expert | `ExpertCreated` | expert | — | Dein VIAK-Zugang | The screen exists (2026-09-29) and creates the account silently; until this mail, a new expert cannot sign in ([[07-dashboard]]) |
+| Student registers | `StudentRegistered` | student | — | Bestätigung Anmeldung | **Built 2026-09-29** as `EmailVerification`, in place of Laravel's stock mail (`User::sendEmailVerificationNotification`); also what a changed address gets |
+| Admin creates an expert | `ExpertCreated` | expert | — | Dein VIAK-Zugang | **Built** as `AccountInvitation`, to students too (#26), from [[CreateAccount]]: a signed 72-hour link to `/zugang/{uuid}`, good once (it carries a fingerprint of the password hash). Legacy's `/expert/finish` trusted the form; this cannot be replayed or pointed at another account |
 | Booking made | `BookingCompleted` | student | — | Buchungsbestätigung – *course* | **Built 2026-09-29** ([[SendBookingMails]]) |
 | | `BookingCreatedInfoExpert` | each expert | — | Neue Anmeldung für *course* | **Built**, as `BookingCreatedInfo` (one class for both) |
 | | `BookingCreatedInfoAdmin` | admin | — | Neue Anmeldung für *course* | **Built**, to `config('mail.admin')` |
@@ -204,7 +204,7 @@ guessing. Not installed on production.
 - **2026-09-29**: steps 1 to 3 (the guard, MailHog locally on 1025 with the
   inbox at http://localhost:8025, legacy's layout and theme), and the *booking
   made*, *cancels*, *confirmed*, *cancelled*, *message*, threshold, rental and
-  reminder rows. Every mail is a queued [[VIAKMail]], sent after
+  reminder rows, registration and the admin-created account's invite. Every mail is a queued [[VIAKMail]], sent after
   the commit. **A cancellation because VIAK called the course off sends none of
   the cancellation mails**; *Kursabsage* (the event-cancel row) tells them.
   **Legacy's cancellation mails issued a discount code for an invoice already

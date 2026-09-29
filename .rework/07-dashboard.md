@@ -538,9 +538,9 @@ against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
   message. Legacy let two people share one. An address the admin changes
   stays verified, as legacy has it: the admin is not an unproven session,
   which is what the portal's own e-mail change guards against.
-- **No invite yet.** Creating an expert makes the account with a password
-  nobody knows, verified as legacy does; *Dein VIAK-Zugang* is chunk 10's
-  (`10-mail.md`). Until then a new expert cannot sign in.
+- **Invited.** Creating an expert makes the account with a password nobody
+  knows, verified as legacy does, and mails *Dein VIAK-Zugang* with a link to
+  set one ([[AccountInvitation]], built with the mails on 2026-09-29).
 - **Deleting is for someone nothing points at** (#16): refused when the
   person has taught a date, booked, been invoiced, has a document, a message
   or a checkout (`User::hasHistory()`), or is you. That leaves four of

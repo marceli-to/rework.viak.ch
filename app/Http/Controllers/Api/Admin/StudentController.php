@@ -53,7 +53,7 @@ class StudentController extends Controller
 		return new StudentFormResource($this->loaded($student));
 	}
 
-	/** Without the invite for now ([[CreateAccount]]). */
+	/** Invited to set their own password ([[CreateAccount]]). */
 	public function store(SaveStudentRequest $request, CreateAccount $create): JsonResponse
 	{
 		$student = DB::transaction(function () use ($request, $create): User {

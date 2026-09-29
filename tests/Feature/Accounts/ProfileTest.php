@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Mail\EmailVerification;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\UserDocument;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
 	$this->user = User::factory()->student()->create([
@@ -76,7 +76,7 @@ it('rejects a wrong current password', function () {
  * ever being proven — and mail then went to an unconfirmed address.
  */
 it('makes a new email address prove itself again', function () {
-	Notification::fake();
+	Mail::fake();
 
 	$this->actingAs($this->user)
 		->putJson('/api/profile', [
@@ -89,7 +89,7 @@ it('makes a new email address prove itself again', function () {
 	expect($this->user->refresh()->email)->toBe('neu@example.com')
 		->and($this->user->hasVerifiedEmail())->toBeFalse();
 
-	Notification::assertSentTo($this->user, VerifyEmail::class);
+	Mail::assertQueued(EmailVerification::class, fn ($mail) => $mail->hasTo('neu@example.com'));
 });
 
 it('keeps verification when the address has not changed', function () {

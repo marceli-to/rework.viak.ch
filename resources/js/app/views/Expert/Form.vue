@@ -7,8 +7,8 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * ([[07-dashboard]], step 6): the fields are [[ExpertSchema]].
  *
  * **Deleting is for someone nothing points at** (#16). Anyone who has taught,
- * booked or been invoiced stays, and is switched off instead. Legacy also
- * mailed a new expert *Dein VIAK-Zugang*; that waits for chunk 10.
+ * booked or been invoiced stays, and is switched off instead. A new expert
+ * is mailed *Dein VIAK-Zugang* to set their password ([[AccountInvitation]]).
  */
 const blocked = (meta) => {
 	if (meta.is_self) return 'Du kannst dein eigenes Konto nicht löschen.';
