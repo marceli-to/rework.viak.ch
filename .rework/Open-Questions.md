@@ -59,6 +59,8 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 37 | Updates and upgrades: an edition in the dropdown, or their own product? | Client | Nothing structural — the shape takes either. Asked 2026-09-29 |
 | 38 | "Nur zusammen mit Neulizenz": enforced by the basket, or a note? | Client | Nothing if a note. Asked 2026-09-29 |
 | 39 | Minimum and maximum quantities beyond the Teams licences' 3? | Client | Nothing — `min_quantity` is planned either way. Asked 2026-09-29 |
+| 40 | **Time zone**: the app (and legacy) run in UTC, so every time shown is two hours off in summer (an upload at 16:45 reads 14:45). Switch to `Europe/Zurich`? Touches every stored and shown time, the port included | Marcel | Nothing built waits on it. Found 2026-09-29 on the event page's documents |
+| 41 | A **confirmation missed at closing**: once an event is closed its attendance is fixed and nobody else can get a *Teilnahmebestätigung*. Needed (a per-seat *Bestätigung senden*), or never? | Marcel | Nothing. See `07-dashboard.md`, *Attendance is asked when closing* |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 | 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |
 | 23 | A late booker gets every earlier course message, one mail each — keep, digest, or drop? | Marcel | Chunk 10's message mails. See `10-mail.md`, *Oddities* |

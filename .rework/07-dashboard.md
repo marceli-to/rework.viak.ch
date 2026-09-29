@@ -1,4 +1,4 @@
-# 07 — The dashboard (steps 1–7 built; 8 waits on #22, #23)
+# 07 — The dashboard (steps 1–7 built; step 8 waits on the client)
 
 The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 `resources/js/vue/backend/dashboard/` — 13 screen groups, about 55 routes and
@@ -14,10 +14,27 @@ both modes, the course form and its images, testimonials, the field kit), and
 then *Loading* and *Polish*.
 
 **Step 6 is done** (2026-09-29): every form on the kit (*Step 6 — experts*,
-*— students*, *— discount codes*, *— settings*, *— profile*). **Next is step 7**,
-the operational screens, which waits on mail (chunk 10): the mail work is the
-next thing to build. Then step 7, which waits
-on mail (chunk 10).
+*— students*, *— discount codes*, *— settings*, *— profile*).
+
+**Step 7 is done** (2026-09-29): *Rechnungen*, *Exporte*, the student page and
+the event page, then an afternoon of Marcel's review against legacy's
+screens. Where things stand, in the sections below:
+
+- *Step 7 — the student page* and *— the course date's page* (the event
+  page), with *Attendance is asked when closing* (the tick moved into
+  closing), *Back is where you came from*, and *A course has
+  Veranstaltungen*.
+- **Matched to legacy on Marcel's screenshots**: the student page (*Profil
+  Student*, teal *Download*, no *Details*), course documents ([[FileRow]],
+  their own upload screen, *Bezeichnung* back on both portals), messages
+  ([[MessageRow]], the portal's composer), empty lists ([[NoResults]]),
+  square badges `px-6 py-2`.
+- **Open for Marcel**: #40 (time zone) and #41 (a confirmation missed at
+  closing) in `Open-Questions.md`.
+- **Next**: step 8 (homepage, *Aktuelles*) waits on the client (#22, #23).
+  Not yet looked at against legacy: *Kurse* and the course form, *Experten*,
+  *Studenten*' list, *Rabatt-Codes*, *Einstellungen*, *Rechnungen*. A
+  walkthrough of those, at phone width too, is the obvious next pass.
 
 What exists at the end of 2026-09-24:
 
