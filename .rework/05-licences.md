@@ -5,8 +5,11 @@ The second thing VIAK sells.
 ## Status
 
 Not built. Shape settled 2026-09-17 against the client's answers and the mockups
-in `history/mockup/`. One question left open — the Bildung tier's Nachweis — and
-it gates a corner of the chunk rather than the chunk itself.
+in `history/mockup/`, then **revised 2026-09-29** against the client's product
+list: this replaces an existing shop, the catalogue has three levels rather than
+two, and an order line has a quantity. See *The real catalogue* below. The
+questions that list raised went to the client on 2026-09-29 and are under *Open
+questions*; prices and article numbers are the one that blocks an import.
 
 The short version: **there is no integration, and a licence is not an entity.**
 Fulfilment is a human forwarding an email, and *Meine Lizenzen* is purchase
@@ -88,7 +91,7 @@ mockups, it resolved into three decisions:
 | | Decision |
 |---|---|
 | **Variants** | **Yes.** A product has purchasable variants — Einzelplatz / Netzwerk / Studierende — at their own prices. The "ab CHF 590.–" on the hub is the cheapest of them. |
-| **Preis auf Anfrage** | **Real.** Some software cannot be bought directly at all. Seven of the nine products on `Software.html` are in this state, so it is the common case, not the exception. |
+| **Preis auf Anfrage** | **Real.** Some software cannot be bought directly at all. ~~Seven of the nine products on `Software.html` are in this state, so it is the common case, not the exception.~~ **2026-09-29:** that count came from the mockup. In the real catalogue nearly everything is sold at a price, so this is the exception. |
 | **Meine Lizenzen** | **Purchase history only.** Not a licence with a life. |
 
 ### Meine Lizenzen is history — and that is the decision that shrinks this chunk
@@ -118,7 +121,136 @@ That is a fair v1 trade — the licence's real state lives with the vendor anywa
 but it is a deliberate departure from the mockup, not an oversight. **Do not
 "fix" it later without asking.**
 
+## The real catalogue — 2026-09-29
+
+The client went through their existing shop with Claude and sent the result as a
+spreadsheet (`Software_Lizenztypen_claude.xlsx`, kept outside the repo on
+Marcel's desktop): one row per product, with Hersteller, Produktart (Software /
+Plugin), Lizenztyp (Perpetual / Subscription), Lizenzzugriff (named / floating),
+Plattform, Frontend-Sichtbarkeit, a remark and the shop URL.
+
+### This replaces 3d-software.ch — answered 2026-09-29
+
+VIAK already sells software, at **3d-software.ch**. Nothing above knew that; it
+was all derived from the mockups. **The rework replaces that shop.** So the
+catalogue is not a blank page to be designed, it is an existing one to be moved,
+and the mockup's nine products are not the scale.
+
+The spreadsheet has **no prices**, and the article numbers (RHN-1002, VRY-1001…)
+survive only inside the shop URLs. Both were asked for on 2026-09-29, open
+question 2 below. We do not scrape them from the old shop: the client owns the
+numbers and should hand them over.
+
+### What is in it
+
+| | |
+|---|---|
+| Products | **107**, in 17 groups (Rhino, V-Ray, Twinmotion, Cinema 4D, Maxwell…) |
+| Manufacturers | 15 — Chaos alone has 35 products, Next Limit 19 |
+| Listed in the shop | 94; the **13 hidden** ones are all EDU, lab and university seat-band licences |
+| Licence type | 58 subscription, 40 perpetual, 9 none (demos) |
+| Demos | 10 |
+| Updates and upgrades | 14 |
+
+### Three levels, not two
+
+The 2026-09-17 shape was `software` → variants. The list does not fit it. A
+spreadsheet group is **not a product**: the Rhino group holds plugins by five
+different makers (Bongo, VisualARQ, Lands Design, Karamba3D, Drakon), and the
+client's own dropdown example splits V-Ray from V-Ray Rendernode, both in the
+V-Ray group. So:
+
+```
+software            the group — Rhino, V-Ray, Maxwell…  (what courses hang off)
+licence_products    V-Ray, V-Ray Render Node, Bongo 2…  manufacturer_id, slug, copy
+licence_variants    Solo named / Premium floating / 5 Stück / Update…  price, term
+```
+
+- **`software` stays the group**, so courses and licences still meet on one row,
+  which was the point for the Vorhaben pages. Eight of the 17 groups already
+  exist as course software (Rhinoceros, V-Ray, CINEMA 4D, Twinmotion, Corona
+  Renderer, ZBrush, Enscape, Lumion); Unreal Engine, Veras, formZ, KeyShot,
+  Maxwell, Anima, RealFlow, HDR Light Studio and MyArchitectAI would be new rows.
+  Drakon is a course software row *and* a product in the Rhino group — fine, the
+  two levels are independent.
+- **The manufacturer moves to the product.** The proposal below put
+  `manufacturer_id` on `software`; the Rhino group alone has five makers, so it
+  cannot live there.
+- **The Hersteller filter** on the hub then filters products, not software.
+
+### Variants carry a term
+
+The client wants the edition in one dropdown and the term (1 / 3 years) in a
+second. The cheapest shape that gives that: a variant is a flat, priced row, and
+has an **optional `term_years`**. The page shows the distinct editions in the
+first select and the terms that edition has in the second. No general
+option/combination system — a product with no terms (every perpetual licence)
+simply shows one select.
+
+16 products say "3-Jahreslizenz verfügbar" but none has a 3-year product in the
+shop today. Whether its price is fixed or 3× annual is open question 3.
+
+The render-node packs (1 / 5 / 20 Stück) are **variants**, not a quantity: each is
+its own SKU at its own price.
+
+### Things that are not variants
+
+- **Host software.** Maxwell V5 and the RealFlow Plugin come for Rhino, Archicad,
+  Cinema 4D, SketchUp… at one price. Seven hosts × node-locked / floating as
+  variants would be fourteen rows with identical prices. Instead the product
+  declares a list of choices and the chosen one is **frozen on the order line**,
+  like the price. VIAK needs it to order the right thing from the reseller.
+- **Quantity.** "Mindestens 3 Lizenzen" on the Cinema 4D and Maxon One Teams
+  licences is a quantity with a minimum. `licence_orders` below had no quantity;
+  it gains `quantity`, and the variant gains `min_quantity` (nullable).
+- **Platform, named/floating on products that allow both, "max. 2 Computer",
+  "Studio + alle Plugins".** Display information on the product. Nothing
+  computes with them.
+
+### Hidden products
+
+The 13 EDU and seat-band licences are in the shop and sold, but not listed. That
+is not `publish = false` — an unpublished product is one nobody can buy. It needs
+a separate *not listed* state. Whether a customer can reach one on the site at all
+(a direct link) or VIAK only ever invoices it is open question 5; if the latter,
+a hidden product is just a preset for the blank one below.
+
+This answers half of the Bildung question: education licences are real. They
+are hidden and sold on request, which is the cheap middle option that question
+already proposed.
+
+### The blank product — asked 2026-09-29
+
+The client's example: someone wants an annual licence for only a few months, VIAK
+works out the price by hand and still sends a normal invoice. That is **a licence
+order an admin creates**, with a free title and a free price instead of a
+variant: `licence_variant_id` becomes nullable, and the order freezes a title as
+it already freezes the price. It should still land on the dispatch worklist,
+because VIAK still has to order it from the reseller.
+
+Chunk 03 already allows the invoice side: `invoice_items.itemable` is nullable and
+the line carries its own description.
+
+### Catalogue admin
+
+The client wants to create, edit and delete products themselves. Expected — the
+catalogue is theirs and changes, EDU products are added on demand. A dashboard
+screen, not a seeder.
+
+### Data to fix before an import
+
+- "TWinmotion" in three rows (Excel autocorrect).
+- MyArchitectAI's demo is typed Subscription; every other demo has no type.
+- MyArchitectAI (4 products) and V-Ray Render Node 20 Stück are marked visible
+  but have no shop URL — new, presumably.
+
+All three are in the 2026-09-29 questions.
+
 ## The shape that falls out — proposed 2026-09-17
+
+**2026-09-29:** partly superseded by *The real catalogue* above — three levels,
+manufacturer on the product, a quantity and a host choice on the order. Kept as
+written for the reasoning.
 
 Small, and entirely ours. **Proposals, not decisions** — written down so the
 build starts from something concrete rather than re-deriving it.
@@ -201,6 +333,23 @@ Blocking the scoping of this chunk:
    Three ways out, and it needs the client: build the proof flow, treat Bildung as
    an enquiry variant like Preis auf Anfrage (cheap, and probably right for v1),
    or drop the tier.
+   **2026-09-29:** half answered by the product list: EDU licences are real, and
+   today they are hidden products sold on request. What stays open is whether
+   the site ever sells one itself — that is question 5.
+
+Asked 2026-09-29, with the product list (`Fragen-Software.txt`, sent by Marcel):
+
+2. (OQ 33) **Prices and article numbers** for all 107 products, hidden ones included,
+   and whether prices are gross or net. **Blocks the import.**
+3. (OQ 34) **The 3-year term:** a fixed price per product, or 3× annual?
+4. (OQ 35) **Demos:** what "buying" one means — a free order, an enquiry, or a link.
+5. (OQ 36) **Hidden products:** can a customer order one on the site (a direct link), or
+   does VIAK only invoice them?
+6. (OQ 37) **Updates and upgrades:** an edition in the product's dropdown, or their own
+   product as today? The three-level shape takes either.
+7. (OQ 38) **"Nur zusammen mit Neulizenz"** (Maxwell V5 Rendernodes Bundle): enforced by
+   the basket, or a note on the product? A note is the proposal.
+8. (OQ 39) **Minimum and maximum quantities** beyond the Teams licences' 3.
 
 Not blocking:
 

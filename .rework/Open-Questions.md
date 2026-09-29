@@ -7,7 +7,7 @@ settled.
 
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-24, with the 2026-09-23 mockup
-review (22–24 are from it).
+review (22–24 are from it), and 2026-09-29 with the licence catalogue (33–39).
 
 **One item is not a question and is not waiting on anyone:** the
 `/expert/finish` account-takeover path on the live site, found 2026-09-18 while
@@ -21,7 +21,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 
 | # | Question | Owner | Blocks |
 |---|---|---|---|
-| 1 | Is the Bildung licence tier real? | Client | Chunk 05, partly |
+| 1 | Is the Bildung licence tier real? — **half answered 2026-09-29**: EDU licences are real, sold today as hidden products; what is left is 36 | Client | Chunk 05, partly |
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed | Client | Chunk 04 page count |
@@ -52,6 +52,13 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 30 | Which ad networks, exactly? Google Ads and Meta today; LinkedIn, ChatGPT, others planned? | Client | Nothing in code; which tags go into GTM |
 | 31 | The answer options for *Wie wurdest du auf uns aufmerksam?*, and is it optional? | Client | `11-tracking.md` step 4 |
 | 32 | That question as a popup (as asked) or a field on the summary step (recommended)? | Client | `11-tracking.md` step 4 |
+| 33 | **Prices and article numbers** for the 107 licence products, gross or net | Client | **The catalogue import.** Asked 2026-09-29 |
+| 34 | A 3-year licence: fixed price, or 3× annual? | Client | Chunk 05, the term select. Asked 2026-09-29 |
+| 35 | What does "buying" a demo mean? | Client | Chunk 05, 10 products. Asked 2026-09-29 |
+| 36 | Can a customer order a hidden (EDU) product on the site, or does VIAK only invoice them? | Client | Chunk 05, the *not listed* state. Asked 2026-09-29 |
+| 37 | Updates and upgrades: an edition in the dropdown, or their own product? | Client | Nothing structural — the shape takes either. Asked 2026-09-29 |
+| 38 | "Nur zusammen mit Neulizenz": enforced by the basket, or a note? | Client | Nothing if a note. Asked 2026-09-29 |
+| 39 | Minimum and maximum quantities beyond the Teams licences' 3? | Client | Nothing — `min_quantity` is planned either way. Asked 2026-09-29 |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 | 22 | Deleting an event with active bookings tells nobody — refuse the delete, or treat it as a cancel? | Marcel | Chunk 10's event mails. See `10-mail.md`, *Oddities* |
 | 23 | A late booker gets every earlier course message, one mail each — keep, digest, or drop? | Marcel | Chunk 10's message mails. See `10-mail.md`, *Oddities* |
@@ -162,6 +169,26 @@ uses resolve to course bookings.
 Worth asking in the same conversation as 1 and 2. Chunk 03 settled where the
 answer would land: `invoice_items.discount` is per line, so a licence discount
 needs no schema change whichever way this goes.
+
+### 33–39. The licence catalogue — asked 2026-09-29
+
+The client sent their existing shop's 107 products as a spreadsheet, and the
+rework replaces that shop (3d-software.ch). The list raised seven questions; Marcel
+forwarded them the same day (`Fragen-Software.txt`). The reasoning behind each is
+in `05-licences.md`, *The real catalogue*.
+
+- **33. Prices and article numbers.** The list has neither; article numbers
+  survive only inside the old shop's URLs. **Decides:** whether there is a
+  catalogue to import at all. The only one of the seven that blocks.
+- **34. The 3-year term.** 16 products advertise it, none has a product for it.
+  **Decides:** whether a 3-year variant carries its own price.
+- **35. Demos.** 10 products. **Decides:** free order, enquiry or link.
+- **36. Hidden products.** **Decides:** whether a *not listed* product can be
+  reached on the site, or is only a preset for an admin-made order. Also closes 1.
+- **37. Updates and upgrades.** **Decides:** the grouping only.
+- **38. "Nur zusammen mit Neulizenz"** (Maxwell V5 Rendernodes Bundle).
+  **Decides:** whether the basket has dependency rules. A note is the proposal.
+- **39. Quantity limits.** **Decides:** whether `min_quantity` needs a partner.
 
 ### 4. Which of the six Vorhaben are real, and are there more coming?
 
