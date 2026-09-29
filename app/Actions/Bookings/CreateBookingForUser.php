@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Bookings;
 
+use App\Actions\Invoices\RaiseInvoiceForBooking;
+use App\Enums\EventState;
 use App\Events\BookingMade;
 use App\Exceptions\SeatNotAvailable;
 use App\Models\Booking;
@@ -47,7 +49,10 @@ use Illuminate\Support\Facades\DB;
  */
 class CreateBookingForUser
 {
-	public function __construct(private readonly BookingNumber $numbers) {}
+	public function __construct(
+		private readonly BookingNumber $numbers,
+		private readonly RaiseInvoiceForBooking $raiseInvoice,
+	) {}
 
 	public function execute(Event $event, User $user, bool $rental = false): Booking
 	{
@@ -76,6 +81,12 @@ class CreateBookingForUser
 		});
 
 		$user->forgetBookmark($event);
+
+		// A seat on a course already confirmed is billed now, as at checkout
+		// ([[CompleteCheckout]]), and before the mails hear of it.
+		if ($event->state === EventState::Confirmed) {
+			$this->raiseInvoice->execute($booking);
+		}
 
 		event(new BookingMade($booking));
 

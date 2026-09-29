@@ -153,7 +153,11 @@ class RaiseInvoiceForBooking
 
 		$discount = $booking->checkout_id !== null
 			? $booking->checkout->remainingDiscount()
-			: (string) $booking->discount_amount;
+			// A booking just created holds no `discount_amount` in memory, the
+			// column's default being the database's, and an empty string is not
+			// a number to bcmath. Only a seat on a confirmed course is billed
+			// that fresh ([[CreateBookingForUser]]).
+			: (string) ($booking->discount_amount ?? '0.00');
 
 		return bccomp($discount, $fee, 2) > 0 ? $fee : $discount;
 	}

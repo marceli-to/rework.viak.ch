@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Bookings;
 
+use App\Actions\Invoices\RaiseInvoiceForBooking;
+use App\Enums\EventState;
 use App\Events\BookingMade;
 use App\Exceptions\BasketPriceChanged;
 use App\Exceptions\SeatNotAvailable;
@@ -42,7 +44,10 @@ use Illuminate\Support\Facades\DB;
  */
 class CompleteCheckout
 {
-	public function __construct(private readonly BookingNumber $numbers) {}
+	public function __construct(
+		private readonly BookingNumber $numbers,
+		private readonly RaiseInvoiceForBooking $raiseInvoice,
+	) {}
 
 	/**
 	 * @throws BasketPriceChanged when the total moved since the basket was shown
@@ -98,16 +103,31 @@ class CompleteCheckout
 				// loud.
 				$user->forgetBookmark($item->event);
 
-				// Notifications hang off this — the participant thresholds, the
-				// confirmation mail. Nothing that must happen for the money to
-				// be right listens to it ([[00-foundation]]).
-				event(new BookingMade($booking));
 			}
 
 			return $checkout;
 		});
 
-		return $checkout->load('bookings.event');
+		$checkout->load('bookings.event');
+
+		foreach ($checkout->bookings as $booking) {
+			// **The exception the docblock names, and it was not wired until
+			// 2026-09-29**: a seat sold on a course already confirmed is billed
+			// now, since its confirmation has passed. After the commit, because
+			// issuing posts to the books, and a checkout that rolled back must
+			// not leave a charge behind ([[IssueInvoice]]).
+			if ($booking->event->state === EventState::Confirmed) {
+				$this->raiseInvoice->execute($booking);
+			}
+
+			// Notifications hang off this — the participant thresholds, the
+			// mails. Nothing that must happen for the money to be right listens
+			// to it ([[00-foundation]]), and it comes after the invoice, so the
+			// course confirmation finds the invoice it attaches.
+			event(new BookingMade($booking));
+		}
+
+		return $checkout;
 	}
 
 	/**
