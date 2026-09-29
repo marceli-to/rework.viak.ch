@@ -52,6 +52,11 @@
 	 * the moment to ask for a scale instead of two one-offs. */
 	--color-success-dark: #427b3c;
 
+	/* `.btn-warning:hover`, `darken($color-warning, 15)`, read from the compiled
+	 * stylesheet as `#ff6503` (2026-09-29). Arrives with *Absagen* on the
+	 * course-date form ([[07-dashboard]]). */
+	--color-warning-dark: #ff6503;
+
 	/* And a second one did appear, 2026-09-22: `.btn-danger:hover` is
 	 * `darken($color-danger, 15)`, which the compiled stylesheet resolves to
 	 * `#b31c00`. Read from the file, like its neighbour.

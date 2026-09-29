@@ -22,6 +22,9 @@ const STYLES = {
 	secondary: 'bg-gray-400 text-white hover:bg-black',
 	outline: 'border border-teal bg-white font-normal text-teal hover:border-black hover:text-black',
 	danger: 'bg-danger text-white hover:bg-danger-dark',
+	// The course-date form's *Bestätigen* and *Absagen* (`.btn-success`, `.btn-warning`).
+	success: 'bg-success text-white hover:bg-success-dark',
+	warning: 'bg-warning text-white hover:bg-warning-dark',
 	gray: 'border border-gray-600 bg-gray-600 text-white',
 	'gray-outline': 'border border-gray-600 bg-white text-gray-600',
 };

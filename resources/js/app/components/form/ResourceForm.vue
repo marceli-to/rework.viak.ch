@@ -68,6 +68,10 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 				<Button v-if="stay && !singleton" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
 			</fieldset>
 
+			<!-- Boxes that act on the record rather than its fields: a course
+			     date's *Bestätigen* and *Absagen*. Drawn by the form that has them. -->
+			<slot v-if="!creating" name="actions" :form="form" :meta="meta" :patch-meta="patchMeta" />
+
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->
 			<div v-if="!creating && !locked(meta) && (deletion || $slots.danger)" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
 				<slot name="danger" :form="form" :meta="meta" :patch-meta="patchMeta">

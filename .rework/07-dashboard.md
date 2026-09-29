@@ -499,8 +499,11 @@ against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
   the first day has gone by, as legacy has it: a date running today is locked.
 - **Deleting is refused while any booking exists**, cancelled ones included:
   they carry invoices, as the course form already rules.
-- **Not built: *Bestätigen*, *Schliessen*, *Absagen*.** Each mails the
-  participants; they wait for chunk 10.
+- ~~**Not built: *Bestätigen*, *Schliessen*, *Absagen*.**~~ **Bestätigen and
+  Absagen built 2026-09-29** with their mails: legacy's green and orange boxes
+  between *Speichern* and the delete box, each behind a confirm, turning into
+  *bestätigt am …* / *abgesagt am …* (`ActionBox`, the `actions` slot on
+  [[ResourceForm]]). *Abschliessen* waits on attendance (`10-mail.md`, *Open*).
 - Found on the way: the dev expert and dev admin had no uuid (the seeder
   found their rows, so `HasUuid`'s create hook never ran), so the dev expert
   could not be ticked. The seeder fills it now.
