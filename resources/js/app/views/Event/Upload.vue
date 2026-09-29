@@ -62,7 +62,6 @@ async function save() {
 	<ArticleText v-else>
 		<template #aside>
 			<h1 class="font-bold text-teal">Dokumente hochladen</h1>
-			<p class="mt-8">{{ page.course.number }} {{ page.course.title }}</p>
 			<BackLink :to="back" />
 		</template>
 
