@@ -8,12 +8,15 @@ use App\Actions\Documents\InvoiceDocument;
 use App\Actions\Invoices\RaiseInvoiceForBooking;
 use App\Mail\EventConfirmationStudent;
 use App\Models\Booking;
+use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 /**
  * The course confirmation for one seat, with its invoice ([[10-mail]]).
@@ -41,11 +44,26 @@ class SendCourseConfirmation implements ShouldQueue
 	 * [[RaiseInvoiceForBooking]] returns the one already raised, or raises it
 	 * (it is safe to call twice), so this job cannot outrun it. A free course
 	 * has none.
+	 *
+	 * A seat that cannot be billed (bad data: a rental with no frozen price) is
+	 * confirmed without an invoice, as [[RaiseInvoicesForEvent]] bills the rest
+	 * and logs that one for the admin: the course is going ahead either way.
 	 */
 	public function handle(RaiseInvoiceForBooking $raise, InvoiceDocument $pdf): void
 	{
-		$invoice = $this->booking->invoice() ?? $raise->execute($this->booking);
+		$invoice = $this->booking->invoice() ?? $this->raise($raise);
 
 		Mail::to($this->booking->user)->send(new EventConfirmationStudent($this->booking, $invoice ? $pdf->execute($invoice) : null));
+	}
+
+	private function raise(RaiseInvoiceForBooking $raise): ?Invoice
+	{
+		try {
+			return $raise->execute($this->booking);
+		} catch (Throwable $e) {
+			Log::error("Confirming booking {$this->booking->number} without an invoice: ".$e->getMessage());
+
+			return null;
+		}
 	}
 }

@@ -9,6 +9,7 @@ use App\Enums\BookingCancellationReason;
 use App\Enums\EventState;
 use App\Mail\EventConfirmationExpert;
 use App\Mail\EventConfirmationStudent;
+use App\Models\Booking;
 use App\Models\Course;
 use App\Models\Event;
 use App\Models\User;
@@ -63,4 +64,15 @@ it('writes legacy text to the expert', function () {
 		->toContain('Sali Kevin')
 		->toContain('Hiermit bestätigen wir die Durchführung des oben erwähnten Kurses')
 		->toContain('/de/experte/profil/kurs/veranstaltung/'.$this->event->uuid);
+});
+
+it('confirms a seat that cannot be billed without an invoice, and the rest with theirs', function () {
+	$odd = User::factory()->student()->create();
+	Booking::factory()->for($this->event)->withRental()->create(['user_id' => $odd->id, 'rental_fee' => '0.00']);
+
+	app(SetEventState::class)->execute($this->event->refresh(), EventState::Confirmed);
+
+	Mail::assertQueued(EventConfirmationStudent::class, 3);
+	Mail::assertQueued(EventConfirmationStudent::class, fn ($mail) => $mail->hasTo($odd->email) && $mail->invoice === null);
+	Mail::assertQueued(EventConfirmationStudent::class, fn ($mail) => $mail->hasTo($this->anna->email) && $mail->invoice !== null);
 });
