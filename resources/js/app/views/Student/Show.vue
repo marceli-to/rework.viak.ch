@@ -104,7 +104,7 @@ async function cancel(booking) {
 			<Collapsible expanded>
 				<template #title>Gebuchte Kurse<Badge v-if="page.booked.length" variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
 				<BookingRow v-for="booking in page.booked" :key="booking.uuid" :booking="booking">
-					<template #facts>
+					<template #badges>
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
 					</template>
 					<template #actions>
@@ -117,7 +117,7 @@ async function cancel(booking) {
 			<Collapsible>
 				<template #title>Absolvierte Kurse<Badge v-if="page.past.length" variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
 				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
-					<template #facts>
+					<template #badges>
 						<Badge v-if="booking.participated" variant="success">Teilgenommen</Badge>
 						<Badge v-else-if="booking.event.state === 'closed'">Nicht teilgenommen</Badge>
 					</template>
@@ -128,9 +128,11 @@ async function cancel(booking) {
 			<Collapsible v-if="page.cancelled.length">
 				<template #title>Annullierte Kurse<Badge v-if="page.cancelled.length" variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
 				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
-					<template #facts>
+					<template #badges>
 						<Badge variant="danger">Annulliert am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}</Badge>
-						<div v-if="booking.reason" class="mt-8">{{ booking.reason }}</div>
+					</template>
+					<template #facts>
+						<div v-if="booking.reason">{{ booking.reason }}</div>
 					</template>
 				</BookingRow>
 			</Collapsible>

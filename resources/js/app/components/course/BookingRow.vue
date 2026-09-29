@@ -9,7 +9,8 @@ import { longDate } from '@/support/format';
  * `span-4` columns. The course and its days on the left, where the date row
  * has only the days; the place, the expert and the state in the middle; what
  * is particular to this seat on the right, with the actions against the far
- * edge. *Details* opens the course date's page.
+ * edge. The `badges` slot sits beside the state badge. *Details* opens the
+ * course date's page.
  */
 defineProps({ booking: { type: Object, required: true } });
 </script>
@@ -28,7 +29,11 @@ defineProps({ booking: { type: Object, required: true } });
 				<div v-if="booking.event.online">Onlinekurs</div>
 				<div v-else>{{ booking.event.location }}</div>
 				<div v-if="booking.event.experts.length">mit {{ booking.event.experts.join(', ') }}</div>
-				<EventState :state="booking.event.state" />
+				<!-- The seat's own badges beside the date's state, on one line (Marcel, 2026-09-29). -->
+				<div class="flex flex-wrap gap-x-8">
+					<EventState :state="booking.event.state" />
+					<div v-if="$slots.badges" class="mt-4 flex flex-wrap gap-8"><slot name="badges" /></div>
+				</div>
 			</div>
 
 			<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
