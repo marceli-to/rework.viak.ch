@@ -98,6 +98,17 @@ it('notifies when a cancellation drops the course below its minimum', function (
 	);
 });
 
+it('says nothing when the office cancels the date itself', function () {
+	$bookings = Booking::factory()->for($this->event)->count(2)->create();
+	evaluate($this->event);
+
+	Events::fake([ParticipantThresholdCrossed::class]);
+	app(CancelBooking::class)->execute($bookings->first(), BookingCancellationReason::EventCancelled);
+
+	Events::assertNotDispatched(ParticipantThresholdCrossed::class);
+	expect($this->event->refresh()->participant_threshold)->toBe(ParticipantThreshold::BelowMinimum);
+});
+
 it('counts only seats that are still held', function () {
 	Booking::factory()->for($this->event)->count(2)->create();
 	Booking::factory()->for($this->event)->cancelled()->count(5)->create();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use App\Enums\BookingCancellationReason;
 use App\Events\BookingCancelled;
 use App\Events\BookingMade;
 use App\Events\ParticipantThresholdCrossed;
@@ -24,16 +25,22 @@ use App\Models\Event;
  * - two bookings in one cycle that jump over the maximum still notify;
  * - a listener that runs twice on the same booking notifies once;
  * - a cancellation that drops a course back below its minimum notifies, and
- *   re-reaching the minimum notifies again.
+ *   re-reaching the minimum notifies again;
+ * - **a seat given up because the office cancelled the date does not**
+ *   (`Open-Questions.md` #34, 2026-09-29): the office has just done it, and
+ *   legacy's cancel handler never told it either. The band is still recorded.
  */
 class NotifyParticipantThreshold
 {
 	public function handle(BookingMade|BookingCancelled $event): void
 	{
-		$this->evaluate($event->booking->event);
+		$this->evaluate(
+			$event->booking->event,
+			announce: $event->booking->cancellation_reason !== BookingCancellationReason::EventCancelled,
+		);
 	}
 
-	private function evaluate(Event $event): void
+	private function evaluate(Event $event, bool $announce): void
 	{
 		$was = $event->participant_threshold;
 		$now = $event->currentThreshold();
@@ -46,7 +53,7 @@ class NotifyParticipantThreshold
 
 		// Never on first evaluation. A ported event has no recorded band, and
 		// announcing thresholds crossed years ago is worse than saying nothing.
-		if ($was === null) {
+		if ($was === null || ! $announce) {
 			return;
 		}
 

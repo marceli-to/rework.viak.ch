@@ -215,8 +215,9 @@ moved with `Carbon::setTestNow()`, so the reminder does not wait ten days.
 *Min. Teilnehmerzahl unterschritten* for it. `CancelBookingsForEvent` goes
 through [[CancelBooking]], which announces `BookingCancelled`, and
 [[NotifyParticipantThreshold]] sees the band drop. Legacy's handler flagged
-the rows directly and never did. Noise rather than harm; **not changed,
-Marcel to decide** (`Open-Questions.md` #34).
+the rows directly and never did. **Fixed 2026-09-29 (Marcel,
+`Open-Questions.md` #34)**: a seat given up with the reason `EventCancelled`
+records the band and announces nothing.
 
 ### 4. Telescope, local only
 
