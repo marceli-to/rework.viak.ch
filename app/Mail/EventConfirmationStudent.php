@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Mail\Concerns\AttachesDocument;
 use App\Models\Booking;
 use App\Models\UserDocument;
 use App\Support\SiteUrl;
@@ -21,6 +22,8 @@ use Illuminate\Mail\Mailables\Envelope;
  */
 class EventConfirmationStudent extends VIAKMail
 {
+	use AttachesDocument;
+
 	public function __construct(
 		public readonly Booking $booking,
 		public readonly ?UserDocument $invoice,
@@ -48,7 +51,6 @@ class EventConfirmationStudent extends VIAKMail
 			'experts' => EventFacts::experts($event),
 			'place' => EventFacts::place($event),
 			'fee' => EventFacts::money($this->booking->netFee()),
-			'invoice' => $invoice,
 			'payment' => $invoice ? url(SiteUrl::invoicePayment($invoice->uuid, 'de')) : null,
 			'portal' => url(SiteUrl::studentPortal('de')),
 		]);
@@ -57,9 +59,7 @@ class EventConfirmationStudent extends VIAKMail
 	/** @return array<int, Attachment> */
 	public function attachments(): array
 	{
-		return $this->invoice
-			? [Attachment::fromStorageDisk('documents', $this->invoice->path())->as($this->invoice->filename)->withMime('application/pdf')]
-			: [];
+		return $this->attachDocument($this->invoice);
 	}
 
 	private function course(): string

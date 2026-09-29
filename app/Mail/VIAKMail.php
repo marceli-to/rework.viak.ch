@@ -19,6 +19,10 @@ use Illuminate\Queue\SerializesModels;
  * - The sender is `config('mail.from')`, which Laravel applies to every mail;
  *   legacy's 24 classes each read `env()` for it, which a cached config breaks.
  * - Outside production every one goes to the catch-all ([[AppServiceProvider]]).
+ *
+ * **A public property reaches the view under its own name, and wins** over
+ * what `content()` passes: a formatted `amount` was overwritten by the raw one.
+ * A view key that formats a property takes another name (`cost`).
  */
 abstract class VIAKMail extends Mailable implements ShouldQueue
 {
