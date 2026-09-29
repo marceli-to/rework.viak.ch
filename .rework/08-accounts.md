@@ -588,8 +588,8 @@ Three rules, all cheap:
 3. **Do not trust `created_at` as the document date.** The duplicates share a
    file but not a timestamp.
 
-Worth fixing in the legacy tree too, since it is two `UPDATE`s and it is customer
-facing — see `Todo.md`.
+The live site is not repaired (Marcel, 2026-09-29); the port's normalising is
+the fix, at cutover. See `Todo.md`.
 
 #### Orphans, for completeness
 
@@ -740,8 +740,9 @@ orphans by construction, not by drift.
 
 ## Open questions
 
-1. **The `/expert/finish` vulnerability** — needs fixing on the live site now,
-   independently of this chunk. Ours to raise, not a client decision.
+1. ~~**The `/expert/finish` vulnerability** — needs fixing on the live site now~~
+   — **settled 2026-09-29: the live site is not fixed.** The rework's flow does
+   not have it; the path closes at cutover (`Todo.md`).
 2. **Should an admin-initiated cancellation charge the penalty?** Chunk 06 needs
    a fourth `CancellationReason` either way. For Marcel.
 3. ~~Medialibrary or `marceli-to/image-cache` for the media pipeline?~~ —

@@ -119,9 +119,10 @@ trusted.
 
 ## What to do
 
-1. **On the live site, soon:** `ALTER TABLE invoices MODIFY due_at TIMESTAMP
-   NULL DEFAULT NULL;`. Stops the bleeding. The deadlines already lost are not
-   recoverable from this table.
+1. ~~**On the live site, soon:** `ALTER TABLE invoices MODIFY due_at TIMESTAMP
+   NULL DEFAULT NULL;`~~ — **dropped 2026-09-29: the live site is not fixed.**
+   Deadlines keep being lost there until cutover; they are not recoverable from
+   this table either way.
 2. **In the rework:** ~~declare `due_at` explicitly nullable, and add a test that
    updating an unrelated invoice column leaves `due_at` alone~~ — **done
    2026-09-17.** It is a `date` column, nullable, and MySQL's implicit rule
@@ -137,7 +138,7 @@ trusted.
 Items 2 and 3 are **owed at the migration** — the fix has to be verified on the
 cutover database, and the open/overdue invoices need a deliberate `due_at` in the
 port rather than the today's-date value they will otherwise carry across. Tracked
-in `Todo.md`. Item 1 stands on its own and is worth doing on the live site now.
+in `Todo.md`.
 
 ## An invoice is created on confirmation, not at checkout — 2026-09-17
 

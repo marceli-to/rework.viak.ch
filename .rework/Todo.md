@@ -146,7 +146,7 @@ or not the migration is close.
 
 ---
 
-## Fix `/expert/finish` on the live site — do not wait for the rework
+## `/expert/finish` is an account-takeover path — the rework must not repeat it
 
 **Found 2026-09-18 while scoping `08-accounts.md`, and confirmed against
 production.** `POST /expert/finish` is unauthenticated, takes a **user uuid from
@@ -159,39 +159,35 @@ User uuids are **public**: `/de/experte/{slug}/{user:uuid}` is a public route an
 the experts index links to every one of them. At least one exposed account holds
 an admin role (`02-courses-events.md`, users 501 and 2).
 
-The fix is small and belongs in the legacy tree now: resolve the user **from the
-token** rather than from the request body, expire the token, and drop the uuid
-from the payload. Laravel's signed URLs or Fortify's reset flow both do this
-correctly — which is what the rework uses, so this is not work that gets thrown
-away.
+**Not fixed on the live site** (Marcel, 2026-09-29: the live site is not
+touched). The rework resolves the user **from the token**, never from the request
+body, through Fortify's reset flow and signed URLs, so the path closes at
+cutover. Until then it stays open on the live site.
 
 Four related authorization gaps, none as urgent, are recorded in
 `08-accounts.md`: unconfirmed email and password changes, world-readable
 generated PDFs, any student reading or posting to any event's message thread, and
 any expert downloading any participant list.
 
-**One of those is worth doing at the same time as the fix above**, because it
-needs no code: `storage/app/public/files/` holds **239 loose participant-list
-PDFs**, 27 MB of names and contact details, written by
+**One of those the rework drops at cutover by not porting it**:
+`storage/app/public/files/` holds **239 loose participant-list PDFs**, 27 MB of names and contact details, written by
 `DocumentController::participantsList`, recorded in no table, deleted by nothing,
-and served publicly through the `public/storage` symlink. They can be removed
-without touching anything that references them, because nothing does.
+and served publicly through the `public/storage` symlink. Nothing references them,
+so the port leaves them behind.
 
-## Still outstanding on the live site — read first
+## Broken on the live site, and staying so until cutover
 
-Two items below need doing in the **legacy** tree, not this one, and neither is
-waiting on the rework:
+**The live site is not fixed** (Marcel, 2026-09-29). These are recorded so the
+rework does not repeat them; each goes away at cutover:
 
-1. **`/expert/finish`** — an unauthenticated account-takeover path. See below.
-2. **The 2023 participation confirmations** — 95 students with 404ing download
+1. **`/expert/finish`**, an unauthenticated account-takeover path. See above.
+2. **The 2023 participation confirmations**, 95 students with 404ing download
    links. See below.
+3. **294 loose participant-list PDFs** in `storage/app/public/files/`, 27 MB of
+   names and contact details served through the `public/storage` symlink and
+   referenced by no database row. Not ported.
 
-A third is housekeeping: **294 loose participant-list PDFs** sit in
-`storage/app/public/files/`, 27 MB of names and contact details served through
-the `public/storage` symlink and referenced by no database row. They can be
-deleted without breaking anything, because nothing points at them.
-
-## Repair the 2023 participation confirmations — two UPDATEs, customer facing
+## The 2023 participation confirmations — repaired by the port, not on the live site
 
 **Found 2026-09-18** reconciling `user_documents` against a production storage
 snapshot. Both bugs are confined to 2023 `PARTICIPATION_CONFIRMATION` rows;
@@ -215,9 +211,8 @@ queue re-running `EventClosedStudent`, whose constructor generates the PDF and
 inserts the row as a side effect.
 
 The rework's port normalises the uri and deduplicates on the file rather than the
-row (`08-accounts.md`), so this is fixed at cutover regardless — but it is two
-statements and two years of broken links, so it is worth doing in the legacy tree
-now.
+row (`08-accounts.md`), so this is fixed at cutover. The live site is not
+repaired.
 
 ## SEO: redirects, canonical, sitemap
 
@@ -432,7 +427,7 @@ items that are ours rather than the client's.
   `bmx5jih`).
 - **Legacy quick win:** `head.blade.php` loads Typekit kit `kcs4ept`
   (neuzeit-grotesk), which no stylesheet references — a dead render-blocking
-  request on every page. Safe to delete from the live site.
+  request on every page. The rework does not load it; the live site keeps it.
 - **Legacy bug: the app cannot run `config:cache`.** 53 runtime `env()` calls in
   `app/` and `routes/`. Every one of the 24 mailables does
   `->from(env('MAIL_FROM_ADDRESS'), env('APP_NAME'))`; `Tasks/Job`,

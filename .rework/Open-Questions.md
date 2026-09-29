@@ -9,10 +9,10 @@ settled.
 and none of these held it up. Updated 2026-09-24, with the 2026-09-23 mockup
 review (22–24 are from it), and 2026-09-29 with the licence catalogue (33–39).
 
-**One item is not a question and is not waiting on anyone:** the
-`/expert/finish` account-takeover path on the live site, found 2026-09-18 while
-scoping `08-accounts.md`. It is written up in `Todo.md` and needs fixing in the
-legacy tree now.
+**The live site is not fixed** (Marcel, 2026-09-29). What the rework finds in
+legacy, including the `/expert/finish` account-takeover path found 2026-09-18
+(`Todo.md`), is recorded as something the rework must not repeat, and goes away
+at cutover. None of it is a question here.
 
 `06-bookings.md` was scoped on 2026-09-17, after the legacy facade map showed
 five facades with nowhere to land. It raised four client questions and **all four
@@ -37,7 +37,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~14~~ | ~~Should an admin cancelling for a student charge the penalty?~~ — **answered 2026-09-24: the admin decides, per cancellation.** See `07-dashboard.md` | — | — |
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | ~~16~~ | ~~Is a user with financial history ever deleted, or only deactivated?~~ — **answered 2026-09-24: deactivated.** See `07-dashboard.md` | — | — |
-| ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The only thing left to ask is whether the 2023 participation confirmations should have been repaired in the legacy tree too (`Todo.md`) | — | — |
+| ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The legacy tree is not repaired (2026-09-29) | — | — |
 | 18 | Do the Elfsight review widgets come across, get replaced, or go? — **mostly answered 2026-09-23: replaced** by a `Testimonial` backend module. Left: does the course page's column move to it too? | Marcel, then the client | The Kundenmeinungen column on the course page |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
