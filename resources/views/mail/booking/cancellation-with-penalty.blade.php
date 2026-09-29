@@ -1,16 +1,17 @@
 {{--
 	*Annullationsbestätigung* with the penalty ([[BookingCancelledWithPenalty]]).
 	../viak.ch/resources/views/mail/booking/cancellation-with-penalty.blade.php,
-	its text as it is, without the discount-code branch (see
-	`cancellation.blade.php`): paid means nothing more to do, unpaid means the
-	invoice is attached.
+	its text as it is: paid in full with money left over, a code for it
+	([[CancelBooking]]); paid, nothing more to do; unpaid, the invoice attached.
 --}}
 @component('mail::message')
 <h1>Annullationsbestätigung – {{ $course }}</h1>
 <p>Guten Tag {{ $booking->user->name }}</p>
 <p>Wir haben Deine Annullation für den Kurs «{{ $course }}» erhalten.</p>
 <p>Die kurzfristige Annullation hat gemäss unseren AGB Kosten zur Folge. Diese belaufen sich auf CHF {{ $cost }}.– ({{ $percent }}% der Kurskosten).</p>
-@if ($paid)
+@if ($paid && $credit)
+<p>Da die gesamte Rechnung bereits bezahlt ist, haben wir Dir einen Rabatt-Code für den zuviel bezahlten Betrag ausgestellt. Dieser kann bei der nächsten Buchung angewendet werden und lautet: <nobr><strong>{{ $credit->code }}</strong></nobr>. Falls du lieber eine Rückerstattung des zuviel bezahlten Betrages möchtest, dann nimm bitte mit uns Kontakt auf.</p>
+@elseif ($paid)
 <p>Da die Rechnung bereits bezahlt ist, musst Du nichts weiter unternehmen.</p>
 @else
 <p>Die entsprechende Rechnung liegt diesem Mail bei.</p>

@@ -65,7 +65,7 @@ in a scenario (below).
 | | `RentalAddedInfoAdmin` | admin, if rental | — | Buchung Mietcomputer für *course* | **Built** |
 | | `EventConfirmationStudent` | student, **if event already confirmed** | invoice (+ rental invoice) | Kursbestätigung – *course* | **Built**: the booking raises the invoice (it did not until b6c866e), [[SendCourseConfirmation]] renders its PDF, the mail attaches it. One invoice with a rental line, so one PDF |
 | | `EventMessageStudent` × every earlier message | student, late booker | — (files linked in the body) | the message's subject | **Built**, one mail each, recorded as recipients; files link to the gated download |
-| Student cancels, no penalty | `BookingCancelled` | student | — | Annullationsbestätigung – *course* | **Built 2026-09-29** as `BookingCancelledStudent` ([[SendCancellationMails]]); legacy's discount-code paragraph left out, refunds are by hand |
+| Student cancels, no penalty | `BookingCancelled` | student | — | Annullationsbestätigung – *course* | **Built 2026-09-29** as `BookingCancelledStudent` ([[SendCancellationMails]]); names the credit code for a paid invoice |
 | | `BookingCancelledInfoAdmin` | admin | — | Abmeldung für *course* | **Built** |
 | Student cancels, with penalty | `BookingCancelledWithPenalty` | student | penalty invoice | Annullationsbestätigung – *course* | **Built**: amount and rate read on the cancellation day; the invoice attached unless paid ([[SendCancellationConfirmation]]) |
 | | `BookingCancelledInfoAdmin` | admin | — | Abmeldung für *course* | **Built** |
@@ -220,8 +220,10 @@ guessing. Not installed on production.
   the commit. **A cancellation because VIAK called the course off sends none of
   the cancellation mails**; *Kursabsage* (the event-cancel row) tells them.
   **Legacy's cancellation mails issued a discount code for an invoice already
-  paid, while rendering.** Not ported: refunds are by hand (Marcel,
-  2026-09-17), so the mails promise no code.
+  paid, while rendering.** First left out; **back since 2026-09-29 (Marcel)**:
+  [[CancelBooking]] issues it ([[IssueCreditCode]]: the paid amount less any
+  cost, fixed, a year, **good once** where legacy's was reusable for the year),
+  and the three mails name it with legacy's offer of a refund.
   Checked in MailHog from real ported bookings: the look is legacy's, the
   invoice PDF is attached.
 - **The course confirmation's *Zahlung per Kreditkarte*** goes to a placeholder

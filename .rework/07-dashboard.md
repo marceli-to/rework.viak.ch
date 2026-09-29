@@ -835,6 +835,25 @@ invoices and must tell participants; an admin booking must confirm itself to the
 student. Built before mail exists, those buttons would do half their job
 silently. Steps 1–6 do not depend on it.
 
+## Decided — 2026-09-29
+
+Marcel, on the choices step 6 and the mails made without asking:
+
+- **Roles stay on both person forms**, and any admin may change anyone's
+  roles, Admin included, except their own Admin role. The whole dashboard is
+  admin-only; nobody changes roles from the portals.
+- **The expert delete rule stays**: only someone nothing points at is deleted,
+  fully, so the address is free again. Anyone else is switched off.
+- **No automatic reactivation.** A deactivated address that tries to register
+  again is told to get in touch; an admin reactivates it.
+- **An address an admin changes must be confirmed too**, like a person's own
+  change: the *Bestätigung* mail goes out and the address is unverified until
+  clicked.
+- **Settings keep refusing to delete what is in use.**
+- **Credit codes come back** (`10-mail.md`): a paid invoice on a cancelled
+  seat becomes a discount code, as legacy did, named in the mail with the offer
+  of a refund instead.
+
 ## Decided — 2026-09-24
 
 Marcel, on the questions this map raised:

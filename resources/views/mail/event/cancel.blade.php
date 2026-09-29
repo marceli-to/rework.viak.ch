@@ -1,9 +1,8 @@
 {{--
 	*Kursabsage* to each student who held a seat, and to each expert
 	([[EventCancelStudent]], [[EventCancelExpert]]).
-	../viak.ch/resources/views/mail/event/cancel.blade.php, its text as it is,
-	without the discount-code paragraph: refunds are by hand (Marcel,
-	2026-09-17, [[CancelBooking]]).
+	../viak.ch/resources/views/mail/event/cancel.blade.php, its text as it is;
+	the code for an invoice already paid is issued by [[CancelBooking]].
 --}}
 @component('mail::message')
 <h1>Kursabsage – {{ $course }}</h1>
@@ -29,6 +28,9 @@
   </tr>
 </table>
 <p>Deine Buchung für diesen Kurs wurde automatisch annulliert.</p>
+@if ($credit)
+<p>Da die Rechnung bereits bezahlt ist, haben wir Dir einen Rabatt-Code für den bezahlten Betrag ausgestellt. Dieser kann bei der nächsten Buchung angewendet werden und lautet: <nobr><strong>{{ $credit->code }}</strong></nobr>. Falls du lieber eine Rückerstattung des Betrages möchtest, dann nimm bitte mit uns Kontakt auf.</p>
+@endif
 @if (count($nextDates))
 <p>Es würde uns natürlich freuen, wenn Du Dich für die nächste Durchführung dieses Kurses erneut anmelden würdest. Hier die nächsten Daten:</p>
 <ul>

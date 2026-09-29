@@ -11,6 +11,7 @@ use App\Enums\CancellationReason;
 use App\Events\BookingCancelled;
 use App\Models\Booking;
 use App\Models\Invoice;
+use App\Support\CancellationPenalty;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -47,6 +48,8 @@ class CancelBooking
 	public function __construct(
 		private readonly RaiseCancellationPenalty $penalty,
 		private readonly CancelInvoice $cancelInvoice,
+		private readonly CancellationPenalty $rules,
+		private readonly IssueCreditCode $credit,
 	) {}
 
 	/**
@@ -80,11 +83,42 @@ class CancelBooking
 
 		if ($penalty === null) {
 			$this->withdrawUnpaidInvoice($booking);
+			$this->creditPaidInvoice($booking, $reason);
 		}
 
 		event(new BookingCancelled($booking->refresh()));
 
 		return $penalty;
+	}
+
+	/**
+	 * **Money already paid comes back as a code** (Marcel, 2026-09-29; legacy's
+	 * behaviour): a paid invoice on the seat, less what the cancellation still
+	 * costs, becomes a discount code for the next booking ([[IssueCreditCode]]).
+	 * The mail names it and offers a refund instead.
+	 *
+	 * - Free cancellation (early, or VIAK called the course off): the whole
+	 *   paid amount.
+	 * - Late, and the paid invoice already covers the cost: what was paid over
+	 *   it — legacy's 50 % case. Inside the 100 % window nothing is left.
+	 *
+	 * Reached only when no penalty invoice was raised: a raised one means the
+	 * paid invoice did not cover the cost, and nothing was overpaid.
+	 */
+	private function creditPaidInvoice(Booking $booking, BookingCancellationReason $reason): void
+	{
+		$paid = $booking->invoice();
+
+		if ($paid === null || ! $paid->isPaid()) {
+			return;
+		}
+
+		$cost = $reason->chargesPenalty() ? $this->rules->amount($booking, $booking->cancelled_at) : '0.00';
+		$left = bcsub((string) $paid->grand_total, $cost, 2);
+
+		if (bccomp($left, '0.00', 2) > 0) {
+			$this->credit->execute($booking, $left);
+		}
 	}
 
 	/**
@@ -97,10 +131,8 @@ class CancelBooking
 	 * because of cancelled booking".
 	 *
 	 * **Paid invoices are left alone.** Money that has arrived is not withdrawn
-	 * by cancelling the document it arrived against; refunding is a human act
-	 * with a human record, and Marcel decided on 2026-09-17 that VIAK handles
-	 * those by hand rather than through a credit-note flow that has never once
-	 * been needed.
+	 * by cancelling the document it arrived against; it comes back as a credit
+	 * code instead ([[creditPaidInvoice]]), or as a refund if the student asks.
 	 *
 	 * A penalty run that *replaced* the invoice never gets here, because it
 	 * returns the replacement.

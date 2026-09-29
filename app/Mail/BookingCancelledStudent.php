@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Models\Booking;
+use App\Models\DiscountCode;
 use App\Support\SiteUrl;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -29,6 +30,8 @@ class BookingCancelledStudent extends VIAKMail
 			'course' => $this->course(),
 			'dates' => EventFacts::dates($this->booking->event),
 			'courses' => url(SiteUrl::courses('de')),
+			// Money already paid, as a code ([[IssueCreditCode]]).
+			'credit' => DiscountCode::query()->where('booking_id', $this->booking->getKey())->first(),
 		]);
 	}
 

@@ -6,6 +6,7 @@ namespace App\Mail;
 
 use App\Mail\Concerns\AttachesDocument;
 use App\Models\Booking;
+use App\Models\DiscountCode;
 use App\Models\UserDocument;
 use App\Support\SiteUrl;
 use Illuminate\Mail\Attachment;
@@ -45,6 +46,8 @@ class BookingCancelledWithPenalty extends VIAKMail
 			'cost' => EventFacts::money($this->amount),
 			'percent' => $this->percent,
 			'paid' => $this->paid,
+			// What was paid over the cost, as a code ([[IssueCreditCode]]).
+			'credit' => DiscountCode::query()->where('booking_id', $this->booking->getKey())->first(),
 			'courses' => url(SiteUrl::courses('de')),
 		]);
 	}

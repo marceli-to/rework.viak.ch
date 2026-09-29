@@ -9,6 +9,7 @@ use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,7 +19,7 @@ class DiscountCode extends Model
 	use HasUuid;
 	use SoftDeletes;
 
-	protected $fillable = ['code', 'type', 'amount', 'usage_limit', 'valid_from', 'valid_to', 'remarks'];
+	protected $fillable = ['code', 'type', 'amount', 'usage_limit', 'valid_from', 'valid_to', 'remarks', 'booking_id'];
 
 	protected function casts(): array
 	{
@@ -29,6 +30,12 @@ class DiscountCode extends Model
 			'valid_from' => 'date',
 			'valid_to' => 'date',
 		];
+	}
+
+	/** The cancelled seat this code credits, if it is a credit ([[IssueCreditCode]]). */
+	public function creditFor(): BelongsTo
+	{
+		return $this->belongsTo(Booking::class, 'booking_id');
 	}
 
 	public function bookings(): HasMany

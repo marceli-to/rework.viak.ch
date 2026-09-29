@@ -9,6 +9,9 @@
 <h1>Annullationsbestätigung – {{ $course }}</h1>
 <p>Guten Tag {{ $booking->user->name }}</p>
 <p>Wir haben Deine Annullation für den Kurs «{{ $course }}» erhalten.</p>
+@if ($credit)
+<p>Da die Rechnung bereits bezahlt ist, haben wir Dir einen Rabatt-Code für den bezahlten Betrag ausgestellt. Dieser kann bei der nächsten Buchung angewendet werden und lautet: <nobr><strong>{{ $credit->code }}</strong></nobr>. Falls du lieber eine Rückerstattung des Betrages möchtest, dann nimm bitte mit uns Kontakt auf.</p>
+@endif
 <table class="content-table" cellpadding="0" cellspacing="0">
   <tr>
     <td width="120">Buchung</td>
