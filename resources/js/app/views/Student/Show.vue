@@ -105,7 +105,6 @@ async function cancel(booking) {
 				<template #title>Gebuchte Kurse<Badge v-if="page.booked.length" variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
 				<BookingRow v-for="booking in page.booked" :key="booking.uuid" :booking="booking">
 					<template #badges>
-						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
 					</template>
 					<template #actions>
