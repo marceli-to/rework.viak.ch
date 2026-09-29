@@ -300,6 +300,13 @@ class PortUsers extends Command
 		$events = Event::withTrashed()->pluck('id', 'uuid');
 		$legacyEvents = $legacy->table('events')->pluck('uuid', 'id');
 
+		// Attendance: legacy's `hasParticipated` flag, ticked by hand on its
+		// event page, carried as the time it was ticked ([[10-mail]]).
+		$participated = $legacy->table('flags')
+			->where('name', 'hasParticipated')
+			->where('flaggable_type', 'App\\Models\\Booking')
+			->pluck('created_at', 'flaggable_id');
+
 		foreach ($legacy->table('bookings')->whereNull('deleted_at')->orderBy('id')->get() as $row) {
 			$eventUuid = $legacyEvents[$row->event_id] ?? null;
 			$eventId = $eventUuid === null ? null : ($events[$eventUuid] ?? null);
@@ -347,6 +354,7 @@ class PortUsers extends Command
 				'invoice_address' => LegacyInvoiceAddress::parse($row->invoice_address),
 				'booked_at' => $row->booked_at,
 				'cancelled_at' => $row->cancelled_at,
+				'participated_at' => $participated[$row->id] ?? null,
 			]);
 		}
 	}
@@ -402,6 +410,13 @@ class PortUsers extends Command
 			// count them.
 			'discount_codes' => [DiscountCode::withTrashed()->count(), $legacy->table('discount_codes')->count()],
 			'bookings' => [Booking::count(), $legacy->table('bookings')->whereNull('deleted_at')->count()],
+			// Attendance ticks on ported bookings ([[10-mail]]); 439 on the
+			// 2026-09-11 snapshot.
+			'bookings attended' => [
+				Booking::whereNotNull('participated_at')->count(),
+				$legacy->table('flags')->where('name', 'hasParticipated')->where('flaggable_type', 'App\\Models\\Booking')
+					->whereIn('flaggable_id', $legacy->table('bookings')->whereNull('deleted_at')->select('id'))->count(),
+			],
 		] as $table => [$after, $before]) {
 			$skipped = $before - $after;
 			$rows[] = [

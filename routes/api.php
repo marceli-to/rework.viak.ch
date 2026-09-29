@@ -147,5 +147,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('events/{event}', [Admin\EventController::class, 'show']);
 		Route::put('events/{event}', [Admin\EventController::class, 'update']);
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
+		Route::get('events/{event}/page', [Admin\EventPageController::class, 'show']);
+		Route::patch('bookings/{booking}/participation', [Admin\EventPageController::class, 'participation']);
 		Route::delete('events/{event}', [Admin\EventController::class, 'destroy']);
 	});

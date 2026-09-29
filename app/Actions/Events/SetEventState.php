@@ -7,6 +7,7 @@ namespace App\Actions\Events;
 use App\Actions\Bookings\CancelBookingsForEvent;
 use App\Enums\EventState;
 use App\Events\EventCancelled;
+use App\Events\EventClosed;
 use App\Events\EventConfirmed;
 use App\Models\Event;
 use RuntimeException;
@@ -47,6 +48,7 @@ class SetEventState
 
 		$wasConfirmed = $event->state === EventState::Confirmed;
 		$wasCancelled = $event->state === EventState::Cancelled;
+		$wasClosed = $event->state === EventState::Closed;
 
 		$event->update($attributes);
 		$event->refresh();
@@ -59,6 +61,12 @@ class SetEventState
 		// from the other side ([[RaiseInvoiceForBooking]]).
 		if ($state === EventState::Confirmed && ! $wasConfirmed) {
 			EventConfirmed::dispatch($event);
+		}
+
+		// Once, on the way in: a closed date confirms its attendees, and
+		// closing it again must not send a second certificate ([[SendClosingMails]]).
+		if ($state === EventState::Closed && ! $wasClosed) {
+			EventClosed::dispatch($event);
 		}
 
 		// Called directly, never dispatched. Students holding seats on a course

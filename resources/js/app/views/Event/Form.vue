@@ -16,9 +16,9 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * delete box: green *Veranstaltung bestätigen*, orange *Veranstaltung
  * absagen*, each behind a confirm, turning into *bestätigt am …* /
  * *abgesagt am …* once done. Each mails the participants and experts
- * ([[SendConfirmationMails]], [[SendEventCancelMails]]). *Abschliessen* is
- * not here yet: its participation confirmation needs attendance, which the
- * rework does not record (`10-mail.md`).
+ * ([[SendConfirmationMails]], [[SendEventCancelMails]]). Once the date has
+ * run, green *Veranstaltung abschliessen*: the seats ticked as attended on
+ * the date's page get the participation confirmation ([[SendClosingMails]]).
  */
 const route = useRoute();
 const save = (uuid, form) => saveEvent(uuid, form, route.params.course);
@@ -36,8 +36,8 @@ async function act(meta, patchMeta, state, question) {
 	try {
 		await setEventState(meta.uuid, state);
 		const now = await fetchEvent(meta.uuid);
-		patchMeta({ state: now.state, confirmed_at: now.confirmed_at, cancelled_at: now.cancelled_at });
-		toast(state === 'confirmed' ? 'Veranstaltung bestätigt' : 'Veranstaltung abgesagt');
+		patchMeta({ state: now.state, confirmed_at: now.confirmed_at, cancelled_at: now.cancelled_at, closed_at: now.closed_at });
+		toast({ confirmed: 'Veranstaltung bestätigt', cancelled: 'Veranstaltung abgesagt', closed: 'Veranstaltung abgeschlossen' }[state]);
 	} catch (problem) {
 		toast(problem.message, 'error');
 	} finally {
@@ -69,6 +69,23 @@ async function act(meta, patchMeta, state, question) {
 			<ActionBox v-if="meta.state === 'cancelled'" tone="warning">
 				<h2 class="mb-8 font-bold sm:mb-16">Veranstaltung abgesagt</h2>
 				<p>Diese Veranstaltung wurde am {{ meta.cancelled_at }} abgesagt.</p>
+			</ActionBox>
+
+			<!-- Legacy's closing box, once the date has run. Its text said the
+			     experts are told as well; legacy's handler never mailed them,
+			     so it says what happens. -->
+			<ActionBox v-else-if="meta.is_past" tone="success">
+				<template v-if="meta.state === 'closed'">
+					<h2 class="mb-8 font-bold sm:mb-16">Veranstaltung abgeschlossen</h2>
+					<p>Diese Veranstaltung wurde am {{ meta.closed_at }} abgeschlossen.</p>
+				</template>
+				<template v-else>
+					<h2 class="mb-8 font-bold sm:mb-16">Veranstaltung abschliessen</h2>
+					<p class="mb-12 lg:mb-16">Mit dieser Aktion wird die Veranstaltung abgeschlossen. Wer auf der Seite der Veranstaltung als teilgenommen markiert ist, erhält per E-Mail eine Teilnahmebestätigung.</p>
+					<div class="mt-12 sm:mt-24">
+						<Button variant="success" class="w-full" :disabled="busy" @click="act(meta, patchMeta, 'closed', 'Bitte «Veranstaltung schliessen» bestätigen!')">Schliessen</Button>
+					</div>
+				</template>
 			</ActionBox>
 
 			<template v-else-if="!meta.is_past">

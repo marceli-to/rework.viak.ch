@@ -80,7 +80,7 @@ in a scenario (below).
 | | `EventConfirmationExpert` | each expert | — | Bestätigung – *course* | **Built** |
 | Event cancelled | `EventCancelStudent` | each student | — | Kursabsage – *course* | **Built**: `SetEventState` now announces [[EventCancelled]] with the seats given up; the next two *published* dates offered |
 | | `EventCancelExpert` | each expert | — | Kursabsage – *course* | **Built** |
-| Event closed | `EventClosedStudent` | each student who **participated** | participation confirmation | Teilnahmebestätigung – *course* | **Not built: needs attendance.** Legacy sends it only to seats ticked `hasParticipated` on the dashboard's event page (439 of 527 active seats are). The rework ported neither flag and has no way to tick one. Waits on a decision (below) |
+| Event closed | `EventClosedStudent` | each student who **participated** | participation confirmation | Teilnahmebestätigung – *course* | **Built 2026-09-29** ([[SendClosingMails]]): only seats ticked as attended (`bookings.participated_at`, ported from `hasParticipated`, 439 ticks), the PDF made by `RenderParticipationConfirmation` before the mail attaches it |
 | Expert posts a message | `EventMessageStudent` | each booked student | — (files linked in the body, `storage/uploads/…`) | the message's subject | **Built 2026-09-29**: `PostMessage` announces [[MessagePosted]], every frozen recipient is mailed; files link to the gated download |
 | | `EventMessageExpert` | the author, if *selfcopy* | — (files linked) | ″ | **Built** |
 | Invoice paid | `InvoicePaidConfirmation` | student | — | Zahlungsbestätigung Rechnung *no.* | **Waits for the card-payment page.** Legacy fires `InvoicePaid` only from its Stripe `PaymentController` (*Bezahlt per Kreditkarte*), never for a bank payment the books report. Built with that page (`Todo.md`, #28) |
@@ -91,14 +91,11 @@ in a scenario (below).
 
 ### Open, 2026-09-29
 
-- **Attendance, for *Event closed*: decided 2026-09-29 (Marcel), non-participants
-  get no confirmation, so attendance is recorded; being built.** Legacy's participation confirmation
-  goes only to seats an admin or expert ticked as attended
-  (`hasParticipated`, on the event page, `POST /booking/participation`).
-  Nothing in the rework records attendance. Options: a `bookings.attended_at`
-  column, ported from the flag, ticked on the event page (step 7) and read by
-  the close mail; or confirm every seat still booked when the course closes.
-  Marcel's call. *Abschliessen* on the course-date form waits on it too.
+- ~~**Attendance, for *Event closed*.**~~ **Decided and built 2026-09-29
+  (Marcel): non-participants get no confirmation.** `bookings.participated_at`,
+  ported from legacy's `hasParticipated` flag with the time it was ticked;
+  ticked on the course date's page (dashboard); closing sends the
+  confirmation to ticked seats only, once.
 - ~~**The password-reset mail is Laravel's stock one, in English, on legacy
   too.**~~ **Translated 2026-09-29 (Marcel)**: `PasswordReset`, VIAK's own German
   mail in the verification mail's words, sent from

@@ -33,7 +33,7 @@ class Booking extends Model
 	protected $fillable = [
 		'number', 'event_id', 'user_id', 'checkout_id', 'course_fee',
 		'discount_code_id', 'discount_amount', 'has_rental', 'rental_fee',
-		'invoice_address', 'booked_at', 'cancelled_at', 'cancellation_reason',
+		'invoice_address', 'booked_at', 'cancelled_at', 'cancellation_reason', 'participated_at',
 	];
 
 	protected function casts(): array
@@ -46,6 +46,7 @@ class Booking extends Model
 			'invoice_address' => 'array',
 			'booked_at' => 'datetime',
 			'cancelled_at' => 'datetime',
+			'participated_at' => 'datetime',
 			'cancellation_reason' => BookingCancellationReason::class,
 		];
 	}
@@ -76,6 +77,15 @@ class Booking extends Model
 	public function checkout(): BelongsTo
 	{
 		return $this->belongsTo(Checkout::class);
+	}
+
+	/**
+	 * Ticked as attended on the course date's page. Only such a seat gets the
+	 * participation confirmation when the course closes ([[SendClosingMails]]).
+	 */
+	public function hasParticipated(): bool
+	{
+		return $this->participated_at !== null;
 	}
 
 	public function isCancelled(): bool

@@ -53,6 +53,7 @@ class EventFormResource extends JsonResource
 			// *bestätigt am …*, *abgesagt am …* on the form's state boxes.
 			'confirmed_at' => $this->confirmed_at?->format('d.m.Y'),
 			'cancelled_at' => $this->cancelled_at?->format('d.m.Y'),
+			'closed_at' => $this->closed_at?->format('d.m.Y'),
 			'is_past' => $this->date->lt(today()),
 			// Cancelled ones too: they carry invoices, as a course's do.
 			'bookings' => $this->bookings()->count(),

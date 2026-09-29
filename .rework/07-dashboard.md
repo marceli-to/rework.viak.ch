@@ -503,7 +503,8 @@ against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
   Absagen built 2026-09-29** with their mails: legacy's green and orange boxes
   between *Speichern* and the delete box, each behind a confirm, turning into
   *bestätigt am …* / *abgesagt am …* (`ActionBox`, the `actions` slot on
-  [[ResourceForm]]). *Abschliessen* waits on attendance (`10-mail.md`, *Open*).
+  [[ResourceForm]]). **Abschliessen too**, once the date has run, with its
+  text corrected: legacy's said the experts are told, and they never were.
 - Found on the way: the dev expert and dev admin had no uuid (the seeder
   found their rows, so `HasUuid`'s create hook never ran), so the dev expert
   could not be ticked. The seeder fills it now.
@@ -731,6 +732,22 @@ collapsible titles (*Aktive Studenten 570*, *Tags 21*), where a term is used
 (*13 Kurse*), a discount code's use (*1 von 1 eingelöst*), and on *Kurse* the
 participants and laptops (*3 / 8 Teilnehmer*, green when full, as the text
 was). A sentence in a form note or a danger zone keeps its number inline.
+
+## Step 7 — the course date's page, begun 2026-09-29
+
+`/dashboard/kursdatum/{uuid}`, legacy's `course/event/Show.vue`, built **as far
+as attendance needs** (Marcel, 2026-09-29: non-participants get no
+participation confirmation, so attendance has to be recorded):
+
+- the course in the aside, *Informationen* (the date's row, as on *Kurse*),
+  and *Teilnehmer*: name, city, firm (or the one billed), e-mail, *Mietcomputer*,
+  and legacy's tick under *Teilgenommen?*. Once the date is closed the tick
+  is *Ja* / *Nein*; a called-off date shows neither.
+- the tick is `PATCH /api/admin/bookings/{booking}/participation`, refused
+  once the date is closed or called off, stored as `bookings.participated_at`
+  (legacy's `hasParticipated`, ported with the time it was set).
+- **Still to build from legacy's page**: *Nachrichten*, *Kurs-Dokumente*,
+  *Teilnehmer hinzufügen* (the student search), the participant list as PDF.
 
 ## Loading, built 2026-09-24
 

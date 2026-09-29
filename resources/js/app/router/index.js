@@ -41,7 +41,12 @@ const routes = [
 		component: () => import('@/views/Event/Form.vue'),
 		meta: { title: 'Kursdatum erfassen' },
 	},
-	pending('kursdatum/:uuid', 'event.show', 'Kursdatum'),
+	{
+		path: '/dashboard/kursdatum/:uuid',
+		name: 'event.show',
+		component: () => import('@/views/Event/Show.vue'),
+		meta: { title: 'Kursdatum' },
+	},
 	{
 		path: '/dashboard/kursdatum/:uuid/bearbeiten',
 		name: 'event.edit',
