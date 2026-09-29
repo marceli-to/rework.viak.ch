@@ -5,6 +5,7 @@ import Badge from '@/components/ui/Badge.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Seiteninhalte → Testimonials* ([[07-dashboard]]). New — legacy has no such
@@ -39,7 +40,7 @@ onMounted(async () => {
 
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
-		<p v-else-if="!items.length" class="mt-32">Noch keine Testimonials erfasst.</p>
+		<NoResults v-else-if="!items.length">Noch keine Testimonials erfasst.</NoResults>
 
 		<EditableListItem
 			v-for="item in items"

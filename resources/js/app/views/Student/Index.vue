@@ -9,6 +9,7 @@ import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Studenten* — legacy's `views/student/Index.vue` ([[07-dashboard]], step 6).
@@ -106,7 +107,7 @@ watch(search, load, { immediate: true });
 						<a v-if="student.phone" :href="`tel:${student.phone.replace(/\s+/g, '')}`" class="hover:text-teal">{{ student.phone }}</a>
 					</div>
 				</EditableListItem>
-				<p v-if="!active.length" class="mt-16 sm:mt-32">Keine Studenten gefunden.</p>
+				<NoResults v-if="!active.length">Keine Studenten gefunden.</NoResults>
 
 				<Button v-if="page < lastPage" variant="secondary" class="mt-32 w-full" :disabled="more" @click="loadMore">
 					{{ more ? 'Wird geladen …' : `Weitere laden (${active.length} von ${total})` }}

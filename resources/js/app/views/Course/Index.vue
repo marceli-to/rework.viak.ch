@@ -15,6 +15,7 @@ import IconArrowRight from '@/components/icons/ArrowRight.vue';
 import IconArrowSwitcher from '@/components/icons/ArrowSwitcher.vue';
 import IconEdit from '@/components/icons/Edit.vue';
 import IconPlus from '@/components/icons/Plus.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Kurse* — legacy's one screen with two modes (`views/course/Index.vue`),
@@ -112,7 +113,7 @@ onMounted(async () => {
 
 		<template v-else-if="mode === 'chronological'">
 			<EventLine v-for="{ event, course } in events" :key="event.uuid" :event="event" :course="course" />
-			<p v-if="!events.length" class="mt-32">Es sind keine Veranstaltungen vorhanden.</p>
+			<NoResults v-if="!events.length">Es sind keine Veranstaltungen vorhanden.</NoResults>
 		</template>
 
 		<div v-else class="mt-12">
@@ -136,7 +137,7 @@ onMounted(async () => {
 				</template>
 
 				<EventRow v-for="event in course.events" :key="event.uuid" :event="event" />
-				<p v-if="!course.events.length" class="mt-16 sm:mt-32">Es sind keine Veranstaltungen vorhanden.</p>
+				<NoResults v-if="!course.events.length">Es sind keine Veranstaltungen vorhanden.</NoResults>
 
 				<div class="mt-24 flex items-center justify-between">
 					<RouterLink :to="{ name: 'event.create', params: { course: course.uuid } }" title="Veranstaltung hinzufügen" class="block hover:text-teal">
@@ -147,7 +148,7 @@ onMounted(async () => {
 					</RouterLink>
 				</div>
 			</Collapsible>
-			<p v-if="!visibleCourses.length" class="mt-32">Keine Kurse gefunden.</p>
+			<NoResults v-if="!visibleCourses.length">Keine Kurse gefunden.</NoResults>
 		</div>
 	</section>
 </template>

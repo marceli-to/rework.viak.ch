@@ -14,6 +14,7 @@ import BookingRow from '@/components/course/BookingRow.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import Loading from '@/components/ui/Loading.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * A student's own page — legacy's `student/Show.vue` ([[07-dashboard]], step 7):
@@ -111,7 +112,7 @@ async function cancel(booking) {
 						<Button v-if="!booking.deleted" variant="danger" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
 					</template>
 				</BookingRow>
-				<p v-if="!page.booked.length" class="mt-16 sm:mt-32">Student hat noch keine gebuchten Kurse.</p>
+				<NoResults v-if="!page.booked.length">Student hat noch keine gebuchten Kurse.</NoResults>
 			</Collapsible>
 
 			<Collapsible>
@@ -121,7 +122,7 @@ async function cancel(booking) {
 						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 					</template>
 				</BookingRow>
-				<p v-if="!page.past.length" class="mt-16 sm:mt-32">Student hat noch keine absolvierten Kurse.</p>
+				<NoResults v-if="!page.past.length">Student hat noch keine absolvierten Kurse.</NoResults>
 			</Collapsible>
 
 			<Collapsible v-if="page.cancelled.length">
@@ -154,7 +155,7 @@ async function cancel(booking) {
 						</div>
 					</div>
 				</article>
-				<p v-if="!page.documents.length" class="mt-16 sm:mt-32">Es sind noch keine Dokumente vorhanden.</p>
+				<NoResults v-if="!page.documents.length">Es sind noch keine Dokumente vorhanden.</NoResults>
 			</Collapsible>
 		</div>
 	</section>

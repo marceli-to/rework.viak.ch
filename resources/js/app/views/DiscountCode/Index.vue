@@ -9,6 +9,7 @@ import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Rabatt-Codes* — legacy's `views/discount/Index.vue` ([[07-dashboard]],
@@ -89,7 +90,7 @@ onMounted(async () => {
 					<div class="col-span-12 sm:col-span-2">{{ amount(code) }}</div>
 					<div class="col-span-12 pr-40 sm:col-span-6">{{ code.remarks }}</div>
 				</EditableListItem>
-				<p v-if="!group.rows.length" class="mt-16 sm:mt-32">Keine Codes gefunden.</p>
+				<NoResults v-if="!group.rows.length">Keine Codes gefunden.</NoResults>
 			</Collapsible>
 		</div>
 	</section>

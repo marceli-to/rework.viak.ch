@@ -10,6 +10,7 @@ import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Rechnungen* — legacy's `views/backoffice/invoice/Index.vue`
@@ -126,7 +127,7 @@ watch(search, load, { immediate: true });
 						<template v-if="invoice.student">{{ invoice.student.name }}<template v-if="invoice.student.city">, {{ invoice.student.city }}</template></template>
 					</div>
 				</EditableListItem>
-				<p v-if="!lists[group.status].rows.length" class="mt-16 sm:mt-32">{{ search ? 'Keine Rechnungen gefunden.' : group.empty }}</p>
+				<NoResults v-if="!lists[group.status].rows.length">{{ search ? 'Keine Rechnungen gefunden.' : group.empty }}</NoResults>
 
 				<Button v-if="lists[group.status].page < lists[group.status].lastPage" variant="secondary" class="mt-32 w-full" :disabled="lists[group.status].more" @click="loadMore(group.status)">
 					{{ lists[group.status].more ? 'Wird geladen …' : `Weitere laden (${lists[group.status].rows.length} von ${lists[group.status].total})` }}

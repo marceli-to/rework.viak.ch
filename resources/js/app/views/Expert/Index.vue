@@ -10,6 +10,7 @@ import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Experten* — legacy's `views/expert/Index.vue` ([[07-dashboard]], step 6).
@@ -91,7 +92,7 @@ onMounted(async () => {
 						<a :href="`mailto:${expert.email}`" class="hover:text-teal" @dragstart.prevent>{{ expert.email }}</a>
 					</div>
 				</EditableListItem>
-				<p v-if="!shownActive.length" class="mt-16 sm:mt-32">Keine aktiven Experten gefunden.</p>
+				<NoResults v-if="!shownActive.length">Keine aktiven Experten gefunden.</NoResults>
 			</Collapsible>
 
 			<!-- Keyed on the search, so a search with hits in here opens it. -->
@@ -109,7 +110,7 @@ onMounted(async () => {
 						<a :href="`mailto:${expert.email}`" class="hover:text-teal">{{ expert.email }}</a>
 					</div>
 				</EditableListItem>
-				<p v-if="!shownInactive.length" class="mt-16 sm:mt-32">Keine inaktiven Experten gefunden.</p>
+				<NoResults v-if="!shownInactive.length">Keine inaktiven Experten gefunden.</NoResults>
 			</Collapsible>
 		</div>
 	</section>

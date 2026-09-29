@@ -8,6 +8,7 @@ import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import IconPlus from '@/components/icons/Plus.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 import { KINDS, usage } from './kinds';
 
 /**
@@ -58,7 +59,7 @@ onMounted(async () => {
 					<div class="col-span-12 sm:col-span-4">{{ label(key, item) }}</div>
 					<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8"><Badge>{{ usage(key, item.usage) }}</Badge></div>
 				</EditableListItem>
-				<p v-if="!lists[key].length" class="mt-16 sm:mt-32">Noch keine erfasst.</p>
+				<NoResults v-if="!lists[key].length">Noch keine erfasst.</NoResults>
 
 				<div class="mt-24 flex">
 					<RouterLink :to="{ name: 'setting.create', params: { kind: key } }" :title="`${kind.noun} hinzufügen`" class="block hover:text-teal">

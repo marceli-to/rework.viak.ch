@@ -21,6 +21,7 @@ import IconTrash from '@/components/icons/Trash.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * A course date's own page — legacy's `course/event/Show.vue` ([[07-dashboard]],
@@ -198,7 +199,7 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 						</div>
 					</article>
 				</template>
-				<p v-else class="mt-16 sm:mt-32">Es sind keine Anmeldungen für diesen Kurs vorhanden.</p>
+				<NoResults v-else>Es sind keine Anmeldungen für diesen Kurs vorhanden.</NoResults>
 
 				<!-- Legacy's pair under the list: the plus with its label, the arrow with its. -->
 				<div v-if="!cancelled" class="mt-24 flex justify-between sm:mt-48">
@@ -230,7 +231,7 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 						</div>
 					</div>
 				</article>
-				<p v-if="!page.messages.length" class="mt-16 sm:mt-32">Es sind noch keine Nachrichten vorhanden.</p>
+				<NoResults v-if="!page.messages.length">Es sind noch keine Nachrichten vorhanden.</NoResults>
 
 				<div class="mt-24 flex">
 					<RouterLink :to="{ name: 'event.message', params: { uuid: page.event.uuid } }" title="Nachricht erfassen" class="block hover:text-teal">
@@ -251,7 +252,7 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 						</div>
 					</div>
 				</article>
-				<p v-if="!page.files.length" class="mt-16 sm:mt-32">Es sind keine Dokumente vorhanden.</p>
+				<NoResults v-if="!page.files.length">Es sind keine Dokumente vorhanden.</NoResults>
 
 				<!-- The expert portal's upload box; here a drop uploads at once, as there is no form around it. -->
 				<div class="mt-24 sm:mt-48">
@@ -272,7 +273,7 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 
 		<Lightbox v-if="adding" title="Teilnehmer hinzufügen" @close="closeAdding">
 			<SearchField v-model="search" />
-			<p v-if="search && !searching && !found.length" class="mt-16 text-lg">Keine Studenten gefunden.</p>
+			<NoResults v-if="search && !searching && !found.length">Keine Studenten gefunden.</NoResults>
 			<ul v-if="found.length" class="mt-16 text-lg">
 				<li v-for="student in found" :key="student.uuid" class="flex items-center justify-between gap-16 border-b border-gray-400 py-8">
 					<span class="min-w-0">{{ student.name }}<template v-if="student.city">, {{ student.city }}</template><br /><span class="text-md text-gray-600">{{ student.email }}</span></span>

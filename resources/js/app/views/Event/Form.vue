@@ -8,6 +8,7 @@ import ActionBox from '@/components/form/ActionBox.vue';
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
+import NoResults from '@/components/ui/NoResults.vue';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
@@ -173,7 +174,7 @@ async function close() {
 				</Checkbox>
 			</li>
 		</ul>
-		<p v-else class="mt-24 text-md sm:text-lg lg:text-xl">Diese Veranstaltung hat keine Teilnehmer.</p>
+		<NoResults v-else>Diese Veranstaltung hat keine Teilnehmer.</NoResults>
 		<p v-if="closing.error && !closing.attended.length" class="mt-16 text-md text-danger lg:text-lg">{{ closing.error }}</p>
 
 		<div class="mt-32 flex flex-col items-center [&>*]:w-full [&>*]:max-w-400 [&>*+*]:mt-12">
