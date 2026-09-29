@@ -152,21 +152,22 @@ async function close() {
 	</ResourceForm>
 
 	<!-- Who attended, asked at the moment it matters: every seat ticked, the no-shows unticked. -->
-	<Lightbox v-if="closing" title="Wer hat teilgenommen?" @close="closing = null">
-		<p class="text-lg">{{ closing.meta.course.number }} {{ closing.meta.course.title }}</p>
-		<p class="mt-8 text-lg">Angekreuzte Teilnehmer erhalten eine Teilnahmebestätigung per E-Mail. Danach lässt sich die Teilnahme nicht mehr ändern.</p>
+	<!-- The course in the title; the text at the checkboxes' own size; each row
+	     clickable across its width, the label stretched over it. -->
+	<Lightbox v-if="closing" :title="`Wer hat teilgenommen?\n${closing.meta.course.number} ${closing.meta.course.title}`" @close="closing = null">
+		<p class="text-md sm:text-lg lg:text-xl">Angekreuzte Teilnehmer erhalten eine Teilnahmebestätigung per E-Mail. Danach lässt sich die Teilnahme nicht mehr ändern.</p>
 
-		<ul v-if="closing.participants.length" class="mt-24 text-lg">
-			<li v-for="participant in closing.participants" :key="participant.uuid" class="border-t border-black py-8">
+		<ul v-if="closing.participants.length" class="mt-24">
+			<li v-for="participant in closing.participants" :key="participant.uuid" class="border-t border-black hover:text-teal [&_input]:mt-11 sm:[&_input]:mt-11 lg:[&_input]:mt-13 [&_label]:flex-1 [&_label]:py-8">
 				<Checkbox v-model="closing.attended" :value="participant.uuid">
 					{{ participant.name }}<template v-if="participant.city">, {{ participant.city }}</template>
 				</Checkbox>
 			</li>
 		</ul>
-		<p v-else class="mt-24 text-lg">Diese Veranstaltung hat keine Teilnehmer.</p>
+		<p v-else class="mt-24 text-md sm:text-lg lg:text-xl">Diese Veranstaltung hat keine Teilnehmer.</p>
 
 		<div class="mt-32 flex flex-col items-center [&>*]:w-full [&>*]:max-w-400 [&>*+*]:mt-12">
-			<Button variant="success" :disabled="busy" @click="close">{{ closing.participants.length ? 'Abschliessen und Bestätigungen senden' : 'Abschliessen' }}</Button>
+			<Button :disabled="busy" @click="close">{{ closing.participants.length ? 'Abschliessen und Bestätigungen senden' : 'Abschliessen' }}</Button>
 			<Button variant="gray-outline" @click="closing = null">Abbrechen</Button>
 		</div>
 	</Lightbox>

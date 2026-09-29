@@ -37,7 +37,7 @@ const emit = defineEmits(['close']);
 
 		<div class="relative max-w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:p-24" :class="wide ? 'w-[90%] sm:w-900' : 'sm:max-w-900 sm:min-w-600'">
 			<div class="max-h-[90vh] overflow-y-auto px-4">
-				<h1 v-if="title" class="mb-12 font-bold text-teal">{{ title }}</h1>
+				<h1 v-if="title" class="mb-12 font-bold whitespace-pre-line text-teal">{{ title }}</h1>
 				<div :class="{ 'mt-24': title }"><slot /></div>
 			</div>
 		</div>
