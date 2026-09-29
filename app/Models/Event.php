@@ -45,7 +45,7 @@ class Event extends Model
 	protected $fillable = [
 		'date', 'registration_until',
 		'min_participants', 'max_participants', 'participant_threshold',
-		'state', 'confirmed_at', 'cancelled_at', 'closed_at',
+		'state', 'confirmed_at', 'cancelled_at', 'closed_at', 'reminded_at',
 		'rentals_available', 'online', 'free_of_charge', 'publish',
 		'fee', 'course_id', 'location_id',
 	];
@@ -58,6 +58,7 @@ class Event extends Model
 			'confirmed_at' => 'datetime',
 			'cancelled_at' => 'datetime',
 			'closed_at' => 'datetime',
+			'reminded_at' => 'datetime',
 			'state' => EventState::class,
 			'participant_threshold' => ParticipantThreshold::class,
 			'rentals_available' => 'integer',

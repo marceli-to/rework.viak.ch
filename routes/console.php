@@ -28,6 +28,13 @@ Schedule::command('queue:work --stop-when-empty --max-time=55 --tries=3 --backof
 	->withoutOverlapping()
 	->runInBackground();
 
+/*
+ * Planned dates ten days away or less, not yet reminded ([[RemindUndecidedEvents]]).
+ * Hourly rather than legacy's once-a-minute exact-day match: it asks "crossed,
+ * and not yet reminded", so a missed run only delays a reminder.
+ */
+Schedule::command('events:remind')->hourly()->withoutOverlapping();
+
 // Failed jobs are kept a month to look into, then go.
 Schedule::command('queue:prune-failed --hours=720')->daily();
 

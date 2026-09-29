@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Bookings;
 
+use App\Events\RentalChanged;
 use App\Exceptions\SeatNotAvailable;
 use App\Models\Booking;
 use RuntimeException;
@@ -40,6 +41,8 @@ class SetRental
 			throw SeatNotAvailable::noRentalLeft($booking->event);
 		}
 
+		$changed = $booking->has_rental !== $rental;
+
 		$booking->forceFill([
 			'has_rental' => $rental,
 			// Frozen at today's price when added, cleared when dropped. Never
@@ -50,6 +53,11 @@ class SetRental
 				? number_format((float) config('invoice.rental_fee'), 2, '.', '')
 				: '0.00',
 		])->save();
+
+		// Only a real change is news: setting what is already set sends nothing.
+		if ($changed) {
+			RentalChanged::dispatch($booking, $rental);
+		}
 
 		return $booking;
 	}

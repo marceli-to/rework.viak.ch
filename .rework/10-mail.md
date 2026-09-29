@@ -69,13 +69,13 @@ in a scenario (below).
 | | `BookingCancelledInfoAdmin` | admin | — | Abmeldung für *course* | **Built** |
 | Student cancels, with penalty | `BookingCancelledWithPenalty` | student | penalty invoice | Annullationsbestätigung – *course* | **Built**: amount and rate read on the cancellation day; the invoice attached unless paid ([[SendCancellationConfirmation]]) |
 | | `BookingCancelledInfoAdmin` | admin | — | Abmeldung für *course* | **Built** |
-| Rental added later | `RentalAdded` | student | rental invoice | Buchung Mietcomputer für *course* | `SetRental` fires nothing |
-| | `RentalAddedInfoAdmin` | admin | — | ″ | ″ |
-| Rental removed | `RentalCancelledInfoAdmin` | admin | — | Stornierung Mietcomputer für *course* | ″ |
+| Rental added later | `RentalAdded` | student | rental invoice | Buchung Mietcomputer für *course* | **Built 2026-09-29**: `SetRental` announces [[RentalChanged]]. No attachment is ever possible: a laptop is added only before the seat is invoiced, and bills on the course's invoice |
+| | `RentalAddedInfoAdmin` | admin | — | ″ | **Built** |
+| Rental removed | `RentalCancelledInfoAdmin` | admin | — | Stornierung Mietcomputer für *course* | **Built** |
 | Seats reach minimum | `ParticipantsMin` | admin | — | Min. Teilnehmerzahl erreicht – *course* | **Built 2026-09-29**: the three are one `ParticipantsChange` ([[SendThresholdMails]]) |
 | Seats reach maximum | `ParticipantsMax` | admin | — | Max. Teilnehmerzahl erreicht – *course* | **Built** |
 | Seats drop below minimum | `ParticipantsBelowMin` | admin | — | Min. Teilnehmerzahl unterschritten – *course* | **Built** |
-| 10 days out, still planned | `EventCancelOrConfirmReminder` | admin | — | Reminder – *course* | No scheduled command yet |
+| 10 days out, still planned | `EventCancelOrConfirmReminder` | admin | — | Reminder – *course* | **Built**: `events:remind`, hourly, *crossed and not yet reminded* (`events.reminded_at`) |
 | Event confirmed | `EventConfirmationStudent` | each student | invoice (+ rental invoice) | Kursbestätigung – *course* | **Built 2026-09-29** ([[SendConfirmationMails]]); one PDF per seat, the rental a line on it |
 | | `EventConfirmationExpert` | each expert | — | Bestätigung – *course* | **Built** |
 | Event cancelled | `EventCancelStudent` | each student | — | Kursabsage – *course* | **Built**: `SetEventState` now announces [[EventCancelled]] with the seats given up; the next two *published* dates offered |
@@ -83,8 +83,8 @@ in a scenario (below).
 | Event closed | `EventClosedStudent` | each student who **participated** | participation confirmation | Teilnahmebestätigung – *course* | State exists, nothing mailed |
 | Expert posts a message | `EventMessageStudent` | each booked student | — (files linked in the body, `storage/uploads/…`) | the message's subject | **Built 2026-09-29**: `PostMessage` announces [[MessagePosted]], every frozen recipient is mailed; files link to the gated download |
 | | `EventMessageExpert` | the author, if *selfcopy* | — (files linked) | ″ | **Built** |
-| Invoice paid | `InvoicePaidConfirmation` | student | — | Zahlungsbestätigung Rechnung *no.* | `SyncInvoiceStatus` sets `paid_at`, fires nothing |
-| | `InvoicePaidNotification` | admin | — | ″ | ″ |
+| Invoice paid | `InvoicePaidConfirmation` | student | — | Zahlungsbestätigung Rechnung *no.* | **Waits for the card-payment page.** Legacy fires `InvoicePaid` only from its Stripe `PaymentController` (*Bezahlt per Kreditkarte*), never for a bank payment the books report. Built with that page (`Todo.md`, #28) |
+| | `InvoicePaidNotification` | admin | — | ″ | ″ (with the page) |
 | Event deleted | nothing — **refused while active bookings exist** | — | — | — | The API deletes regardless — see *Oddities* |
 
 24 mailables, 28 rows: four are sent from two triggers.
@@ -203,7 +203,8 @@ guessing. Not installed on production.
 
 - **2026-09-29**: steps 1 to 3 (the guard, MailHog locally on 1025 with the
   inbox at http://localhost:8025, legacy's layout and theme), and the *booking
-  made*, *cancels*, *confirmed*, *cancelled*, *message* and threshold rows. Every mail is a queued [[VIAKMail]], sent after
+  made*, *cancels*, *confirmed*, *cancelled*, *message*, threshold, rental and
+  reminder rows. Every mail is a queued [[VIAKMail]], sent after
   the commit. **A cancellation because VIAK called the course off sends none of
   the cancellation mails**; *Kursabsage* (the event-cancel row) tells them.
   **Legacy's cancellation mails issued a discount code for an invoice already
