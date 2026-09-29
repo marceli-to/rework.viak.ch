@@ -20,7 +20,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * *abgesagt am …* once done. Each mails the participants and experts
  * ([[SendConfirmationMails]], [[SendEventCancelMails]]). Once the date has
  * run, green *Veranstaltung abschliessen*, which **asks who attended first**
- * (Marcel, 2026-09-29): a lightbox lists the seats, every one ticked, and
+ * (Marcel, 2026-09-29): a lightbox, *Teilnehmer «Kurs»*, lists the seats, every one ticked, and
  * *Abschliessen und Bestätigungen senden* records the ticks and closes in one
  * request ([[EventPageController::close]]). The ticked seats get the
  * participation confirmation ([[SendClosingMails]]); the date's page then
@@ -154,7 +154,7 @@ async function close() {
 	<!-- Who attended, asked at the moment it matters: every seat ticked, the no-shows unticked. -->
 	<!-- The course in the title; the text at the checkboxes' own size; each row
 	     clickable across its width, the label stretched over it. -->
-	<Lightbox v-if="closing" :title="`Wer hat teilgenommen?\n${closing.meta.course.number} ${closing.meta.course.title}`" @close="closing = null">
+	<Lightbox v-if="closing" :title="`Teilnehmer «${closing.meta.course.title}»`" @close="closing = null">
 		<p class="text-md sm:text-lg lg:text-xl">Angekreuzte Teilnehmer erhalten eine Teilnahmebestätigung per E-Mail. Danach lässt sich die Teilnahme nicht mehr ändern.</p>
 
 		<ul v-if="closing.participants.length" class="mt-24">

@@ -833,7 +833,7 @@ the edit form, two screens for one decision):
   *Teilgenommen?* header is gone. The student page shows the same badge on
   booked and past seats.
 - **Closing asks who attended.** The edit form's *Veranstaltung abschliessen*
-  box (button now *Abschliessen*) opens a lightbox, *Wer hat teilgenommen?*,
+  box (button now *Abschliessen*) opens a lightbox, *Teilnehmer «Kursname»*,
   listing the live seats **all ticked** (Marcel: untick the no-shows).
   *Abschliessen und Bestätigungen senden* is one request,
   `POST /api/admin/events/{event}/close` with the attended booking uuids
