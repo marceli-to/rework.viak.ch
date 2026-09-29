@@ -236,11 +236,17 @@ process*: a slow send delays everything queued behind it, and
 `RunInvoiceBatchProcess` runs `everyMinute()` with nothing stopping it
 overlapping itself mid-batch.
 
-**Open, and it is a deployment question:** how the worker runs — `queue:work`
-under a supervisor, or, with only a crontab, `schedule:run` each minute driving
-`queue:work --stop-when-empty --max-time=55`. The second is the honest choice on
-shared hosting and is still strictly better than what legacy does. Same
-conversation as the production PHP version.
+**Decided 2026-09-29 (Marcel): cron.** Production has one crontab line,
+`* * * * * php artisan schedule:run`, and the schedule starts
+`queue:work --stop-when-empty --max-time=55 --tries=3 --backoff=60` every
+minute, in the background and never overlapping (`routes/console.php`,
+`tests/Feature/ScheduleTest.php`). A queued mail waits at most a minute.
+`retry_after` (90) stays above the worker's 55 seconds, so no job runs twice.
+Failed jobs are pruned after 30 days. Locally, `composer dev` runs a listener.
+
+**`env()` is read in `config/` and nowhere else**, enforced by
+`tests/Unit/EnvOnlyInConfigTest.php` (2026-09-29), so `config:cache` is safe to
+run on deploy. Legacy cannot cache its config (`Todo.md`).
 
 ## Directory shape
 
@@ -517,9 +523,8 @@ every page of the live site and is not carried over; worth deleting there too.
 **Blocking the build:**
 
 1. Production PHP version (pin above). Only bites at deploy time.
-2. How the queue worker runs in production — supervisor, or cron driving
-   `queue:work --stop-when-empty`. Also a deploy-time question; see
-   **Queue and schedule** above.
+2. ~~How the queue worker runs in production~~ — **cron**, decided
+   2026-09-29; see **Queue and schedule** above.
 
 Nothing else blocks the build. Chunk 03 is buildable today and chunk 05's shape
 is settled; the one licence question still open — whether the Bildung tier's

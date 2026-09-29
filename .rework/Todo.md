@@ -442,7 +442,8 @@ items that are ours rather than the client's.
   from a null address, to a null admin. Nothing to fix urgently — it works because
   the config is never cached — but nobody should "optimise" that deploy without
   moving these to `config()` first. The rework bans `env()` outside `config/`; see
-  `00-foundation.md`.
+  `00-foundation.md`. **In the rework: done 2026-09-29** (`config('mail.admin')`,
+  and a test enforcing the ban); the legacy tree still has all 53.
 - **Legacy bug: the cancel-or-confirm reminder misses a day whenever the
   scheduler does.** `Tasks/ObserveEventState` matches
   `where('date', now()->addDays(10))` — an exact day. One missed minute-run on the

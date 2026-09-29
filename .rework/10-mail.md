@@ -20,13 +20,15 @@ Everything upstream of the mail — state, invoices, PDFs — is built and teste
 
 Nothing blocks it. Everything legacy attaches — invoices and the participation
 confirmation — is already generated ([[03-invoices]]).
-Two things to settle on the way in, both already written down:
+Two things to settle on the way in, **both settled 2026-09-29**:
 
-- how the queue worker runs in production (`00-foundation.md`, *Queue and
-  schedule*);
-- legacy's `->from(env(...))` in all 24 mailables breaks under a cached config
-  (`Todo.md`). The rework reads `config('mail.from')` and a new
-  `config('mail.admin')` for what legacy calls `env('MAIL_TO')`.
+- ~~how the queue worker runs in production~~ — **cron**: `schedule:run` each
+  minute starts a worker that empties the queue (`00-foundation.md`, *Queue
+  and schedule*);
+- ~~legacy's `->from(env(...))` in all 24 mailables~~ — mail reads
+  `config('mail.from')`, and `config('mail.admin')` (`MAIL_ADMIN_ADDRESS`) for
+  what legacy calls `env('MAIL_TO')`. A test fails on any `env()` outside
+  `config/`.
 
 ## The rule that comes before any mail: nothing reaches a real inbox
 

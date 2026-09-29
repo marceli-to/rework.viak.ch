@@ -115,4 +115,19 @@ return [
 		'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
 	],
 
+	/*
+	|--------------------------------------------------------------------------
+	| The office — legacy's `MAIL_TO`
+	|--------------------------------------------------------------------------
+	|
+	| Where the mails meant for VIAK go: a new booking, a course reaching its
+	| minimum, a cancellation ([[10-mail]]). Legacy read `env('MAIL_TO')` at
+	| runtime in three places and its 24 mailables read their sender the same
+	| way, so a cached config sent mail from nobody to nobody (`Todo.md`).
+	| Here both are config, and `env()` is read nowhere else (a test says so).
+	|
+	*/
+
+	'admin' => env('MAIL_ADMIN_ADDRESS'),
+
 ];
