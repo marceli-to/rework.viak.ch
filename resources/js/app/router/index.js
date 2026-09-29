@@ -217,6 +217,22 @@ const lastQuery = {};
 /** Where a form goes back to: `list`, with the query that list last had. */
 export const returnTo = (list) => (lastQuery[list.name] ? { name: list.name, query: lastQuery[list.name] } : list);
 
+/**
+ * **Back is where the admin came from** (Marcel, 2026-09-29): an event
+ * opened from a student's page goes back to that page, not to *Kurse*.
+ * vue-router keeps the previous in-app address in `history.state.back`,
+ * which is empty when the page was opened directly, from a mail or a
+ * bookmark; then it is `fallback`, the list as it was left. Going *back*
+ * rather than pushing the address again keeps the history a path, so the
+ * page before goes back further instead of into the form just left.
+ */
+export const cameFromApp = () => Boolean(window.history.state?.back);
+
+export function goBack(fallback) {
+	if (cameFromApp()) router.back();
+	else router.push(returnTo(fallback));
+}
+
 router.afterEach((to) => {
 	arrived();
 	if (to.name) lastQuery[to.name] = to.query;

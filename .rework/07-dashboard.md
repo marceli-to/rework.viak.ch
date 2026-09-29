@@ -848,6 +848,21 @@ the edit form, two screens for one decision):
 - Not built: sending a confirmation afterwards to someone missed. Once closed,
   the attendance is fixed, as before.
 
+## Back is where you came from, 2026-09-29
+
+Marcel: *Zurück* always went to a fixed list (the event form to *Kurse*),
+wrong when the event was opened from a student's page. Now *Zurück* and
+*Speichern* go **back in the history** when the page before was a dashboard
+screen ([[goBack]], from vue-router's `history.state.back`), and to the list
+as it was left only when the page was opened directly (a mail, a bookmark).
+Going back rather than pushing keeps the history a path: student, event,
+*Bearbeiten*, *Speichern*, *Zurück* lands on the student again. *Löschen*
+still goes to the list, since the page before may be the record deleted.
+Checked in the browser along that path, and opened directly.
+
+On the event page, *Teilnehmerliste (PDF)* with an arrow became
+*Teilnehmerliste* with the invoices' download icon.
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed

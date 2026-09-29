@@ -3,7 +3,7 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { fetchForm } from '@/api/forms';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
-import { returnTo } from '@/router';
+import { goBack, returnTo } from '@/router';
 
 /**
  * Everything a dashboard form does besides drawing its fields — the part of
@@ -84,7 +84,9 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 			toast(missed.length ? `${done}. Nicht hochgeladen: ${missed.join(', ')}` : done, missed.length ? 'error' : 'success');
 
 			if (singleton) return;
-			if (!stay) router.push(back);
+			// Back where the admin came from ([[goBack]]); a delete below goes to
+			// the list, since the page before may be the record just deleted.
+			if (!stay) goBack(list);
 			else if (wasCreating) router.replace(edit(id.value));
 		} catch (problem) {
 			errors.value = problem.errors ?? {};

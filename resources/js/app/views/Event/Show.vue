@@ -15,7 +15,7 @@ import Button from '@/components/ui/Button.vue';
 import DropBox from '@/components/form/DropBox.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EventRow from '@/components/course/EventRow.vue';
-import IconArrowRight from '@/components/icons/ArrowRight.vue';
+import IconDownload from '@/components/icons/Download.vue';
 import IconPlus from '@/components/icons/Plus.vue';
 import IconTrash from '@/components/icons/Trash.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
@@ -31,7 +31,7 @@ import SearchField from '@/components/list/SearchField.vue';
  *   *Teilnahme offen* until the date is closed. **Attendance is asked when the date is closed**, in the edit
  *   form's lightbox, not ticked here (Marcel, 2026-09-29): legacy's tick and
  *   *Teilgenommen?* are gone. Under the list,
- *   *Teilnehmer hinzufügen* and *Teilnehmerliste (PDF)*, as legacy has them.
+ *   *Teilnehmer hinzufügen* and *Teilnehmerliste* with the download icon.
  * - *Nachrichten*, legacy's messages module: a row per note that opens it in
  *   a lightbox, and the plus to *Nachricht erfassen*. Only with participants,
  *   as legacy.
@@ -207,9 +207,10 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 						<IconPlus size="md" />
 					</button>
 					<span v-else />
-					<button v-if="page.participants.length" type="button" class="flex flex-col items-end hover:text-teal" :disabled="downloading" @click="pdf">
-						<span>{{ downloading ? 'Wird erstellt …' : 'Teilnehmerliste (PDF)' }}</span>
-						<IconArrowRight />
+					<!-- The invoices' download icon beside the label, as the plus stands beside *Teilnehmer hinzufügen*. -->
+					<button v-if="page.participants.length" type="button" class="flex items-center gap-12 hover:text-teal" :disabled="downloading" @click="pdf">
+						<span>{{ downloading ? 'Wird erstellt …' : 'Teilnehmerliste' }}</span>
+						<IconDownload class="size-18" />
 					</button>
 				</div>
 			</Collapsible>
