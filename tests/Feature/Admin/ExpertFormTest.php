@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\Role;
+use App\Mail\EmailVerification;
 use App\Models\Booking;
 use App\Models\Country;
 use App\Models\Event;
@@ -10,6 +11,7 @@ use App\Models\ExpertProfile;
 use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -226,4 +228,15 @@ it('starts a new expert in a country the form offers', function () {
 	$country = collect($schema['fields'])->firstWhere('name', 'country');
 
 	expect(array_column($country['options'], 'value'))->toContain($schema['defaults']['country']);
+});
+
+it('has an address the admin changes confirmed by the expert', function () {
+	$expert = expertAccount(user: ['email' => 'alt@example.test']);
+	Mail::fake();
+
+	$this->actingAs($this->admin)->putJson("/api/admin/experts/{$expert->uuid}", expertPayload(['email' => 'neu@example.test']))
+		->assertOk()
+		->assertJsonPath('data.email_verified', false);
+
+	Mail::assertQueued(EmailVerification::class, fn ($mail) => $mail->hasTo('neu@example.test'));
 });

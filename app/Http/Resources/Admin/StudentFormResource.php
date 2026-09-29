@@ -39,6 +39,8 @@ class StudentFormResource extends JsonResource
 			// Read, never sent ([[useResourceForm]]).
 			'name' => $this->name,
 			'is_self' => $this->resource->is($request->user()),
+			// A changed address waits for the person to confirm it.
+			'email_verified' => $this->hasVerifiedEmail(),
 			'deactivated_at' => $this->deactivated_at?->toIso8601String(),
 		];
 	}

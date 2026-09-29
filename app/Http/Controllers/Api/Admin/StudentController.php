@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Accounts\CreateAccount;
+use App\Actions\Accounts\RequireEmailConfirmation;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveStudentRequest;
@@ -67,16 +68,20 @@ class StudentController extends Controller
 	}
 
 	/**
-	 * An address the admin changes stays verified, as on the expert form
-	 * ([[ExpertController::update]]).
+	 * An address the admin changes must be confirmed by the person
+	 * ([[RequireEmailConfirmation]]).
 	 */
-	public function update(SaveStudentRequest $request, User $student): StudentFormResource
+	public function update(SaveStudentRequest $request, User $student, RequireEmailConfirmation $confirm): StudentFormResource
 	{
 		DB::transaction(function () use ($request, $student): void {
 			$student->update($request->userAttributes());
 			$student->syncRoles($request->roles());
 			$this->saveAddresses($student, $request->addresses());
 		});
+
+		if ($student->wasChanged('email')) {
+			$confirm->execute($student);
+		}
 
 		return new StudentFormResource($this->loaded($student));
 	}

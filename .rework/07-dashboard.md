@@ -540,8 +540,9 @@ against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
   binds only Expert-role users.
 - **E-mail is unique across every account, deleted ones too**, with a German
   message. Legacy let two people share one. An address the admin changes
-  stays verified, as legacy has it: the admin is not an unproven session,
-  which is what the portal's own e-mail change guards against.
+  ~~stays verified, as legacy has it~~ **must be confirmed by the person**
+  (Marcel, 2026-09-29): the *Bestätigung* mail goes out and the form notes
+  the address is unconfirmed ([[RequireEmailConfirmation]]).
 - **Invited.** Creating an expert makes the account with a password nobody
   knows, verified as legacy does, and mails *Dein VIAK-Zugang* with a link to
   set one ([[AccountInvitation]], built with the mails on 2026-09-29).

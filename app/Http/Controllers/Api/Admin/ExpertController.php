@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Accounts\CreateAccount;
+use App\Actions\Accounts\RequireEmailConfirmation;
 use App\Actions\Media\DeleteMedia;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
@@ -67,17 +68,20 @@ class ExpertController extends Controller
 	}
 
 	/**
-	 * An address the admin changes stays verified, as legacy has it: the
-	 * admin is not an unproven session, which is what the portal's own
-	 * e-mail change guards against ([[UpdateProfileRequest]]).
+	 * An address the admin changes must be confirmed by the person, as their
+	 * own change must (Marcel, 2026-09-29, [[RequireEmailConfirmation]]).
 	 */
-	public function update(SaveExpertRequest $request, User $expert): ExpertFormResource
+	public function update(SaveExpertRequest $request, User $expert, RequireEmailConfirmation $confirm): ExpertFormResource
 	{
 		DB::transaction(function () use ($request, $expert): void {
 			$expert->update($request->userAttributes());
 			$expert->expertProfile()->updateOrCreate([], $request->profileAttributes());
 			$expert->syncRoles($request->roles());
 		});
+
+		if ($expert->wasChanged('email')) {
+			$confirm->execute($expert);
+		}
 
 		return new ExpertFormResource($expert->load('expertProfile'));
 	}

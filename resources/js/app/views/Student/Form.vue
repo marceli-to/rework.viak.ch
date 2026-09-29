@@ -18,6 +18,15 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  */
 const busy = ref(false);
 
+/** What the form says about the account, above *Speichern*. */
+const note = (meta) =>
+	[
+		meta.deactivated_at ? `Dieses Konto ist seit dem ${shortDate(meta.deactivated_at.slice(0, 10))} deaktiviert.` : null,
+		meta.email_verified ? null : 'Die E-Mail-Adresse ist noch nicht bestätigt.',
+	]
+		.filter(Boolean)
+		.join(' ') || null;
+
 async function toggle(form, meta, patchMeta) {
 	const active = Boolean(meta.deactivated_at);
 	const name = `${form.first_name} ${form.last_name}, ${form.email}`;
@@ -46,7 +55,7 @@ async function toggle(form, meta, patchMeta) {
 		:edit="(uuid) => ({ name: 'student.edit', params: { uuid } })"
 		noun="Student"
 		:titles="{ create: 'Student hinzufügen', edit: 'Student bearbeiten' }"
-		:note="(meta) => (meta.deactivated_at ? `Dieses Konto ist seit dem ${shortDate(meta.deactivated_at.slice(0, 10))} deaktiviert.` : null)"
+		:note="note"
 	>
 		<template #danger="{ form, meta, patchMeta }">
 			<template v-if="meta.deactivated_at">

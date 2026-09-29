@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use App\Enums\Role;
+use App\Mail\EmailVerification;
 use App\Models\Country;
 use App\Models\User;
 use App\Models\UserAddress;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * *Studenten* — `/api/admin/students` ([[07-dashboard]], step 6): legacy's
@@ -217,4 +219,18 @@ describe('deactivating (#16)', function () {
 
 		$this->actingAs($student)->getJson('/api/profile')->assertUnauthorized();
 	});
+});
+
+it('has an address the admin changes confirmed by the student, and keeps an unchanged one verified', function () {
+	$student = studentAccount(['email' => 'alt@example.test', 'email_verified_at' => now()]);
+	Mail::fake();
+
+	$this->actingAs($this->admin)->putJson("/api/admin/students/{$student->uuid}", studentPayload(['email' => 'alt@example.test']))->assertOk();
+	expect($student->refresh()->hasVerifiedEmail())->toBeTrue();
+	Mail::assertNotQueued(EmailVerification::class);
+
+	$this->putJson("/api/admin/students/{$student->uuid}", studentPayload(['email' => 'neu@example.test']))
+		->assertOk()
+		->assertJsonPath('data.email_verified', false);
+	Mail::assertQueued(EmailVerification::class, fn ($mail) => $mail->hasTo('neu@example.test'));
 });

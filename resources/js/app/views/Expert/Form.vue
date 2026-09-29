@@ -33,5 +33,6 @@ const blocked = (meta) => {
 			question: (form) => `${form.first_name} ${form.last_name}, ${form.email}`,
 		}"
 		:blocked="blocked"
+		:note="(meta) => (meta.email_verified ? null : 'Die E-Mail-Adresse ist noch nicht bestätigt.')"
 	/>
 </template>

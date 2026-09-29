@@ -33,6 +33,8 @@ class ExpertFormResource extends JsonResource
 			// Read, never sent ([[useResourceForm]]).
 			'name' => $this->name,
 			'is_self' => $this->resource->is($request->user()),
+			// A changed address waits for the person to confirm it.
+			'email_verified' => $this->hasVerifiedEmail(),
 			// Decides whether the danger zone offers *Löschen* (#16).
 			'has_history' => $this->hasHistory(),
 		];
