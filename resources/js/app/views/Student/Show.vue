@@ -99,7 +99,7 @@ async function cancel(booking) {
 
 		<div class="mt-32 sm:mt-48">
 			<Collapsible expanded>
-				<template #title>Gebuchte Kurse<Badge variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
+				<template #title>Gebuchte Kurse<Badge v-if="page.booked.length" variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
 				<BookingRow v-for="booking in page.booked" :key="booking.uuid" :booking="booking">
 					<template #facts>
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
@@ -112,7 +112,7 @@ async function cancel(booking) {
 			</Collapsible>
 
 			<Collapsible>
-				<template #title>Absolvierte Kurse<Badge variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
+				<template #title>Absolvierte Kurse<Badge v-if="page.past.length" variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
 				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
 					<template #facts>
 						<Badge v-if="booking.participated" variant="success">Teilgenommen</Badge>
@@ -123,7 +123,7 @@ async function cancel(booking) {
 			</Collapsible>
 
 			<Collapsible v-if="page.cancelled.length">
-				<template #title>Annullierte Kurse<Badge variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
+				<template #title>Annullierte Kurse<Badge v-if="page.cancelled.length" variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
 				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
 					<template #facts>
 						<Badge variant="danger">Annulliert am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}</Badge>
@@ -133,7 +133,7 @@ async function cancel(booking) {
 			</Collapsible>
 
 			<Collapsible>
-				<template #title>Dokumente<Badge variant="solid" class="ml-12">{{ page.documents.length }}</Badge></template>
+				<template #title>Dokumente<Badge v-if="page.documents.length" variant="solid" class="ml-12">{{ page.documents.length }}</Badge></template>
 				<!-- The portal's document row (`row/document.blade.php`), 4 / 3 / 5. -->
 				<EditableListItem v-for="document in page.documents" :key="document.uuid" :download="document.url" wide>
 					<div class="col-span-12 sm:col-span-4">

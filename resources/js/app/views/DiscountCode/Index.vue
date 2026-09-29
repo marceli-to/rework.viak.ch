@@ -73,7 +73,7 @@ onMounted(async () => {
 
 		<div v-else class="mt-12">
 			<Collapsible v-for="group in [{ title: 'Gültige Codes', rows: valid, open: true }, { title: 'Verwendete oder abgelaufene Codes', rows: spent, open: false }]" :key="`${group.title}-${group.open || search}`" :expanded="group.open || (Boolean(search) && group.rows.length > 0)">
-				<template #title>{{ group.title }}<Badge variant="solid" class="ml-12">{{ group.rows.length }}</Badge></template>
+				<template #title>{{ group.title }}<Badge v-if="group.rows.length" variant="solid" class="ml-12">{{ group.rows.length }}</Badge></template>
 				<EditableListItem
 					v-for="code in group.rows"
 					:key="code.uuid"

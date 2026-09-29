@@ -90,7 +90,7 @@ watch(search, load, { immediate: true });
 
 		<div v-else class="mt-12">
 			<Collapsible expanded>
-				<template #title>Aktive Studenten<Badge variant="solid" class="ml-12">{{ total }}</Badge></template>
+				<template #title>Aktive Studenten<Badge v-if="total" variant="solid" class="ml-12">{{ total }}</Badge></template>
 				<EditableListItem
 					v-for="student in active"
 					:key="student.uuid"
@@ -115,7 +115,7 @@ watch(search, load, { immediate: true });
 
 			<!-- Keyed on the search, so a search with hits in here opens it. -->
 			<Collapsible v-if="deactivated.length" :key="`deaktiviert-${search}`" :expanded="Boolean(search)">
-				<template #title>Deaktivierte Studenten<Badge variant="solid" class="ml-12">{{ deactivated.length }}</Badge></template>
+				<template #title>Deaktivierte Studenten<Badge v-if="deactivated.length" variant="solid" class="ml-12">{{ deactivated.length }}</Badge></template>
 				<EditableListItem
 					v-for="student in deactivated"
 					:key="student.uuid"

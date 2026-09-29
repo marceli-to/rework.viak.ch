@@ -46,7 +46,7 @@ onMounted(async () => {
 
 		<div v-else class="mt-12">
 			<Collapsible v-for="(kind, key) in KINDS" :key="key" :expanded="open === key">
-				<template #title>{{ kind.title }}<Badge variant="solid" class="ml-12">{{ lists[key].length }}</Badge></template>
+				<template #title>{{ kind.title }}<Badge v-if="lists[key].length" variant="solid" class="ml-12">{{ lists[key].length }}</Badge></template>
 
 				<EditableListItem
 					v-for="item in lists[key]"

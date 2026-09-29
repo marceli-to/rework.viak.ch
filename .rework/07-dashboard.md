@@ -733,6 +733,8 @@ collapsible titles (*Aktive Studenten 570*, *Tags 21*), where a term is used
 (*13 Kurse*), a discount code's use (*1 von 1 eingelöst*), and on *Kurse* the
 participants and laptops (*3 / 8 Teilnehmer*, green when full, as the text
 was). A sentence in a form note or a danger zone keeps its number inline.
+**A zero is not drawn** (Marcel, 2026-09-29): a collapsible whose list is
+empty says so in its own line, and a *0* beside the title only repeats it.
 
 ## Step 7 — the course date's page, begun 2026-09-29
 

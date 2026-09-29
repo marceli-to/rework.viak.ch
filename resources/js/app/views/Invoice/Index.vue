@@ -107,7 +107,7 @@ watch(search, load, { immediate: true });
 		<div v-else class="mt-12">
 			<!-- Keyed on the search, so a search with hits in a closed list opens it. -->
 			<Collapsible v-for="group in shown" :key="`${group.status}-${search}`" :expanded="group.open || (Boolean(search) && lists[group.status].total > 0)">
-				<template #title>{{ group.title }}<Badge variant="solid" class="ml-12">{{ lists[group.status].total }}</Badge></template>
+				<template #title>{{ group.title }}<Badge v-if="lists[group.status].total" variant="solid" class="ml-12">{{ lists[group.status].total }}</Badge></template>
 
 				<EditableListItem
 					v-for="invoice in lists[group.status].rows"
