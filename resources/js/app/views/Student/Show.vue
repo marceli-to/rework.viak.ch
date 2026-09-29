@@ -126,8 +126,8 @@ async function cancel(booking) {
 				<template #title>Annullierte Kurse<Badge variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
 				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
 					<template #facts>
-						<Badge variant="danger">Annulliert</Badge>
-						<div class="mt-8">am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}<template v-if="booking.reason"><br />{{ booking.reason }}</template></div>
+						<Badge variant="danger">Annulliert am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}</Badge>
+						<div v-if="booking.reason" class="mt-8">{{ booking.reason }}</div>
 					</template>
 				</BookingRow>
 			</Collapsible>

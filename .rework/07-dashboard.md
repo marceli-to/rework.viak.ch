@@ -762,7 +762,7 @@ then four collapsibles:
   The row is [[BookingRow]], on [[EventRow]]'s geometry, with *Details* to the
   course date's page. A past seat says *Teilgenommen*, or *Nicht teilgenommen*
   once the date is closed.
-- ***Annullierte Kurse*** is new: when, and by whom (student, VIAK, VIAK without
+- ***Annullierte Kurse*** is new: when (in the badge, *Annulliert am …*), and by whom (student, VIAK, VIAK without
   cost, the course called off). Shown only when there is one.
 - ***Dokumente***: all of them, in the portal's 4 / 3 / 5 row with the download
   icon, where legacy showed five and linked the rest.
