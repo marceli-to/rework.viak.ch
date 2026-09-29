@@ -13,9 +13,9 @@ both modes, the course form and its images, testimonials, the field kit), and
 **step 6 began with the course-date form**. See *Step 1* to *Step 6* below,
 then *Loading* and *Polish*.
 
-**Next: the rest of step 6**, the remaining forms on the kit: discount codes,
-taxonomies, profile (*Build order*, below). Experts and students were built on
-2026-09-29 (*Step 6 — experts*, *Step 6 — students*). Then step 7, which waits
+**Next: the rest of step 6**, the remaining forms on the kit: taxonomies and
+profile (*Build order*, below). Experts, students and discount codes were built
+on 2026-09-29 (*Step 6 — experts*, *— students*, *— discount codes*). Then step 7, which waits
 on mail (chunk 10).
 
 What exists at the end of 2026-09-24:
@@ -24,7 +24,7 @@ What exists at the end of 2026-09-24:
   their portal), and admin endpoints live under `/api/admin` (*Step 1*).
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
-  *Experten* and *Studenten* (lists and forms, 2026-09-29).
+  *Experten*, *Studenten*, *Rabatt-Codes* (lists and forms, 2026-09-29).
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -156,7 +156,8 @@ Code (generated, `VIAK-XXXX-XXXX`), amount, fixed or percent, valid from/to,
 remarks. Lists split into valid and used-or-expired. **The usage rule is
 implicit in legacy**: a code without dates is single-use, a code with dates is
 unlimited while valid. Make it a visible field. Kit form. Server: chunk 06 holds
-the model; the CRUD endpoints are missing.
+the model; the CRUD endpoints are missing. → **Built 2026-09-29** (*Step 6 —
+discount codes*).
 
 ### Invoices and export — keep, narrow the edit
 
@@ -604,6 +605,38 @@ leads to its `Pending` for now.
   the expert form cannot deactivate anyone yet, it only switches the public
   profile off.
 
+## Step 6 — discount codes, built 2026-09-29
+
+*Rabatt-Codes*: [[DiscountCodeSchema]], `views/DiscountCode/`,
+`/api/admin/discount-codes`.
+
+- **The list is legacy's two groups**, *Gültige Codes* and *Verwendete oder
+  abgelaufene Codes*, but **the split is the checkout's own question**
+  (`DiscountCode::isRedeemableOn`: dates, deleted, uses against the limit)
+  rather than legacy's `isUsed` flag and `valid_to`. A row is the code, its
+  dates and *Eingelöst: 1 von 1*, the amount, the remarks. Newest first,
+  about a hundred codes, searched in the browser. Used codes keep their
+  pencil (legacy commented it out): every booking keeps the amount it got,
+  so editing a code moves no past order. `withUsage()` counts uses in the
+  list's query instead of two per row.
+- **The form is legacy's**, with the code generated when it opens and shown,
+  not typed. Fixed or percent is a select (*Art*) where legacy had two
+  radios; the kit has no radio and a two-option select says the same.
+  **One new field: *Einlösbar (Anzahl Bestellungen)*, empty for unlimited**,
+  the `usage_limit` chunk 06 made a column of. A new code starts at 1.
+  Percent is capped at 100, *Gültig bis* cannot precede *Gültig ab*.
+- **The generator is new** (`DiscountCodeGenerator`, legacy's alphabet and
+  shape). Legacy's `Discount::generate()` retried a collision by calling
+  itself and discarding the result, then testing the same code again.
+- **Deleting is soft**, as legacy's: bookings and checkouts keep pointing at
+  the code, and a deleted code is not redeemable.
+- **The local database is stale here, not the port.** Every code reads
+  `usage_limit = null` locally, so the 32 codes with no dates show as
+  unlimited. `PortUsers` does set them to 1 (the legacy rule); the local
+  data was ported before it did. A fresh `port:*` fixes it.
+- The kit's `Field` gained `readonly` (the code) and `hint` (*Leer lassen für
+  unbegrenzt.*).
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed
@@ -679,8 +712,8 @@ hamburger. Proposed, grouped by what the admin is doing:
    `GET /api/admin/forms/{form}`, `FormNode`, error mapping, leave guard. Move
    both forms onto it. (Built, *Step 5*.)
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
-   ~~experts~~, ~~students~~ (built, *Step 6 — experts* / *students*),
-   discount codes, taxonomies, profile.
+   ~~experts~~, ~~students~~, ~~discount codes~~ (built, *Step 6 — …*),
+   taxonomies, profile.
 7. **Operational screens, by hand** — the event page, the student page,
    invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.

@@ -15,6 +15,10 @@ defineProps({
 	type: { type: String, default: 'text' },
 	required: { type: Boolean, default: false },
 	error: { type: String, default: null },
+	// Shown, not typed: a generated discount code. The value on its rule, in black.
+	readonly: { type: Boolean, default: false },
+	// A line under the field — *Leer lassen für unbegrenzt.*
+	hint: { type: String, default: null },
 });
 
 const id = useId();
@@ -30,10 +34,12 @@ const id = useId();
 			v-model="model"
 			:type="type"
 			:required="required"
+			:readonly="readonly"
 			:aria-invalid="error ? 'true' : null"
-			class="block w-full bg-transparent py-4 text-lg leading-[normal] font-bold text-teal outline-hidden sm:text-xl lg:text-3xl"
-			:class="error ? 'border-b border-danger' : 'border-b border-black'"
+			class="block w-full bg-transparent py-4 text-lg leading-[normal] font-bold outline-hidden sm:text-xl lg:text-3xl"
+			:class="[readonly ? 'text-black' : 'text-teal', error ? 'border-b border-danger' : 'border-b border-black']"
 		/>
 		<div v-if="error" class="pt-8 text-md text-danger lg:text-lg">{{ error }}</div>
+		<div v-else-if="hint" class="pt-8 text-md text-gray-600 lg:text-lg">{{ hint }}</div>
 	</div>
 </template>

@@ -51,8 +51,22 @@ class DiscountCode extends Model
 	 */
 	public function timesUsed(): int
 	{
+		// Counted in the query already, for a list of them ([[scopeWithUsage]]).
+		if (array_key_exists('checkouts_count', $this->attributes) && array_key_exists('unlinked_bookings_count', $this->attributes)) {
+			return (int) $this->checkouts_count + (int) $this->unlinked_bookings_count;
+		}
+
 		return $this->checkouts()->count()
 			+ $this->bookings()->whereNull('checkout_id')->count();
+	}
+
+	/** [[timesUsed]] counted in the query, so a list of codes asks once. */
+	public function scopeWithUsage(Builder $query): void
+	{
+		$query->withCount([
+			'checkouts',
+			'bookings as unlinked_bookings_count' => fn (Builder $q) => $q->whereNull('checkout_id'),
+		]);
 	}
 
 	/**

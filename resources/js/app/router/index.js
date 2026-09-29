@@ -89,7 +89,24 @@ const routes = [
 	pending('student/:uuid', 'student.show', 'Student'),
 	pending('rechnungen', 'backoffice.invoices', 'Rechnungen'),
 	pending('exporte', 'backoffice.exports', 'Exporte'),
-	pending('rabatt-codes', 'discount-codes', 'Rabatt-Codes'),
+	{
+		path: '/dashboard/rabatt-codes',
+		name: 'discount-codes',
+		component: () => import('@/views/DiscountCode/Index.vue'),
+		meta: { title: 'Rabatt-Codes' },
+	},
+	{
+		path: '/dashboard/rabatt-code/erfassen',
+		name: 'discount-code.create',
+		component: () => import('@/views/DiscountCode/Form.vue'),
+		meta: { title: 'Rabatt-Code erfassen' },
+	},
+	{
+		path: '/dashboard/rabatt-code/:uuid',
+		name: 'discount-code.edit',
+		component: () => import('@/views/DiscountCode/Form.vue'),
+		meta: { title: 'Rabatt-Code bearbeiten' },
+	},
 	{
 		path: '/dashboard/testimonials',
 		name: 'content.testimonials',

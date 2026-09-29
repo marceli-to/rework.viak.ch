@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Forms\CourseSchema;
+use App\Forms\DiscountCodeSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
 use App\Forms\Schema;
@@ -27,6 +28,7 @@ class FormController extends Controller
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,
 		'student' => StudentSchema::class,
+		'discount-code' => DiscountCodeSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

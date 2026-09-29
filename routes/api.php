@@ -123,6 +123,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('students/{student}', [Admin\StudentController::class, 'update']);
 		Route::patch('students/{student}/state', [Admin\StudentController::class, 'state']);
 
+		Route::get('discount-codes', [Admin\DiscountCodeController::class, 'index']);
+		Route::post('discount-codes', [Admin\DiscountCodeController::class, 'store']);
+		Route::get('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'show']);
+		Route::put('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'update']);
+		Route::delete('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'destroy']);
+
 		Route::post('courses/{course}/events', [Admin\EventController::class, 'store']);
 		Route::get('events/{event}', [Admin\EventController::class, 'show']);
 		Route::put('events/{event}', [Admin\EventController::class, 'update']);
