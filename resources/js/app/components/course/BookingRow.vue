@@ -30,9 +30,9 @@ defineProps({ booking: { type: Object, required: true } });
 				<div v-else>{{ booking.event.location }}</div>
 				<div v-if="booking.event.experts.length">mit {{ booking.event.experts.join(', ') }}</div>
 				<!-- The seat's own badges beside the date's state, on one line (Marcel, 2026-09-29):
-				     all of them children of one row, so a wrap spaces them the same wherever
+				     all of them children of one row, 8px apart across and down, so a wrap spaces them the same wherever
 				     it falls, and `items-start` keeps each at its own height. -->
-				<div class="mt-4 flex flex-wrap items-start gap-x-8 gap-y-4">
+				<div class="mt-4 flex flex-wrap items-start gap-8">
 					<EventState :state="booking.event.state" class="mt-0! flex" />
 					<!-- A seat on an event legacy deleted: kept as history, not opened ([[StudentPageController]]). -->
 					<Badge v-if="booking.deleted" variant="danger">Veranstaltung gelöscht</Badge>
