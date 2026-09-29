@@ -51,7 +51,7 @@ const routes = [
 		path: '/dashboard/veranstaltung/:uuid/nachricht',
 		name: 'event.message',
 		component: () => import('@/views/Event/Message.vue'),
-		meta: { title: 'Nachricht erfassen' },
+		meta: { title: 'Nachricht erstellen' },
 	},
 	{
 		path: '/dashboard/veranstaltung/:uuid/dokumente',

@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { fetchEventPage, postMessage } from '@/api/events';
 import { toast } from '@/composables/useToast';
+import { goBack } from '@/router';
 import ArticleText from '@/components/layout/ArticleText.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Button from '@/components/ui/Button.vue';
@@ -14,15 +15,16 @@ import Field from '@/components/form/Field.vue';
 import Loading from '@/components/ui/Loading.vue';
 
 /**
- * *Nachricht erfassen* — legacy's `event-message-create`, a screen of its own
- * reached from the course date's page ([[07-dashboard]], step 7). The expert
- * portal's composer in the dashboard's fields: *Betreff*, *Nachricht* in the
- * editor, *Anhänge*, *Kopie an mich*. One multipart POST, so an abandoned
- * draft leaves no file behind ([[ExpertPortalController::storeMessage]]).
- * Sent to every live seat.
+ * *Nachricht erstellen* — legacy's `event-message-create`, a screen of its own
+ * reached from the event page ([[07-dashboard]], step 7). **The expert
+ * portal's composer, class for class** (`site/expert/message.blade.php`,
+ * Marcel, 2026-09-29: match legacy): legacy's sentence in the aside,
+ * *Betreff*, *Nachricht*, *Anhänge (max. 32 MB)* with a rule under the drop
+ * box, *Kopie der Nachricht an mich* with a rule under it, and a full-width
+ * *Senden*. One multipart POST, so an abandoned draft leaves no file behind
+ * ([[ExpertPortalController::storeMessage]]). Sent to every live seat.
  */
 const route = useRoute();
-const router = useRouter();
 const page = ref(null);
 const error = ref(null);
 
@@ -55,7 +57,7 @@ async function send() {
 	try {
 		await postMessage(route.params.uuid, { subject: subject.value, body: body.value, copyToMe: copyToMe.value, attachments: attachments.value });
 		toast('Die Nachricht wurde gesendet.');
-		router.push(back());
+		goBack(back());
 	} catch (problem) {
 		errors.value = problem.errors;
 		if (!Object.keys(problem.errors).length) toast(problem.message, 'error');
@@ -71,7 +73,8 @@ async function send() {
 
 	<ArticleText v-else>
 		<template #aside>
-			<h1 class="font-bold text-teal">Nachricht erfassen</h1>
+			<h1 class="font-bold text-teal">Nachricht erstellen</h1>
+			<p class="text-md sm:mt-12 sm:text-lg lg:text-xl">Sende eine Nachricht an alle Studenten dieses Kurses.</p>
 			<BackLink :to="back()" />
 		</template>
 
@@ -79,10 +82,10 @@ async function send() {
 			<Field v-model="subject" label="Betreff" required :error="errors.subject?.[0]" />
 			<Editor v-model="body" label="Nachricht" required :error="errors.body?.[0]" class="mt-24" />
 
-			<!-- The expert composer's `x-form.file-input`: the drop box, its limits under it,
-			     and the chosen files listed under a black rule each. Nothing leaves before *Senden*. -->
-			<div class="mt-24">
-				<div class="mb-4 text-md sm:text-lg lg:text-xl">Anhänge</div>
+			<!-- `x-form.file-input` with `rule`: the drop box, its limits, the chosen
+			     files, and a black rule under the group. Nothing leaves before *Senden*. -->
+			<div class="relative mt-24 mb-16 border-b border-black pb-16 sm:pb-32 lg:mb-32">
+				<div class="mb-4 text-md sm:text-lg lg:text-xl">Anhänge (max. 32 MB)</div>
 				<DropBox class="mt-8 sm:mt-16" :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" @files="(files) => attachments.push(...files)" />
 				<p v-if="fileError()" class="pt-8 text-md text-danger lg:text-lg">{{ fileError() }}</p>
 				<ul v-if="attachments.length" class="mt-16 sm:mt-24">
@@ -96,10 +99,13 @@ async function send() {
 				</ul>
 			</div>
 
-			<Checkbox v-model="copyToMe" class="mt-24">Kopie an mich</Checkbox>
+			<!-- `.line-after`, as on the portal: the checkbox over a black rule. -->
+			<div class="mb-16 border-b border-black pb-22 sm:pb-26 lg:mb-32 lg:pb-36">
+				<Checkbox v-model="copyToMe">Kopie der Nachricht an mich</Checkbox>
+			</div>
 
-			<div class="mt-24 sm:flex">
-				<Button type="submit" :disabled="sending || !page.participants.length">{{ sending ? 'Wird gesendet …' : 'Senden' }}</Button>
+			<div class="mb-16 lg:mb-32">
+				<Button type="submit" class="w-full" :class="{ 'pointer-events-none opacity-60': sending || !page.participants.length }">{{ sending ? 'Wird gesendet …' : 'Senden' }}</Button>
 			</div>
 		</form>
 	</ArticleText>

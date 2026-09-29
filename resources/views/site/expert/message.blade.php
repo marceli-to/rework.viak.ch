@@ -26,14 +26,12 @@
 			<h1 class="hidden font-bold text-teal sm:block">Nachricht erstellen</h1>
 
 			{{-- `.text-small` with 12px above it from `sm` — legacy's
-			     `text-small sm:mt-3x`. The sentence promises a send, so it says
-			     how many people that is rather than leaving *alle* to be
-			     guessed; a course with cancellations reaches fewer people than
-			     it has bookings ([[PostMessage]]). --}}
+			     `text-small sm:mt-3x`, and legacy's sentence as it is (Marcel,
+			     2026-09-29: the count this once carried is gone, on the
+			     dashboard's composer as well). --}}
 			<p class="text-md sm:mt-12 sm:text-lg lg:text-xl">
-				Sende eine Nachricht an alle Studenten dieses Kurses ({{ $recipients }}).
+				Sende eine Nachricht an alle Studenten dieses Kurses.
 			</p>
-
 			<x-ui.back-link :href="\App\Support\SiteUrl::expertEvent($event->uuid)" />
 		</x-slot:aside>
 
@@ -54,14 +52,13 @@
 
 			<x-form.editor name="body" label="Nachricht" required />
 
-			{{-- *Anhänge (max. 32 MB)* — legacy's label, and here the number is
-			     the rule rather than a sentence beside it
-			     ([[PostEventMessageRequest]]). --}}
+			{{-- *Anhänge (max. 32 MB)*, legacy's label (Marcel, 2026-09-29),
+			     and the number is the rule ([[PostEventMessageRequest]]). --}}
 			{{-- No hint line, as legacy has none: the ten-file cap is said by
 			     the drop box when it bites. The one thing a visitor could not
 			     otherwise know — that a failed send drops the chosen files —
 			     is said only when it has just happened. --}}
-			<x-form.file-input name="attachments" label="Anhänge" rule
+			<x-form.file-input name="attachments" label="Anhänge (max. 32 MB)" rule
 				:accept="\App\Support\DocumentTypes::accept()"
 				:restrictions="\App\Support\DocumentTypes::RESTRICTIONS"
 				:max-size="32" :max-files="10"

@@ -171,14 +171,7 @@ class ExpertPortalController extends Controller
 
 		$this->authorize('create', [Message::class, $event]);
 
-		return view('site.expert.message', [
-			'event' => $event,
-			// What *Sende eine Nachricht an alle Studenten dieses Kurses* means,
-			// counted rather than promised: [[PostMessage]] mails the holders of
-			// live seats, so a course with cancellations mails fewer people than
-			// it has bookings.
-			'recipients' => $event->bookings()->active()->distinct()->count('user_id'),
-		]);
+		return view('site.expert.message', ['event' => $event]);
 	}
 
 	/**

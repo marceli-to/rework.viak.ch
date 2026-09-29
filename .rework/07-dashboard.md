@@ -773,13 +773,18 @@ participation confirmation, so attendance has to be recorded):
     student page.
   - ***Teilnehmerliste (PDF)*** is the portal's [[RenderParticipantList]],
     fetched as a blob like the Excel export.
-  - ***Nachrichten***: the portals' message row (date, sender, subject and
-    35 characters, *Anzeigen* into a lightbox with the recipients and the
-    files), and the plus to ***Nachricht erfassen***, a screen of its own as
-    legacy has it: *Betreff*, the editor, *Anhänge*, *Kopie an mich*, one
-    multipart POST, and the mails on [[MessagePosted]]. The body is cleaned by
-    [[MessageHtml]] whatever `body_format` says, and shown through
-    [[RichText]].
+  - ***Nachrichten***: the portals' message row and box ([[MessageRow]], the
+    Vue port of `row/message.blade.php`, Marcel 2026-09-29: match legacy):
+    date, sender, 35 characters of the body and a teal *Anzeigen*, opening
+    legacy's box with *Datum* and *Absender* over a rule, the subject, the
+    body through [[RichText]], and *Anhänge* under a rule. The plus opens
+    ***Nachricht erstellen***, legacy's screen and the expert portal's form
+    class for class: legacy's sentence in the aside, *Betreff*, the editor,
+    *Anhänge (max. 32 MB)* with a rule under the drop box, *Kopie der
+    Nachricht an mich* over a rule, a full-width *Senden*. One multipart
+    POST, the mails on [[MessagePosted]]. The body is cleaned by
+    [[MessageHtml]] whatever `body_format` says. The portal's composer took
+    legacy's label and lost the recipient count in its sentence the same day.
   - ***Kurs-Dokumente***: legacy's rows (Marcel, 2026-09-29, from legacy's
     page), [[FileRow]], the Vue port of the portal's `row/file`: the name
     (caption and file name where there is a caption), uploaded, size,

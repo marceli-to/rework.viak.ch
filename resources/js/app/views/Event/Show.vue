@@ -19,6 +19,7 @@ import IconDownload from '@/components/icons/Download.vue';
 import IconPlus from '@/components/icons/Plus.vue';
 import Lightbox from '@/components/ui/Lightbox.vue';
 import Loading from '@/components/ui/Loading.vue';
+import MessageRow from '@/components/list/MessageRow.vue';
 import SearchField from '@/components/list/SearchField.vue';
 import NoResults from '@/components/ui/NoResults.vue';
 
@@ -32,8 +33,8 @@ import NoResults from '@/components/ui/NoResults.vue';
  *   form's lightbox, not ticked here (Marcel, 2026-09-29): legacy's tick and
  *   *Teilgenommen?* are gone. Under the list,
  *   *Teilnehmer hinzufügen* and *Teilnehmerliste* with the download icon.
- * - *Nachrichten*, legacy's messages module: a row per note that opens it in
- *   a lightbox, and the plus to *Nachricht erfassen*. Only with participants,
+ * - *Nachrichten*, legacy's messages module ([[MessageRow]]): a row per note
+ *   that opens it in legacy's box, and the plus to *Nachricht erstellen*. Only with participants,
  *   as legacy.
  * - *Kurs-Dokumente*: legacy's rows ([[FileRow]], the portal's
  *   `row/file`), *Download* over *Löschen*, and the plus to *Dokumente
@@ -115,13 +116,6 @@ async function pdf() {
 	}
 }
 
-// Nachrichten
-const reading = ref(null);
-const preview = (html) => {
-	const text = new DOMParser().parseFromString(html, 'text/html').body.textContent.trim();
-	return text.length > 35 ? `${text.slice(0, 35)}…` : text;
-};
-
 // Kurs-Dokumente
 async function remove(file) {
 	if (!(await confirm('Bitte Löschen bestätigen!', `${file.name} wird entfernt.`))) return;
@@ -201,22 +195,12 @@ async function remove(file) {
 			<Collapsible v-if="page.participants.length">
 				<template #title>Nachrichten<Badge v-if="page.messages.length" variant="solid" class="ml-12">{{ page.messages.length }}</Badge></template>
 
-				<!-- The portals' message row (`row/message.blade.php`): date, sender, preview, *Anzeigen*. -->
-				<article v-for="message in page.messages" :key="message.uuid" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
-					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-						<div class="mb-8 sm:hidden">{{ shortDate(message.created_at) }}, {{ message.author }}</div>
-						<div class="mb-4 max-sm:hidden sm:col-span-2">{{ shortDate(message.created_at) }}</div>
-						<div class="mb-4 max-sm:hidden sm:col-span-3">{{ message.author }}</div>
-						<div class="sm:col-span-4 md:col-span-5"><strong class="font-bold">{{ message.subject }}</strong><br />{{ preview(message.body) }}</div>
-						<div class="mt-24 sm:col-span-3 sm:mt-0 md:col-span-2">
-							<Button variant="secondary" class="w-full" @click="reading = message">Anzeigen</Button>
-						</div>
-					</div>
-				</article>
+				<!-- The portals' message row and box ([[MessageRow]], `row/message.blade.php`). -->
+				<MessageRow v-for="message in page.messages" :key="message.uuid" :message="message" />
 				<NoResults v-if="!page.messages.length">Es sind noch keine Nachrichten vorhanden.</NoResults>
 
 				<div class="mt-24 flex">
-					<RouterLink :to="{ name: 'event.message', params: { uuid: page.event.uuid } }" title="Nachricht erfassen" class="block hover:text-teal">
+					<RouterLink :to="{ name: 'event.message', params: { uuid: page.event.uuid } }" title="Nachricht erstellen" class="block hover:text-teal">
 						<IconPlus size="lg" class="block" />
 					</RouterLink>
 				</div>
@@ -242,14 +226,7 @@ async function remove(file) {
 			</Collapsible>
 		</div>
 
-		<Lightbox v-if="reading" :title="reading.subject" @close="reading = null">
-			<p class="mb-12 text-lg">{{ shortDate(reading.created_at) }}, {{ reading.author }}<template v-if="reading.recipients !== null">, an {{ reading.recipients }} Teilnehmer</template></p>
-			<!-- Through the site's allowlist on the server ([[RichText]]). -->
-			<div class="text-lg [&_a]:underline [&_li]:ml-20 [&_li]:list-disc [&_p+p]:mt-12" v-html="reading.body" />
-			<ul v-if="reading.attachments.length" class="mt-24 border-t-2 border-gray-600 pt-8 text-lg">
-				<li v-for="file in reading.attachments" :key="file.uuid"><a :href="file.url" target="_blank" class="underline hover:text-teal">{{ file.name }}</a></li>
-			</ul>
-		</Lightbox>
+		
 
 		<Lightbox v-if="adding" title="Teilnehmer hinzufügen" @close="closeAdding">
 			<SearchField v-model="search" />
