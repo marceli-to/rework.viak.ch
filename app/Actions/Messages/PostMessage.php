@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Messages;
 
+use App\Events\MessagePosted;
 use App\Models\Event;
 use App\Models\Media;
 use App\Models\Message;
@@ -45,7 +46,7 @@ class PostMessage
 		array $attachments = [],
 		bool $copyToAuthor = false,
 	): Message {
-		return DB::transaction(function () use ($event, $author, $subject, $body, $attachments, $copyToAuthor): Message {
+		$message = DB::transaction(function () use ($event, $author, $subject, $body, $attachments, $copyToAuthor): Message {
 			$message = Message::create([
 				'event_id' => $event->id,
 				'user_id' => $author->id,
@@ -70,5 +71,10 @@ class PostMessage
 
 			return $message->load('recipients');
 		});
+
+		// The mails read the recipients just frozen ([[SendMessageMails]]).
+		MessagePosted::dispatch($message);
+
+		return $message;
 	}
 }

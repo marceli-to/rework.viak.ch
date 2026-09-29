@@ -15,11 +15,12 @@ use Illuminate\Mail\Mailables\Envelope;
  * is: one mail per message, Marcel 2026-09-24).
  *
  * `$post`, not `$message`: Laravel hands every mail view a `$message` of its
- * own, the outgoing mail.
+ * own, the outgoing mail. Not `readonly`: [[EventMessageExpert]] extends this,
+ * and the queue cannot restore a parent's readonly property from a child.
  */
 class EventMessageStudent extends VIAKMail
 {
-	public function __construct(public readonly Message $post)
+	public function __construct(public Message $post)
 	{
 		parent::__construct();
 	}
