@@ -26,5 +26,5 @@ const TONES = {
 </script>
 
 <template>
-	<span class="inline-block border px-4 py-1 text-md leading-[1.2] font-bold" :class="TONES[variant] ?? TONES.neutral"><slot /></span>
+	<span class="inline-block border px-6 py-2 text-md leading-[1.2] font-bold" :class="TONES[variant] ?? TONES.neutral"><slot /></span>
 </template>
