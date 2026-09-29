@@ -501,6 +501,8 @@ then they show how many are booked.
   (`PaymentController`). The course confirmation mail already carries the
   *Zahlung per Kreditkarte* button ([[SiteUrl::invoicePayment]]); the URL serves
   a placeholder page (`site/payment/placeholder.blade.php`). `Open-Questions.md`
-  #28 asks whether card payment is still wanted. **The two *invoice paid*
+  #28 asks whether card payment is still wanted. **Waits for the licence work
+  (chunk 05)** and is designed with it: card payment will probably look
+  different once software is sold (Marcel, 2026-09-29). **The two *invoice paid*
   mails come with it**: legacy sends them only after a card payment
   (`10-mail.md`).

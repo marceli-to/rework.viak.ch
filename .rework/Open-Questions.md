@@ -46,7 +46,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 24 | Where do the new Kontakt and Firmenschulung forms send, and what do they keep? | Marcel | The phase-two Kontakt and Firmenschulung pages. Needs mail first |
 | ~~26~~ | ~~Admin-created students: a set-password invite?~~ — **answered 2026-09-24: yes.** See `07-dashboard.md` | — | — |
 | ~~27~~ | ~~What belongs on the dashboard's landing page?~~ — **answered 2026-09-24: nothing yet; it stays empty.** | — | — |
-| 28 | **Card payment for an invoice**: legacy's `/de/zahlung/rechnung/{uuid}` (Stripe). Still wanted? The course confirmation mail links to it; the rework serves a placeholder there (2026-09-29) | Marcel, then the client | Cutover: the page, or the mail's button |
+| 28 | **Card payment for an invoice**: legacy's `/de/zahlung/rechnung/{uuid}` (Stripe). Still wanted? The course confirmation mail links to it; the rework serves a placeholder there (2026-09-29) | Marcel, then the client | Cutover. **Waits for chunk 05**: designed with the licence checkout (Marcel, 2026-09-29) |
 | 25 | Firmenschulung's URL, and does it launch before cutover? | Marcel | The 301 for the indexed `/de/individualschulungen` — without the new page it has nowhere to go |
 | 29 | Who manages the GTM container `GTM-M3L7WVP` and the ad accounts, VIAK or an agency? | Client | `11-tracking.md` step 2's container changes, and UTM templates on campaigns |
 | 30 | Which ad networks, exactly? Google Ads and Meta today; LinkedIn, ChatGPT, others planned? | Client | Nothing in code; which tags go into GTM |
