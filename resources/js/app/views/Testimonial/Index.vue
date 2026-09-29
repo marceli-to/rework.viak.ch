@@ -56,7 +56,7 @@ onMounted(async () => {
 					<p class="line-clamp-3" :title="item.quote">„{{ item.quote }}“</p>
 					<p class="text-lg">
 						{{ item.name }}<template v-if="item.context"> ({{ item.context }})</template>
-						<Badge v-if="!item.publish" class="ml-8">nicht publiziert</Badge>
+						<span v-if="!item.publish" class="mt-8 block"><Badge>nicht publiziert</Badge></span>
 					</p>
 				</div>
 

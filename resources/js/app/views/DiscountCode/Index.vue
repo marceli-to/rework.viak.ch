@@ -73,7 +73,7 @@ onMounted(async () => {
 
 		<div v-else class="mt-12">
 			<Collapsible v-for="group in [{ title: 'Gültige Codes', rows: valid, open: true }, { title: 'Verwendete oder abgelaufene Codes', rows: spent, open: false }]" :key="`${group.title}-${group.open || search}`" :expanded="group.open || (Boolean(search) && group.rows.length > 0)">
-				<template #title>{{ group.title }}<Badge class="ml-12">{{ group.rows.length }}</Badge></template>
+				<template #title>{{ group.title }}<Badge variant="solid" class="ml-12">{{ group.rows.length }}</Badge></template>
 				<EditableListItem
 					v-for="code in group.rows"
 					:key="code.uuid"
@@ -84,7 +84,7 @@ onMounted(async () => {
 					<div class="col-span-12 sm:col-span-4">
 						<strong>{{ code.code }}</strong>
 						<span v-if="dates(code)" class="block">{{ dates(code) }}</span>
-						<Badge class="mt-8">{{ usage(code) }}</Badge>
+						<div class="mt-8"><Badge>{{ usage(code) }}</Badge></div>
 					</div>
 					<div class="col-span-12 sm:col-span-2">{{ amount(code) }}</div>
 					<div class="col-span-12 pr-40 sm:col-span-6">{{ code.remarks }}</div>

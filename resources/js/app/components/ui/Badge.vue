@@ -4,10 +4,12 @@
  * publiziert* ([[07-dashboard]]). Dashboard only. The site keeps its italic
  * state line (`components/course/event-state.blade.php`).
  *
- * The outline button's shape (`Button.vue`, `outline`): a 1px border, square
- * corners, bold text in the border's colour. Not filled: white on `warning`
- * or `success` is too faint to read at 14px. `neutral` is a state that is
- * neither good nor bad.
+ * The outline button's shape (`Button.vue`, `outline`): a 1px border and bold
+ * text in the border's colour, but with `rounded-sm` corners (Marcel,
+ * 2026-09-29). Always on a line of its own inside a list row. Not filled:
+ * white on `warning` or `success` is too faint to read at 14px. `neutral` is
+ * a state that is neither good nor bad. `solid` (`gray-600`, white text) is the
+ * one filled tone: the total in a collapsible title (Marcel, 2026-09-29).
  */
 defineProps({
 	variant: { type: String, default: 'neutral' },
@@ -15,6 +17,7 @@ defineProps({
 
 const TONES = {
 	neutral: 'border-black text-black',
+	solid: 'border-gray-600 bg-gray-600 text-white',
 	success: 'border-success text-success',
 	warning: 'border-warning text-warning',
 	danger: 'border-danger text-danger',
@@ -22,5 +25,5 @@ const TONES = {
 </script>
 
 <template>
-	<span class="inline-block border px-8 py-2 text-md leading-[1.2] font-bold" :class="TONES[variant] ?? TONES.neutral"><slot /></span>
+	<span class="inline-block rounded-sm border px-4 py-1 text-md leading-[1.2] font-bold" :class="TONES[variant] ?? TONES.neutral"><slot /></span>
 </template>
