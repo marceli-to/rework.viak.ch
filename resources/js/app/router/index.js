@@ -126,7 +126,24 @@ const routes = [
 		meta: { title: 'Testimonial bearbeiten' },
 	},
 	pending('news', 'content.news', 'News'),
-	pending('einstellungen', 'settings', 'Einstellungen'),
+	{
+		path: '/dashboard/einstellungen',
+		name: 'settings',
+		component: () => import('@/views/Setting/Index.vue'),
+		meta: { title: 'Einstellungen' },
+	},
+	{
+		path: '/dashboard/einstellungen/:kind/erfassen',
+		name: 'setting.create',
+		component: () => import('@/views/Setting/Form.vue'),
+		meta: { title: 'Einstellungen' },
+	},
+	{
+		path: '/dashboard/einstellungen/:kind/:uuid',
+		name: 'setting.edit',
+		component: () => import('@/views/Setting/Form.vue'),
+		meta: { title: 'Einstellungen' },
+	},
 	pending('profil', 'profile', 'Mein Profil'),
 
 	// The old list's address, from before the two modes were one screen.

@@ -13,9 +13,9 @@ both modes, the course form and its images, testimonials, the field kit), and
 **step 6 began with the course-date form**. See *Step 1* to *Step 6* below,
 then *Loading* and *Polish*.
 
-**Next: the rest of step 6**, the remaining forms on the kit: taxonomies and
-profile (*Build order*, below). Experts, students and discount codes were built
-on 2026-09-29 (*Step 6 — experts*, *— students*, *— discount codes*). Then step 7, which waits
+**Next: the last of step 6**, the admin's own profile (*Build order*, below).
+Experts, students, discount codes and the settings were built on 2026-09-29
+(*Step 6 — experts*, *— students*, *— discount codes*, *— settings*). Then step 7, which waits
 on mail (chunk 10).
 
 What exists at the end of 2026-09-24:
@@ -24,7 +24,8 @@ What exists at the end of 2026-09-24:
   their portal), and admin endpoints live under `/api/admin` (*Step 1*).
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
-  *Experten*, *Studenten*, *Rabatt-Codes* (lists and forms, 2026-09-29).
+  *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen* (lists and forms,
+  2026-09-29).
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -178,7 +179,8 @@ Categories, languages, levels, tags (a translatable title each), locations
 (title, address, map URL). **They stay** (Marcel, 2026-09-24): they are what
 the course filter and the course pages are built on, even if the lists rarely
 change. Rarely edited is a reason to build them cheaply — one generic taxonomy
-schema in the kit rather than five hand-made screens — not to drop them. **Software leaves this group**: chunk 05
+schema in the kit rather than five hand-made screens — not to drop them. → **Built
+2026-09-29** (*Step 6 — settings*). **Software leaves this group**: chunk 05
 turns it into an entity with variants and a manufacturer, and it gets its own
 screen there.
 
@@ -637,6 +639,29 @@ leads to its `Pending` for now.
 - The kit's `Field` gained `readonly` (the code) and `hint` (*Leer lassen für
   unbegrenzt.*).
 
+## Step 6 — settings, built 2026-09-29
+
+*Einstellungen*: categories, languages, levels, tags and places on one screen,
+legacy's `views/setting/Index.vue`. **Two schemas for five lists**:
+[[TermSchema]] (a name) for the four terms, [[LocationSchema]] (name, address,
+map link, *Publizieren*) for places, and one controller
+([[SettingController]], `/api/admin/settings/{kind}`).
+
+- **The screen is legacy's**: a collapsible per list, a row per entry, a `+`
+  under each list. The list a form returns to is open (`?liste=tags`), as
+  legacy's `:type` param did. Each row says where it is used (*In 13 Kursen*,
+  *In 325 Kursdaten*).
+- **German only**, as the course form: legacy's *Beschreibung (en)* fields are
+  not asked for, and English already stored is kept (#6). The list's second
+  column, the English name, is gone with them.
+- **Nothing in use is deleted.** A term a course is filed under, or a place a
+  date is at, cannot be deleted, and the form says how many use it; legacy
+  deleted it from under them. What is unused is soft-deleted.
+- A new term goes to the end of its list, published. Order and *publish* on
+  terms are not on the form, as they were not in legacy; the order is the one
+  the port brought across.
+- Software is not here: chunk 05 gives it its own screen.
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed
@@ -712,8 +737,8 @@ hamburger. Proposed, grouped by what the admin is doing:
    `GET /api/admin/forms/{form}`, `FormNode`, error mapping, leave guard. Move
    both forms onto it. (Built, *Step 5*.)
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
-   ~~experts~~, ~~students~~, ~~discount codes~~ (built, *Step 6 — …*),
-   taxonomies, profile.
+   ~~experts~~, ~~students~~, ~~discount codes~~, ~~taxonomies~~ (built,
+   *Step 6 — …*), profile.
 7. **Operational screens, by hand** — the event page, the student page,
    invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.

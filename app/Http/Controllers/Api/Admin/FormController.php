@@ -8,8 +8,10 @@ use App\Forms\CourseSchema;
 use App\Forms\DiscountCodeSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
+use App\Forms\LocationSchema;
 use App\Forms\Schema;
 use App\Forms\StudentSchema;
+use App\Forms\TermSchema;
 use App\Forms\TestimonialSchema;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +31,8 @@ class FormController extends Controller
 		'expert' => ExpertSchema::class,
 		'student' => StudentSchema::class,
 		'discount-code' => DiscountCodeSchema::class,
+		'term' => TermSchema::class,
+		'location' => LocationSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

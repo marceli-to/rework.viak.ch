@@ -129,6 +129,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'update']);
 		Route::delete('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'destroy']);
 
+		Route::get('settings', [Admin\SettingController::class, 'index']);
+		Route::post('settings/{kind}', [Admin\SettingController::class, 'store']);
+		Route::get('settings/{kind}/{uuid}', [Admin\SettingController::class, 'show']);
+		Route::put('settings/{kind}/{uuid}', [Admin\SettingController::class, 'update']);
+		Route::delete('settings/{kind}/{uuid}', [Admin\SettingController::class, 'destroy']);
+
 		Route::post('courses/{course}/events', [Admin\EventController::class, 'store']);
 		Route::get('events/{event}', [Admin\EventController::class, 'show']);
 		Route::put('events/{event}', [Admin\EventController::class, 'update']);
