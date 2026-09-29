@@ -100,6 +100,21 @@ it('uploads course documents and removes them, but never a message\'s', function
 	$this->deleteJson("/api/admin/events/{$this->event->uuid}/files/{$attachment->uuid}")->assertNotFound();
 });
 
+it('uploads course documents with their Bezeichnung', function () {
+	$this->actingAs($this->admin)->post("/api/admin/events/{$this->event->uuid}/files", [
+		'files' => [
+			UploadedFile::fake()->create('workshop.pdf', 50, 'application/pdf'),
+			UploadedFile::fake()->create('modelle.pdf', 50, 'application/pdf'),
+		],
+		'captions' => ['', 'Modelle Tag 1'],
+	], ['Accept' => 'application/json'])->assertCreated();
+
+	$this->getJson("/api/admin/events/{$this->event->uuid}/page")
+		->assertJsonPath('data.files.0.caption', null)
+		->assertJsonPath('data.files.1.caption', 'Modelle Tag 1')
+		->assertJsonPath('data.files.1.name', 'modelle.pdf');
+});
+
 it('keeps all of it to admins', function () {
 	$this->actingAs($this->student)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['student' => $this->student->uuid])->assertForbidden();
 	$this->get("/api/admin/events/{$this->event->uuid}/participants")->assertForbidden();

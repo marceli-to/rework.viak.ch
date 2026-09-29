@@ -528,6 +528,23 @@ it('uploads course materials and attaches them to the event', function () {
 	Storage::disk('public')->assertExists('uploads/'.$event->media()->first()->file);
 });
 
+it('keeps the Bezeichnung typed beside each file, and none where it was left empty', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+
+	$this->actingAs($expert)->post('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload', [
+		'files' => [
+			UploadedFile::fake()->create('modelle.zip', 20),
+			UploadedFile::fake()->create('workshop.pdf', 20),
+		],
+		'captions' => ['Modelle Tag 1', ''],
+	])->assertRedirect();
+
+	expect($event->media()->orderBy('sort_order')->pluck('caption')->all())->toBe(['Modelle Tag 1', null]);
+
+	$this->get('/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/file-upload')->assertSee('name="captions[]"', false);
+});
+
 it('refuses an upload to a course somebody else teaches', function () {
 	$expert = expertUser();
 	$event = taughtEvent(expertUser(['email' => 'other@viak.test']));

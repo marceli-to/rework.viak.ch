@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Media;
 
+use App\Actions\Media\UploadMedia;
 use App\Models\Event;
 use App\Models\Media;
 use App\Support\DocumentTypes;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 
 /**
  * *Dokumente hochladen* — course materials, from the expert portal
@@ -46,7 +48,30 @@ class UploadEventMediaRequest extends FormRequest
 			 * is what a deployment has to agree with ([[Todo]]).
 			 */
 			'files.*' => ['file', 'max:'.(32 * 1024), ...DocumentTypes::rules()],
+
+			// Legacy's *Bezeichnung*, one per file in the files' order, each
+			// optional (Marcel, 2026-09-29).
+			'captions' => ['sometimes', 'array'],
+			'captions.*' => ['nullable', 'string', 'max:255'],
 		];
+	}
+
+	/**
+	 * Each file uploaded, carrying the caption typed beside it. Set here,
+	 * before [[AttachMedia]] saves the row, because it skips a file it cannot
+	 * find and the order after it would no longer be the files'.
+	 *
+	 * @return array<int, Media>
+	 */
+	public function uploads(UploadMedia $upload): array
+	{
+		return array_map(function (UploadedFile $file, int $index) use ($upload): Media {
+			$media = $upload->execute($file);
+			$caption = trim((string) ($this->input('captions')[$index] ?? ''));
+			$media->caption = $caption === '' ? null : $caption;
+
+			return $media;
+		}, $this->file('files'), array_keys($this->file('files')));
 	}
 
 	/** @return array<string, string> */

@@ -34,10 +34,13 @@ export function postMessage(event, { subject, body, copyToMe, attachments }) {
 	return client.post(`/admin/events/${event}/messages`, form).then((r) => r.data.data);
 }
 
-/** *Kurs-Dokumente*: upload, and remove one again. */
-export function uploadFiles(event, files) {
+/** *Kurs-Dokumente*: upload, each with its *Bezeichnung* (`[{ file, caption }]`), and remove one again. */
+export function uploadFiles(event, items) {
 	const form = new FormData();
-	files.forEach((file) => form.append('files[]', file));
+	items.forEach(({ file, caption }) => {
+		form.append('files[]', file);
+		form.append('captions[]', caption ?? '');
+	});
 
 	return client.post(`/admin/events/${event}/files`, form).then((r) => r.data.data);
 }

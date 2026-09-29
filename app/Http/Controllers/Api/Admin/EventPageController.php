@@ -198,7 +198,7 @@ class EventPageController extends Controller
 	/** *Kurs-Dokumente* — [[UploadMedia]] then [[AttachMedia]], as the portal does. */
 	public function upload(UploadEventMediaRequest $request, Event $event, UploadMedia $upload, AttachMedia $attach): JsonResponse
 	{
-		$attached = $attach->execute(array_map(fn ($file) => $upload->execute($file), $request->file('files')), $event);
+		$attached = $attach->execute($request->uploads($upload), $event);
 
 		return response()->json(['data' => array_map(fn (Media $media) => $this->file($media), $attached)], 201);
 	}

@@ -8,6 +8,9 @@
 	'maxSize' => null,
 	'maxFiles' => null,
 	'rule' => false,
+	// A *Bezeichnung…* under each chosen file, sent as `captions[]` in the
+	// files' order: legacy's description, for course documents (Marcel, 2026-09-29).
+	'captions' => false,
 ])
 
 {{--
@@ -100,15 +103,22 @@
 	     the 1px black rule legacy puts above each listed file. --}}
 	<ul x-cloak x-show="files.length" class="mt-16 sm:mt-24">
 		<template x-for="(file, index) in files" x-bind:key="file.name + file.size + file.lastModified">
-			<li class="flex items-center justify-between gap-16 border-t border-black py-8 text-xs sm:text-md lg:text-lg">
-				<span class="min-w-0 truncate" x-text="file.name"></span>
-				<span class="flex shrink-0 items-center gap-16">
-					<span class="text-gray-400" x-text="size(file)"></span>
-					<button type="button" x-on:click="remove(index)" class="transition-colors hover:text-teal"
-						x-bind:aria-label="'Entfernen: ' + file.name">
-						<x-icon.cross class="w-12!" />
-					</button>
-				</span>
+			<li class="border-t border-black py-8 text-xs sm:text-md lg:text-lg">
+				<div class="flex items-center justify-between gap-16">
+					<span class="min-w-0 truncate" x-text="file.name"></span>
+					<span class="flex shrink-0 items-center gap-16">
+						<span class="text-gray-400" x-text="size(file)"></span>
+						<button type="button" x-on:click="remove(index)" class="transition-colors hover:text-teal"
+							x-bind:aria-label="'Entfernen: ' + file.name">
+							<x-icon.cross class="w-12!" />
+						</button>
+					</span>
+				</div>
+				@if ($captions)
+					<input type="text" name="captions[]" maxlength="255" placeholder="Bezeichnung…"
+						x-bind:aria-label="'Bezeichnung für ' + file.name"
+						class="mt-8 block w-full border-b border-gray-400 bg-transparent py-4 text-teal outline-hidden placeholder:text-gray-400 focus:border-teal">
+				@endif
 			</li>
 		</template>
 	</ul>

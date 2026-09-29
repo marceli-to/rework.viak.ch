@@ -787,8 +787,12 @@ participation confirmation, so attendance has to be recorded):
     (`/dashboard/veranstaltung/{uuid}/dokumente`), a screen of its own as
     legacy has it and as the expert portal rebuilt it: the drop box
     ([[DropBox]]), the chosen files listed, a full-width *Speichern*, and
-    **nothing uploaded before *Speichern*** (legacy uploaded on drop). No
-    *Bezeichnung*, as on the portal. The composer's *Anhänge* is the same box. The date's row here has no *Details*, which would lead
+    **nothing uploaded before *Speichern*** (legacy uploaded on drop). **Each
+    file has legacy's optional *Bezeichnung* again** (Marcel, 2026-09-29), on
+    this screen and on the expert portal's (`x-form.file-input captions`),
+    sent as `captions[]` in the files' order and stored as `media.caption`
+    ([[UploadEventMediaRequest::uploads]]). The composer's *Anhänge* is the
+    same box, without it. The date's row here has no *Details*, which would lead
     back to the page. A message's
     attachment cannot be removed here (404).
   - **Checked in the browser** on the dev fixtures: a student added, a message

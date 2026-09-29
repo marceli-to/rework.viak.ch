@@ -43,7 +43,7 @@
 			     cap is ours ([[UploadEventMediaRequest]]) and is said when it
 			     bites. 16px above it, as legacy's `mt-2x` wrapper puts it. --}}
 			<div class="pt-16">
-				<x-form.file-input name="files" required
+				<x-form.file-input name="files" required captions
 					:accept="\App\Support\DocumentTypes::accept()"
 					:restrictions="\App\Support\DocumentTypes::RESTRICTIONS"
 					:max-size="32" :max-files="10" />

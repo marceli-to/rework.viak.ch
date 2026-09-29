@@ -292,10 +292,7 @@ class ExpertPortalController extends Controller
 	): RedirectResponse {
 		$event = $this->teachable($request->user(), $uuid);
 
-		$attach->execute(
-			array_map(fn ($file) => $upload->execute($file), $request->file('files')),
-			$event,
-		);
+		$attach->execute($request->uploads($upload), $event);
 
 		return redirect(SiteUrl::expertEvent($event->uuid))
 			->with('status', 'Die Dokumente wurden hochgeladen.');

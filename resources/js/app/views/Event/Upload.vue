@@ -17,7 +17,8 @@ import Loading from '@/components/ui/Loading.vue';
  * portal's `site/expert/upload.blade.php` in the dashboard: the drop box, its
  * limits, the chosen files listed, and a full-width *Speichern*. **Nothing is
  * uploaded until *Speichern***, where legacy uploaded on drop and left 11 of
- * its 44 files attached to nothing. No *Bezeichnung*, as on the portal.
+ * its 44 files attached to nothing. Each file has legacy's optional
+ * *Bezeichnung* under it (Marcel, 2026-09-29), as the portal's has again.
  */
 const route = useRoute();
 const back = { name: 'event.show', params: { uuid: route.params.uuid } };
@@ -67,15 +68,19 @@ async function save() {
 
 		<form @submit.prevent="save">
 			<div class="pb-16 sm:pb-32">
-				<DropBox :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" @files="(picked) => files.push(...picked)" />
+				<DropBox :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" @files="(picked) => files.push(...picked.map((file) => ({ file, caption: '' })))" />
 				<p v-if="problem" class="pt-8 text-md text-danger lg:text-lg">{{ problem }}</p>
 				<ul v-if="files.length" class="mt-16 sm:mt-24">
-					<li v-for="(file, index) in files" :key="`${file.name}-${file.size}-${file.lastModified}`" class="flex items-center justify-between gap-16 border-t border-black py-8 text-xs sm:text-md lg:text-lg">
-						<span class="min-w-0 truncate">{{ file.name }}</span>
-						<span class="flex shrink-0 items-center gap-16">
-							<span class="text-gray-400">{{ size(file.size) }}</span>
-							<button type="button" class="transition-colors hover:text-teal" :aria-label="`Entfernen: ${file.name}`" @click="files.splice(index, 1)"><IconCross size="sm" /></button>
-						</span>
+					<li v-for="(item, index) in files" :key="`${item.file.name}-${item.file.size}-${item.file.lastModified}`" class="border-t border-black py-8 text-xs sm:text-md lg:text-lg">
+						<div class="flex items-center justify-between gap-16">
+							<span class="min-w-0 truncate">{{ item.file.name }}</span>
+							<span class="flex shrink-0 items-center gap-16">
+								<span class="text-gray-400">{{ size(item.file.size) }}</span>
+								<button type="button" class="transition-colors hover:text-teal" :aria-label="`Entfernen: ${item.file.name}`" @click="files.splice(index, 1)"><IconCross size="sm" /></button>
+							</span>
+						</div>
+						<!-- The portal's `x-form.file-input` with `captions`: the same input. -->
+						<input v-model="item.caption" type="text" maxlength="255" placeholder="Bezeichnung…" :aria-label="`Bezeichnung für ${item.file.name}`" class="mt-8 block w-full border-b border-gray-400 bg-transparent py-4 text-teal outline-hidden placeholder:text-gray-400 focus:border-teal" />
 					</li>
 				</ul>
 			</div>
