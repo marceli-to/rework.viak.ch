@@ -94,7 +94,8 @@ in a scenario (below).
 - ~~**Attendance, for *Event closed*.**~~ **Decided and built 2026-09-29
   (Marcel): non-participants get no confirmation.** `bookings.participated_at`,
   ported from legacy's `hasParticipated` flag with the time it was ticked;
-  ticked on the course date's page (dashboard); closing sends the
+  asked in the lightbox that closes the event (dashboard, *Attendance is asked
+  when closing* in `07-dashboard.md`); closing sends the
   confirmation to ticked seats only, once.
 - ~~**The password-reset mail is Laravel's stock one, in English, on legacy
   too.**~~ **Translated 2026-09-29 (Marcel)**: `PasswordReset`, VIAK's own German

@@ -16,9 +16,8 @@ export const setEventState = (uuid, state) =>
 /** A course date's own page: the date and its participants ([[EventPageController]]). */
 export const fetchEventPage = (uuid) => client.get(`/admin/events/${uuid}/page`).then((r) => r.data.data);
 
-/** Tick a seat as attended, or untick it. */
-export const setParticipation = (booking, participated) =>
-	client.patch(`/admin/bookings/${booking}/participation`, { participated }).then((r) => r.data.data);
+/** *Veranstaltung abschliessen*, with the seats that attended ([[EventPageController::close]]). */
+export const closeEvent = (event, attended) => client.post(`/admin/events/${event}/close`, { attended }).then((r) => r.data.data);
 
 /** *Teilnehmer hinzufügen*: book a student onto the date ([[CreateBookingForUser]]). */
 export const bookStudent = (event, student) => client.post(`/admin/events/${event}/bookings`, { student }).then((r) => r.data.data);

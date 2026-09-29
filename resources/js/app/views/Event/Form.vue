@@ -1,11 +1,13 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { deleteEvent, fetchEvent, saveEvent, setEventState } from '@/api/events';
+import { closeEvent, deleteEvent, fetchEvent, fetchEventPage, saveEvent, setEventState } from '@/api/events';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import ActionBox from '@/components/form/ActionBox.vue';
 import Button from '@/components/ui/Button.vue';
+import Checkbox from '@/components/form/Checkbox.vue';
+import Lightbox from '@/components/ui/Lightbox.vue';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
@@ -17,8 +19,12 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * absagen*, each behind a confirm, turning into *bestätigt am …* /
  * *abgesagt am …* once done. Each mails the participants and experts
  * ([[SendConfirmationMails]], [[SendEventCancelMails]]). Once the date has
- * run, green *Veranstaltung abschliessen*: the seats ticked as attended on
- * the date's page get the participation confirmation ([[SendClosingMails]]).
+ * run, green *Veranstaltung abschliessen*, which **asks who attended first**
+ * (Marcel, 2026-09-29): a lightbox lists the seats, every one ticked, and
+ * *Abschliessen und Bestätigungen senden* records the ticks and closes in one
+ * request ([[EventPageController::close]]). The ticked seats get the
+ * participation confirmation ([[SendClosingMails]]); the date's page then
+ * shows each seat's attendance as a badge.
  */
 const route = useRoute();
 const save = (uuid, form) => saveEvent(uuid, form, route.params.course);
@@ -38,6 +44,37 @@ async function act(meta, patchMeta, state, question) {
 		const now = await fetchEvent(meta.uuid);
 		patchMeta({ state: now.state, confirmed_at: now.confirmed_at, cancelled_at: now.cancelled_at, closed_at: now.closed_at });
 		toast({ confirmed: 'Veranstaltung bestätigt', cancelled: 'Veranstaltung abgesagt', closed: 'Veranstaltung abgeschlossen' }[state]);
+	} catch (problem) {
+		toast(problem.message, 'error');
+	} finally {
+		busy.value = false;
+	}
+}
+
+// Veranstaltung abschliessen
+const closing = ref(null);
+
+async function startClosing(meta, patchMeta) {
+	busy.value = true;
+	try {
+		const { participants } = await fetchEventPage(meta.uuid);
+		closing.value = { meta, patchMeta, participants, attended: participants.map((participant) => participant.uuid) };
+	} catch (problem) {
+		toast(problem.message, 'error');
+	} finally {
+		busy.value = false;
+	}
+}
+
+async function close() {
+	const { meta, patchMeta, attended } = closing.value;
+	busy.value = true;
+	try {
+		await closeEvent(meta.uuid, attended);
+		const now = await fetchEvent(meta.uuid);
+		patchMeta({ state: now.state, closed_at: now.closed_at });
+		closing.value = null;
+		toast('Veranstaltung abgeschlossen');
 	} catch (problem) {
 		toast(problem.message, 'error');
 	} finally {
@@ -81,9 +118,9 @@ async function act(meta, patchMeta, state, question) {
 				</template>
 				<template v-else>
 					<h2 class="mb-8 font-bold sm:mb-16">Veranstaltung abschliessen</h2>
-					<p class="mb-12 lg:mb-16">Mit dieser Aktion wird die Veranstaltung abgeschlossen. Wer auf der Seite der Veranstaltung als teilgenommen markiert ist, erhält per E-Mail eine Teilnahmebestätigung.</p>
+					<p class="mb-12 lg:mb-16">Mit dieser Aktion wird die Veranstaltung abgeschlossen. Zuerst wird gefragt, wer teilgenommen hat: diese Teilnehmer erhalten per E-Mail eine Teilnahmebestätigung.</p>
 					<div class="mt-12 sm:mt-24">
-						<Button variant="success" class="w-full" :disabled="busy" @click="act(meta, patchMeta, 'closed', 'Bitte «Veranstaltung schliessen» bestätigen!')">Schliessen</Button>
+						<Button variant="success" class="w-full" :disabled="busy" @click="startClosing(meta, patchMeta)">Abschliessen</Button>
 					</div>
 				</template>
 			</ActionBox>
@@ -113,4 +150,24 @@ async function act(meta, patchMeta, state, question) {
 			</template>
 		</template>
 	</ResourceForm>
+
+	<!-- Who attended, asked at the moment it matters: every seat ticked, the no-shows unticked. -->
+	<Lightbox v-if="closing" title="Wer hat teilgenommen?" @close="closing = null">
+		<p class="text-lg">{{ closing.meta.course.number }} {{ closing.meta.course.title }}</p>
+		<p class="mt-8 text-lg">Angekreuzte Teilnehmer erhalten eine Teilnahmebestätigung per E-Mail. Danach lässt sich die Teilnahme nicht mehr ändern.</p>
+
+		<ul v-if="closing.participants.length" class="mt-24 text-lg">
+			<li v-for="participant in closing.participants" :key="participant.uuid" class="border-t border-black py-8">
+				<Checkbox v-model="closing.attended" :value="participant.uuid">
+					{{ participant.name }}<template v-if="participant.city">, {{ participant.city }}</template>
+				</Checkbox>
+			</li>
+		</ul>
+		<p v-else class="mt-24 text-lg">Diese Veranstaltung hat keine Teilnehmer.</p>
+
+		<div class="mt-32 flex flex-col items-center [&>*]:w-full [&>*]:max-w-400 [&>*+*]:mt-12">
+			<Button variant="success" :disabled="busy" @click="close">{{ closing.participants.length ? 'Abschliessen und Bestätigungen senden' : 'Abschliessen' }}</Button>
+			<Button variant="gray-outline" @click="closing = null">Abbrechen</Button>
+		</div>
+	</Lightbox>
 </template>

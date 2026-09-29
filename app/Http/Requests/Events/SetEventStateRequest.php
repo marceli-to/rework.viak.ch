@@ -19,7 +19,9 @@ class SetEventStateRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'state' => ['required', Rule::enum(EventState::class)],
+			// Not `closed`: that comes with the attendance, through
+			// [[EventPageController::close]], or nobody would get a confirmation.
+			'state' => ['required', Rule::enum(EventState::class)->except([EventState::Closed])],
 		];
 	}
 

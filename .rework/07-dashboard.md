@@ -758,9 +758,9 @@ participation confirmation, so attendance has to be recorded):
   and *Teilnehmer*: name, city, firm (or the one billed), e-mail, *Mietcomputer*,
   and legacy's tick under *Teilgenommen?*. Once the date is closed the tick
   is *Ja* / *Nein*; a called-off date shows neither.
-- the tick is `PATCH /api/admin/bookings/{booking}/participation`, refused
-  once the date is closed or called off, stored as `bookings.participated_at`
-  (legacy's `hasParticipated`, ported with the time it was set).
+- stored as `bookings.participated_at` (legacy's `hasParticipated`, ported
+  with the time it was set). **Superseded the same day**: the tick moved into
+  closing, see *Attendance is asked when closing*.
 - **The rest of legacy's page, the same afternoon**, as UI over what the
   expert portal already does ([[EventPageController]]; the portal's two
   requests now take a bound `{event}` as well as its `{uuid}`):
@@ -821,6 +821,29 @@ then four collapsibles:
 - Not built: legacy's separate *Alle Dokumente* screen (not needed, the list
   is whole). The old `/api/bookings/{booking}/cancel` still charges when an
   admin uses it on someone else's seat; the dashboard no longer does.
+
+## Attendance is asked when closing, 2026-09-29
+
+Marcel, on the event page as first built (a tick per seat there, the close on
+the edit form, two screens for one decision):
+
+- **The event page no longer ticks.** Each seat shows its attendance as a
+  badge, always ([[AttendanceBadge]]): *Teilnahme offen* until the event is
+  closed, then *Teilgenommen* (green) or *Nicht teilgenommen* (red). The
+  *Teilgenommen?* header is gone. The student page shows the same badge on
+  booked and past seats.
+- **Closing asks who attended.** The edit form's *Veranstaltung abschliessen*
+  box (button now *Abschliessen*) opens a lightbox, *Wer hat teilgenommen?*,
+  listing the live seats **all ticked** (Marcel: untick the no-shows).
+  *Abschliessen und Bestätigungen senden* is one request,
+  `POST /api/admin/events/{event}/close` with the attended booking uuids
+  ([[EventPageController::close]]): the ticks and the close in one
+  transaction, so they cannot disagree, then the confirmations to the ticked
+  seats. Only once the date has run, and only once.
+- **The plain state switch refuses `closed`** ([[SetEventStateRequest]]), and
+  the per-seat tick endpoint is gone.
+- Not built: sending a confirmation afterwards to someone missed. Once closed,
+  the attendance is fixed, as before.
 
 ## Loading, built 2026-09-24
 

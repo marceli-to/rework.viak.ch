@@ -7,6 +7,7 @@ import { toast } from '@/composables/useToast';
 import { returnTo } from '@/router';
 import { shortDate } from '@/support/format';
 import ArticleText from '@/components/layout/ArticleText.vue';
+import AttendanceBadge from '@/components/course/AttendanceBadge.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Badge from '@/components/ui/Badge.vue';
 import BookingRow from '@/components/course/BookingRow.vue';
@@ -105,6 +106,7 @@ async function cancel(booking) {
 				<template #title>Gebuchte Kurse<Badge v-if="page.booked.length" variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
 				<BookingRow v-for="booking in page.booked" :key="booking.uuid" :booking="booking">
 					<template #badges>
+						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
 					</template>
 					<template #actions>
@@ -118,8 +120,7 @@ async function cancel(booking) {
 				<template #title>Absolvierte Kurse<Badge v-if="page.past.length" variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
 				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
 					<template #badges>
-						<Badge v-if="booking.participated" variant="success">Teilgenommen</Badge>
-						<Badge v-else-if="booking.event.state === 'closed'">Nicht teilgenommen</Badge>
+						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 					</template>
 				</BookingRow>
 				<p v-if="!page.past.length" class="mt-16 sm:mt-32">Student hat noch keine absolvierten Kurse.</p>

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Bookings\CreateBookingForUser;
 use App\Actions\Documents\RenderParticipantList;
+use App\Actions\Events\SetEventState;
 use App\Actions\Media\AttachMedia;
 use App\Actions\Media\DeleteMedia;
 use App\Actions\Media\UploadMedia;
@@ -28,11 +29,12 @@ use App\Support\RichText;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A course date's own page on the dashboard ([[07-dashboard]], step 7) —
- * legacy's `course/event/Show.vue`: the date, its participants with the tick
- * that decides who gets the participation confirmation (Marcel, 2026-09-29),
+ * legacy's `course/event/Show.vue`: the date, its participants (with whether
+ * they attended, once the date is closed), closing it with the attendance,
  * *Teilnehmer hinzufügen*, the participant list as PDF, *Nachrichten* and
  * *Kurs-Dokumente*.
  *
@@ -91,19 +93,40 @@ class EventPageController extends Controller
 	}
 
 	/**
-	 * Ticked as attended, or not. Not once the date is closed: the
-	 * confirmations went out then, to the seats ticked at the time.
+	 * *Veranstaltung abschliessen*, **with who attended, in one step** (Marcel,
+	 * 2026-09-29). The edit form's lightbox lists the live seats, all ticked,
+	 * and sends the ones left ticked; this records exactly those as attended and
+	 * every other seat as not, then closes the date, in one transaction, so a
+	 * tick and the close can never disagree. Closing is what mails the
+	 * participation confirmation, to the attended seats only
+	 * ([[SendClosingMails]]).
+	 *
+	 * Only once the date has begun, as the form's box appears, and only once:
+	 * after closing, the attendance is fixed with what was sent.
 	 */
-	public function participation(Request $request, Booking $booking): JsonResponse
+	public function close(Request $request, Event $event, SetEventState $setState): JsonResponse
 	{
-		$participated = $request->validate(['participated' => ['required', 'boolean']])['participated'];
+		$attended = $request->validate([
+			'attended' => ['present', 'array'],
+			'attended.*' => ['uuid'],
+		])['attended'];
 
-		abort_if($booking->isCancelled(), 422, 'Diese Buchung ist annulliert.');
-		abort_if(in_array($booking->event->state, [EventState::Closed, EventState::Cancelled], true), 422, 'Diese Veranstaltung ist abgeschlossen oder abgesagt.');
+		abort_if(in_array($event->state, [EventState::Closed, EventState::Cancelled], true), 422, 'Diese Veranstaltung ist bereits abgeschlossen oder abgesagt.');
+		abort_unless($event->date->lt(today()), 422, 'Eine Veranstaltung wird abgeschlossen, wenn sie stattgefunden hat.');
 
-		$booking->forceFill(['participated_at' => $participated ? ($booking->participated_at ?? now()) : null])->save();
+		DB::transaction(function () use ($event, $attended, $setState): void {
+			$seats = $event->bookings()->active();
 
-		return response()->json(['data' => ['uuid' => $booking->uuid, 'participated' => $booking->hasParticipated()]]);
+			(clone $seats)->whereIn('uuid', $attended)->whereNull('participated_at')->update(['participated_at' => now()]);
+			(clone $seats)->whereNotIn('uuid', $attended)->update(['participated_at' => null]);
+
+			$setState->execute($event, EventState::Closed);
+		});
+
+		return response()->json(['data' => [
+			'state' => $event->refresh()->state->value,
+			'attended' => $event->bookings()->active()->whereNotNull('participated_at')->count(),
+		]]);
 	}
 
 	/**

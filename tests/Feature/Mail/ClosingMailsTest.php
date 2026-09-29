@@ -32,19 +32,47 @@ beforeEach(function () {
 	$this->event->update(['date' => now()->subDay()->toDateString()]);
 });
 
-it('lets an admin tick a seat as attended, and untick it', function () {
-	$booking = $this->came->bookings()->first();
+it('closes with who attended, in one step', function () {
+	$came = $this->came->bookings()->first();
+	$missed = $this->missed->bookings()->first();
+	// A tick from before is not kept when the lightbox leaves it off.
+	$missed->forceFill(['participated_at' => now()])->save();
+	Mail::fake();
 
-	$this->actingAs($this->admin)->patchJson("/api/admin/bookings/{$booking->uuid}/participation", ['participated' => true])
-		->assertOk()->assertJsonPath('data.participated', true);
-	expect($booking->refresh()->hasParticipated())->toBeTrue();
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => [$came->uuid]])
+		->assertOk()
+		->assertJsonPath('data.state', 'closed')
+		->assertJsonPath('data.attended', 1);
 
-	$this->patchJson("/api/admin/bookings/{$booking->uuid}/participation", ['participated' => false]);
-	expect($booking->refresh()->hasParticipated())->toBeFalse();
+	expect($came->refresh()->hasParticipated())->toBeTrue()
+		->and($missed->refresh()->hasParticipated())->toBeFalse();
+	Mail::assertQueued(EventClosedStudent::class, 1);
+	Mail::assertQueued(EventClosedStudent::class, fn ($mail) => $mail->hasTo($this->came->email));
 });
 
-it('keeps ticking to admins', function () {
-	$this->actingAs($this->came)->patchJson('/api/admin/bookings/'.$this->came->bookings()->first()->uuid.'/participation', ['participated' => true])->assertForbidden();
+it('closes with nobody attended when the list comes back empty', function () {
+	Mail::fake();
+
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertOk();
+
+	expect($this->event->refresh()->state)->toBe(EventState::Closed);
+	Mail::assertNotQueued(EventClosedStudent::class);
+});
+
+it('closes only a date that has run, only once, and only for admins', function () {
+	$this->actingAs($this->came)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertForbidden();
+
+	$this->event->update(['date' => now()->addDay()->toDateString()]);
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertStatus(422);
+
+	$this->event->update(['date' => now()->subDay()->toDateString()]);
+	$this->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertOk();
+	$this->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => []])->assertStatus(422);
+});
+
+it('does not close through the plain state switch, which knows nothing of attendance', function () {
+	$this->actingAs($this->admin)->patchJson("/api/admin/events/{$this->event->uuid}/state", ['state' => 'closed'])
+		->assertJsonValidationErrors('state');
 });
 
 it('confirms participation to ticked seats only, with the certificate', function () {
@@ -59,17 +87,15 @@ it('confirms participation to ticked seats only, with the certificate', function
 		&& count($mail->attachments()) === 1);
 });
 
-it('refuses a tick once the date is closed, and does not confirm twice', function () {
+it('does not confirm twice', function () {
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Closed);
 	Mail::fake();
-
-	$this->actingAs($this->admin)->patchJson('/api/admin/bookings/'.$this->missed->bookings()->first()->uuid.'/participation', ['participated' => true])->assertStatus(422);
 
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Closed);
 	Mail::assertNothingQueued();
 });
 
-it('shows the page with each participant and their tick', function () {
+it('shows the page with each participant and whether they attended', function () {
 	$this->came->bookings()->first()->forceFill(['participated_at' => now()])->save();
 
 	$page = $this->actingAs($this->admin)->getJson("/api/admin/events/{$this->event->uuid}/page")->assertOk()->json('data');

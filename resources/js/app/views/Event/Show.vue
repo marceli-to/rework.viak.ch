@@ -1,17 +1,17 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { bookStudent, downloadParticipants, fetchEventPage, removeFile, setParticipation, uploadFiles } from '@/api/events';
+import { bookStudent, downloadParticipants, fetchEventPage, removeFile, uploadFiles } from '@/api/events';
 import { fetchStudents } from '@/api/students';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import { returnTo } from '@/router';
 import { shortDate } from '@/support/format';
 import ArticleText from '@/components/layout/ArticleText.vue';
+import AttendanceBadge from '@/components/course/AttendanceBadge.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
-import Checkbox from '@/components/form/Checkbox.vue';
 import DropBox from '@/components/form/DropBox.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EventRow from '@/components/course/EventRow.vue';
@@ -27,9 +27,10 @@ import SearchField from '@/components/list/SearchField.vue';
  * step 7, [[EventPageController]]):
  *
  * - *Informationen*, the date's row as on *Kurse*.
- * - *Teilnehmer*, each with legacy's tick, *Teilgenommen?* (Marcel,
- *   2026-09-29: only a ticked seat gets the participation confirmation when
- *   the date closes; once closed the tick is *Ja* / *Nein*). Under the list,
+ * - *Teilnehmer*, each with its attendance as a badge ([[AttendanceBadge]]),
+ *   *Teilnahme offen* until the date is closed. **Attendance is asked when the date is closed**, in the edit
+ *   form's lightbox, not ticked here (Marcel, 2026-09-29): legacy's tick and
+ *   *Teilgenommen?* are gone. Under the list,
  *   *Teilnehmer hinzufügen* and *Teilnehmerliste (PDF)*, as legacy has them.
  * - *Nachrichten*, legacy's messages module: a row per note that opens it in
  *   a lightbox, and the plus to *Nachricht erfassen*. Only with participants,
@@ -59,17 +60,6 @@ async function load() {
 }
 
 onMounted(load);
-
-async function tick(participant, value) {
-	const was = participant.participated;
-	participant.participated = value;
-	try {
-		await setParticipation(participant.uuid, value);
-	} catch (problem) {
-		participant.participated = was;
-		toast(problem.message, 'error');
-	}
-}
 
 // Teilnehmer hinzufügen
 const adding = ref(false);
@@ -187,8 +177,6 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 				<template #title>Teilnehmer<Badge v-if="page.participants.length" variant="solid" class="ml-12">{{ page.participants.length }}</Badge></template>
 
 				<template v-if="page.participants.length">
-					<div v-if="!cancelled" class="mt-12 flex justify-end sm:mt-24">Teilgenommen?</div>
-
 					<!-- Legacy's stacked row, 2/2/2/3/1/2 of twelve. -->
 					<article
 						v-for="participant in page.participants"
@@ -204,13 +192,9 @@ const size = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed
 							<a :href="`mailto:${participant.email}`" class="hover:text-teal">{{ participant.email }}</a>
 						</div>
 						<div class="col-span-6 sm:col-span-1">{{ participant.has_rental ? 'Mietcomputer' : '' }}</div>
-						<div class="col-span-6 flex justify-end sm:col-span-2">
-							<template v-if="!cancelled">
-								<strong v-if="closed">{{ participant.participated ? 'Ja' : 'Nein' }}</strong>
-								<Checkbox v-else :model-value="participant.participated" @update:model-value="(value) => tick(participant, value)">
-									<span class="sr-only">{{ participant.name }} hat teilgenommen</span>
-								</Checkbox>
-							</template>
+						<div class="col-span-6 flex items-start justify-end sm:col-span-2">
+							<!-- Recorded when the date was closed ([[EventPageController::close]]). -->
+							<AttendanceBadge :participated="participant.participated" :closed="closed" />
 						</div>
 					</article>
 				</template>

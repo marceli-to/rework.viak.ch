@@ -150,7 +150,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('events/{event}', [Admin\EventController::class, 'update']);
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
 		Route::get('events/{event}/page', [Admin\EventPageController::class, 'show']);
-		Route::patch('bookings/{booking}/participation', [Admin\EventPageController::class, 'participation']);
+		Route::post('events/{event}/close', [Admin\EventPageController::class, 'close']);
 		Route::post('events/{event}/bookings', [Admin\EventPageController::class, 'book']);
 		Route::get('events/{event}/participants', [Admin\EventPageController::class, 'participants']);
 		Route::post('events/{event}/messages', [Admin\EventPageController::class, 'message']);

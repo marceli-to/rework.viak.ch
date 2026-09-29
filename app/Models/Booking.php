@@ -80,7 +80,7 @@ class Booking extends Model
 	}
 
 	/**
-	 * Ticked as attended on the course date's page. Only such a seat gets the
+	 * Marked as attended when the event is closed. Only such a seat gets the
 	 * participation confirmation when the course closes ([[SendClosingMails]]).
 	 */
 	public function hasParticipated(): bool

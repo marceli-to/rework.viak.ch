@@ -162,9 +162,9 @@ it('records a timestamp when an event is confirmed', function () {
 });
 
 it('stops accepting bookings once closed', function () {
-	$event = Event::factory()->create();
+	$event = Event::factory()->create(['date' => now()->subDay()->toDateString()]);
 
-	$this->actingAs($this->admin)->patchJson("/api/admin/events/{$event->uuid}/state", ['state' => 'closed'])->assertOk();
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$event->uuid}/close", ['attended' => []])->assertOk();
 
 	expect($event->refresh()->state->acceptsBookings())->toBeFalse();
 });
