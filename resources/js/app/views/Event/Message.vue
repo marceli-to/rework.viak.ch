@@ -82,7 +82,7 @@ async function send() {
 
 			<!-- The expert composer's `x-form.file-input`: the drop box, its limits under it,
 			     and the chosen files listed under a black rule each. Nothing leaves before *Senden*. -->
-			<div class="mt-24 pb-16 sm:pb-32">
+			<div class="mt-24">
 				<div class="mb-4 text-md sm:text-lg lg:text-xl">Anhänge</div>
 				<DropBox class="mt-8 sm:mt-16" :accept="page.uploads.accept" :restrictions="page.uploads.restrictions" @files="(files) => attachments.push(...files)" />
 				<p v-if="fileError()" class="pt-8 text-md text-danger lg:text-lg">{{ fileError() }}</p>
