@@ -146,7 +146,8 @@ async function cancel(booking) {
 					<div class="col-span-12 sm:col-span-3">{{ document.type }} {{ document.number }}</div>
 					<div class="col-span-12 pr-40 sm:col-span-5">
 						<template v-if="document.grand_total">{{ chf(document.grand_total) }}</template>
-						<div v-if="document.status" class="mt-8"><Badge :variant="STATUS_TONES[document.status]">{{ document.status }}</Badge></div>
+						<!-- Beside the amount it qualifies, not on a line of its own (Marcel, 2026-09-29). -->
+						<Badge v-if="document.status" :variant="STATUS_TONES[document.status]" class="ml-8 align-middle">{{ document.status }}</Badge>
 					</div>
 				</EditableListItem>
 				<p v-if="!page.documents.length" class="mt-16 sm:mt-32">Es sind noch keine Dokumente vorhanden.</p>
