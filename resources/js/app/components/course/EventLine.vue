@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import EventState from './EventState.vue';
+import Badge from '@/components/ui/Badge.vue';
 import IconEdit from '@/components/icons/Edit.vue';
 import IconArrowRight from '@/components/icons/ArrowRight.vue';
 import { shortDate } from '@/support/format';
@@ -51,10 +52,9 @@ defineProps({
 			</div>
 
 			<div class="sm:col-span-4">
-				<div :class="{ 'text-success': event.bookings >= event.max_participants }">
-					{{ event.bookings }}&thinsp;/&thinsp;{{ event.max_participants }} Teilnehmer
-				</div>
-				<div v-if="event.rentals_available">{{ event.rentals }}&thinsp;/&thinsp;{{ event.rentals_available }} Mietcomputer</div>
+				<!-- Counts are badges (Marcel, 2026-09-29); a full date in green, as the text was. -->
+				<Badge :variant="event.bookings >= event.max_participants ? 'success' : 'neutral'">{{ event.bookings }}&thinsp;/&thinsp;{{ event.max_participants }} Teilnehmer</Badge>
+				<div v-if="event.rentals_available" class="mt-8"><Badge>{{ event.rentals }}&thinsp;/&thinsp;{{ event.rentals_available }} Mietcomputer</Badge></div>
 			</div>
 		</div>
 	</article>

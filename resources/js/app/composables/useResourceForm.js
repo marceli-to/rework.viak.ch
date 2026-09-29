@@ -22,7 +22,7 @@ import { returnTo } from '@/router';
  * - **Hooks** let a custom part of the form take part: the image section
  *   reports what it is holding and uploads it once a new course exists.
  */
-export function useResourceForm({ schema: name, load, save, remove, list, edit, noun }) {
+export function useResourceForm({ schema: name, load, save, remove, list, edit, noun, singleton = false }) {
 	const route = useRoute();
 	const router = useRouter();
 
@@ -35,7 +35,9 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	const deleting = ref(false);
 	const failed = ref(null);
 
-	const creating = computed(() => !route.params.uuid);
+	// A `singleton` is one record with no id in the path — the admin's own
+	// profile. Always edited, never created or deleted; saving stays.
+	const creating = computed(() => !singleton && !route.params.uuid);
 	const back = returnTo(list);
 
 	const hooks = [];
@@ -61,7 +63,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	onMounted(async () => {
 		try {
 			schema.value = await fetchForm(name);
-			take(creating.value ? { ...schema.value.defaults } : await load(route.params.uuid));
+			take(creating.value ? { ...schema.value.defaults } : await load(singleton ? null : route.params.uuid));
 		} catch (problem) {
 			failed.value = problem.message;
 		}
@@ -81,6 +83,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 			const done = wasCreating ? `${noun} erfasst` : 'Gespeichert';
 			toast(missed.length ? `${done}. Nicht hochgeladen: ${missed.join(', ')}` : done, missed.length ? 'error' : 'success');
 
+			if (singleton) return;
 			if (!stay) router.push(back);
 			else if (wasCreating) router.replace(edit(id.value));
 		} catch (problem) {

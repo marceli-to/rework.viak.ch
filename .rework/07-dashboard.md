@@ -13,9 +13,10 @@ both modes, the course form and its images, testimonials, the field kit), and
 **step 6 began with the course-date form**. See *Step 1* to *Step 6* below,
 then *Loading* and *Polish*.
 
-**Next: the last of step 6**, the admin's own profile (*Build order*, below).
-Experts, students, discount codes and the settings were built on 2026-09-29
-(*Step 6 — experts*, *— students*, *— discount codes*, *— settings*). Then step 7, which waits
+**Step 6 is done** (2026-09-29): every form on the kit (*Step 6 — experts*,
+*— students*, *— discount codes*, *— settings*, *— profile*). **Next is step 7**,
+the operational screens, which waits on mail (chunk 10): the mail work is the
+next thing to build. Then step 7, which waits
 on mail (chunk 10).
 
 What exists at the end of 2026-09-24:
@@ -24,8 +25,9 @@ What exists at the end of 2026-09-24:
   their portal), and admin endpoints live under `/api/admin` (*Step 1*).
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
-  *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen* (lists and forms,
-  2026-09-29).
+  *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen*, *Mein Profil*
+  (2026-09-29). Only the student page, the event page, invoices and export
+  still render `Pending`.
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -201,7 +203,8 @@ screen there.
   empty** (#27, decided): not in use, so `/dashboard` goes straight to the
   course dates, as it does today.
 - **Own profile** — names, address, e-mail, password. Small kit form; changing
-  e-mail should verify, as it does for students.
+  e-mail should verify, as it does for students. → **Built 2026-09-29**
+  (*Step 6 — profile*).
 
 ## The field kit, checked against every form
 
@@ -662,6 +665,33 @@ map link, *Publizieren*) for places, and one controller
   the port brought across.
 - Software is not here: chunk 05 gives it its own screen.
 
+## Step 6 — profile, built 2026-09-29
+
+*Mein Profil* (the profile icon): legacy's `views/admin/Index.vue`,
+[[ProfileSchema]], `/api/admin/profile`.
+
+- **Legacy's fields**, then *Zugangsdaten*: e-mail, new password twice, and the
+  current password. **The rules are the portal's, not legacy's**: changing the
+  address or the password asks for the current one, and a new address is
+  unverified until confirmed. It goes through the portal's own
+  [[UpdateProfile]], so there is one place that does it; legacy asked for
+  neither, on any of its three copies.
+- **The form is the view.** Legacy showed the details with a pencil to open
+  the form; here the form is the page, and it stays after saving
+  (`singleton` on [[ResourceForm]]: no id in the path, no list, nothing to
+  delete).
+- Password inputs carry `autocomplete="new-password"`: a browser filling a
+  remembered password into *Neues Passwort* would change it on the next save.
+
+## Counts are badges, 2026-09-29
+
+Marcel, while step 6 was being built: **a number that counts records or
+relationships is drawn as a [[Badge]]**, not as text. So: the totals in
+collapsible titles (*Aktive Studenten 570*, *Tags 21*), where a term is used
+(*13 Kurse*), a discount code's use (*1 von 1 eingelöst*), and on *Kurse* the
+participants and laptops (*3 / 8 Teilnehmer*, green when full, as the text
+was). A sentence in a form note or a danger zone keeps its number inline.
+
 ## Loading, built 2026-09-24
 
 Each screen had its own *Wird geladen …* and nothing else. Nothing showed
@@ -737,8 +767,8 @@ hamburger. Proposed, grouped by what the admin is doing:
    `GET /api/admin/forms/{form}`, `FormNode`, error mapping, leave guard. Move
    both forms onto it. (Built, *Step 5*.)
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
-   ~~experts~~, ~~students~~, ~~discount codes~~, ~~taxonomies~~ (built,
-   *Step 6 — …*), profile.
+   ~~experts~~, ~~students~~, ~~discount codes~~, ~~taxonomies~~,
+   ~~profile~~ (built, *Step 6 — …*).
 7. **Operational screens, by hand** — the event page, the student page,
    invoices, export.
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.

@@ -22,6 +22,9 @@ defineProps({
 });
 
 const id = useId();
+
+// A password field is never filled in by the browser (`new-password`): a
+// remembered password in *Neues Passwort* would change it on the next save.
 </script>
 
 <template>
@@ -35,6 +38,7 @@ const id = useId();
 			:type="type"
 			:required="required"
 			:readonly="readonly"
+			:autocomplete="type === 'password' ? 'new-password' : null"
 			:aria-invalid="error ? 'true' : null"
 			class="block w-full bg-transparent py-4 text-lg leading-[normal] font-bold outline-hidden sm:text-xl lg:text-3xl"
 			:class="[readonly ? 'text-black' : 'text-teal', error ? 'border-b border-danger' : 'border-b border-black']"

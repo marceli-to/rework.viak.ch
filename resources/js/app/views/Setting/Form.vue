@@ -34,7 +34,7 @@ const name = (form) => form.title ?? form.description;
 			text: `Mit dieser Aktion wird ${key === 'locations' ? 'der Ort' : 'der Eintrag'} gelöscht.`,
 			question: (form) => name(form),
 		}"
-		:blocked="(meta) => (meta.usage ? `${usage(key, meta.usage)} verwendet, kann darum nicht gelöscht werden.` : null)"
+		:blocked="(meta) => (meta.usage ? `Verwendet von ${usage(key, meta.usage)}, kann darum nicht gelöscht werden.` : null)"
 		:stay="false"
 	/>
 	<p v-else class="text-danger">Diese Liste gibt es nicht.</p>

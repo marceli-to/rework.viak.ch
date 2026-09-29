@@ -144,7 +144,12 @@ const routes = [
 		component: () => import('@/views/Setting/Form.vue'),
 		meta: { title: 'Einstellungen' },
 	},
-	pending('profil', 'profile', 'Mein Profil'),
+	{
+		path: '/dashboard/profil',
+		name: 'profile',
+		component: () => import('@/views/Profile/Form.vue'),
+		meta: { title: 'Mein Profil' },
+	},
 
 	// The old list's address, from before the two modes were one screen.
 	{ path: '/dashboard/termine', redirect: { name: 'courses' } },

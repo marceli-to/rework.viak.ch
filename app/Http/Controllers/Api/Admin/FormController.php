@@ -9,6 +9,7 @@ use App\Forms\DiscountCodeSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
 use App\Forms\LocationSchema;
+use App\Forms\ProfileSchema;
 use App\Forms\Schema;
 use App\Forms\StudentSchema;
 use App\Forms\TermSchema;
@@ -33,6 +34,7 @@ class FormController extends Controller
 		'discount-code' => DiscountCodeSchema::class,
 		'term' => TermSchema::class,
 		'location' => LocationSchema::class,
+		'profile' => ProfileSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

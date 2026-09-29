@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { fetchSettings } from '@/api/settings';
+import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
@@ -45,7 +46,7 @@ onMounted(async () => {
 
 		<div v-else class="mt-12">
 			<Collapsible v-for="(kind, key) in KINDS" :key="key" :expanded="open === key">
-				<template #title>{{ kind.title }}<span class="ml-12 font-normal">{{ lists[key].length }}</span></template>
+				<template #title>{{ kind.title }}<Badge class="ml-12">{{ lists[key].length }}</Badge></template>
 
 				<EditableListItem
 					v-for="item in lists[key]"
@@ -55,7 +56,7 @@ onMounted(async () => {
 					wide
 				>
 					<div class="col-span-12 sm:col-span-4">{{ label(key, item) }}</div>
-					<div class="col-span-12 pr-40 text-gray-600 sm:col-span-8">{{ usage(key, item.usage) }}</div>
+					<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8"><Badge>{{ usage(key, item.usage) }}</Badge></div>
 				</EditableListItem>
 				<p v-if="!lists[key].length" class="mt-16 sm:mt-32">Noch keine erfasst.</p>
 

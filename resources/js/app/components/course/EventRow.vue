@@ -1,5 +1,6 @@
 <script setup>
 import EventState from './EventState.vue';
+import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import { longDate } from '@/support/format';
 
@@ -38,10 +39,9 @@ defineProps({ event: { type: Object, required: true } });
 
 			<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">
 				<div>
-					<div :class="{ 'text-success': event.bookings >= event.max_participants }">
-						{{ event.bookings }}&thinsp;/&thinsp;{{ event.max_participants }} Teilnehmer
-					</div>
-					<div v-if="event.rentals_available">{{ event.rentals }}&thinsp;/&thinsp;{{ event.rentals_available }} Mietcomputer</div>
+					<!-- Counts are badges (Marcel, 2026-09-29); a full date in green, as the text was. -->
+				<Badge :variant="event.bookings >= event.max_participants ? 'success' : 'neutral'">{{ event.bookings }}&thinsp;/&thinsp;{{ event.max_participants }} Teilnehmer</Badge>
+					<div v-if="event.rentals_available" class="mt-8"><Badge>{{ event.rentals }}&thinsp;/&thinsp;{{ event.rentals_available }} Mietcomputer</Badge></div>
 				</div>
 				<div class="mt-24 sm:mt-0">
 					<Button :to="{ name: 'event.edit', params: { uuid: event.uuid } }" class="mb-12">Bearbeiten</Button>

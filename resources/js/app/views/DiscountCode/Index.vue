@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchDiscountCodes } from '@/api/discountCodes';
 import { fold, shortDate } from '@/support/format';
+import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
@@ -46,7 +47,7 @@ const spent = computed(() => shown.value.filter((code) => !code.redeemable));
 const amount = (code) => (code.type === 'percent' ? `${Number(code.amount)}%` : `CHF ${Number(code.amount).toFixed(2)}`);
 const dates = (code) =>
 	code.valid_from || code.valid_to ? `Gültig: ${shortDate(code.valid_from) || '…'} bis ${shortDate(code.valid_to) || '…'}` : null;
-const usage = (code) => `Eingelöst: ${code.times_used}${code.usage_limit === '' ? ', unbegrenzt' : ` von ${code.usage_limit}`}`;
+const usage = (code) => (code.usage_limit === '' ? `${code.times_used} eingelöst, unbegrenzt` : `${code.times_used} von ${code.usage_limit} eingelöst`);
 
 onMounted(async () => {
 	try {
@@ -72,7 +73,7 @@ onMounted(async () => {
 
 		<div v-else class="mt-12">
 			<Collapsible v-for="group in [{ title: 'Gültige Codes', rows: valid, open: true }, { title: 'Verwendete oder abgelaufene Codes', rows: spent, open: false }]" :key="`${group.title}-${group.open || search}`" :expanded="group.open || (Boolean(search) && group.rows.length > 0)">
-				<template #title>{{ group.title }}<span class="ml-12 font-normal">{{ group.rows.length }}</span></template>
+				<template #title>{{ group.title }}<Badge class="ml-12">{{ group.rows.length }}</Badge></template>
 				<EditableListItem
 					v-for="code in group.rows"
 					:key="code.uuid"
@@ -83,7 +84,7 @@ onMounted(async () => {
 					<div class="col-span-12 sm:col-span-4">
 						<strong>{{ code.code }}</strong>
 						<span v-if="dates(code)" class="block">{{ dates(code) }}</span>
-						<span class="block">{{ usage(code) }}</span>
+						<Badge class="mt-8">{{ usage(code) }}</Badge>
 					</div>
 					<div class="col-span-12 sm:col-span-2">{{ amount(code) }}</div>
 					<div class="col-span-12 pr-40 sm:col-span-6">{{ code.remarks }}</div>

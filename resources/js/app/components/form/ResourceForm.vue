@@ -35,6 +35,8 @@ const props = defineProps({
 	// A record past changing — a course date that has run. Legacy's
 	// `form.is-disabled`: the fields and *Speichern* at 40%, deleting gone.
 	locked: { type: Function, default: () => false },
+	// One record with no id and no list: the admin's own profile.
+	singleton: { type: Boolean, default: false },
 });
 
 const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
@@ -63,7 +65,7 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 				<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>
 
 				<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
-				<Button v-if="stay" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
+				<Button v-if="stay && !singleton" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
 			</fieldset>
 
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->

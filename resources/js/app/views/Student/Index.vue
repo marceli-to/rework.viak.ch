@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchStudents } from '@/api/students';
 import Button from '@/components/ui/Button.vue';
+import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
@@ -89,7 +90,7 @@ watch(search, load, { immediate: true });
 
 		<div v-else class="mt-12">
 			<Collapsible expanded>
-				<template #title>Aktive Studenten<span class="ml-12 font-normal">{{ total }}</span></template>
+				<template #title>Aktive Studenten<Badge class="ml-12">{{ total }}</Badge></template>
 				<EditableListItem
 					v-for="student in active"
 					:key="student.uuid"
@@ -114,7 +115,7 @@ watch(search, load, { immediate: true });
 
 			<!-- Keyed on the search, so a search with hits in here opens it. -->
 			<Collapsible v-if="deactivated.length" :key="`deaktiviert-${search}`" :expanded="Boolean(search)">
-				<template #title>Deaktivierte Studenten<span class="ml-12 font-normal">{{ deactivated.length }}</span></template>
+				<template #title>Deaktivierte Studenten<Badge class="ml-12">{{ deactivated.length }}</Badge></template>
 				<EditableListItem
 					v-for="student in deactivated"
 					:key="student.uuid"
