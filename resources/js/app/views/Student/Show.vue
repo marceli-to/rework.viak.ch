@@ -44,6 +44,9 @@ onMounted(load);
 
 const chf = (value) => `CHF ${Number(value).toFixed(2)}`;
 
+// An invoice's state, as the portal colours it: paid green, overdue red.
+const STATUS_TONES = { Bezahlt: 'success', Offen: 'neutral', Fällig: 'danger', Storniert: 'neutral' };
+
 async function cancel(booking) {
 	const { penalty } = booking;
 	const who = `${page.value.student.name} wird von ${booking.course.title} (${shortDate(booking.event.date)}) abgemeldet.`;
@@ -143,7 +146,7 @@ async function cancel(booking) {
 					<div class="col-span-12 sm:col-span-3">{{ document.type }} {{ document.number }}</div>
 					<div class="col-span-12 pr-40 sm:col-span-5">
 						<template v-if="document.grand_total">{{ chf(document.grand_total) }}</template>
-						<em v-if="document.status" class="ml-8 italic" :class="{ 'text-success': document.status === 'bezahlt', 'text-danger': document.status === 'fällig' }">({{ document.status }})</em>
+						<div v-if="document.status" class="mt-8"><Badge :variant="STATUS_TONES[document.status]">{{ document.status }}</Badge></div>
 					</div>
 				</EditableListItem>
 				<p v-if="!page.documents.length" class="mt-16 sm:mt-32">Es sind noch keine Dokumente vorhanden.</p>
