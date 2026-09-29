@@ -1,35 +1,26 @@
 @props(['event'])
 
 {{--
-	`shared/components/ui/misc/EventState.vue`, the public half.
+	Whether a course is happening, on a portal row — as the dashboard says it
+	(`course/EventState.vue`): a badge with the dashboard's labels (Marcel,
+	2026-09-29: the expert's and the student's screens look like the admin's).
+	Until then it was legacy's public half of `EventState.vue`, an italic line
+	reading *Kurs ist abgeschlossen*, *Kurs wurde abgesagt*.
 
 	Four states in this order — **closed wins over cancelled, cancelled over
 	confirmed** — which matters on the portal, where a student holds seats on
-	courses that have already run. Legacy's component carries a second set of
-	labels for the dashboard (*Kurs abgeschlossen*, *Kurs abgesagt*, …); those
-	belong to the Vue side and are not ported here.
+	courses that have already run.
 
-	Only *Kurs ist abgeschlossen* has no colour of its own and reads black,
-	which is production's choice rather than an omission.
-
-	**At the row's own size**, like the rest of the small print on a
-	`.stacked-list` row (Marcel, 2026-09-22). Legacy gives these `.text-xsmall`
-	— 12/14/16 against the row's 16/16/18 — so on the live site the one line
-	that says whether the course is happening is smaller than the expert's name
-	above it. `italic` and nothing else is the only way to inherit: naming a
-	Tailwind size drags its own line height along (`resources/css/README.md`).
-
-	`x-card.event` still spells its own two states out inline. It lists
-	only bookable events, so *abgeschlossen* and *abgesagt* cannot appear there
-	and swapping it to this component would add two branches it has no use for.
+	`x-card.event` on the course page still spells its own two states out
+	inline, in legacy's italic: that page is the public site and stays 1:1.
 --}}
 @php
 	$state = match (true) {
-		$event->state === \App\Enums\EventState::Closed => ['Kurs ist abgeschlossen', ''],
-		$event->state === \App\Enums\EventState::Cancelled => ['Kurs wurde abgesagt', 'text-danger'],
-		$event->state === \App\Enums\EventState::Confirmed => ['Kurs findet statt', 'text-success'],
-		default => ['Kurs offen, wird bestätigt', 'text-warning'],
+		$event->state === \App\Enums\EventState::Closed => ['Kurs abgeschlossen', 'neutral'],
+		$event->state === \App\Enums\EventState::Cancelled => ['Kurs abgesagt', 'danger'],
+		$event->state === \App\Enums\EventState::Confirmed => ['Kurs findet statt', 'success'],
+		default => ['Kurs offen, wird bestätigt', 'warning'],
 	};
 @endphp
 
-<div {{ $attributes->class([$state[1]]) }}><em class="italic">{{ $state[0] }}</em></div>
+<x-ui.badge :variant="$state[1]">{{ $state[0] }}</x-ui.badge>

@@ -2238,3 +2238,29 @@ not a component, since nothing renders it as one.
 `breadcrumb` and `textarea` were deleted: breadcrumb had no caller since chunk
 02 and was in stock Tailwind units; textarea lost its only one to the tiptap
 editor (b718c67), whose no-JS fallback is the same control.
+
+## The portals look like the dashboard — Marcel, 2026-09-29
+
+The expert's and the student's screens behind the login now draw what the
+dashboard draws for the same thing, **not legacy's portal**: "as identical as
+possible" to the Vue screens. The public site in front of the login is untouched
+and stays 1:1.
+
+- **Badges** from `x-ui.badge`, the Blade twin of `ui/Badge.vue`: the course's
+  state (`x-course.event-state`, with the dashboard's labels *Kurs abgeschlossen*,
+  *Kurs abgesagt*), *n / m Teilnehmer* (green when full) and *n / m Mietcomputer*
+  on the expert's rows, attendance (`x-course.attendance-badge`), *Annulliert*,
+  *Mietcomputer*, and the invoice status on a document (*Bezahlt*, *Offen*,
+  *Fällig*, now *Storniert* too).
+- **Collapsible counts** are the solid badge, open or shut, where legacy printed
+  *(3)* only while shut.
+- ***Details***, grey, where legacy had a teal *Detail*; *Annullieren* is red.
+- The expert's *Teilnehmer*: the dashboard's 2/2/2 columns with the email column
+  left empty (the expert still gets no address), badges at the far edge, open by
+  default; *Teilnehmerliste* with the download icon on the right.
+- Empty lists through `x-ui.no-results` (`ui/NoResults.vue`), same wording as the
+  dashboard; the 20px plus.
+
+What still differs, on purpose: the headings (the portal's course name is black
+and has no number) and the collapsible's heading spacing, which is the site's
+variant rather than the dashboard's tighter one.

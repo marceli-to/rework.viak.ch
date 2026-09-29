@@ -559,7 +559,7 @@ it('keeps a cancelled seat readable but shuts the thread', function () {
 	$this->actingAs($user)
 		->get('/de/student/profil/kurs/veranstaltung/'.$booking->event->uuid)
 		->assertOk()
-		->assertSee('annulliert')
+		->assertSee('Annulliert am')
 		->assertDontSee('Anreise und Parkplätze');
 });
 

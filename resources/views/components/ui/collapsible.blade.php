@@ -44,22 +44,12 @@
 			:aria-expanded="open">
 			{{ $title }}
 
-			{{--
-				How many are inside, **while it is shut** — legacy's
-				`Count.vue`, shown by `Collapsible.vue` on `items.length > 0 &&
-				!isOpen`. The portal's four lists are the only callers; the
-				course page passes nothing and renders as before.
-
-				`<strong>` and a plain space, which is what production draws.
-				`%content-list-collapsible` styles `> h2 a span` with a 12px
-				margin and regular weight — and `Count.vue` renders a `strong`,
-				so **that rule has never matched anything**. Measured on the
-				live stylesheet: 18px, bold, `#505050`, separated from the title
-				by the template's own whitespace. Ported as it renders, not as
-				it was meant to.
-			--}}
+			{{-- How many are inside, as the dashboard's collapsibles say it: a
+			     solid badge, open or shut (Marcel, 2026-09-29). Legacy's
+			     `Count.vue` printed a bold *(3)* only while shut. The portal's
+			     lists are the only callers; the course page passes nothing. --}}
 			@if ($count)
-				<strong x-show="! open" class="font-bold">({{ $count }})</strong>
+				<x-ui.badge variant="solid" class="ml-12">{{ $count }}</x-ui.badge>
 			@endif
 
 			{{-- Legacy's chevron is a CSS triangle rather than an icon

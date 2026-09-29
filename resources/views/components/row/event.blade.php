@@ -8,6 +8,8 @@
 	'showExperts' => true,
 	'showFee' => true,
 	'bookings' => null,
+	'rentals' => null,
+	'badges' => null,
 	'marked' => false,
 ])
 
@@ -131,14 +133,23 @@
 				<div>mit {{ $expert->first_name }} {{ $expert->last_name }}</div>
 			@endif
 
-			<x-course.event-state :event="$event" />
+			{{-- The state and the row's own badges on one line, 8px apart across
+			     and down — the dashboard's `BookingRow.vue`, whose `badges`
+			     slot this is (Marcel, 2026-09-29). --}}
+			<div class="mt-4 flex flex-wrap items-start gap-8">
+				<x-course.event-state :event="$event" />
+				{{ $badges }}
+			</div>
 		</div>
 
 		{{-- What it costs, and what can be done about it --}}
 		<div @class([
 			'sm:col-span-4',
 			'sm:flex sm:items-start sm:justify-between' => $action !== null,
-			'sm:flex sm:justify-end' => $action === null,
+			// The expert's counts stay at the column's start without a button,
+			// where the dashboard's *Kurse* has them; a student's fee goes to
+			// the far edge, as in legacy.
+			'sm:flex sm:justify-end' => $action === null && $bookings === null,
 		])>
 			{{-- **The facts share one box and the button is its sibling**, which
 			     is legacy's own markup — `StackedListEvent.vue` renders a bare
@@ -154,8 +165,15 @@
 				     portal passes ([[ExpertPortalController]]). The thin spaces
 				     around the slash are legacy's `&thinsp;` and they are what
 				     stop it reading as a date. --}}
+				{{-- A badge, as on the dashboard's *Kurse* (`EventRow.vue`):
+				     green once the course is full. The laptops under it where
+				     the course has any, which the expert has to have ready. --}}
 				@if ($bookings !== null)
-					<div>{{ $bookings }}&thinsp;/&thinsp;{{ $event->max_participants }} Teilnehmer</div>
+					<div><x-ui.badge :variant="$bookings >= $event->max_participants ? 'success' : 'neutral'">{{ $bookings }}&thinsp;/&thinsp;{{ $event->max_participants }} Teilnehmer</x-ui.badge></div>
+				@endif
+
+				@if ($rentals !== null && $event->rentals_available)
+					<div class="mt-8"><x-ui.badge>{{ $rentals }}&thinsp;/&thinsp;{{ $event->rentals_available }} Mietcomputer</x-ui.badge></div>
 				@endif
 
 				@if ($showFee)

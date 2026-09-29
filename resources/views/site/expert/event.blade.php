@@ -43,7 +43,7 @@
 		     the expert's own screen is noise. --}}
 		<x-ui.collapsible title="Informationen" :expanded="true">
 			<x-row.event :event="$event" :showExperts="false" :showFee="false"
-				:bookings="$bookings->count()" />
+				:bookings="$bookings->count()" :rentals="$bookings->where('has_rental', true)->count()" />
 		</x-ui.collapsible>
 	</div>
 
@@ -64,7 +64,7 @@
 			contact details are in the participant list, and the participant list
 			is the one thing here that is not built ([[09-public-site]]).
 		--}}
-		<x-ui.collapsible title="Teilnehmer" :expanded="false" :count="$bookings->count()">
+		<x-ui.collapsible title="Teilnehmer" :expanded="true" :count="$bookings->count()">
 			@forelse ($bookings as $booking)
 				@php
 					// The firm, from the seat's own record first and the invoice
@@ -77,31 +77,36 @@
 				@endphp
 
 				<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
-					{{-- `sm:span-4 md:span-3` and two `sm:span-2 md:span-3`,
-					     which is legacy's and adds up to 8 of 12 at `sm` and 9
-					     at `md`. The columns are left-aligned rather than
-					     spread, so the shortfall is trailing space — not a bug
-					     to tidy, and tidying it would widen a name column that
-					     is already wide enough. --}}
+					{{-- Name, town and firm, then the seat's badges against the far
+					     edge as on the dashboard's event page (Marcel, 2026-09-29):
+					     the laptop, and whether the seat attended — asked when the
+					     course is closed ([[EventPageController::close]]). A seat on
+					     a cancelled course says so, where legacy printed nothing and
+					     the expert could not tell the two states apart. --}}
 					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-						<div class="sm:col-span-4 lg:col-span-3">{{ $booking->user->name }}</div>
-						<div class="sm:col-span-2 lg:col-span-3">{{ $booking->user->city }}</div>
-						<div class="sm:col-span-2 lg:col-span-3">{{ $company }}</div>
+						<div class="sm:col-span-2">{{ $booking->user->name }}</div>
+						<div class="sm:col-span-2">{{ $booking->user->city }}</div>
+						<div class="sm:col-span-2">{{ $company }}</div>
+						{{-- The dashboard's email column stays empty: the expert
+						     does not get the address (see above). --}}
+						<div class="mt-8 flex flex-wrap items-start gap-8 sm:col-span-6 sm:mt-0 sm:justify-end">
+							@if ($booking->has_rental)
+								<x-ui.badge>Mietcomputer</x-ui.badge>
+							@endif
+							@if ($booking->isCancelled())
+								<x-ui.badge variant="danger">Annulliert</x-ui.badge>
+							@else
+								<x-course.attendance-badge :booking="$booking" :closed="$event->state === \App\Enums\EventState::Closed" />
+							@endif
+						</div>
 					</div>
-
-					@if ($booking->isCancelled())
-						{{-- Only ever seen on a cancelled course, where the list
-						     *is* the cancelled seats. Legacy prints nothing and
-						     the expert cannot tell the two states apart. --}}
-						<div class="text-danger">annulliert</div>
-					@endif
 				</article>
 			@empty
-				<p class="mt-16 italic">Es sind keine Anmeldungen für diesen Kurs vorhanden.</p>
+				<x-ui.no-results>Es sind keine Anmeldungen für diesen Kurs vorhanden.</x-ui.no-results>
 			@endforelse
 
 			{{--
-				*Teilnehmerliste (PDF)* — the printable form of the list above.
+				*Teilnehmerliste* — the printable form of the list above.
 
 				**Behind the same check as the screen** ([[EventPolicy::viewParticipants]]),
 				which is what legacy's own route does not have: it carries
@@ -114,14 +119,15 @@
 				`v-if="!data.event.is_cancelled"`.
 			--}}
 			@if ($bookings->isNotEmpty() && ! $cancelled)
-				{{-- `.mt-5x sm:mt-10x` above it, and the same arrow-below link
-				     the aside's *Zurück* uses. --}}
-				<div class="mt-20 sm:mt-40">
+				{{-- The dashboard's: the label with the download icon beside it,
+				     against the right edge (Marcel, 2026-09-29). Legacy's was
+				     *Teilnehmerliste (PDF)* over an arrow. --}}
+				<div class="mt-24 flex justify-end sm:mt-48">
 					<a href="{{ route($locale.'.expert.event.participants', ['uuid' => $event->uuid]) }}"
 						title="Teilnehmerliste herunterladen"
-						class="inline-block text-left transition-colors hover:text-teal">
-						<span class="mb-4 block">Teilnehmerliste (PDF)</span>
-						<x-icon.arrow-right />
+						class="flex items-center gap-12 transition-colors hover:text-teal">
+						<span>Teilnehmerliste</span>
+						<x-icon.download class="size-18" />
 					</a>
 				</div>
 			@endif
@@ -142,17 +148,16 @@
 			@forelse ($messages as $message)
 				<x-row.message :message="$message" />
 			@empty
-				<p class="mt-16 italic">Es sind keine Nachrichten vorhanden.</p>
+				<x-ui.no-results>Es sind noch keine Nachrichten vorhanden.</x-ui.no-results>
 			@endforelse
 
 			@if ($bookings->isNotEmpty() && ! $cancelled)
-				{{-- `.flex.justify-start.mt-6x` around a 16×16 plus, the same
-				     control the student's address list adds with. --}}
+				{{-- `.flex.justify-start.mt-6x` around the dashboard's 20×20 plus. --}}
 				<div class="mt-24 flex justify-start">
 					<a href="{{ \App\Support\SiteUrl::expertEventMessage($event->uuid) }}"
 						title="Nachricht erstellen"
 						class="block transition-colors hover:text-teal">
-						<x-icon.plus class="w-16" />
+						<x-icon.plus size="large" />
 					</a>
 				</div>
 			@endif
@@ -196,7 +201,7 @@
 					</x-slot:action>
 				</x-row.file>
 			@empty
-				<p class="mt-16 italic">Es sind keine Dokumente vorhanden.</p>
+				<x-ui.no-results>Es sind keine Dokumente vorhanden.</x-ui.no-results>
 			@endforelse
 
 			@if (! $cancelled)
@@ -204,7 +209,7 @@
 					<a href="{{ \App\Support\SiteUrl::expertEventUpload($event->uuid) }}"
 						title="Dokumente hochladen"
 						class="block transition-colors hover:text-teal">
-						<x-icon.plus class="w-16" />
+						<x-icon.plus size="large" />
 					</a>
 				</div>
 			@endif

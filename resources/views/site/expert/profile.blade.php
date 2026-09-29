@@ -57,24 +57,27 @@
 			Anna Muster* on the list of courses Anna Muster teaches is noise.
 
 			What takes their place is `showBookings` — *12 / 14 Teilnehmer*, the
-			one number an expert opens this page for.
+			one number an expert opens this page for, and the laptops beside it.
+
+			**Badges and a grey *Details***, as the dashboard's *Kurse* draws the
+			same row (Marcel, 2026-09-29): legacy's teal *Detail* is gone.
 		--}}
 		<x-ui.collapsible title="Bevorstehende Kurse" :expanded="true" :count="$upcoming->count()">
 			@forelse ($upcoming as $event)
 				<x-row.event :event="$event" :showExperts="false" :showFee="false"
-					:bookings="$event->bookings_count">
+					:bookings="$event->bookings_count" :rentals="$event->rentals_taken_count">
 					<x-slot:action>
-						<x-ui.button href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
-							title="Detail">Detail</x-ui.button>
+						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
+							title="Details">Details</x-ui.button>
 					</x-slot:action>
 				</x-row.event>
 			@empty
-				<p class="mt-16 italic">Du hast keine bevorstehenden Kurse.</p>
+				<x-ui.no-results>Du hast keine bevorstehenden Kurse.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 
 		{{--
-			*Vergangene Kurse*, shut — and it keeps its *Detail* button, unlike
+			*Vergangene Kurse*, shut — and it keeps its *Details* button, unlike
 			the student's *Absolvierte Kurse*, which loses everything but the
 			link. An expert still wants the participant list of a course that has
 			run: it is who was in the room.
@@ -82,14 +85,14 @@
 		<x-ui.collapsible title="Vergangene Kurse" :expanded="false" :count="$past->count()">
 			@forelse ($past as $event)
 				<x-row.event :event="$event" :showExperts="false" :showFee="false"
-					:bookings="$event->bookings_count">
+					:bookings="$event->bookings_count" :rentals="$event->rentals_taken_count">
 					<x-slot:action>
-						<x-ui.button href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
-							title="Detail">Detail</x-ui.button>
+						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::expertEvent($event->uuid) }}"
+							title="Details">Details</x-ui.button>
 					</x-slot:action>
 				</x-row.event>
 			@empty
-				<p class="mt-16 italic">Du hast keine abgeschlossenen Kurse.</p>
+				<x-ui.no-results>Du hast keine abgeschlossenen Kurse.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 	</div>

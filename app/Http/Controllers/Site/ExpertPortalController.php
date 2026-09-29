@@ -348,7 +348,10 @@ class ExpertPortalController extends Controller
 	{
 		$events = fn () => $user->eventsAsExpert()
 			->with(['course', 'dates', 'location'])
-			->withCount(['bookings' => fn ($query) => $query->active()]);
+			->withCount([
+				'bookings' => fn ($query) => $query->active(),
+				'bookings as rentals_taken_count' => fn ($query) => $query->active()->where('has_rental', true),
+			]);
 
 		return [
 			$events()->upcoming()->get(),

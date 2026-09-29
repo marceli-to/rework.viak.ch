@@ -24,7 +24,7 @@
 			@forelse ($documents as $document)
 				<x-row.document :document="$document" />
 			@empty
-				<p class="mt-16 italic">Es sind noch keine Dokumente vorhanden.</p>
+				<x-ui.no-results>Es sind noch keine Dokumente vorhanden.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 	</div>

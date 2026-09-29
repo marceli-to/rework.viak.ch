@@ -264,7 +264,7 @@ it('shows the cancelled seats where the course itself was called off', function 
 		// The live list would be empty, and the expert would lose the list of
 		// people they have to apologise to.
 		->assertSee('Antonia Haller')
-		->assertSee('annulliert');
+		->assertSee('Annulliert');
 });
 
 it('hides a cancelled seat on a live course', function () {

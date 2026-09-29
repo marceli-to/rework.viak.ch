@@ -111,7 +111,7 @@
 					</x-slot:action>
 				</x-row.event>
 			@empty
-				<p class="mt-16 italic">Deine Merkliste ist leer.</p>
+				<x-ui.no-results>Deine Merkliste ist leer.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 
@@ -127,8 +127,8 @@
 					<x-slot:icon><x-icon.checkmark class="text-teal" /></x-slot:icon>
 
 					<x-slot:action>
-						<x-ui.button href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
-							class="mb-8" title="Detail">Detail</x-ui.button>
+						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
+							class="mb-8" title="Details">Details</x-ui.button>
 
 						{{-- *Annullieren* asks first, and **what it asks
 						     depends on the date**: inside the penalty window the
@@ -148,7 +148,7 @@
 						     over the JSON without escaping it twice. The
 						     `x-data="bookmark({ … @js(…) })"` on the course card
 						     works because it sits on a plain `<button>`. --}}
-						<x-ui.button variant="secondary"
+						<x-ui.button variant="danger"
 							@click="$store.portal.askCancel({{ \Illuminate\Support\Js::from([
 								'uuid' => $booking->uuid,
 								'penalty' => $penalties[$booking->uuid]['applies'],
@@ -161,7 +161,7 @@
 
 					@if ($booking->has_rental && $booking->isEditable())
 						<x-slot:rentalAction>
-							<x-ui.button variant="secondary"
+							<x-ui.button variant="danger"
 								@click="$store.portal.askCancelRental({{ \Illuminate\Support\Js::from(['uuid' => $booking->uuid]) }})">
 								Annullieren
 							</x-ui.button>
@@ -196,7 +196,7 @@
 					@endif
 				</x-row.event>
 			@empty
-				<p class="mt-16 italic">Du hast noch keine Kurse gebucht.</p>
+				<x-ui.no-results>Du hast noch keine Kurse gebucht.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 
@@ -221,13 +221,18 @@
 					     is right and means the colour has to be said here
 					     instead of being smuggled in with the artwork. --}}
 					<x-slot:icon><x-icon.checkmark class="text-teal" /></x-slot:icon>
+					{{-- Whether the seat attended, as the dashboard's student
+					     page shows it under *Absolvierte Kurse*. --}}
+					<x-slot:badges>
+						<x-course.attendance-badge :booking="$booking" :closed="$booking->event->state === \App\Enums\EventState::Closed" />
+					</x-slot:badges>
 					<x-slot:action>
-						<x-ui.button href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
-							title="Detail">Detail</x-ui.button>
+						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
+							title="Details">Details</x-ui.button>
 					</x-slot:action>
 				</x-row.event>
 			@empty
-				<p class="mt-16 italic">Du hast noch keine Kurse absolviert.</p>
+				<x-ui.no-results>Du hast noch keine Kurse absolviert.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 	</div>
@@ -237,7 +242,7 @@
 			@forelse ($documents as $document)
 				<x-row.document :document="$document" />
 			@empty
-				<p class="mt-16 italic">Es sind noch keine Dokumente vorhanden.</p>
+				<x-ui.no-results>Es sind noch keine Dokumente vorhanden.</x-ui.no-results>
 			@endforelse
 
 			@if ($documentCount > $documents->count())

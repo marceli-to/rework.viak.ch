@@ -26,6 +26,18 @@
 	<div class="mt-48 lg:mt-64">
 		<x-ui.collapsible title="Buchung" :expanded="true">
 			<x-row.event :event="$event" :booking="$booking">
+				{{-- The seat's own badges beside the course's state, as the
+				     dashboard's student page draws them: *Annulliert am …* for a
+				     cancelled seat, whether it attended once the course is
+				     closed. --}}
+				<x-slot:badges>
+					@if ($booking->isCancelled())
+						<x-ui.badge variant="danger">Annulliert am {{ $booking->cancelled_at->format('d.m.Y') }}</x-ui.badge>
+					@elseif ($event->state === \App\Enums\EventState::Closed)
+						<x-course.attendance-badge :booking="$booking" :closed="true" />
+					@endif
+				</x-slot:badges>
+
 				{{-- **Nothing to cancel once the course is shut.** Legacy hides
 				     the button on `event.is_closed`, and the rule underneath is
 				     stronger than the screen: cancelling a closed course would
@@ -35,7 +47,7 @@
 				     the invoice is raised. --}}
 				@if (! $booking->isCancelled() && $event->state !== \App\Enums\EventState::Closed)
 					<x-slot:action>
-						<x-ui.button variant="secondary"
+						<x-ui.button variant="danger"
 							@click="$store.portal.askCancel({{ \Illuminate\Support\Js::from([
 								'uuid' => $booking->uuid,
 								'penalty' => $penalty['applies'],
@@ -48,7 +60,7 @@
 
 					@if ($booking->has_rental && $booking->isEditable())
 						<x-slot:rentalAction>
-							<x-ui.button variant="secondary"
+							<x-ui.button variant="danger"
 								@click="$store.portal.askCancelRental({{ \Illuminate\Support\Js::from(['uuid' => $booking->uuid]) }})">
 								Annullieren
 							</x-ui.button>
@@ -57,16 +69,10 @@
 				@endif
 			</x-row.event>
 
-			@if ($booking->isCancelled())
-				{{-- The row stays reachable after a cancellation — the booking
-				     is history, and its documents still point here. Legacy has
-				     no state for this at all: its portal drops a cancelled
-				     booking out of every list, so the only way back to this
-				     screen is a link that now 404s. --}}
-				<p class="mt-16 italic text-danger">
-					Diese Buchung wurde am {{ $booking->cancelled_at->format('d.m.Y') }} annulliert.
-				</p>
-			@endif
+			{{-- A cancelled row stays reachable — the booking is history, and its
+			     documents still point here. Legacy drops a cancelled booking out
+			     of every list, so its only way back here is a link that 404s. The
+			     date it was cancelled is the badge above. --}}
 		</x-ui.collapsible>
 	</div>
 
@@ -93,7 +99,7 @@
 			@forelse ($messages as $message)
 				<x-row.message :message="$message" />
 			@empty
-				<p class="mt-16 italic">Es sind keine Nachrichten vorhanden.</p>
+				<x-ui.no-results>Es sind noch keine Nachrichten vorhanden.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 	</div>
@@ -119,7 +125,7 @@
 			@forelse ($files as $file)
 				<x-row.file :file="$file" />
 			@empty
-				<p class="mt-16 italic">Es sind keine Kurs-Dokumente vorhanden.</p>
+				<x-ui.no-results>Es sind keine Dokumente vorhanden.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
 	</div>

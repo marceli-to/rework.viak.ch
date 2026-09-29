@@ -130,7 +130,7 @@
 						</a>
 					</article>
 				@empty
-					<p class="mt-16 italic">Du hast noch keine Rechnungsadresse erfasst.</p>
+					<x-ui.no-results>Du hast noch keine Rechnungsadresse erfasst.</x-ui.no-results>
 				@endforelse
 
 				{{-- `.flex.justify-start.mt-6x` around a 16×16 plus. --}}

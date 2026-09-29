@@ -6,17 +6,17 @@
 	$event = $document->relatedBooking()?->event;
 
 	/*
-	 * `(bezahlt)` / `(offen)` / `(fällig)`, and nothing at all for a cancelled
-	 * one — legacy's `StackedListDocument` tests three of the four
-	 * [[InvoiceStatus]] cases and leaves `CANCELLED` blank. 16 of the 568
-	 * invoices are cancelled, so the blank is visible today; kept, because a
-	 * cancelled invoice is a document the customer still holds and the word for
-	 * it is a decision rather than a port.
+	 * The invoice's state as a badge beside the amount, with the words and
+	 * tones the dashboard's student page uses (Marcel, 2026-09-29: the portals
+	 * look like the admin's screens). Legacy's `StackedListDocument` printed an
+	 * italic `(bezahlt)` / `(offen)` / `(fällig)` and nothing for a cancelled
+	 * invoice; the dashboard says *Storniert*, so this does too.
 	 */
 	$status = match ($invoice?->status) {
-		\App\Enums\InvoiceStatus::Paid => ['(bezahlt)', 'text-success'],
-		\App\Enums\InvoiceStatus::Open => ['(offen)', 'text-info'],
-		\App\Enums\InvoiceStatus::Overdue => ['(fällig)', 'text-danger'],
+		\App\Enums\InvoiceStatus::Paid => ['Bezahlt', 'success'],
+		\App\Enums\InvoiceStatus::Open => ['Offen', 'neutral'],
+		\App\Enums\InvoiceStatus::Overdue => ['Fällig', 'danger'],
+		\App\Enums\InvoiceStatus::Cancelled => ['Storniert', 'neutral'],
 		default => null,
 	};
 @endphp
@@ -60,7 +60,7 @@
 					CHF {{ number_format((float) $invoice->grand_total, 2, '.', '') }}
 				@endif
 				@if ($status)
-					<em class="{{ $status[1] }} italic">{{ $status[0] }}</em>
+					<x-ui.badge :variant="$status[1]" class="ml-8 align-middle">{{ $status[0] }}</x-ui.badge>
 				@endif
 			</div>
 
