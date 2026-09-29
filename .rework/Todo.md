@@ -270,6 +270,14 @@ easier to do while the templates are being rebuilt than afterwards.
 3. **No sitemap.** `public/robots.txt` is `User-agent: *` + `Disallow:` and
    nothing else.
 
+**All three done in the rework (2026-09-29).** Canonical and `hreflang` are in
+`components/layout/site.blade.php`. The sitemap is `/sitemap.xml`
+([[SitemapController]]): the fixed pages, each published course by its slug,
+each listed expert, on the canonical host, 46 URLs against the local port.
+`robots.txt` names it. `SitemapTest` opens every URL in it and checks that the
+page calls exactly that URL canonical. Left for cutover: submitting it in
+Search Console.
+
 One unrelated thing worth doing at the same time, already noted in
 `00-foundation.md`: `head.blade.php` loads a second Typekit kit, `kcs4ept`
 (*neuzeit-grotesk*), referenced by no stylesheet. It is a dead render-blocking

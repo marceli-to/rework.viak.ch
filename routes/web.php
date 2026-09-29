@@ -12,6 +12,7 @@ use App\Http\Controllers\Site\CourseController;
 use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\InviteController;
+use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\StudentAddressController;
 use App\Http\Controllers\Site\StudentPortalController;
 use App\Http\Middleware\SetLocaleFromUrl;
@@ -30,6 +31,9 @@ use Illuminate\Support\Facades\Route;
  * and consolidates the two properly.
  */
 Route::redirect('/', '/'.config('app.locale'), 301);
+
+/* Every public page, on the canonical host ([[SitemapController]]); named in `robots.txt`. */
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 /*
  * On-demand image rendering ([[08-accounts]]). Parameters are clamped to the
