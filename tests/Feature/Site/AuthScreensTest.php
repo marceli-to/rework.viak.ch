@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Enums\Gender;
 use App\Enums\OperatingSystem;
 use App\Enums\Role;
+use App\Http\Middleware\SignOutDeactivated;
 use App\Models\Country;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -245,4 +246,18 @@ it('splits street/number and zip/city in half, as production does', function () 
 	expect(substr_count($html, 'sm:col-span-6'))->toBe(4)
 		->and($html)->not->toContain('sm:col-span-9')
 		->and($html)->not->toContain('sm:col-span-3');
+});
+
+/**
+ * A deactivated address is not reopened by registering again (Marcel,
+ * 2026-09-29): the person is told to get in touch, and an admin reactivates.
+ */
+it('tells a deactivated address to get in touch instead of registering it again', function () {
+	User::factory()->create(['email' => 'ada@example.test', 'deactivated_at' => now()]);
+
+	$this->post('/de/registration', registration())
+		->assertSessionHasErrors(['email' => SignOutDeactivated::MESSAGE]);
+
+	expect(User::where('email', 'ada@example.test')->count())->toBe(1);
+	$this->assertGuest();
 });

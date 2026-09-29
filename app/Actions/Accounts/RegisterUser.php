@@ -7,8 +7,10 @@ namespace App\Actions\Accounts;
 use App\Enums\Gender;
 use App\Enums\OperatingSystem;
 use App\Enums\Role;
+use App\Http\Middleware\SignOutDeactivated;
 use App\Models\Country;
 use App\Models\User;
+use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -50,7 +52,19 @@ class RegisterUser implements CreatesNewUsers
 			'zip' => ['required', 'string', 'max:10'],
 			'city' => ['required', 'string', 'max:255'],
 			'country_code' => ['required', 'string', 'exists:countries,code'],
-			'email' => ['required', 'string', 'email', 'max:255', 'confirmed', 'unique:users,email'],
+			'email' => [
+				'bail', 'required', 'string', 'email', 'max:255', 'confirmed',
+				// A deactivated account is not reopened by registering again
+				// (Marcel, 2026-09-29): the person is told to get in touch and an
+				// admin reactivates it. Said before *already taken*, which would
+				// only send them to a password reset that cannot sign them in.
+				function (string $attribute, mixed $value, Closure $fail): void {
+					if (User::query()->where('email', $value)->whereNotNull('deactivated_at')->exists()) {
+						$fail(SignOutDeactivated::MESSAGE);
+					}
+				},
+				'unique:users,email',
+			],
 			'password' => ['required', 'string', 'confirmed', 'min:8'],
 			'operating_systems' => ['required', 'array', 'min:1'],
 			'operating_systems.*' => ['string', 'in:'.implode(',', array_column(OperatingSystem::cases(), 'value'))],
