@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import IconArrowRight from '@/components/icons/ArrowRight.vue';
+import IconDownload from '@/components/icons/Download.vue';
 import IconEdit from '@/components/icons/Edit.vue';
 
 /**
@@ -18,9 +19,13 @@ import IconEdit from '@/components/icons/Edit.vue';
  * `show` adds legacy's second link, to the record's own page: the 20px arrow
  * under the pencil, 40px below the rule (`icon-arrow-right.is-absolute`,
  * `_arrow.scss`), as each student row has it.
+ *
+ * `download` is a file instead of a form: legacy's download icon where the
+ * pencil would be, on a paid or cancelled invoice. A row can have neither.
  */
 defineProps({
-	edit: { type: [String, Object], required: true },
+	edit: { type: [String, Object], default: null },
+	download: { type: String, default: null },
 	show: { type: [String, Object], default: null },
 	dimmed: { type: Boolean, default: false },
 	wide: { type: Boolean, default: false },
@@ -29,9 +34,12 @@ defineProps({
 
 <template>
 	<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl" :class="{ 'text-gray-400': dimmed }">
-		<RouterLink :to="edit" title="Bearbeiten" class="absolute top-12 right-0 z-10 block size-18 text-black hover:text-teal">
+		<RouterLink v-if="edit" :to="edit" title="Bearbeiten" class="absolute top-12 right-0 z-10 block size-18 text-black hover:text-teal">
 			<IconEdit class="block" />
 		</RouterLink>
+		<a v-else-if="download" :href="download" title="Herunterladen" class="absolute top-12 right-0 z-10 block text-black hover:text-teal">
+			<IconDownload class="block" />
+		</a>
 		<RouterLink v-if="show" :to="show" title="Anzeigen" class="absolute top-40 right-0 z-10 block text-black hover:text-teal">
 			<IconArrowRight size="sm" class="[&_svg]:w-20" />
 		</RouterLink>

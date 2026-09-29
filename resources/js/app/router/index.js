@@ -87,8 +87,24 @@ const routes = [
 	},
 	// Bookings, documents, cancelling: an operational screen, step 7.
 	pending('student/:uuid', 'student.show', 'Student'),
-	pending('rechnungen', 'backoffice.invoices', 'Rechnungen'),
-	pending('exporte', 'backoffice.exports', 'Exporte'),
+	{
+		path: '/dashboard/rechnungen',
+		name: 'backoffice.invoices',
+		component: () => import('@/views/Invoice/Index.vue'),
+		meta: { title: 'Rechnungen' },
+	},
+	{
+		path: '/dashboard/rechnung/:uuid',
+		name: 'backoffice.invoice.edit',
+		component: () => import('@/views/Invoice/Form.vue'),
+		meta: { title: 'Rechnung bearbeiten' },
+	},
+	{
+		path: '/dashboard/exporte',
+		name: 'backoffice.exports',
+		component: () => import('@/views/Export/Index.vue'),
+		meta: { title: 'Exporte' },
+	},
 	{
 		path: '/dashboard/rabatt-codes',
 		name: 'discount-codes',

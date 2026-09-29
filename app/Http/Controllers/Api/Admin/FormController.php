@@ -8,6 +8,7 @@ use App\Forms\CourseSchema;
 use App\Forms\DiscountCodeSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
+use App\Forms\InvoiceSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\Schema;
@@ -35,6 +36,7 @@ class FormController extends Controller
 		'term' => TermSchema::class,
 		'location' => LocationSchema::class,
 		'profile' => ProfileSchema::class,
+		'invoice' => InvoiceSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

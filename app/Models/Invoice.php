@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\CancellationReason;
+use App\Enums\DocumentType;
 use App\Enums\InvoiceStatus;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -70,6 +72,12 @@ class Invoice extends Model
 	public function items(): HasMany
 	{
 		return $this->hasMany(InvoiceItem::class)->orderBy('position');
+	}
+
+	/** The PDF, once [[RenderInvoice]] has made it: what the dashboard links to. */
+	public function document(): MorphOne
+	{
+		return $this->morphOne(UserDocument::class, 'documentable')->where('type', DocumentType::Invoice);
 	}
 
 	/** The invoice that took this one's place — the penalty flow, 6 rows. */

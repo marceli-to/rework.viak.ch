@@ -129,6 +129,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'update']);
 		Route::delete('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'destroy']);
 
+		Route::get('invoices', [Admin\InvoiceController::class, 'index']);
+		Route::get('invoices/{invoice}', [Admin\InvoiceController::class, 'show']);
+		Route::put('invoices/{invoice}', [Admin\InvoiceController::class, 'update']);
+		Route::get('exports/courses', [Admin\ExportController::class, 'courses']);
+
 		Route::get('profile', [Admin\ProfileController::class, 'show']);
 		Route::put('profile', [Admin\ProfileController::class, 'update']);
 

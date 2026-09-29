@@ -26,8 +26,8 @@ What exists at the end of 2026-09-24:
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
   *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen*, *Mein Profil*
-  (2026-09-29). Only the student page, the event page, invoices and export
-  still render `Pending`.
+  (2026-09-29), *Rechnungen* and *Exporte* (step 7, same day). Only the
+  student page and the event page still render `Pending`.
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -683,6 +683,43 @@ map link, *Publizieren*) for places, and one controller
 - Password inputs carry `autocomplete="new-password"`: a browser filling a
   remembered password into *Neues Passwort* would change it on the next save.
 
+## Step 7 — invoices and export, built 2026-09-29
+
+Taken ahead of mail: neither screen sends anything, so neither waits on
+chunk 10 (the event page and the student page still do).
+
+**Rechnungen** ([[InvoiceController]], `views/Invoice/`). Legacy's four lists
+and its row (number as the PDF link, date, amount, *Name, Ort*), the pencil on
+open and overdue, the download icon on paid and cancelled. Changed:
+
+- **Each list is its own request, searched and paged on the server**, 50 at a
+  time: the paid list is 542 rows. Search is every word against the number and
+  the student's names, city and company.
+- ***Fällige Rechnungen* second and open**, where legacy had it third and
+  closed behind the paid ones. It is the list somebody acts on.
+- **The PDF comes through `/dokumente/{uuid}`** and [[UserDocumentPolicy]],
+  not the public disk legacy linked to. `Invoice::document()` finds it.
+
+**Rechnung bearbeiten** ([[InvoiceSchema]], [[ChangeInvoiceAddress]]). The
+address and nothing else, as decided above, **as fields**, not legacy's free
+text: the QR slip prints the payer from the structured snapshot and cannot
+split a text. Saved as `UserAddress::toSnapshot()`'s shape, then the PDF is
+rendered again. Only while the invoice is owed: a paid or cancelled one
+answers 409 and its form opens locked. The fields start from the frozen
+address, or from the student's where there is none (431 ported invoices);
+the 131 with printed `lines` start from the student's too, and the note says
+what the invoice prints today. Run My Accounts is not told, as legacy did not.
+
+**Exporte** ([[CourseParticipantsExport]], `GET /api/admin/exports/courses`).
+Legacy's workbook: a sheet per course with past participants, its eleven
+columns and headings, bold heading row, autosized. **Checked against the
+legacy database the same day: 31 sheets, 503 rows on both sides**, once the
+two local `dev@viak.test` bookings are left out. Sheet names are made legal for
+Excel (no `: / \ ? * [ ]`, 31 characters, never twice), which legacy did not
+do. Written with `phpoffice/phpspreadsheet` directly (new dependency), the
+library under legacy's `maatwebsite/excel`. Fetched through the API client as
+a blob, so the session and the top bar work as for every other request.
+
 ## Counts are badges, 2026-09-29
 
 Marcel, while step 6 was being built: **a number that counts records or
@@ -770,7 +807,7 @@ hamburger. Proposed, grouped by what the admin is doing:
    ~~experts~~, ~~students~~, ~~discount codes~~, ~~taxonomies~~,
    ~~profile~~ (built, *Step 6 — …*).
 7. **Operational screens, by hand** — the event page, the student page,
-   invoices, export.
+   ~~invoices, export~~ (built, *Step 7 — invoices and export*).
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.
 
 **Mail (chunk 10) runs alongside, and gates step 7.** Confirming an event raises
