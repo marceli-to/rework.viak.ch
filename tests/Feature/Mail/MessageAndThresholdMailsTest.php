@@ -83,5 +83,5 @@ it('writes legacy text, with a way into the dashboard', function () {
 	expect((new ParticipantsChange($this->event->refresh(), 'min'))->render())
 		->toContain('Min. Teilnehmerzahl erreicht – Rhino Einstiegskurs')
 		->toContain('wurde erreicht.')
-		->toContain('/dashboard/kursdatum/'.$this->event->uuid.'/bearbeiten');
+		->toContain('/dashboard/veranstaltung/'.$this->event->uuid.'/bearbeiten');
 });

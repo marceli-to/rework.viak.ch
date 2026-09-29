@@ -12,7 +12,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  */
 const blocked = (meta) => {
 	if (meta.is_self) return 'Du kannst dein eigenes Konto nicht löschen.';
-	if (meta.has_history) return 'Diese Person hat Kursdaten, Buchungen oder Rechnungen und kann nicht gelöscht werden. Setze sie stattdessen auf nicht aktiv, oder nimm ihr die Rolle Experte.';
+	if (meta.has_history) return 'Diese Person hat Veranstaltungen, Buchungen oder Rechnungen und kann nicht gelöscht werden. Setze sie stattdessen auf nicht aktiv, oder nimm ihr die Rolle Experte.';
 	return null;
 };
 </script>

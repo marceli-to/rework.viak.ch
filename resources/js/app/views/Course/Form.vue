@@ -24,7 +24,7 @@ const list = { name: 'courses', query: { modus: 'kurse' } };
 		:edit="(uuid) => ({ name: 'course.edit', params: { uuid } })"
 		noun="Kurs"
 		:titles="{ create: 'Kurs erfassen', edit: 'Kurs bearbeiten' }"
-		:deletion="{ title: 'Kurs löschen', text: 'Mit dieser Aktion wird der Kurs inklusive aller Kursdaten gelöscht.', question: () => 'Der Kurs wird mit allen Kursdaten gelöscht.' }"
+		:deletion="{ title: 'Kurs löschen', text: 'Mit dieser Aktion wird der Kurs inklusive aller Veranstaltungen gelöscht.', question: () => 'Der Kurs wird mit allen Veranstaltungen gelöscht.' }"
 		:blocked="(meta) => (meta.has_bookings ? 'Dieser Kurs hat Buchungen und kann nicht gelöscht werden. Setze ihn stattdessen auf nicht publiziert.' : null)"
 	/>
 </template>

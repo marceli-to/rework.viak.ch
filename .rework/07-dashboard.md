@@ -24,7 +24,7 @@ What exists at the end of 2026-09-24:
 - **The shell is guarded** (`auth`, admin only; a student or expert is sent to
   their portal), and admin endpoints live under `/api/admin` (*Step 1*).
 - **Screens built**: *Kurse* (both modes), *Kurs erfassen / bearbeiten* with
-  *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
+  *Bilder*, *Veranstaltung hinzufügen / bearbeiten*, *Testimonials* (list and form),
   *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen*, *Mein Profil*
   (2026-09-29), *Rechnungen* and *Exporte* (step 7, same day), the student
   page and the course date's page (step 7, same day). **Step 7 is done.**
@@ -473,7 +473,7 @@ From the course and testimonial forms, once both existed by hand — the
 
 ## Step 6 — the course-date form, built 2026-09-24
 
-*Kursdatum erfassen* / *bearbeiten*, legacy's form in its order, measured
+*Veranstaltung hinzufügen* / *bearbeiten*, legacy's form in its order, measured
 against it at 1291px: [[EventSchema]], `views/Event/Form.vue`.
 
 - **The public API's event writes moved to `/api/admin`**: `POST
@@ -658,7 +658,7 @@ map link, *Publizieren*) for places, and one controller
 - **The screen is legacy's**: a collapsible per list, a row per entry, a `+`
   under each list. The list a form returns to is open (`?liste=tags`), as
   legacy's `:type` param did. Each row says where it is used (*In 13 Kursen*,
-  *In 325 Kursdaten*).
+  *In 325 Veranstaltungen*).
 - **German only**, as the course form: legacy's *Beschreibung (en)* fields are
   not asked for, and English already stored is kept (#6). The list's second
   column, the English name, is gone with them.
@@ -725,6 +725,18 @@ do. Written with `phpoffice/phpspreadsheet` directly (new dependency), the
 library under legacy's `maatwebsite/excel`. Fetched through the API client as
 a blob, so the session and the top bar work as for every other request.
 
+## A course has Veranstaltungen, 2026-09-29
+
+Marcel: **a *Kurs* has *Veranstaltungen***, which is legacy's word throughout
+its dashboard (*Veranstaltung bestätigen*, *Veranstaltung löschen*). The
+dashboard had said *Kursdatum* in its URLs and some of its text. Now
+`/dashboard/veranstaltung/{uuid}` (`/bearbeiten`, `/nachricht`) and
+`/dashboard/kurs/{course}/veranstaltung/erfassen`, and *Veranstaltung* in
+every label, title and message. Two *Kursdatum* stay on purpose: the public
+course page's *Neues Kursdatum folgt in Kürze* (legacy's copy, held to
+parity) and the Excel export's column heading, which is the date and
+legacy's heading. English prose and code keep *event* / *course date*.
+
 ## Counts are badges, 2026-09-29
 
 Marcel, while step 6 was being built: **a number that counts records or
@@ -738,7 +750,7 @@ empty says so in its own line, and a *0* beside the title only repeats it.
 
 ## Step 7 — the course date's page, built 2026-09-29
 
-`/dashboard/kursdatum/{uuid}`, legacy's `course/event/Show.vue`, built **as far
+`/dashboard/veranstaltung/{uuid}`, legacy's `course/event/Show.vue`, built **as far
 as attendance needs** (Marcel, 2026-09-29: non-participants get no
 participation confirmation, so attendance has to be recorded):
 
@@ -858,7 +870,7 @@ Studenten, the rest behind the burger). What was proposed:
 Legacy's top bar holds Kurse, Experten, Studenten; everything else sits in a
 hamburger. Proposed, grouped by what the admin is doing:
 
-- **Kurse** — courses, and each course's dates; **Kursdaten** — every date,
+- **Kurse** — courses, and each course's dates; **Veranstaltungen**, every event,
   chronologically (today's `/dashboard/termine`)
 - **Personen** — Studierende, Experten
 - **Verkauf** — Rechnungen, Rabatt-Codes, Export

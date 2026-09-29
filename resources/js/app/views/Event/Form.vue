@@ -9,7 +9,7 @@ import Button from '@/components/ui/Button.vue';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
- * *Kursdatum erfassen* / *bearbeiten* ([[07-dashboard]], step 6): the fields
+ * *Veranstaltung hinzufügen* / *bearbeiten* ([[07-dashboard]], step 6): the fields
  * are [[EventSchema]]. A new one is created under the course in the path.
  *
  * **Legacy's state boxes** (its `event/Form.vue`), between *Speichern* and the
@@ -54,7 +54,7 @@ async function act(meta, patchMeta, state, question) {
 		:remove="deleteEvent"
 		:list="{ name: 'courses' }"
 		:edit="(uuid) => ({ name: 'event.edit', params: { uuid } })"
-		noun="Kursdatum"
+		noun="Veranstaltung"
 		:titles="{ create: 'Veranstaltung hinzufügen', edit: (meta) => `Veranstaltung für\n${meta.course.title}` }"
 		:deletion="{
 			title: 'Veranstaltung löschen',

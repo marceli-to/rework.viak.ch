@@ -11,9 +11,9 @@ export const KINDS = {
 	locations: { title: 'Orte', noun: 'Ort', schema: 'location' },
 };
 
-/** Where a term is used, for its badge: courses for a term, course dates for a place. */
+/** Where a term is used, for its badge: courses for a term, events for a place. */
 export const usage = (kind, count) => {
 	if (!count) return 'Nicht verwendet';
-	const [one, many] = kind === 'locations' ? ['Kursdatum', 'Kursdaten'] : ['Kurs', 'Kurse'];
+	const [one, many] = kind === 'locations' ? ['Veranstaltung', 'Veranstaltungen'] : ['Kurs', 'Kurse'];
 	return `${count} ${count === 1 ? one : many}`;
 };

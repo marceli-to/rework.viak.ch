@@ -61,7 +61,7 @@ class EventController extends Controller
 	{
 		if ($event->bookings()->exists()) {
 			return response()->json([
-				'message' => 'Dieses Kursdatum hat Buchungen und kann nicht gelöscht werden.',
+				'message' => 'Diese Veranstaltung hat Buchungen und kann nicht gelöscht werden.',
 			], 422);
 		}
 

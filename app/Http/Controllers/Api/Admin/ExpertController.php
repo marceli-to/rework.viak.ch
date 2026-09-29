@@ -114,7 +114,7 @@ class ExpertController extends Controller
 	public function destroy(Request $request, User $expert, DeleteMedia $delete): JsonResponse
 	{
 		abort_if($expert->is($request->user()), 422, 'Du kannst dein eigenes Konto nicht löschen.');
-		abort_if($expert->hasHistory(), 422, 'Diese Person hat Kursdaten, Buchungen oder Rechnungen und kann nicht gelöscht werden.');
+		abort_if($expert->hasHistory(), 422, 'Diese Person hat Veranstaltungen, Buchungen oder Rechnungen und kann nicht gelöscht werden.');
 
 		DB::transaction(function () use ($expert, $delete): void {
 			$expert->media->each(fn ($media) => $delete->execute($media));

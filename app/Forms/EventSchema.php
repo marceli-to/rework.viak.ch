@@ -9,7 +9,7 @@ use App\Models\Location;
 use App\Models\User;
 
 /**
- * *Kursdatum erfassen* / *bearbeiten* — legacy's event form, in its order
+ * *Veranstaltung hinzufügen* / *bearbeiten* — legacy's event form, in its order
  * ([[07-dashboard]], step 6). Confirming, closing and cancelling are not
  * fields and not here yet: each one mails, and mail is chunk 10.
  */

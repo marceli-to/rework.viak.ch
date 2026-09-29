@@ -40,7 +40,7 @@ class ParticipantsChange extends VIAKMail
 			'course' => $this->course(),
 			'dates' => EventFacts::dates($this->event),
 			'experts' => EventFacts::experts($this->event),
-			'edit' => url('/dashboard/kursdatum/'.$this->event->uuid.'/bearbeiten'),
+			'edit' => url('/dashboard/veranstaltung/'.$this->event->uuid.'/bearbeiten'),
 		]);
 	}
 

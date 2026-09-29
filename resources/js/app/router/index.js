@@ -33,31 +33,31 @@ const routes = [
 		component: () => import('@/views/Course/Form.vue'),
 		meta: { title: 'Kurs bearbeiten' },
 	},
-	pending('kurs/:uuid/kursdaten', 'course.events', 'Kursdaten'),
+	pending('kurs/:uuid/veranstaltungen', 'course.events', 'Veranstaltungen'),
 	{
 		// `:course`, not `:uuid`: the form is creating when it has no `uuid`.
-		path: '/dashboard/kurs/:course/kursdatum/erfassen',
+		path: '/dashboard/kurs/:course/veranstaltung/erfassen',
 		name: 'event.create',
 		component: () => import('@/views/Event/Form.vue'),
-		meta: { title: 'Kursdatum erfassen' },
+		meta: { title: 'Veranstaltung hinzufügen' },
 	},
 	{
-		path: '/dashboard/kursdatum/:uuid',
+		path: '/dashboard/veranstaltung/:uuid',
 		name: 'event.show',
 		component: () => import('@/views/Event/Show.vue'),
-		meta: { title: 'Kursdatum' },
+		meta: { title: 'Veranstaltung' },
 	},
 	{
-		path: '/dashboard/kursdatum/:uuid/nachricht',
+		path: '/dashboard/veranstaltung/:uuid/nachricht',
 		name: 'event.message',
 		component: () => import('@/views/Event/Message.vue'),
 		meta: { title: 'Nachricht erfassen' },
 	},
 	{
-		path: '/dashboard/kursdatum/:uuid/bearbeiten',
+		path: '/dashboard/veranstaltung/:uuid/bearbeiten',
 		name: 'event.edit',
 		component: () => import('@/views/Event/Form.vue'),
-		meta: { title: 'Kursdatum bearbeiten' },
+		meta: { title: 'Veranstaltung bearbeiten' },
 	},
 
 	{

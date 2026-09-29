@@ -10,7 +10,7 @@ use App\Models\Location;
 use App\Models\User;
 
 /**
- * *Kursdatum erfassen* / *bearbeiten* — `/api/admin/events` ([[07-dashboard]],
+ * *Veranstaltung hinzufügen* / *bearbeiten* — `/api/admin/events` ([[07-dashboard]],
  * step 6). Took over the public API's event writes and their guarantees.
  */
 beforeEach(function () {

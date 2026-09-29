@@ -112,7 +112,7 @@ onMounted(async () => {
 
 		<template v-else-if="mode === 'chronological'">
 			<EventLine v-for="{ event, course } in events" :key="event.uuid" :event="event" :course="course" />
-			<p v-if="!events.length" class="mt-32">Keine Kursdaten gefunden.</p>
+			<p v-if="!events.length" class="mt-32">Es sind keine Veranstaltungen vorhanden.</p>
 		</template>
 
 		<div v-else class="mt-12">
@@ -139,10 +139,10 @@ onMounted(async () => {
 				<p v-if="!course.events.length" class="mt-16 sm:mt-32">Es sind keine Veranstaltungen vorhanden.</p>
 
 				<div class="mt-24 flex items-center justify-between">
-					<RouterLink :to="{ name: 'event.create', params: { course: course.uuid } }" title="Neues Kursdatum" class="block hover:text-teal">
+					<RouterLink :to="{ name: 'event.create', params: { course: course.uuid } }" title="Veranstaltung hinzufügen" class="block hover:text-teal">
 						<IconPlus size="lg" class="block" />
 					</RouterLink>
-					<RouterLink :to="{ name: 'course.events', params: { uuid: course.uuid } }" title="Alle Kursdaten" class="block hover:text-teal">
+					<RouterLink :to="{ name: 'course.events', params: { uuid: course.uuid } }" title="Alle Veranstaltungen" class="block hover:text-teal">
 						<IconArrowRight size="sm" class="[&_svg]:w-20" />
 					</RouterLink>
 				</div>
