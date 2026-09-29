@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Actions\Documents\InvoiceDocument;
+use App\Actions\Invoices\RaiseInvoiceForBooking;
 use App\Mail\EventConfirmationStudent;
 use App\Models\Booking;
 use Illuminate\Bus\Queueable;
@@ -34,9 +35,16 @@ class SendCourseConfirmation implements ShouldQueue
 		$this->afterCommit();
 	}
 
-	public function handle(InvoiceDocument $pdf): void
+	/**
+	 * The invoice is asked for, not assumed: confirming a course raises them
+	 * in a listener of its own, and listeners are not run in a promised order.
+	 * [[RaiseInvoiceForBooking]] returns the one already raised, or raises it
+	 * (it is safe to call twice), so this job cannot outrun it. A free course
+	 * has none.
+	 */
+	public function handle(RaiseInvoiceForBooking $raise, InvoiceDocument $pdf): void
 	{
-		$invoice = $this->booking->invoice();
+		$invoice = $this->booking->invoice() ?? $raise->execute($this->booking);
 
 		Mail::to($this->booking->user)->send(new EventConfirmationStudent($this->booking, $invoice ? $pdf->execute($invoice) : null));
 	}

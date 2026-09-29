@@ -76,10 +76,10 @@ in a scenario (below).
 | Seats reach maximum | `ParticipantsMax` | admin | — | Max. Teilnehmerzahl erreicht – *course* | ″ |
 | Seats drop below minimum | `ParticipantsBelowMin` | admin | — | Min. Teilnehmerzahl unterschritten – *course* | ″ |
 | 10 days out, still planned | `EventCancelOrConfirmReminder` | admin | — | Reminder – *course* | No scheduled command yet |
-| Event confirmed | `EventConfirmationStudent` | each student | invoice (+ rental invoice) | Kursbestätigung – *course* | `EventConfirmed` → invoices raised, not mailed |
-| | `EventConfirmationExpert` | each expert | — | Bestätigung – *course* | ″ |
-| Event cancelled | `EventCancelStudent` | each student | — | Kursabsage – *course* | `CancelBookingsForEvent` runs, nothing mailed |
-| | `EventCancelExpert` | each expert | — | Kursabsage – *course* | ″ |
+| Event confirmed | `EventConfirmationStudent` | each student | invoice (+ rental invoice) | Kursbestätigung – *course* | **Built 2026-09-29** ([[SendConfirmationMails]]); one PDF per seat, the rental a line on it |
+| | `EventConfirmationExpert` | each expert | — | Bestätigung – *course* | **Built** |
+| Event cancelled | `EventCancelStudent` | each student | — | Kursabsage – *course* | **Built**: `SetEventState` now announces [[EventCancelled]] with the seats given up; the next two *published* dates offered |
+| | `EventCancelExpert` | each expert | — | Kursabsage – *course* | **Built** |
 | Event closed | `EventClosedStudent` | each student who **participated** | participation confirmation | Teilnahmebestätigung – *course* | State exists, nothing mailed |
 | Expert posts a message | `EventMessageStudent` | each booked student | — (files linked in the body, `storage/uploads/…`) | the message's subject | `PostMessage` records recipients, sends nothing |
 | | `EventMessageExpert` | the author, if *selfcopy* | — (files linked) | ″ | ″ |
@@ -203,7 +203,7 @@ guessing. Not installed on production.
 
 - **2026-09-29**: steps 1 to 3 (the guard, MailHog locally on 1025 with the
   inbox at http://localhost:8025, legacy's layout and theme), and the *booking
-  made* and *cancels* rows. Every mail is a queued [[VIAKMail]], sent after
+  made*, *cancels*, *confirmed* and *cancelled* rows. Every mail is a queued [[VIAKMail]], sent after
   the commit. **A cancellation because VIAK called the course off sends none of
   the cancellation mails**; *Kursabsage* (the event-cancel row) tells them.
   **Legacy's cancellation mails issued a discount code for an invoice already

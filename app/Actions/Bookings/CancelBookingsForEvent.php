@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Actions\Bookings;
 
 use App\Enums\BookingCancellationReason;
+use App\Models\Booking;
 use App\Models\Event;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * VIAK calls a course off ([[06-bookings]]).
@@ -28,8 +30,13 @@ class CancelBookingsForEvent
 {
 	public function __construct(private readonly CancelBooking $cancel) {}
 
-	/** Returns how many seats were given up. */
-	public function execute(Event $event): int
+	/**
+	 * Returns the seats given up — the people *Kursabsage* goes to
+	 * ([[EventCancelled]]).
+	 *
+	 * @return Collection<int, Booking>
+	 */
+	public function execute(Event $event): Collection
 	{
 		$bookings = $event->bookings()->active()->get();
 
@@ -37,6 +44,6 @@ class CancelBookingsForEvent
 			$this->cancel->execute($booking, BookingCancellationReason::EventCancelled);
 		}
 
-		return $bookings->count();
+		return $bookings;
 	}
 }

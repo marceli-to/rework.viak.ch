@@ -6,6 +6,7 @@ namespace App\Actions\Events;
 
 use App\Actions\Bookings\CancelBookingsForEvent;
 use App\Enums\EventState;
+use App\Events\EventCancelled;
 use App\Events\EventConfirmed;
 use App\Models\Event;
 use RuntimeException;
@@ -45,6 +46,7 @@ class SetEventState
 		}
 
 		$wasConfirmed = $event->state === EventState::Confirmed;
+		$wasCancelled = $event->state === EventState::Cancelled;
 
 		$event->update($attributes);
 		$event->refresh();
@@ -64,8 +66,10 @@ class SetEventState
 		// cancelling, not a reaction to it. Legacy made this a listener; a
 		// listener that silently fails to register is 143 bookings left live
 		// ([[CancelBookingsForEvent]]).
-		if ($state === EventState::Cancelled) {
-			$this->cancelBookings->execute($event);
+		if ($state === EventState::Cancelled && ! $wasCancelled) {
+			// Who held a seat is known only now, before and not after: the
+			// mails that tell them hang off this ([[EventCancelled]]).
+			EventCancelled::dispatch($event, $this->cancelBookings->execute($event));
 		}
 
 		return $event;

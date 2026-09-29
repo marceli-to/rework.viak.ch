@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Actions\Bookings\CancelBooking;
+use App\Actions\Bookings\CreateBookingForUser;
+use App\Actions\Events\SetEventState;
+use App\Enums\BookingCancellationReason;
+use App\Enums\EventState;
+use App\Mail\EventConfirmationExpert;
+use App\Mail\EventConfirmationStudent;
+use App\Models\Course;
+use App\Models\Event;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+
+/**
+ * *Event confirmed* ([[10-mail]]): each student holding a seat gets the course
+ * confirmation with their invoice, each expert theirs.
+ */
+beforeEach(function () {
+	Storage::fake('documents');
+	$this->event = Event::factory()->for(Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'fee' => '890.00']))->create();
+	$this->event->dates()->create(['date' => now()->addMonth()->toDateString()]);
+	$this->expert = User::factory()->expert()->create(['first_name' => 'Kevin']);
+	$this->event->experts()->attach($this->expert);
+
+	$this->anna = User::factory()->student()->create();
+	$this->beat = User::factory()->student()->create();
+	$gone = User::factory()->student()->create();
+	foreach ([$this->anna, $this->beat, $gone] as $student) {
+		app(CreateBookingForUser::class)->execute($this->event->refresh(), $student);
+	}
+	app(CancelBooking::class)->execute($gone->bookings()->first(), BookingCancellationReason::Student);
+
+	Mail::fake();
+});
+
+it('sends each booked student the confirmation with their own invoice, and each expert theirs', function () {
+	app(SetEventState::class)->execute($this->event->refresh(), EventState::Confirmed);
+
+	Mail::assertQueued(EventConfirmationStudent::class, 2);
+	foreach ([$this->anna, $this->beat] as $student) {
+		Mail::assertQueued(EventConfirmationStudent::class, fn ($mail) => $mail->hasTo($student->email)
+			&& $mail->invoice?->user_id === $student->id
+			&& Storage::disk('documents')->exists($mail->invoice->path()));
+	}
+	Mail::assertQueued(EventConfirmationExpert::class, fn ($mail) => $mail->hasTo($this->expert->email));
+});
+
+it('does not confirm twice when a confirmed course is saved again', function () {
+	app(SetEventState::class)->execute($this->event->refresh(), EventState::Confirmed);
+	Mail::fake();
+
+	app(SetEventState::class)->execute($this->event->refresh(), EventState::Confirmed);
+
+	Mail::assertNothingQueued();
+});
+
+it('writes legacy text to the expert', function () {
+	expect((new EventConfirmationExpert($this->event->refresh(), $this->expert))->render())
+		->toContain('Sali Kevin')
+		->toContain('Hiermit bestätigen wir die Durchführung des oben erwähnten Kurses')
+		->toContain('/de/experte/profil/kurs/veranstaltung/'.$this->event->uuid);
+});
