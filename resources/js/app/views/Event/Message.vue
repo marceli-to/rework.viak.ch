@@ -19,7 +19,7 @@ import Loading from '@/components/ui/Loading.vue';
  * portal's composer in the dashboard's fields: *Betreff*, *Nachricht* in the
  * editor, *Anhänge*, *Kopie an mich*. One multipart POST, so an abandoned
  * draft leaves no file behind ([[ExpertPortalController::storeMessage]]).
- * Sent to every live seat, which the page says before it is sent.
+ * Sent to every live seat.
  */
 const route = useRoute();
 const router = useRouter();
@@ -98,8 +98,6 @@ async function send() {
 			</div>
 
 			<Checkbox v-model="copyToMe" class="mt-24">Kopie an mich</Checkbox>
-
-			<p class="mt-24">{{ page.participants.length === 1 ? 'Geht an den einen Teilnehmer dieses Kurses.' : `Geht an alle ${page.participants.length} Teilnehmer dieses Kurses.` }}</p>
 
 			<div class="mt-24 sm:flex">
 				<Button type="submit" :disabled="sending || !page.participants.length">{{ sending ? 'Wird gesendet …' : 'Senden' }}</Button>
