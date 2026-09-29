@@ -151,5 +151,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::patch('events/{event}/state', [Admin\EventController::class, 'setState']);
 		Route::get('events/{event}/page', [Admin\EventPageController::class, 'show']);
 		Route::patch('bookings/{booking}/participation', [Admin\EventPageController::class, 'participation']);
+		Route::post('events/{event}/bookings', [Admin\EventPageController::class, 'book']);
+		Route::get('events/{event}/participants', [Admin\EventPageController::class, 'participants']);
+		Route::post('events/{event}/messages', [Admin\EventPageController::class, 'message']);
+		Route::post('events/{event}/files', [Admin\EventPageController::class, 'upload']);
+		Route::delete('events/{event}/files/{media:uuid}', [Admin\EventPageController::class, 'removeFile']);
 		Route::delete('events/{event}', [Admin\EventController::class, 'destroy']);
 	});

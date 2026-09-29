@@ -1,4 +1,4 @@
-# 07 — The dashboard (being built: steps 1–5 done, 6 under way)
+# 07 — The dashboard (steps 1–7 built; 8 waits on #22, #23)
 
 The admin's half of the app: the Vue SPA under `/dashboard`. Legacy's is
 `resources/js/vue/backend/dashboard/` — 13 screen groups, about 55 routes and
@@ -27,7 +27,7 @@ What exists at the end of 2026-09-24:
   *Bilder*, *Kursdatum erfassen / bearbeiten*, *Testimonials* (list and form),
   *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen*, *Mein Profil*
   (2026-09-29), *Rechnungen* and *Exporte* (step 7, same day), the student
-  page (step 7, same day). The event page is built as far as attendance.
+  page and the course date's page (step 7, same day). **Step 7 is done.**
   Every other menu entry renders `Pending` under its own title.
 - **The field kit** (`app/Forms/`, `FormNode`, `useResourceForm`,
   `ResourceForm`) draws every form but the image section.
@@ -736,7 +736,7 @@ was). A sentence in a form note or a danger zone keeps its number inline.
 **A zero is not drawn** (Marcel, 2026-09-29): a collapsible whose list is
 empty says so in its own line, and a *0* beside the title only repeats it.
 
-## Step 7 — the course date's page, begun 2026-09-29
+## Step 7 — the course date's page, built 2026-09-29
 
 `/dashboard/kursdatum/{uuid}`, legacy's `course/event/Show.vue`, built **as far
 as attendance needs** (Marcel, 2026-09-29: non-participants get no
@@ -749,8 +749,31 @@ participation confirmation, so attendance has to be recorded):
 - the tick is `PATCH /api/admin/bookings/{booking}/participation`, refused
   once the date is closed or called off, stored as `bookings.participated_at`
   (legacy's `hasParticipated`, ported with the time it was set).
-- **Still to build from legacy's page**: *Nachrichten*, *Kurs-Dokumente*,
-  *Teilnehmer hinzufügen* (the student search), the participant list as PDF.
+- **The rest of legacy's page, the same afternoon**, as UI over what the
+  expert portal already does ([[EventPageController]]; the portal's two
+  requests now take a bound `{event}` as well as its `{uuid}`):
+  - ***Teilnehmer hinzufügen*** opens a lightbox that searches as *Studenten*
+    does, on the server, and books with one click ([[CreateBookingForUser]]:
+    today's fee, the booking mails). Name, place and e-mail per hit (three dev
+    fixtures share a name). Refuses a deactivated account (owed since
+    *Step 6 — students*) and a date that is closed or called off; capacity is
+    not checked, as legacy did not. Each participant's name links to their
+    student page.
+  - ***Teilnehmerliste (PDF)*** is the portal's [[RenderParticipantList]],
+    fetched as a blob like the Excel export.
+  - ***Nachrichten***: the portals' message row (date, sender, subject and
+    35 characters, *Anzeigen* into a lightbox with the recipients and the
+    files), and the plus to ***Nachricht erfassen***, a screen of its own as
+    legacy has it: *Betreff*, the editor, *Anhänge*, *Kopie an mich*, one
+    multipart POST, and the mails on [[MessagePosted]]. The body is cleaned by
+    [[MessageHtml]] whatever `body_format` says, and shown through
+    [[RichText]].
+  - ***Kurs-Dokumente***: name (the download), size and a bin; the plus picks
+    files and uploads them at once, where legacy had a screen. A message's
+    attachment cannot be removed here (404).
+  - **Checked in the browser** on the dev fixtures: a student added, a message
+    sent, and in MailHog the three message mails, the booking confirmation and
+    the office notice.
 
 ## Step 7 — the student page, built 2026-09-29
 
@@ -860,7 +883,7 @@ hamburger. Proposed, grouped by what the admin is doing:
 6. **The CRUD that remains, on the kit** — ~~event form~~ (built, *Step 6*),
    ~~experts~~, ~~students~~, ~~discount codes~~, ~~taxonomies~~,
    ~~profile~~ (built, *Step 6 — …*).
-7. **Operational screens, by hand** — the event page, ~~the student page~~,
+7. **Operational screens, by hand** — ~~the event page~~, ~~the student page~~,
    ~~invoices, export~~ (built, *Step 7 — invoices and export*).
 8. **Homepage schema** once #23 is answered; **Aktuelles** once #22 is.
 

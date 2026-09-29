@@ -48,6 +48,12 @@ const routes = [
 		meta: { title: 'Kursdatum' },
 	},
 	{
+		path: '/dashboard/kursdatum/:uuid/nachricht',
+		name: 'event.message',
+		component: () => import('@/views/Event/Message.vue'),
+		meta: { title: 'Nachricht erfassen' },
+	},
+	{
 		path: '/dashboard/kursdatum/:uuid/bearbeiten',
 		name: 'event.edit',
 		component: () => import('@/views/Event/Form.vue'),

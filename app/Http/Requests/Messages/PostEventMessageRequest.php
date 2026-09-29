@@ -27,7 +27,8 @@ class PostEventMessageRequest extends FormRequest
 {
 	public function authorize(): bool
 	{
-		$event = Event::query()->where('uuid', $this->route('uuid'))->first();
+		// The portal routes by `{uuid}`, the dashboard binds `{event}`.
+		$event = $this->route('event') ?? Event::query()->where('uuid', $this->route('uuid'))->first();
 
 		if ($event === null) {
 			return false;
