@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Forms;
 
-use App\Enums\Role;
 
 /**
  * *Student hinzufügen* / *bearbeiten* — legacy's `views/student/Form.vue` and
@@ -48,7 +47,7 @@ final class CustomerSchema extends Schema
 				Field::checkbox('subscribe_newsletter')->label('Newsletter abonnieren'),
 			]),
 
-			self::roleField(),
+			self::roleField(required: false),
 
 			/*
 			 * The portal's rule, not legacy's: a pair of names or a firm, either
@@ -83,7 +82,7 @@ final class CustomerSchema extends Schema
 		];
 	}
 
-	/** Legacy's starting values: the Student role, Switzerland, no newsletter. */
+	/** Legacy's starting values, less its Student role: no role, Switzerland, no newsletter. */
 	public function defaults(): array
 	{
 		return [
@@ -91,7 +90,7 @@ final class CustomerSchema extends Schema
 			'first_name' => '', 'last_name' => '', 'company' => '', 'email' => '', 'phone' => '',
 			'street' => '', 'street_no' => '', 'zip' => '', 'city' => '', 'country' => 'ch',
 			'subscribe_newsletter' => false,
-			'roles' => [Role::Student->value],
+			'roles' => [],
 			'addresses' => [],
 		];
 	}

@@ -1,12 +1,12 @@
 {{--
 	*Kursabsage* to each student who held a seat, and to each expert
-	([[EventCancelStudent]], [[EventCancelExpert]]).
+	([[EventCancelCustomer]], [[EventCancelExpert]]).
 	../viak.ch/resources/views/mail/event/cancel.blade.php, its text as it is;
 	the code for an invoice already paid is issued by [[CancelBooking]].
 --}}
 @component('mail::message')
 <h1>Kursabsage – {{ $course }}</h1>
-@if ($recipient === 'student')
+@if ($recipient === 'customer')
 <p>Guten Tag {{ $user->name }}</p>
 <p>Leider müssen wir den folgenden Kurs absagen:</p>
 <table class="content-table" cellpadding="0" cellspacing="0">

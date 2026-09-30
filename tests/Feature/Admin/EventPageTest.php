@@ -26,7 +26,7 @@ beforeEach(function () {
 	$this->event = Event::factory()->for(Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs']]))
 		->create(['date' => now()->addDays(20)->toDateString()]);
 	$this->event->dates()->create(['date' => now()->addDays(20)->toDateString()]);
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 });
 
 it('books a student onto the date, once', function () {
@@ -45,7 +45,7 @@ it('books no deactivated account, and nothing on a date that is over', function 
 	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $this->student->uuid])
 		->assertStatus(422);
 
-	$other = User::factory()->student()->create();
+	$other = User::factory()->create();
 	$this->event->forceFill(['state' => EventState::Cancelled])->save();
 	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $other->uuid])
 		->assertStatus(422);

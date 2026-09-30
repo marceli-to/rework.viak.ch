@@ -20,7 +20,7 @@ use Illuminate\Mail\Mailables\Envelope;
  * Legacy's version created the invoice while rendering itself; here the
  * document already exists and the mail only attaches it.
  */
-class EventConfirmationStudent extends VIAKMail
+class EventConfirmationCustomer extends VIAKMail
 {
 	use AttachesDocument;
 
@@ -42,7 +42,7 @@ class EventConfirmationStudent extends VIAKMail
 		$invoice = $this->invoice?->invoice();
 
 		return new Content(markdown: 'mail.event.confirmation', with: [
-			'recipient' => 'student',
+			'recipient' => 'customer',
 			'booking' => $this->booking,
 			'event' => $event,
 			'user' => $this->booking->user,

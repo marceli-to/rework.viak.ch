@@ -7,8 +7,8 @@ use App\Actions\Bookings\CreateBookingForUser;
 use App\Actions\Events\SetEventState;
 use App\Enums\BookingCancellationReason;
 use App\Enums\EventState;
+use App\Mail\EventCancelCustomer;
 use App\Mail\EventCancelExpert;
-use App\Mail\EventCancelStudent;
 use App\Models\Course;
 use App\Models\Event;
 use App\Models\User;
@@ -25,8 +25,8 @@ beforeEach(function () {
 	$this->expert = User::factory()->expert()->create();
 	$this->event->experts()->attach($this->expert);
 
-	$this->anna = User::factory()->student()->create();
-	$this->left = User::factory()->student()->create();
+	$this->anna = User::factory()->create();
+	$this->left = User::factory()->create();
 	app(CreateBookingForUser::class)->execute($this->event->refresh(), $this->anna);
 	app(CreateBookingForUser::class)->execute($this->event->refresh(), $this->left);
 	app(CancelBooking::class)->execute($this->left->bookings()->first(), BookingCancellationReason::Student);
@@ -37,8 +37,8 @@ beforeEach(function () {
 it('tells each student who held a seat, and each expert', function () {
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Cancelled);
 
-	Mail::assertQueued(EventCancelStudent::class, 1);
-	Mail::assertQueued(EventCancelStudent::class, fn ($mail) => $mail->hasTo($this->anna->email));
+	Mail::assertQueued(EventCancelCustomer::class, 1);
+	Mail::assertQueued(EventCancelCustomer::class, fn ($mail) => $mail->hasTo($this->anna->email));
 	Mail::assertQueued(EventCancelExpert::class, fn ($mail) => $mail->hasTo($this->expert->email));
 });
 
@@ -51,7 +51,7 @@ it('offers the course next two published dates', function () {
 
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Cancelled);
 
-	Mail::assertQueued(EventCancelStudent::class, function ($mail) {
+	Mail::assertQueued(EventCancelCustomer::class, function ($mail) {
 		$html = $mail->render();
 
 		return str_contains($html, now()->addDays(40)->format('d.m.Y'))
@@ -64,5 +64,5 @@ it('offers the course next two published dates', function () {
 it('says a new date will follow when there is none', function () {
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Cancelled);
 
-	Mail::assertQueued(EventCancelStudent::class, fn ($mail) => str_contains($mail->render(), 'Falls der Kurs an einem neuen Datum stattfinden wird'));
+	Mail::assertQueued(EventCancelCustomer::class, fn ($mail) => str_contains($mail->render(), 'Falls der Kurs an einem neuen Datum stattfinden wird'));
 });

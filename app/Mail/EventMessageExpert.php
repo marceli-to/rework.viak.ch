@@ -9,4 +9,4 @@ namespace App\Mail;
  * (*Kopie an mich*, [[10-mail]]). Legacy's `EventMessageExpert`, whose view is
  * the student's word for word.
  */
-class EventMessageExpert extends EventMessageStudent {}
+class EventMessageExpert extends EventMessageCustomer {}

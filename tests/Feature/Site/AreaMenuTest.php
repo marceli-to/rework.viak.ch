@@ -11,17 +11,17 @@ use App\Support\SiteUrl;
  * (`12-customers.md`).
  */
 it('lists the areas a person may use, in the profile link\'s order', function () {
-	$all = User::factory()->admin()->expert()->student()->create();
+	$all = User::factory()->admin()->expert()->create();
 
 	expect(collect(SiteUrl::areasFor($all, 'de'))->pluck('label')->all())->toBe(['Kunde', 'Experte', 'Dashboard'])
-		->and(SiteUrl::areasFor(User::factory()->student()->create(), 'de'))->toHaveCount(1)
+		->and(SiteUrl::areasFor(User::factory()->create(), 'de'))->toHaveCount(1)
 		// Every account is a customer, so an expert has two areas.
 		->and(collect(SiteUrl::areasFor(User::factory()->expert()->create(), 'de'))->pluck('key')->all())->toBe(['customer', 'expert'])
 		->and(SiteUrl::areasFor(null))->toBe([]);
 });
 
 it('makes the profile icon a menu of the areas for a multi-role account', function () {
-	$this->actingAs(User::factory()->expert()->student()->create())
+	$this->actingAs(User::factory()->expert()->create())
 		->get('/de')
 		->assertOk()
 		->assertSee('aria-haspopup="true"', false)
@@ -31,7 +31,7 @@ it('makes the profile icon a menu of the areas for a multi-role account', functi
 });
 
 it('keeps the plain profile link for an account with one area', function () {
-	$this->actingAs(User::factory()->student()->create())
+	$this->actingAs(User::factory()->create())
 		->get('/de')
 		->assertOk()
 		->assertDontSee('aria-haspopup="true"', false);

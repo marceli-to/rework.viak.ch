@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * 17 paths carry more than one row — 37 for a single booking, then 19, 19, 18,
  * 12 — so 2023's 272 rows sit on **115 actual files**. Each group is one booking
- * and one user, which is the signature of `EventClosedStudent` being re-run:
+ * and one user, which is the signature of `EventClosedCustomer` being re-run:
  * that Mailable generated the PDF and inserted the row from inside its own
  * constructor, so every pass through the queue wrote another.
  *

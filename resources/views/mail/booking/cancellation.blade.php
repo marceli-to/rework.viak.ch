@@ -1,5 +1,5 @@
 {{--
-	*Annullationsbestätigung*, no penalty ([[BookingCancelledStudent]]).
+	*Annullationsbestätigung*, no penalty ([[BookingCancelledCustomer]]).
 	../viak.ch/resources/views/mail/booking/cancellation.blade.php, its text as it
 	is, **without the discount-code paragraph**: legacy's mail issued a code for
 	an invoice already paid while it rendered. Refunds are VIAK's to handle by

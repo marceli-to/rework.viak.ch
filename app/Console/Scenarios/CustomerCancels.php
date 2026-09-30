@@ -9,7 +9,7 @@ use App\Models\Event;
 use App\Models\User;
 
 /** A student drops out twice: once early and free, once late and charged. */
-class StudentCancels extends Scenario
+class CustomerCancels extends Scenario
 {
 	private Event $event;
 

@@ -8,8 +8,8 @@ use App\Actions\Events\SetEventState;
 use App\Enums\BookingCancellationReason;
 use App\Enums\EventState;
 use App\Enums\InvoiceStatus;
+use App\Mail\BookingCancelledCustomer;
 use App\Mail\BookingCancelledInfoAdmin;
-use App\Mail\BookingCancelledStudent;
 use App\Mail\BookingCancelledWithPenalty;
 use App\Models\Course;
 use App\Models\Event;
@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Storage;
 beforeEach(function () {
 	Storage::fake('documents');
 	config(['mail.admin' => 'office@example.test']);
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 });
 
 function courseInDays(int $days, EventState $state = EventState::Planned): Event
@@ -50,7 +50,7 @@ function bookThenCancel(Event $event, User $user, BookingCancellationReason $rea
 it('confirms an early cancellation at no cost, and tells the office', function () {
 	bookThenCancel(courseInDays(40), $this->student);
 
-	Mail::assertQueued(BookingCancelledStudent::class, fn ($mail) => $mail->hasTo($this->student->email));
+	Mail::assertQueued(BookingCancelledCustomer::class, fn ($mail) => $mail->hasTo($this->student->email));
 	Mail::assertQueued(BookingCancelledInfoAdmin::class, fn ($mail) => $mail->hasTo('office@example.test'));
 	Mail::assertNotQueued(BookingCancelledWithPenalty::class);
 });
@@ -65,7 +65,7 @@ it('names the late cost and attaches the invoice that bills it', function () {
 			&& ! $mail->paid
 			&& count($mail->attachments()) === 1;
 	});
-	Mail::assertNotQueued(BookingCancelledStudent::class);
+	Mail::assertNotQueued(BookingCancelledCustomer::class);
 });
 
 it('says there is nothing more to do when the invoice is paid, and attaches nothing', function () {
@@ -86,7 +86,7 @@ it('stays silent when VIAK calls the course off', function () {
 
 	app(SetEventState::class)->execute($event->refresh(), EventState::Cancelled);
 
-	Mail::assertNotQueued(BookingCancelledStudent::class);
+	Mail::assertNotQueued(BookingCancelledCustomer::class);
 	Mail::assertNotQueued(BookingCancelledWithPenalty::class);
 	Mail::assertNotQueued(BookingCancelledInfoAdmin::class);
 });
@@ -99,6 +99,6 @@ it('writes legacy text', function () {
 	expect($html)->toContain('Annullationsbestätigung – Rhino Einstiegskurs')
 		->toContain('Diese belaufen sich auf CHF 445.– (50% der Kurskosten).')
 		->toContain('Die entsprechende Rechnung liegt diesem Mail bei.')
-		->and((new BookingCancelledStudent($booking))->render())->toContain('/de/kurse')
+		->and((new BookingCancelledCustomer($booking))->render())->toContain('/de/kurse')
 		->and((new BookingCancelledInfoAdmin($booking->event, null))->render())->toContain('hat sich jemand abgemeldet');
 });

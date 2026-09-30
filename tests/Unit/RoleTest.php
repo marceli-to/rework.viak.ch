@@ -10,9 +10,9 @@ it('maps to and from the legacy roles table ids', function (Role $role, int $leg
 })->with([
 	[Role::Admin, 1],
 	[Role::Expert, 2],
-	[Role::Student, 3],
 ]);
 
-it('falls back to student for an unknown legacy id', function () {
-	expect(Role::fromLegacyId(99))->toBe(Role::Student);
+it('has no role for legacy\'s Student, or for an unknown id', function () {
+	expect(Role::fromLegacyId(3))->toBeNull()
+		->and(Role::fromLegacyId(99))->toBeNull();
 });

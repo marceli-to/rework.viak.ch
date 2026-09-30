@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Queue;
 beforeEach(function () {
 	Queue::fake([SendCancellationConfirmation::class]);
 	$this->admin = User::factory()->admin()->create();
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 });
 
 function studentSeat(User $student, int $days, string $fee = '600.00'): Booking

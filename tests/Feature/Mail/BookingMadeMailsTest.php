@@ -6,8 +6,8 @@ use App\Actions\Bookings\CreateBookingForUser;
 use App\Enums\EventState;
 use App\Mail\BookingCompleted;
 use App\Mail\BookingCreatedInfo;
-use App\Mail\EventConfirmationStudent;
-use App\Mail\EventMessageStudent;
+use App\Mail\EventConfirmationCustomer;
+use App\Mail\EventMessageCustomer;
 use App\Mail\RentalAddedInfoAdmin;
 use App\Models\Course;
 use App\Models\Event;
@@ -26,7 +26,7 @@ beforeEach(function () {
 	Storage::fake('documents');
 	config(['mail.admin' => 'office@example.test']);
 
-	$this->student = User::factory()->student()->create(['first_name' => 'Anna', 'last_name' => 'Muster']);
+	$this->student = User::factory()->create(['first_name' => 'Anna', 'last_name' => 'Muster']);
 	$this->expert = User::factory()->expert()->create(['first_name' => 'Kevin']);
 	$location = Location::create(['description' => ['de' => 'Visualisierungs-Akademie, Zürich'], 'address' => ['de' => 'x'], 'publish' => true]);
 	$this->event = Event::factory()
@@ -70,7 +70,7 @@ it('sends the course confirmation with the invoice on a course already confirmed
 
 	book($this->event, $this->student);
 
-	Mail::assertQueued(EventConfirmationStudent::class, function ($mail) {
+	Mail::assertQueued(EventConfirmationCustomer::class, function ($mail) {
 		return $mail->hasTo($this->student->email)
 			&& $mail->invoice !== null
 			&& Storage::disk('documents')->exists($mail->invoice->path())
@@ -81,7 +81,7 @@ it('sends the course confirmation with the invoice on a course already confirmed
 it('sends no course confirmation while the course is only planned', function () {
 	book($this->event, $this->student);
 
-	Mail::assertNotQueued(EventConfirmationStudent::class);
+	Mail::assertNotQueued(EventConfirmationCustomer::class);
 });
 
 it('sends a late booker every earlier message, one mail each, and records it', function () {
@@ -90,8 +90,8 @@ it('sends a late booker every earlier message, one mail each, and records it', f
 
 	book($this->event, $this->student);
 
-	Mail::assertQueued(EventMessageStudent::class, 2);
-	Mail::assertQueued(EventMessageStudent::class, fn ($mail) => $mail->post->is($first) && $mail->hasTo($this->student->email));
+	Mail::assertQueued(EventMessageCustomer::class, 2);
+	Mail::assertQueued(EventMessageCustomer::class, fn ($mail) => $mail->post->is($first) && $mail->hasTo($this->student->email));
 	expect($second->recipients()->whereKey($this->student->id)->exists())->toBeTrue();
 });
 
@@ -116,6 +116,6 @@ it('renders every booking mail without an error', function () {
 
 	expect((new BookingCreatedInfo($booking, $this->expert, true))->render())->toContain('Hallo Kevin')->toContain('/de/experte/profil')
 		->and((new RentalAddedInfoAdmin($booking))->render())->toContain('wurde ein Mietcomputer gebucht')
-		->and((new EventConfirmationStudent($booking, null))->render())->toContain('Hiermit bestätigen wir die Durchführung')
-		->and((new EventMessageStudent($post))->render())->toMatch('#<strong[^>]*>Laptop</strong>#'); // the theme inlines a style onto it
+		->and((new EventConfirmationCustomer($booking, null))->render())->toContain('Hiermit bestätigen wir die Durchführung')
+		->and((new EventMessageCustomer($post))->render())->toMatch('#<strong[^>]*>Laptop</strong>#'); // the theme inlines a style onto it
 });

@@ -31,7 +31,7 @@ function eventIn(int $days, array $attributes = []): Event
 }
 
 it('tells the student and the office when a laptop is added later, and the office when it is dropped', function () {
-	$student = User::factory()->student()->create();
+	$student = User::factory()->create();
 	$booking = app(CreateBookingForUser::class)->execute(eventIn(40), $student);
 	Mail::fake();
 
@@ -48,7 +48,7 @@ it('tells the student and the office when a laptop is added later, and the offic
 });
 
 it('sends nothing when the rental is set to what it already is', function () {
-	$booking = app(CreateBookingForUser::class)->execute(eventIn(40), User::factory()->student()->create());
+	$booking = app(CreateBookingForUser::class)->execute(eventIn(40), User::factory()->create());
 	Mail::fake();
 
 	app(SetRental::class)->execute($booking->refresh(), false);

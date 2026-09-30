@@ -6,8 +6,8 @@ use App\Actions\Bookings\CancelBooking;
 use App\Actions\Bookings\CreateBookingForUser;
 use App\Actions\Messages\PostMessage;
 use App\Enums\BookingCancellationReason;
+use App\Mail\EventMessageCustomer;
 use App\Mail\EventMessageExpert;
-use App\Mail\EventMessageStudent;
 use App\Mail\ParticipantsChange;
 use App\Models\Course;
 use App\Models\Event;
@@ -28,7 +28,7 @@ beforeEach(function () {
 
 function seat(Event $event): User
 {
-	$student = User::factory()->student()->create();
+	$student = User::factory()->create();
 	app(CreateBookingForUser::class)->execute($event->refresh(), $student);
 
 	return $student;
@@ -41,8 +41,8 @@ it('mails a posted message to each booked student, and a copy to the author who 
 
 	app(PostMessage::class)->execute($this->event, $this->expert, 'Vorbereitung', '<p>Bitte Laptop mitbringen.</p>', copyToAuthor: true);
 
-	Mail::assertQueued(EventMessageStudent::class, fn ($mail) => $mail->hasTo($anna->email) && ! $mail instanceof EventMessageExpert);
-	Mail::assertQueued(EventMessageStudent::class, fn ($mail) => $mail->hasTo($beat->email));
+	Mail::assertQueued(EventMessageCustomer::class, fn ($mail) => $mail->hasTo($anna->email) && ! $mail instanceof EventMessageExpert);
+	Mail::assertQueued(EventMessageCustomer::class, fn ($mail) => $mail->hasTo($beat->email));
 	Mail::assertQueued(EventMessageExpert::class, fn ($mail) => $mail->hasTo($this->expert->email));
 	Mail::assertQueuedCount(3);
 });

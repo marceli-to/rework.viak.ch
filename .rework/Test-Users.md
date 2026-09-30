@@ -18,12 +18,15 @@ it authenticated against. Sign in again after seeding.
 
 ## The accounts
 
-| Role | Email | Lands on |
+| Account | Email | Profile icon |
 |---|---|---|
-| Student | `dev@viak.test` | `/de/student/profil` |
-| Expert | `dev-expert@viak.test` | `/de/experte/profil` |
-| Admin | `dev-admin@viak.test` | `/dashboard` |
-| All three | `dev-all@viak.test` | `/de/student/profil` — **and both portals are real** |
+| Customer (no role) | `dev@viak.test` | `/de/konto` |
+| Expert | `dev-expert@viak.test` | menu: *Kunde*, *Experte* |
+| Admin | `dev-admin@viak.test` | menu: *Kunde*, *Dashboard* |
+| Expert + Admin | `dev-all@viak.test` | menu: *Kunde*, *Experte*, *Dashboard* |
+
+Every account is a customer since 2026-09-30 (`12-customers.md`): there is no
+student role, and `dev@` holds none.
 
 Plus eight throwaway students, `dev-teilnehmer-{event}-{0..3}@viak.test`, who
 exist to be names on the two experts' participant lists. They hold the same
@@ -44,15 +47,9 @@ sentence is not true of anything in production, and `DevUsersSeeder` throws
 unless `APP_ENV=local` so this set cannot follow the code there. Do not soften
 that guard.
 
-The "Landing on" column is `SiteUrl::profileFor()`, which is what the header's
-*Profil* icon uses: student first for an account holding more than one role,
-then expert, then the dashboard for an admin-only account. A guest gets
-`/login`.
-
-`dev-all@viak.test` is what that precedence is for: it holds all three roles,
-lands on the student portal, and reaches the other two by typing the URL —
-legacy adds a role-picker screen after login that the rework does not have
-(`09-public-site.md`).
+The header's profile icon is a plain link to `/de/konto` for an account with
+no role, and a menu of every area for anyone else (`SiteUrl::areasFor()`),
+where legacy asked on a role-picker screen after login. A guest gets `/login`.
 
 ## What the student holds
 

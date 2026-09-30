@@ -20,7 +20,7 @@ beforeEach(function () {
 
 function billedStudent(array $attributes = []): User
 {
-	return User::factory()->student()->create([
+	return User::factory()->create([
 		'first_name' => 'Antonia', 'last_name' => 'Haller', 'company' => null,
 		'street' => 'Kaiserstr.', 'street_no' => '76', 'zip' => '7752', 'city' => 'Orsières', 'country_code' => 'ch',
 		...$attributes,
@@ -37,7 +37,7 @@ function addressPayload(array $overrides = []): array
 }
 
 it('keeps invoices and the export to admins', function () {
-	$student = User::factory()->student()->create();
+	$student = User::factory()->create();
 	$invoice = Invoice::factory()->create();
 
 	$this->actingAs($student)->getJson('/api/admin/invoices?status=offen')->assertForbidden();

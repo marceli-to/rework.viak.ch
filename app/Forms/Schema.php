@@ -66,20 +66,27 @@ abstract class Schema
 
 	/**
 	 * *Benutzer-Rollen* — on the person, wherever the person is edited: the
-	 * expert form and the student form. Legacy's expert form was the only place
-	 * anyone could be made an admin. At least one; the request stops an admin
-	 * taking their own Admin role away. Legacy's always-open collapsible around
-	 * three boxes is a plain group, four to a row as its `span-3`.
+	 * expert form and the customer form. Legacy's expert form was the only place
+	 * anyone could be made an admin. The request stops an admin taking their
+	 * own Admin role away. Legacy's always-open collapsible around three boxes
+	 * is a plain group, four to a row as its `span-3`.
+	 *
+	 * Admin and Experte only: there is no customer role (`12-customers.md`).
+	 * **Required on the expert form, optional on the customer's**, where
+	 * none ticked is a customer and nothing more.
 	 */
-	protected static function roleField(): Field
+	protected static function roleField(bool $required = true): Field
 	{
-		return Field::checkboxes('roles', fn () => [
+		$field = Field::checkboxes('roles', fn () => [
 			Role::Admin->value => 'Admin',
 			Role::Expert->value => 'Experte',
-			Role::Student->value => 'Student',
-		])->label('Benutzer-Rollen')->required()->with(['columns' => 4])
-			->message('required', 'Bitte mindestens eine Rolle wählen.')
-			->message('min', 'Bitte mindestens eine Rolle wählen.');
+		])->label('Benutzer-Rollen')->with(['columns' => 4]);
+
+		return $required
+			? $field->required()
+				->message('required', 'Bitte mindestens eine Rolle wählen.')
+				->message('min', 'Bitte mindestens eine Rolle wählen.')
+			: $field;
 	}
 
 	/** @return array<string, array<int, mixed>> */

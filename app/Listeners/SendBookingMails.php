@@ -9,7 +9,7 @@ use App\Events\BookingMade;
 use App\Jobs\SendCourseConfirmation;
 use App\Mail\BookingCompleted;
 use App\Mail\BookingCreatedInfo;
-use App\Mail\EventMessageStudent;
+use App\Mail\EventMessageCustomer;
 use App\Mail\RentalAddedInfoAdmin;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -56,7 +56,7 @@ class SendBookingMails
 		}
 
 		foreach ($event->messages()->with(['author', 'media'])->orderBy('created_at')->orderBy('id')->get() as $post) {
-			Mail::to($student)->send(new EventMessageStudent($post));
+			Mail::to($student)->send(new EventMessageCustomer($post));
 			$post->recipients()->syncWithoutDetaching([$student->id => ['created_at' => now()]]);
 		}
 	}

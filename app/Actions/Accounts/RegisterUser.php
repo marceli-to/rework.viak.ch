@@ -6,7 +6,6 @@ namespace App\Actions\Accounts;
 
 use App\Enums\Gender;
 use App\Enums\OperatingSystem;
-use App\Enums\Role;
 use App\Http\Middleware\SignOutDeactivated;
 use App\Models\Country;
 use App\Models\User;
@@ -98,12 +97,9 @@ class RegisterUser implements CreatesNewUsers
 				'subscribe_newsletter' => (bool) ($input['subscribe_newsletter'] ?? false),
 			]);
 
-			// Everyone who signs up here is a student. Expert and admin are
-			// granted in the dashboard, never claimed at registration.
-			DB::table('role_user')->insert([
-				'user_id' => $user->id,
-				'role' => Role::Student->value,
-			]);
+			// No role: everyone who signs up is a customer, which every
+			// account is (`12-customers.md`). Expert and admin are granted in
+			// the dashboard, never claimed at registration.
 
 			return $user;
 		});

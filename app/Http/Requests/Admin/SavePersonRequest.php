@@ -80,6 +80,6 @@ abstract class SavePersonRequest extends FormRequest
 	/** @return array<int, Role> */
 	public function roles(): array
 	{
-		return array_map(fn (string $role) => Role::from($role), $this->validated('roles'));
+		return array_map(fn (string $role) => Role::from($role), $this->validated('roles') ?? []);
 	}
 }

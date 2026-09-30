@@ -18,7 +18,7 @@ use Illuminate\Mail\Mailables\Envelope;
  * own, the outgoing mail. Not `readonly`: [[EventMessageExpert]] extends this,
  * and the queue cannot restore a parent's readonly property from a child.
  */
-class EventMessageStudent extends VIAKMail
+class EventMessageCustomer extends VIAKMail
 {
 	public function __construct(public Message $post)
 	{
@@ -34,7 +34,7 @@ class EventMessageStudent extends VIAKMail
 	{
 		$event = $this->post->event;
 
-		return new Content(markdown: 'mail.event.message-student', with: [
+		return new Content(markdown: 'mail.event.message-customer', with: [
 			'post' => $this->post,
 			'event' => $event,
 			'body' => RichText::render($this->post->body),

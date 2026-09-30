@@ -7,8 +7,8 @@ use App\Actions\Bookings\CreateBookingForUser;
 use App\Actions\Events\SetEventState;
 use App\Enums\BookingCancellationReason;
 use App\Enums\EventState;
+use App\Mail\EventConfirmationCustomer;
 use App\Mail\EventConfirmationExpert;
-use App\Mail\EventConfirmationStudent;
 use App\Models\Booking;
 use App\Models\Course;
 use App\Models\Event;
@@ -27,9 +27,9 @@ beforeEach(function () {
 	$this->expert = User::factory()->expert()->create(['first_name' => 'Kevin']);
 	$this->event->experts()->attach($this->expert);
 
-	$this->anna = User::factory()->student()->create();
-	$this->beat = User::factory()->student()->create();
-	$gone = User::factory()->student()->create();
+	$this->anna = User::factory()->create();
+	$this->beat = User::factory()->create();
+	$gone = User::factory()->create();
 	foreach ([$this->anna, $this->beat, $gone] as $student) {
 		app(CreateBookingForUser::class)->execute($this->event->refresh(), $student);
 	}
@@ -41,9 +41,9 @@ beforeEach(function () {
 it('sends each booked student the confirmation with their own invoice, and each expert theirs', function () {
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Confirmed);
 
-	Mail::assertQueued(EventConfirmationStudent::class, 2);
+	Mail::assertQueued(EventConfirmationCustomer::class, 2);
 	foreach ([$this->anna, $this->beat] as $student) {
-		Mail::assertQueued(EventConfirmationStudent::class, fn ($mail) => $mail->hasTo($student->email)
+		Mail::assertQueued(EventConfirmationCustomer::class, fn ($mail) => $mail->hasTo($student->email)
 			&& $mail->invoice?->user_id === $student->id
 			&& Storage::disk('documents')->exists($mail->invoice->path()));
 	}
@@ -67,12 +67,12 @@ it('writes legacy text to the expert', function () {
 });
 
 it('confirms a seat that cannot be billed without an invoice, and the rest with theirs', function () {
-	$odd = User::factory()->student()->create();
+	$odd = User::factory()->create();
 	Booking::factory()->for($this->event)->withRental()->create(['user_id' => $odd->id, 'rental_fee' => '0.00']);
 
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Confirmed);
 
-	Mail::assertQueued(EventConfirmationStudent::class, 3);
-	Mail::assertQueued(EventConfirmationStudent::class, fn ($mail) => $mail->hasTo($odd->email) && $mail->invoice === null);
-	Mail::assertQueued(EventConfirmationStudent::class, fn ($mail) => $mail->hasTo($this->anna->email) && $mail->invoice !== null);
+	Mail::assertQueued(EventConfirmationCustomer::class, 3);
+	Mail::assertQueued(EventConfirmationCustomer::class, fn ($mail) => $mail->hasTo($odd->email) && $mail->invoice === null);
+	Mail::assertQueued(EventConfirmationCustomer::class, fn ($mail) => $mail->hasTo($this->anna->email) && $mail->invoice !== null);
 });

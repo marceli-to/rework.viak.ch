@@ -44,7 +44,7 @@ beforeEach(function () {
 });
 
 it('keeps the form to admins', function () {
-	$this->actingAs(User::factory()->student()->create())
+	$this->actingAs(User::factory()->create())
 		->postJson('/api/admin/courses', coursePayload())
 		->assertForbidden();
 });

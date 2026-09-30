@@ -16,7 +16,7 @@ use Illuminate\Mail\Mailables\Envelope;
  * Legacy's own, with the course's next two dates to book instead — those
  * published as well as upcoming, so none of them is a link to nothing.
  */
-class EventCancelStudent extends VIAKMail
+class EventCancelCustomer extends VIAKMail
 {
 	public function __construct(public readonly Booking $booking)
 	{
@@ -46,7 +46,7 @@ class EventCancelStudent extends VIAKMail
 			->map(fn (Event $date) => $date->dates->sortBy('date')->map(fn ($day) => $day->date->format('d.m.Y'))->implode('/'));
 
 		return new Content(markdown: 'mail.event.cancel', with: [
-			'recipient' => 'student',
+			'recipient' => 'customer',
 			'booking' => $this->booking,
 			'user' => $this->booking->user,
 			'course' => $this->course(),

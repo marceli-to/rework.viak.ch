@@ -67,7 +67,8 @@ class DevUsersSeeder extends Seeder
 			);
 		}
 
-		$student = $this->account('dev@viak.test', 'Dev', 'Student', ['student']);
+		// A customer: no role, as every account is one (`12-customers.md`).
+		$student = $this->account('dev@viak.test', 'Dev', 'Student', []);
 		$expert = $this->account('dev-expert@viak.test', 'Dev', 'Expert', ['expert']);
 		$this->account('dev-admin@viak.test', 'Dev', 'Admin', ['admin']);
 
@@ -78,7 +79,7 @@ class DevUsersSeeder extends Seeder
 		 * tree, so seeding one would only have proved the header's precedence;
 		 * now it is the account that shows both portals at once.
 		 */
-		$all = $this->account('dev-all@viak.test', 'Dev', 'Mehrfach', ['student', 'expert', 'admin']);
+		$all = $this->account('dev-all@viak.test', 'Dev', 'Mehrfach', ['expert', 'admin']);
 
 		$this->give($student);
 
@@ -398,8 +399,6 @@ class DevUsersSeeder extends Seeder
 				'password' => Hash::make(self::PASSWORD),
 				'email_verified_at' => now(),
 			]);
-
-			DB::table('role_user')->insertOrIgnore(['user_id' => $student->id, 'role' => 'student']);
 
 			$student->bookings()->forceDelete();
 

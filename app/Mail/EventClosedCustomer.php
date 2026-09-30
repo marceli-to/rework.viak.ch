@@ -17,7 +17,7 @@ use Illuminate\Mail\Mailables\Envelope;
  * attended, when the course closes ([[10-mail]]). Legacy's own, which built
  * the PDF while rendering; here [[SendParticipationConfirmation]] makes it first.
  */
-class EventClosedStudent extends VIAKMail
+class EventClosedCustomer extends VIAKMail
 {
 	use AttachesDocument;
 

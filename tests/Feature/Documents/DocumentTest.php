@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
 	Storage::fake('documents');
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 });
 
 it('lets a customer download their own invoice', function () {

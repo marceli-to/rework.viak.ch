@@ -1,5 +1,5 @@
 {{--
-	*Teilnahmebestätigung* to a student who attended ([[EventClosedStudent]]).
+	*Teilnahmebestätigung* to a student who attended ([[EventClosedCustomer]]).
 	../viak.ch/resources/views/mail/event/attendance.blade.php, its text as it is.
 --}}
 @component('mail::message')

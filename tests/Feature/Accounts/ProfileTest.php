@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
-	$this->user = User::factory()->student()->create([
+	$this->user = User::factory()->create([
 		'password' => Hash::make('correct-horse'),
 		'email_verified_at' => now(),
 	]);

@@ -102,8 +102,8 @@ it('registers a student with every field legacy asks for', function () {
 		->and($user->subscribe_newsletter)->toBeFalse()
 		->and(collect($user->operating_systems)->pluck('value')->all())->toBe(['windows']);
 
-	// Everyone who signs up here is a student, and nothing else.
-	expect($user->roles()->map(fn (Role $role) => $role->value)->all())->toBe(['student']);
+	// Everyone who signs up here is a customer, which takes no role.
+	expect($user->roles())->toBeEmpty();
 });
 
 /**
@@ -165,12 +165,12 @@ it('keeps two-factor and passkeys off, as the live site has neither', function (
 	$this->get('/two-factor-challenge')->assertNotFound();
 });
 
-it('drops a role_user row exactly once per registration', function () {
+it('writes no role_user row at registration: a customer has no role', function () {
 	$this->post('/de/registration', registration());
 
 	$user = User::firstWhere('email', 'ada@example.test');
 
-	expect(DB::table('role_user')->where('user_id', $user->id)->count())->toBe(1);
+	expect(DB::table('role_user')->where('user_id', $user->id)->count())->toBe(0);
 });
 
 /**
@@ -181,7 +181,6 @@ it('drops a role_user row exactly once per registration', function () {
  */
 it('sends a signed-in student away from the login page to the public site', function () {
     $student = User::factory()->create();
-    DB::table('role_user')->insert(['user_id' => $student->id, 'role' => Role::Student->value]);
 
     $this->actingAs($student)->get('/login')->assertRedirect('/de');
     $this->actingAs($student)->get('/de/registration')->assertRedirect('/de');
@@ -196,7 +195,6 @@ it('sends signed-in staff to the dashboard instead', function () {
 
 it('lands a student on the public site after logging in, and staff on the dashboard', function () {
     $student = User::factory()->create(['password' => Hash::make('pw-for-the-student')]);
-    DB::table('role_user')->insert(['user_id' => $student->id, 'role' => Role::Student->value]);
 
     $this->post('/login', ['email' => $student->email, 'password' => 'pw-for-the-student'])
         ->assertRedirect('/de');
@@ -213,7 +211,6 @@ it('lands a student on the public site after logging in, and staff on the dashbo
 /** What carries a guest back to the checkout step that bounced them. */
 it('returns to the page that asked for the login', function () {
     $student = User::factory()->create(['password' => Hash::make('pw-for-the-student')]);
-    DB::table('role_user')->insert(['user_id' => $student->id, 'role' => Role::Student->value]);
 
     $this->withSession(['url.intended' => '/de/checkout/basket'])
         ->post('/login', ['email' => $student->email, 'password' => 'pw-for-the-student'])

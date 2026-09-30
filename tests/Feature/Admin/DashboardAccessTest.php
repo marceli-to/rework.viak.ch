@@ -22,15 +22,15 @@ it('lets an admin in, on any path the SPA owns', function () {
 });
 
 it('sends a student or an expert to their own portal instead of a 403', function () {
-	$student = User::factory()->student()->create(['email_verified_at' => now()]);
+	$student = User::factory()->create(['email_verified_at' => now()]);
 	$expert = User::factory()->expert()->create(['email_verified_at' => now()]);
 
 	$this->actingAs($student)->get('/dashboard')->assertRedirect('/de/konto');
 	$this->actingAs($expert)->get('/dashboard/termine')->assertRedirect('/de/experte/profil');
 });
 
-it('lands each role in the right place after signing in', function (string $state, string $landing) {
-	$user = User::factory()->{$state}()->create(['email_verified_at' => now(), 'password' => 'geheim1234']);
+it('lands each role in the right place after signing in', function (?string $state, string $landing) {
+	$user = ($state ? User::factory()->{$state}() : User::factory())->create(['email_verified_at' => now(), 'password' => 'geheim1234']);
 
 	$this->post('/login', ['email' => $user->email, 'password' => 'geheim1234'])
 		->assertRedirect($landing);
@@ -38,5 +38,6 @@ it('lands each role in the right place after signing in', function (string $stat
 	'admin' => ['admin', '/dashboard'],
 	// The dashboard is admins-only now, so an expert goes to their portal.
 	'expert' => ['expert', '/de/experte/profil'],
-	'student' => ['student', '/de'],
+	// No role: a customer, which every account is.
+	'customer' => [null, '/de'],
 ]);

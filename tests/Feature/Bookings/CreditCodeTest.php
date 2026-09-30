@@ -8,9 +8,9 @@ use App\Actions\Events\SetEventState;
 use App\Enums\BookingCancellationReason;
 use App\Enums\EventState;
 use App\Enums\InvoiceStatus;
-use App\Mail\BookingCancelledStudent;
+use App\Mail\BookingCancelledCustomer;
 use App\Mail\BookingCancelledWithPenalty;
-use App\Mail\EventCancelStudent;
+use App\Mail\EventCancelCustomer;
 use App\Models\Booking;
 use App\Models\Course;
 use App\Models\DiscountCode;
@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Storage;
  */
 beforeEach(function () {
 	Storage::fake('documents');
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 });
 
 function paidSeat(int $days, User $student): Booking
@@ -51,7 +51,7 @@ it('credits the whole paid amount when cancelling costs nothing, for a year, goo
 		->and($code->usage_limit)->toBe(1)
 		->and($code->valid_to->toDateString())->toBe(today()->addYear()->toDateString());
 
-	Mail::assertQueued(BookingCancelledStudent::class, fn ($mail) => str_contains($mail->render(), $code->code)
+	Mail::assertQueued(BookingCancelledCustomer::class, fn ($mail) => str_contains($mail->render(), $code->code)
 		&& str_contains($mail->render(), 'Falls du lieber eine Rückerstattung des Betrages möchtest'));
 });
 
@@ -95,5 +95,5 @@ it('credits every paid seat on a course VIAK calls off, and says so in the Kursa
 
 	$code = DiscountCode::where('booking_id', $booking->id)->sole();
 	expect($code->amount)->toBe('890.00');
-	Mail::assertQueued(EventCancelStudent::class, fn ($mail) => str_contains($mail->render(), $code->code));
+	Mail::assertQueued(EventCancelCustomer::class, fn ($mail) => str_contains($mail->render(), $code->code));
 });

@@ -114,7 +114,7 @@ it('keeps an expert their own address on save', function () {
 
 it('sets the roles exactly, Admin included', function () {
 	$expert = expertAccount();
-	$expert->syncRoles([Role::Expert, Role::Student]);
+	$expert->syncRoles([Role::Expert]);
 
 	$this->actingAs($this->admin)->putJson("/api/admin/experts/{$expert->uuid}", expertPayload(['roles' => ['admin', 'expert']]))->assertOk();
 
@@ -148,7 +148,7 @@ it('cleans the bio as the course texts are cleaned', function () {
 });
 
 it('binds experts only', function () {
-	$student = User::factory()->student()->create();
+	$student = User::factory()->create();
 
 	$this->actingAs($this->admin)->getJson("/api/admin/experts/{$student->uuid}")->assertNotFound();
 });
@@ -157,7 +157,7 @@ it('lists every expert in the Experten page order, unpublished ones too', functi
 	$b = expertAccount(['order' => 2, 'publish' => true]);
 	$a = expertAccount(['order' => 1, 'publish' => true]);
 	$off = expertAccount(['order' => 3, 'publish' => false]);
-	User::factory()->student()->create();
+	User::factory()->create();
 
 	$rows = $this->actingAs($this->admin)->getJson('/api/admin/experts')->json('data');
 

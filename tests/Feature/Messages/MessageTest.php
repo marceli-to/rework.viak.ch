@@ -12,12 +12,12 @@ beforeEach(function () {
 	$this->event = Event::factory()->create();
 	$this->expert = User::factory()->expert()->create();
 	$this->expert->eventsAsExpert()->attach($this->event);
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 	Booking::factory()->for($this->event)->for($this->student)->create();
 });
 
 it('records who a message went to, at the moment it was sent', function () {
-	$other = User::factory()->student()->create();
+	$other = User::factory()->create();
 	Booking::factory()->for($this->event)->for($other)->create();
 
 	$message = app(PostMessage::class)->execute($this->event, $this->expert, 'Raum', 'B12');
@@ -93,7 +93,7 @@ it('lets a booked student read the thread', function () {
 it('will not show the thread to a student who never booked', function () {
 	Message::factory()->for($this->event)->create();
 
-	$this->actingAs(User::factory()->student()->create())
+	$this->actingAs(User::factory()->create())
 		->getJson("/api/events/{$this->event->uuid}/messages")
 		->assertForbidden();
 });

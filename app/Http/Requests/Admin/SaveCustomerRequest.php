@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin;
 
-use App\Forms\Schema;
 use App\Forms\CustomerSchema;
+use App\Forms\Schema;
 use App\Models\User;
 
 /**

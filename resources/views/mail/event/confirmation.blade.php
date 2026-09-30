@@ -1,6 +1,6 @@
 {{--
 	*Kursbestätigung* to a student, *Bestätigung* to an expert
-	([[EventConfirmationStudent]], [[EventConfirmationExpert]]).
+	([[EventConfirmationCustomer]], [[EventConfirmationExpert]]).
 	../viak.ch/resources/views/mail/event/confirmation.blade.php, its text as it is,
 	with one change: legacy sent the rental on an invoice of its own, with its
 	own paragraph and button; the rework bills it as a line of the one invoice
@@ -11,7 +11,7 @@
 --}}
 @component('mail::message')
 <h1>Kursbestätigung – {{ $course }}</h1>
-@if ($recipient === 'student')
+@if ($recipient === 'customer')
 <p>Guten Tag {{ $user->name }}</p>
 <p>Hiermit bestätigen wir die Durchführung des oben erwähnten {{ $event->free_of_charge ? 'Events' : 'Kurses' }}:</p>
 <table class="content-table" cellpadding="0" cellspacing="0">

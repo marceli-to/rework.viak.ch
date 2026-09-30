@@ -220,7 +220,7 @@ class ExpertPortalController extends Controller
 
 		/*
 		 * **It is not mailed, and the sentence does not say it is.** Legacy's
-		 * composer queues an `EventMessageStudent` to every participant, and
+		 * composer queues an `EventMessageCustomer` to every participant, and
 		 * `PostMessage` records exactly who that would be — but there is no
 		 * Mailable anywhere in the rework yet, on this path or the checkout's,
 		 * and mail is a chunk of its own ([[00-foundation]]). Telling an expert

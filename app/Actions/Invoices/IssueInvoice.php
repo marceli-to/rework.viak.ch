@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * Writes an invoice ([[03-invoices]]).
  *
  * The only place an invoice is created. Legacy did it from inside a Mailable's
- * `build()` — `EventConfirmationStudent` created the invoice as a side effect
+ * `build()` — `EventConfirmationCustomer` created the invoice as a side effect
  * of composing the confirmation email — which meant the document a customer
  * legally owes money against came into existence when a mail template was
  * rendered, and could be created twice or not at all depending on queue

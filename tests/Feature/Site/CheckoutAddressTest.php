@@ -17,7 +17,7 @@ use App\Support\CheckoutSession;
  */
 function buyer(array $attributes = []): User
 {
-	return User::factory()->student()->create([
+	return User::factory()->create([
 		'email_verified_at' => now(),
 		'first_name' => 'Antonia',
 		'last_name' => 'Haller',

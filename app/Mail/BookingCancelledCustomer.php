@@ -11,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
 /** *Annullationsbestätigung*, when cancelling costs nothing ([[10-mail]]). Legacy's `BookingCancelled`. */
-class BookingCancelledStudent extends VIAKMail
+class BookingCancelledCustomer extends VIAKMail
 {
 	public function __construct(public readonly Booking $booking)
 	{

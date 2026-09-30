@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Actions\Documents\InvoiceDocument;
-use App\Mail\BookingCancelledStudent;
+use App\Mail\BookingCancelledCustomer;
 use App\Mail\BookingCancelledWithPenalty;
 use App\Models\Booking;
 use App\Support\CancellationPenalty;
@@ -45,7 +45,7 @@ class SendCancellationConfirmation implements ShouldQueue
 		$on = $booking->cancelled_at;
 
 		if (! $booking->cancellation_reason?->chargesPenalty() || ! $penalty->applies($booking, $on)) {
-			Mail::to($booking->user)->send(new BookingCancelledStudent($booking));
+			Mail::to($booking->user)->send(new BookingCancelledCustomer($booking));
 
 			return;
 		}

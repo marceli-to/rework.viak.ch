@@ -1,5 +1,5 @@
 {{--
-	A course message, to a booked student ([[EventMessageStudent]]).
+	A course message, to a booked student ([[EventMessageCustomer]]).
 	../viak.ch/resources/views/mail/event/message-student.blade.php, its text as it is.
 	Attachments link to the gated download, not legacy's public
 	`/storage/uploads/` path: a message's file is as private as the message

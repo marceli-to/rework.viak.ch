@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\Role;
 use App\Mail\EmailVerification;
 use App\Models\Country;
 use App\Models\User;
@@ -35,7 +34,7 @@ function studentPayload(array $overrides = []): array
 		'city' => 'Zürich',
 		'country' => 'ch',
 		'subscribe_newsletter' => false,
-		'roles' => ['student'],
+		'roles' => [],
 		'addresses' => [],
 		...$overrides,
 	];
@@ -52,7 +51,7 @@ function addressRow(array $overrides = []): array
 
 function studentAccount(array $attributes = []): User
 {
-	return User::factory()->student()->create([
+	return User::factory()->create([
 		'gender' => 'male', 'phone' => '031 000 00 00', 'street' => 'Marktgasse', 'zip' => '3011',
 		'city' => 'Bern', 'country_code' => 'ch', ...$attributes,
 	]);
@@ -62,7 +61,7 @@ it('keeps students to admins', function () {
 	$this->actingAs(User::factory()->expert()->create())->getJson('/api/admin/customers')->assertForbidden();
 });
 
-it('creates a student with their roles and addresses', function () {
+it('creates a customer with their addresses, and no role', function () {
 	$uuid = $this->actingAs($this->admin)
 		->postJson('/api/admin/customers', studentPayload(['addresses' => [addressRow()]]))
 		->assertCreated()
@@ -70,7 +69,7 @@ it('creates a student with their roles and addresses', function () {
 
 	$student = User::where('uuid', $uuid)->first();
 
-	expect($student->isStudent())->toBeTrue()
+	expect($student->roles())->toBeEmpty()
 		->and($student->email_verified_at)->not->toBeNull()
 		->and($student->addresses()->sole()->company)->toBe('Muster AG');
 });
@@ -135,11 +134,10 @@ it('binds any account, since every account is a customer', function () {
 });
 
 it('will not let an admin take their own Admin role away here either', function () {
-	$this->admin->syncRoles([Role::Admin, Role::Student]);
 	$this->admin->forceFill(['gender' => 'male', 'phone' => '1', 'street' => 'x', 'zip' => '1', 'city' => 'x', 'country_code' => 'ch'])->save();
 
 	$this->actingAs($this->admin)
-		->putJson("/api/admin/customers/{$this->admin->uuid}", studentPayload(['email' => $this->admin->email, 'roles' => ['student']]))
+		->putJson("/api/admin/customers/{$this->admin->uuid}", studentPayload(['email' => $this->admin->email, 'roles' => []]))
 		->assertJsonPath('errors.roles.0', 'Du kannst dir die Admin-Rolle nicht selbst entziehen.');
 });
 
@@ -185,8 +183,6 @@ describe('deactivating (#16)', function () {
 	});
 
 	it('will not let an admin deactivate themselves', function () {
-		$this->admin->syncRoles([Role::Admin, Role::Student]);
-
 		$this->actingAs($this->admin)->patchJson("/api/admin/customers/{$this->admin->uuid}/state", ['active' => false])->assertStatus(422);
 
 		expect($this->admin->refresh()->isDeactivated())->toBeFalse();

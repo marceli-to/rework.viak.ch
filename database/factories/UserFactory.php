@@ -48,11 +48,6 @@ class UserFactory extends Factory
 		return $this->withRole(Role::Expert);
 	}
 
-	public function student(): static
-	{
-		return $this->withRole(Role::Student);
-	}
-
 	/**
 	 * Roles live in a pivot, so they are attached once the user exists.
 	 * Chainable — `User::factory()->admin()->expert()` is a real combination,

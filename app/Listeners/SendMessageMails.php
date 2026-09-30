@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Events\MessagePosted;
+use App\Mail\EventMessageCustomer;
 use App\Mail\EventMessageExpert;
-use App\Mail\EventMessageStudent;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -24,7 +24,7 @@ class SendMessageMails
 		foreach ($message->recipients as $recipient) {
 			Mail::to($recipient)->send($recipient->is($message->author)
 				? new EventMessageExpert($message)
-				: new EventMessageStudent($message));
+				: new EventMessageCustomer($message));
 		}
 	}
 }

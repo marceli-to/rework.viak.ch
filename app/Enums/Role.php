@@ -22,11 +22,14 @@ namespace App\Enums;
  * - Expert:  teaches courses, has a public bio, appears on the Experten page
  *            (subject to its own publish/visible flags — holding the role is
  *            necessary but not sufficient).
- * - Student: books courses.
+ *
+ * **There is no customer role.** Legacy's third, Student, meant "has an
+ * account and books", which every account does; it went on 2026-09-30, and
+ * every account is a customer (`12-customers.md`). The port drops legacy's
+ * role 3.
  */
 enum Role: string
 {
-	case Student = 'student';
 	case Expert = 'expert';
 	case Admin = 'admin';
 
@@ -36,17 +39,16 @@ enum Role: string
 		return match ($this) {
 			self::Admin => 1,
 			self::Expert => 2,
-			self::Student => 3,
 		};
 	}
 
-	public static function fromLegacyId(int $id): self
+	/** Legacy's Student (3), and anything else, is no role here. */
+	public static function fromLegacyId(int $id): ?self
 	{
 		return match ($id) {
 			1 => self::Admin,
 			2 => self::Expert,
-			3 => self::Student,
-			default => self::Student,
+			default => null,
 		};
 	}
 }

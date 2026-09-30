@@ -20,7 +20,7 @@ beforeEach(function () {
 });
 
 it('keeps the dashboard profile to admins', function () {
-	$this->actingAs(User::factory()->student()->create())->getJson('/api/admin/profile')->assertForbidden();
+	$this->actingAs(User::factory()->create())->getJson('/api/admin/profile')->assertForbidden();
 });
 
 it('sends back exactly what it loads, the password fields empty', function () {

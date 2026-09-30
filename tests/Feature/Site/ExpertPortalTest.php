@@ -52,7 +52,7 @@ function taughtEvent(User $expert, int $days = 14, array $attributes = []): Even
 /** A student holding a seat on it. */
 function expertSeatOn(Event $event, array $userAttributes = []): Booking
 {
-	$student = User::factory()->student()->create([
+	$student = User::factory()->create([
 		'email_verified_at' => now(),
 		'city' => 'Winterthur',
 		...$userAttributes,
@@ -79,7 +79,7 @@ beforeEach(function () {
 it('is behind auth, verification and the expert role', function () {
 	$this->get('/de/experte/profil')->assertRedirect('/login');
 
-	$this->actingAs(User::factory()->student()->create(['email_verified_at' => now()]))
+	$this->actingAs(User::factory()->create(['email_verified_at' => now()]))
 		->get('/de/experte/profil')
 		->assertForbidden();
 });

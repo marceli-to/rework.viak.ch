@@ -101,10 +101,10 @@ class Stage
 		return $this->person($firstName, 'Experte', Role::Expert);
 	}
 
-	/** A student who already has an account, verified. */
+	/** A customer who already has an account, verified. No role: every account is a customer. */
 	public function student(string $firstName): User
 	{
-		return $this->person($firstName, 'Muster', Role::Student);
+		return $this->person($firstName, 'Muster', null);
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Stage
 		});
 	}
 
-	private function person(string $firstName, string $lastName, Role $role): User
+	private function person(string $firstName, string $lastName, ?Role $role): User
 	{
 		$user = User::create([
 			'first_name' => $firstName,
@@ -211,7 +211,9 @@ class Stage
 		]);
 		$user->forceFill(['email_verified_at' => now()])->save();
 
-		DB::table('role_user')->insert(['user_id' => $user->id, 'role' => $role->value]);
+		if ($role !== null) {
+			DB::table('role_user')->insert(['user_id' => $user->id, 'role' => $role->value]);
+		}
 
 		return $this->people[] = $user;
 	}

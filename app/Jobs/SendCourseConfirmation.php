@@ -6,7 +6,7 @@ namespace App\Jobs;
 
 use App\Actions\Documents\InvoiceDocument;
 use App\Actions\Invoices\RaiseInvoiceForBooking;
-use App\Mail\EventConfirmationStudent;
+use App\Mail\EventConfirmationCustomer;
 use App\Models\Booking;
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
@@ -53,7 +53,7 @@ class SendCourseConfirmation implements ShouldQueue
 	{
 		$invoice = $this->booking->invoice() ?? $this->raise($raise);
 
-		Mail::to($this->booking->user)->send(new EventConfirmationStudent($this->booking, $invoice ? $pdf->execute($invoice) : null));
+		Mail::to($this->booking->user)->send(new EventConfirmationCustomer($this->booking, $invoice ? $pdf->execute($invoice) : null));
 	}
 
 	private function raise(RaiseInvoiceForBooking $raise): ?Invoice

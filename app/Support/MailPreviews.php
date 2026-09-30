@@ -8,20 +8,20 @@ use App\Actions\Courses\CreateCourse;
 use App\Enums\DocumentType;
 use App\Enums\InvoiceStatus;
 use App\Mail\AccountInvitation;
+use App\Mail\BookingCancelledCustomer;
 use App\Mail\BookingCancelledInfoAdmin;
-use App\Mail\BookingCancelledStudent;
 use App\Mail\BookingCancelledWithPenalty;
 use App\Mail\BookingCompleted;
 use App\Mail\BookingCreatedInfo;
 use App\Mail\EmailVerification;
+use App\Mail\EventCancelCustomer;
 use App\Mail\EventCancelExpert;
 use App\Mail\EventCancelOrConfirmReminder;
-use App\Mail\EventCancelStudent;
-use App\Mail\EventClosedStudent;
+use App\Mail\EventClosedCustomer;
+use App\Mail\EventConfirmationCustomer;
 use App\Mail\EventConfirmationExpert;
-use App\Mail\EventConfirmationStudent;
+use App\Mail\EventMessageCustomer;
 use App\Mail\EventMessageExpert;
-use App\Mail\EventMessageStudent;
 use App\Mail\ParticipantsChange;
 use App\Mail\PasswordReset;
 use App\Mail\RentalAdded;
@@ -85,7 +85,7 @@ final class MailPreviews
 		$this->expert = User::factory()->expert()->create(['first_name' => 'Kevin', 'last_name' => 'Muster', 'email' => 'vorschau-kevin@viak.test']);
 		$this->event->experts()->attach($this->expert);
 
-		$this->student = User::factory()->student()->create(['first_name' => 'Anna', 'last_name' => 'Beispiel', 'email' => 'vorschau-anna@viak.test']);
+		$this->student = User::factory()->create(['first_name' => 'Anna', 'last_name' => 'Beispiel', 'email' => 'vorschau-anna@viak.test']);
 		$this->booking = $this->seat();
 		$this->rental = $this->seat(['has_rental' => true, 'rental_fee' => '80.00']);
 		$this->credited = $this->seat(['cancelled_at' => now()]);
@@ -126,8 +126,8 @@ final class MailPreviews
 			'miete-buero' => ['Booking made with a laptop, or one added: office', fn () => new RentalAddedInfoAdmin($this->rental)],
 			'miete' => ['Laptop added later: student', fn () => new RentalAdded($this->rental)],
 			'miete-storno' => ['Laptop dropped: office', fn () => new RentalCancelledInfoAdmin($this->rental)],
-			'annullation' => ['Customer cancels, no penalty', fn () => new BookingCancelledStudent($this->booking)],
-			'annullation-gutschrift' => ['Customer cancels, no penalty, invoice already paid', fn () => new BookingCancelledStudent($this->credited)],
+			'annullation' => ['Customer cancels, no penalty', fn () => new BookingCancelledCustomer($this->booking)],
+			'annullation-gutschrift' => ['Customer cancels, no penalty, invoice already paid', fn () => new BookingCancelledCustomer($this->credited)],
 			'annullation-kosten' => ['Customer cancels late: penalty invoice attached', fn () => new BookingCancelledWithPenalty($this->booking, '445.00', 50, false, $this->invoice)],
 			'annullation-kosten-bezahlt' => ['Customer cancels late, invoice already paid', fn () => new BookingCancelledWithPenalty($this->credited, '445.00', 50, true, null)],
 			'abmeldung-buero' => ['Customer cancels: office', fn () => new BookingCancelledInfoAdmin($this->event, null)],
@@ -135,14 +135,14 @@ final class MailPreviews
 			'max' => ['Seats reach the maximum: office', fn () => new ParticipantsChange($this->event, 'max')],
 			'unter-min' => ['Seats drop below the minimum: office', fn () => new ParticipantsChange($this->event, 'belowMin')],
 			'reminder' => ['10 days out, still planned: office', fn () => new EventCancelOrConfirmReminder($this->event)],
-			'bestaetigung' => ['Date confirmed: student, with the invoice', fn () => new EventConfirmationStudent($this->booking, $this->invoice)],
-			'bestaetigung-ohne-rechnung' => ['Date confirmed: student, seat not billable', fn () => new EventConfirmationStudent($this->booking, null)],
+			'bestaetigung' => ['Date confirmed: student, with the invoice', fn () => new EventConfirmationCustomer($this->booking, $this->invoice)],
+			'bestaetigung-ohne-rechnung' => ['Date confirmed: student, seat not billable', fn () => new EventConfirmationCustomer($this->booking, null)],
 			'bestaetigung-experte' => ['Date confirmed: each expert', fn () => new EventConfirmationExpert($this->event, $this->expert)],
-			'absage' => ['Date cancelled: student, with the next two dates', fn () => new EventCancelStudent($this->booking)],
-			'absage-gutschrift' => ['Date cancelled: student, invoice already paid', fn () => new EventCancelStudent($this->credited)],
+			'absage' => ['Date cancelled: student, with the next two dates', fn () => new EventCancelCustomer($this->booking)],
+			'absage-gutschrift' => ['Date cancelled: student, invoice already paid', fn () => new EventCancelCustomer($this->credited)],
 			'absage-experte' => ['Date cancelled: each expert', fn () => new EventCancelExpert($this->event)],
-			'teilnahme' => ['Date closed: each student who attended', fn () => new EventClosedStudent($this->booking, $this->certificate)],
-			'nachricht' => ['Expert posts a message: each student', fn () => new EventMessageStudent($this->post)],
+			'teilnahme' => ['Date closed: each student who attended', fn () => new EventClosedCustomer($this->booking, $this->certificate)],
+			'nachricht' => ['Expert posts a message: each student', fn () => new EventMessageCustomer($this->post)],
 			'nachricht-kopie' => ['Expert posts a message: the author\'s copy', fn () => new EventMessageExpert($this->post)],
 		];
 	}

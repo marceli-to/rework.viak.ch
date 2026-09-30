@@ -30,7 +30,7 @@ function codePayload(array $overrides = []): array
 }
 
 it('keeps discount codes to admins', function () {
-	$this->actingAs(User::factory()->student()->create())->getJson('/api/admin/discount-codes')->assertForbidden();
+	$this->actingAs(User::factory()->create())->getJson('/api/admin/discount-codes')->assertForbidden();
 });
 
 it('generates legacy-shaped codes, never one that exists, deleted ones included', function () {

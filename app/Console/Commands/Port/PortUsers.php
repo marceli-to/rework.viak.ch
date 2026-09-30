@@ -188,7 +188,9 @@ class PortUsers extends Command
 		$roles = $legacy->table('role_user')
 			->where('user_id', $legacyUserId)
 			->pluck('role_id')
-			->map(fn ($id) => Role::fromLegacyId((int) $id)->value)
+			// Legacy's Student is no role here: every account is a customer.
+			->map(fn ($id) => Role::fromLegacyId((int) $id)?->value)
+			->filter()
 			->unique();
 
 		foreach ($roles as $role) {

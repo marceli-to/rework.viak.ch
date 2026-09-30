@@ -6,12 +6,12 @@ namespace App\Console\Commands;
 
 use App\Console\Scenarios\Cancel;
 use App\Console\Scenarios\Confirm;
+use App\Console\Scenarios\CustomerCancels;
 use App\Console\Scenarios\LateBooker;
 use App\Console\Scenarios\Reminder;
 use App\Console\Scenarios\Rental;
 use App\Console\Scenarios\Scenario;
 use App\Console\Scenarios\Stage;
-use App\Console\Scenarios\StudentCancels;
 use App\Mail\VIAKMail;
 use Database\Seeders\DevUsersSeeder;
 use Illuminate\Console\Command;
@@ -56,7 +56,7 @@ class PlayScenario extends Command
 		'confirm' => Confirm::class,
 		'cancel' => Cancel::class,
 		'late-booker' => LateBooker::class,
-		'student-cancels' => StudentCancels::class,
+		'student-cancels' => CustomerCancels::class,
 		'rental' => Rental::class,
 		'reminder' => Reminder::class,
 	];

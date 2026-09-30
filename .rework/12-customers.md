@@ -1,4 +1,4 @@
-# 12 — Customers, not students (not yet built)
+# 12 — Customers, not students (built 2026-09-30)
 
 The next version sells software licences as well as courses. Some people will
 only book courses, some will do both, and some will only ever order a licence.
@@ -9,7 +9,7 @@ only book courses, some will do both, and some will only ever order a licence.
 **Scoped 2026-09-30** (Marcel). Two parts:
 
 - **The student role goes; every account is a customer** — the bigger block,
-  in four stages below. **Stages 1 to 3 done 2026-09-30.**
+  in four stages below. **All four done 2026-09-30.**
 - **Switching between the areas one person may use** — legacy's role picker,
   missing here. Built first, because it needs nothing else and the first part
   only changes its labels.
@@ -81,8 +81,21 @@ Too big for one commit, and each stage leaves the suite green:
    *Teilnehmer hinzufügen* finds any account. A cancellation by the customer
    reads *Durch Kunde*. Where a course's participants are meant (the
    composer, the call-off box) the word is *Teilnehmer*.
-4. **The role itself**: `Role::Student`, the factory state, the port, the
-   `role_user` rows.
+4. **The role itself** — *done*: `Role::Student` is gone and
+   `Role::fromLegacyId(3)` is `null`, so the port writes no row for it;
+   registration writes no role; the factory has no `student()` state; the
+   role group on the customer form is Admin and Experte, **optional** there
+   (none ticked is a plain customer) and still required on the expert form.
+   Migration `2026_09_30_000001` deletes the `student` rows (575 on the dev
+   data; 10 admin and 20 expert rows are left). The mails and the scenario
+   followed: `EventConfirmationCustomer`, `EventCancelCustomer`,
+   `EventClosedCustomer`, `EventMessageCustomer`, `BookingCancelledCustomer`,
+   `CustomerCancels`, and the mail views' `recipient` is `customer`.
+
+**What still says student, on purpose**: the `student` value of
+`BookingCancellationReason` (stored on bookings; its label is *Durch Kunde*),
+the `student` URL segment that 301s, the `user_documents` types, test
+helpers, and comments that name legacy's own classes.
 
 ## Switching areas — the role picker, built 2026-09-30
 

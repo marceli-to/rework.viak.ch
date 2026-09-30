@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Actions\Documents\RenderParticipationConfirmation;
-use App\Mail\EventClosedStudent;
+use App\Mail\EventClosedCustomer;
 use App\Models\Booking;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,6 +33,6 @@ class SendParticipationConfirmation implements ShouldQueue
 
 	public function handle(RenderParticipationConfirmation $render): void
 	{
-		Mail::to($this->booking->user)->send(new EventClosedStudent($this->booking, $render->execute($this->booking)));
+		Mail::to($this->booking->user)->send(new EventClosedCustomer($this->booking, $render->execute($this->booking)));
 	}
 }

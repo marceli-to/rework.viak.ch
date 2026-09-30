@@ -76,7 +76,7 @@ it('refuses to add a laptop to a booking once none is left, but always lets one 
 
 it('tells the portal why, in words a customer can read', function () {
 	$event = roomWith(1, rented: 1);
-	$student = User::factory()->student()->create(['email_verified_at' => now()]);
+	$student = User::factory()->create(['email_verified_at' => now()]);
 	$booking = Booking::factory()->for($event)->for($student)->create();
 
 	$this->actingAs($student)

@@ -20,7 +20,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
  */
 function student(): User
 {
-	return User::factory()->student()->create(['email_verified_at' => now()]);
+	return User::factory()->create(['email_verified_at' => now()]);
 }
 
 it('sends a guest to the login rather than showing a basket', function () {
@@ -39,7 +39,7 @@ it('is open to any account, an admin without the student role too', function () 
 });
 
 it('sends an unverified student to the verification notice', function () {
-	$user = User::factory()->student()->create(['email_verified_at' => null]);
+	$user = User::factory()->create(['email_verified_at' => null]);
 
 	$this->actingAs($user)->get('/de/checkout/basket')->assertRedirect('/email/verify');
 });

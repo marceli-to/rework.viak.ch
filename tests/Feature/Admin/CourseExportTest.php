@@ -16,7 +16,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
  */
 function participant(array $attributes = []): User
 {
-	return User::factory()->student()->create([
+	return User::factory()->create([
 		'gender' => Gender::Female, 'first_name' => 'Eva', 'last_name' => 'Keller', 'company' => 'Keller AG',
 		'street' => 'Hauptgasse', 'street_no' => '3', 'zip' => '3011', 'city' => 'Bern',
 		'phone' => '031 000 00 00', 'email' => 'eva@example.test',

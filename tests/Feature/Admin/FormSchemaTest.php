@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Forms\CourseSchema;
+use App\Forms\CustomerSchema;
 use App\Forms\DiscountCodeSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
-use App\Forms\CustomerSchema;
 use App\Forms\TermSchema;
 use App\Forms\TestimonialSchema;
 use App\Models\User;

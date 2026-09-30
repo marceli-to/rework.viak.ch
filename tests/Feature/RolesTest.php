@@ -6,11 +6,10 @@ use App\Enums\Role;
 use App\Models\User;
 
 it('lets one person hold several roles at once', function () {
-	$user = User::factory()->admin()->expert()->student()->create();
+	$user = User::factory()->admin()->expert()->create();
 
 	expect($user->hasRole(Role::Admin))->toBeTrue()
-		->and($user->hasRole(Role::Expert))->toBeTrue()
-		->and($user->hasRole(Role::Student))->toBeTrue();
+		->and($user->hasRole(Role::Expert))->toBeTrue();
 });
 
 /**

@@ -6,7 +6,7 @@ use App\Actions\Bookings\CreateBookingForUser;
 use App\Actions\Documents\RenderParticipationConfirmation;
 use App\Actions\Events\SetEventState;
 use App\Enums\EventState;
-use App\Mail\EventClosedStudent;
+use App\Mail\EventClosedCustomer;
 use App\Models\Course;
 use App\Models\Event;
 use App\Models\User;
@@ -25,8 +25,8 @@ beforeEach(function () {
 		->create(['date' => now()->addDays(3)->toDateString()]);
 	$this->event->dates()->create(['date' => now()->addDays(3)->toDateString()]);
 
-	$this->came = User::factory()->student()->create();
-	$this->missed = User::factory()->student()->create();
+	$this->came = User::factory()->create();
+	$this->missed = User::factory()->create();
 	foreach ([$this->came, $this->missed] as $student) {
 		app(CreateBookingForUser::class)->execute($this->event->refresh(), $student);
 	}
@@ -47,8 +47,8 @@ it('closes with who attended, in one step', function () {
 
 	expect($came->refresh()->hasParticipated())->toBeTrue()
 		->and($missed->refresh()->hasParticipated())->toBeFalse();
-	Mail::assertQueued(EventClosedStudent::class, 1);
-	Mail::assertQueued(EventClosedStudent::class, fn ($mail) => $mail->hasTo($this->came->email));
+	Mail::assertQueued(EventClosedCustomer::class, 1);
+	Mail::assertQueued(EventClosedCustomer::class, fn ($mail) => $mail->hasTo($this->came->email));
 });
 
 it('wants at least one attendee where there are seats', function () {
@@ -95,8 +95,8 @@ it('confirms participation to ticked seats only, with the certificate', function
 
 	app(SetEventState::class)->execute($this->event->refresh(), EventState::Closed);
 
-	Mail::assertQueued(EventClosedStudent::class, 1);
-	Mail::assertQueued(EventClosedStudent::class, fn ($mail) => $mail->hasTo($this->came->email)
+	Mail::assertQueued(EventClosedCustomer::class, 1);
+	Mail::assertQueued(EventClosedCustomer::class, fn ($mail) => $mail->hasTo($this->came->email)
 		&& Storage::disk('documents')->exists($mail->certificate->path())
 		&& count($mail->attachments()) === 1);
 });
@@ -123,7 +123,7 @@ it('writes legacy text', function () {
 	$booking = $this->came->bookings()->first();
 	$certificate = app(RenderParticipationConfirmation::class)->execute($booking);
 
-	expect((new EventClosedStudent($booking->refresh(), $certificate))->render())
+	expect((new EventClosedCustomer($booking->refresh(), $certificate))->render())
 		->toContain('Teilnahmebestätigung – Rhino Einstiegskurs')
 		->toContain('Hiermit bestätigen wir Deine Teilnahme an unserem Kurs:');
 });
@@ -138,13 +138,13 @@ it('confirms a seat missed at closing, afterwards and once', function () {
 	$this->postJson($confirm)->assertOk()->assertJsonPath('data.participated', true);
 
 	expect($missed->refresh()->hasParticipated())->toBeTrue();
-	Mail::assertQueued(EventClosedStudent::class, 1);
-	Mail::assertQueued(EventClosedStudent::class, fn ($mail) => $mail->hasTo($this->missed->email));
+	Mail::assertQueued(EventClosedCustomer::class, 1);
+	Mail::assertQueued(EventClosedCustomer::class, fn ($mail) => $mail->hasTo($this->missed->email));
 
 	// Not twice, and not for the seat closing already confirmed.
 	$this->postJson($confirm)->assertStatus(422);
 	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings/{$came->uuid}/confirm")->assertStatus(422);
-	Mail::assertQueued(EventClosedStudent::class, 1);
+	Mail::assertQueued(EventClosedCustomer::class, 1);
 });
 
 it('confirms a seat only on a closed date, only its own, and only for admins', function () {

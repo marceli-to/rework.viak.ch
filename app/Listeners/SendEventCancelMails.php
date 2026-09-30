@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Events\EventCancelled;
+use App\Mail\EventCancelCustomer;
 use App\Mail\EventCancelExpert;
-use App\Mail\EventCancelStudent;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -23,7 +23,7 @@ class SendEventCancelMails
 
 		foreach ($cancelled->bookings as $booking) {
 			$booking->loadMissing('user')->setRelation('event', $event);
-			Mail::to($booking->user)->send(new EventCancelStudent($booking));
+			Mail::to($booking->user)->send(new EventCancelCustomer($booking));
 		}
 
 		foreach ($event->experts as $expert) {

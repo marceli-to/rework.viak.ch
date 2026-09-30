@@ -10,7 +10,7 @@ use App\Models\Event;
 use App\Models\User;
 
 beforeEach(function () {
-	$this->student = User::factory()->student()->create();
+	$this->student = User::factory()->create();
 });
 
 function bookableEvent(string $fee = '499.00', array $attributes = []): Event
