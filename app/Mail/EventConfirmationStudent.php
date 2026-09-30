@@ -52,7 +52,7 @@ class EventConfirmationStudent extends VIAKMail
 			'place' => EventFacts::place($event),
 			'fee' => EventFacts::money($this->booking->netFee()),
 			'payment' => $invoice ? url(SiteUrl::invoicePayment($invoice->uuid, 'de')) : null,
-			'portal' => url(SiteUrl::studentPortal('de')),
+			'portal' => url(SiteUrl::customerPortal('de')),
 		]);
 	}
 

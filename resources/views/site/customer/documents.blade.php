@@ -15,7 +15,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Meine Dokumente</h1>
-			<x-ui.back-link :href="\App\Support\SiteUrl::studentPortal()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::customerPortal()" />
 		</x-slot:aside>
 	</x-layout.article>
 

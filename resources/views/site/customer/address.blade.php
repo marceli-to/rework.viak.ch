@@ -28,7 +28,7 @@
 		**A page, not the checkout's dialog.** The lightbox on checkout step 2
 		exists so a customer mid-purchase does not lose the basket; here there
 		is nothing to lose and legacy gives the form a screen of its own
-		([[StudentAddressController]]).
+		([[CustomerAddressController]]).
 	--}}
 	<x-layout.article>
 		<x-slot:aside>
@@ -37,7 +37,7 @@
 			     This screen is reached from the *Rechnungsadressen* block inside
 			     it, and landing anywhere else hides the address you just came
 			     here to add ([[SiteUrl::studentProfileEdit]]). --}}
-			<x-ui.back-link :href="\App\Support\SiteUrl::studentProfileEdit()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::customerProfileEdit()" />
 		</x-slot:aside>
 
 		@if ($errors->any())
@@ -46,8 +46,8 @@
 
 		<form method="POST"
 			action="{{ $editing
-				? route($locale.'.student.address.update', $address)
-				: route($locale.'.student.address.store') }}">
+				? route($locale.'.customer.address.update', $address)
+				: route($locale.'.customer.address.store') }}">
 			@csrf
 			@if ($editing) @method('PUT') @endif
 
@@ -140,9 +140,9 @@
 
 				**Nothing is actually destroyed.** The row is soft-deleted,
 				because a booking froze a *copy* of the address rather than
-				pointing at it ([[StudentAddressController::destroy]]).
+				pointing at it ([[CustomerAddressController::destroy]]).
 			--}}
-			<form method="POST" action="{{ route($locale.'.student.address.destroy', $address) }}"
+			<form method="POST" action="{{ route($locale.'.customer.address.destroy', $address) }}"
 				class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
 				@csrf
 				@method('DELETE')

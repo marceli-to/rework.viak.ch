@@ -35,7 +35,7 @@ class BookingCompleted extends VIAKMail
 			'experts' => EventFacts::experts($event),
 			'place' => EventFacts::place($event),
 			'fee' => EventFacts::money($this->booking->netFee()),
-			'portal' => url(SiteUrl::studentPortal('de')),
+			'portal' => url(SiteUrl::customerPortal('de')),
 		]);
 	}
 

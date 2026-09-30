@@ -36,7 +36,7 @@ use RuntimeException;
  * Legacy's `backend/expert/` SPA: four Vue views, 578 lines, two API calls to
  * draw a screen whose every value the server already had. Server-rendered Blade
  * like the rest of the public site, and the sibling of
- * [[StudentPortalController]] — same article, same collapsibles, same row.
+ * [[CustomerPortalController]] — same article, same collapsibles, same row.
  *
  * **Where the two differ is what a course *is* to each of them.** A student's
  * course is a seat they bought, so their screen leads with the booking and what
@@ -91,7 +91,7 @@ class ExpertPortalController extends Controller
 	}
 
 	/**
-	 * The form's POST, which is [[StudentPortalController::update]] with a
+	 * The form's POST, which is [[CustomerPortalController::update]] with a
 	 * different redirect.
 	 *
 	 * Deliberately the same Action and the same FormRequest rather than the
@@ -340,7 +340,7 @@ class ExpertPortalController extends Controller
 	 * draws — **today counts as upcoming**. Legacy asks for `date >=` here and
 	 * `date <` there, which agrees by accident: its two relations are written
 	 * out separately and its student portal splits on a flag instead, which is
-	 * where the 67 stale rows come from ([[StudentPortalController::splitBookings]]).
+	 * where the 67 stale rows come from ([[CustomerPortalController::splitBookings]]).
 	 *
 	 * @return array{0: Collection<int, Event>, 1: Collection<int, Event>}
 	 */

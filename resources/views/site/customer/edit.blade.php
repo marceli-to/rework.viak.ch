@@ -40,7 +40,7 @@
 			     already carries the page title on a phone. --}}
 			<h1 class="hidden font-bold text-teal sm:block">Profil bearbeiten</h1>
 
-			<x-ui.back-link :href="\App\Support\SiteUrl::studentPortal()" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::customerPortal()" />
 		</x-slot:aside>
 
 		@if ($errors->any())
@@ -49,7 +49,7 @@
 
 		{{-- The POST lands on this same URL, so a validation failure comes back
 		     to the form by itself. --}}
-		<form method="POST" action="{{ route($locale.'.student.profile.update') }}">
+		<form method="POST" action="{{ route($locale.'.customer.profile.update') }}">
 			@csrf
 
 			<x-form.select name="gender" label="Geschlecht" :options="$genderOptions"
@@ -99,7 +99,7 @@
 				The addresses are still **links out of the form**, as they are in
 				legacy, and anything typed above is lost by going to one. What is
 				fixed is the way back: those screens return *here* rather than to
-				a profile that does not show them ([[StudentAddressController]]).
+				a profile that does not show them ([[CustomerAddressController]]).
 			--}}
 			<x-ui.collapsible dashboard title="Rechnungsadressen" class="mt-56" :expanded="true">
 				@forelse ($addresses as $address)
@@ -123,7 +123,7 @@
 					])>
 						{{ $address->summary() }}
 
-						<a href="{{ \App\Support\SiteUrl::studentAddressEdit($address->uuid) }}"
+						<a href="{{ \App\Support\SiteUrl::customerAddressEdit($address->uuid) }}"
 							title="Adresse bearbeiten"
 							class="absolute top-16 right-0 mt-2 block transition-colors hover:text-teal sm:top-16 sm:mt-4">
 							<x-icon.edit class="w-18" />
@@ -135,7 +135,7 @@
 
 				{{-- `.flex.justify-start.mt-6x` around a 16×16 plus. --}}
 				<div class="mt-24 flex justify-start">
-					<a href="{{ \App\Support\SiteUrl::studentAddressCreate() }}"
+					<a href="{{ \App\Support\SiteUrl::customerAddressCreate() }}"
 						title="Adresse hinzufügen"
 						class="block transition-colors hover:text-teal">
 						<x-icon.plus class="w-16" />
@@ -190,7 +190,7 @@
 			     24px, which made it bigger than the button above it. A link
 			     rather than a button — nothing has been posted, so leaving the
 			     form *is* going back to the screen it came from. --}}
-			<a href="{{ \App\Support\SiteUrl::studentPortal() }}"
+			<a href="{{ \App\Support\SiteUrl::customerPortal() }}"
 				class="inline-block text-md italic transition-colors hover:text-teal sm:text-lg lg:text-xl">Abbrechen</a>
 		</form>
 	</x-layout.article>

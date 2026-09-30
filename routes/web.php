@@ -9,13 +9,14 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
+use App\Http\Controllers\Site\CustomerAddressController;
+use App\Http\Controllers\Site\CustomerPortalController;
 use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\SitemapController;
-use App\Http\Controllers\Site\StudentAddressController;
-use App\Http\Controllers\Site\StudentPortalController;
 use App\Http\Middleware\SetLocaleFromUrl;
+use App\Support\SiteUrl;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -166,28 +167,37 @@ Route::prefix('{locale}')
 				});
 
 			/*
-			 * The student portal ([[08-accounts]], [[09-public-site]]).
+			 * Legacy's `/de/student/profil` and everything under it, **301 to
+			 * the customer portal** (`12-customers.md`): legacy's mails and
+			 * people's bookmarks point at the old tree. The rest of the path
+			 * is kept, so a booked seat's link lands on the same seat.
+			 */
+			Route::get($segments['student'].'/'.$segments['profile'].'/{rest?}',
+				fn (?string $rest = null) => redirect(SiteUrl::customerPortal($locale).($rest ? '/'.$rest : ''), 301))
+				->where('rest', '.*')
+				->name("{$locale}.student.legacy");
+
+			/*
+			 * The customer portal ([[08-accounts]], [[09-public-site]]) —
+			 * `/de/konto` and the screens under it (Marcel, 2026-09-30,
+			 * `12-customers.md`). Legacy's was `/de/student/profil`.
 			 *
-			 * **Legacy's URL tree, with the segments read from
-			 * `config/site.php`** — `/de/student/profil` and four screens under
-			 * it. Legacy writes both languages out by hand in its own
-			 * `routes/web.php`, twelve routes for six; here the loop does it,
-			 * and adding `'en'` to `site.locales` adds the English tree.
+			 * The segments are read from `config/site.php`, so adding `'en'`
+			 * to `site.locales` adds the English tree.
 			 *
-			 * Why a role tree rather than one `/de/konto`: four accounts hold
-			 * more than one role, and what a student sees and what an expert
-			 * sees are different screens over different data, not two views of
-			 * one. See [[SiteUrl::studentPortal]].
+			 * A tree of its own beside the expert portal's
+			 * `/de/experte/profil`: what a customer sees and what an expert
+			 * sees are different screens over different data, and an account
+			 * can have both. See [[SiteUrl::customerPortal]].
 			 *
 			 * The guard is `auth` and `verified`, the checkout's: legacy's
-			 * `role:student` went when every account became a customer
-			 * (`12-customers.md`).
+			 * `role:student` went when every account became a customer.
 			 */
 			Route::middleware(['auth', 'verified'])
-				->prefix($segments['student'].'/'.$segments['profile'])
+				->prefix($segments['account'])
 				->group(function () use ($locale, $segments): void {
-					Route::get('/', [StudentPortalController::class, 'index'])
-						->name("{$locale}.student.profile");
+					Route::get('/', [CustomerPortalController::class, 'index'])
+						->name("{$locale}.customer.profile");
 
 					/*
 					 * **The edit form is a screen, not a panel** (Marcel,
@@ -201,14 +211,14 @@ Route::prefix('{locale}')
 					 * comes back to the form by itself rather than needing to be
 					 * sent there.
 					 */
-					Route::get($segments['edit'], [StudentPortalController::class, 'edit'])
-						->name("{$locale}.student.profile.edit");
+					Route::get($segments['edit'], [CustomerPortalController::class, 'edit'])
+						->name("{$locale}.customer.profile.edit");
 
-					Route::post($segments['edit'], [StudentPortalController::class, 'update'])
-						->name("{$locale}.student.profile.update");
+					Route::post($segments['edit'], [CustomerPortalController::class, 'update'])
+						->name("{$locale}.customer.profile.update");
 
-					Route::get($segments['documents'], [StudentPortalController::class, 'documents'])
-						->name("{$locale}.student.documents");
+					Route::get($segments['documents'], [CustomerPortalController::class, 'documents'])
+						->name("{$locale}.customer.documents");
 
 					/*
 					 * One booked seat, resolved by the **event's** uuid rather
@@ -217,9 +227,9 @@ Route::prefix('{locale}')
 					 * found from it and the policy decides whether it is theirs.
 					 */
 					Route::get($segments['course'].'/'.$segments['event'].'/{uuid}',
-						[StudentPortalController::class, 'event'])
+						[CustomerPortalController::class, 'event'])
 						->whereUuid('uuid')
-						->name("{$locale}.student.event");
+						->name("{$locale}.customer.event");
 
 					/*
 					 * Saved invoice addresses. Full pages rather than a dialog,
@@ -228,20 +238,20 @@ Route::prefix('{locale}')
 					 * different job ([[09-public-site]]).
 					 */
 					Route::prefix($segments['address'])->group(function () use ($locale, $segments): void {
-						Route::get($segments['create'], [StudentAddressController::class, 'create'])
-							->name("{$locale}.student.address.create");
+						Route::get($segments['create'], [CustomerAddressController::class, 'create'])
+							->name("{$locale}.customer.address.create");
 
-						Route::post('/', [StudentAddressController::class, 'store'])
-							->name("{$locale}.student.address.store");
+						Route::post('/', [CustomerAddressController::class, 'store'])
+							->name("{$locale}.customer.address.store");
 
-						Route::get($segments['edit'].'/{address:uuid}', [StudentAddressController::class, 'edit'])
-							->name("{$locale}.student.address.edit");
+						Route::get($segments['edit'].'/{address:uuid}', [CustomerAddressController::class, 'edit'])
+							->name("{$locale}.customer.address.edit");
 
-						Route::put('{address:uuid}', [StudentAddressController::class, 'update'])
-							->name("{$locale}.student.address.update");
+						Route::put('{address:uuid}', [CustomerAddressController::class, 'update'])
+							->name("{$locale}.customer.address.update");
 
-						Route::delete('{address:uuid}', [StudentAddressController::class, 'destroy'])
-							->name("{$locale}.student.address.destroy");
+						Route::delete('{address:uuid}', [CustomerAddressController::class, 'destroy'])
+							->name("{$locale}.customer.address.destroy");
 					});
 				});
 

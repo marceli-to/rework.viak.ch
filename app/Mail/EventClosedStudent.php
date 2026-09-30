@@ -42,7 +42,7 @@ class EventClosedStudent extends VIAKMail
 			'dates' => EventFacts::dates($event),
 			'experts' => EventFacts::experts($event),
 			'place' => EventFacts::place($event),
-			'portal' => url(SiteUrl::studentPortal('de')),
+			'portal' => url(SiteUrl::customerPortal('de')),
 		]);
 	}
 

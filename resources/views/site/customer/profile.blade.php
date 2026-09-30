@@ -14,7 +14,7 @@
 		together and *Dokumente* is its own subject.
 
 		**The form is not here.** Legacy toggles it in place off `isEdit`; it has
-		a screen of its own at `/de/student/profil/bearbeiten`, because that
+		a screen of its own at `/de/konto/bearbeiten`, because that
 		state is a component's and does not survive leaving the page — which
 		*Rechnungsadressen*, living inside the form with links to screens of
 		their own, does every time somebody adds an address
@@ -31,7 +31,7 @@
 		     the aside rather than over the column.
 
 		     A link where legacy has an `<a href="">` that toggles. --}}
-		<a href="{{ \App\Support\SiteUrl::studentProfileEdit() }}"
+		<a href="{{ \App\Support\SiteUrl::customerProfileEdit() }}"
 			class="absolute top-0 right-0 block transition-colors hover:text-teal"
 			title="Profil bearbeiten">
 			<x-icon.edit class="w-18" />
@@ -120,14 +120,14 @@
 				<x-row.event :event="$booking->event" :booking="$booking">
 
 					<x-slot:action>
-						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
+						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::customerEvent($booking->event->uuid) }}"
 							class="mb-8" title="Details">Details</x-ui.button>
 
 						{{-- *Annullieren* asks first, and **what it asks
 						     depends on the date**: inside the penalty window the
 						     dialog names the amount and the rate before it lets
 						     the student confirm. Both figures are the server's
-						     ([[StudentPortalController::penalties]]). The
+						     ([[CustomerPortalController::penalties]]). The
 						     cancellation itself is
 						     `PATCH /api/bookings/{booking}/cancel` — the same
 						     [[CancelBooking]] the dashboard calls, penalty rule
@@ -202,7 +202,7 @@
 			are still listed as *Gebuchte Kurse* on the live site, across 63
 			students, the oldest from March 2023, each with a live *Annullieren*
 			beside it. The reasoning and the measurement are in
-			[[StudentPortalController::splitBookings]].
+			[[CustomerPortalController::splitBookings]].
 		--}}
 		<x-ui.collapsible dashboard title="Absolvierte Kurse" :expanded="false" :count="$past->count()">
 			@forelse ($past as $booking)
@@ -213,7 +213,7 @@
 						<x-course.attendance-badge :booking="$booking" :closed="$booking->event->state === \App\Enums\EventState::Closed" />
 					</x-slot:badges>
 					<x-slot:action>
-						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::studentEvent($booking->event->uuid) }}"
+						<x-ui.button variant="secondary" href="{{ \App\Support\SiteUrl::customerEvent($booking->event->uuid) }}"
 							title="Details">Details</x-ui.button>
 					</x-slot:action>
 				</x-row.event>
@@ -235,7 +235,7 @@
 				{{-- `.mt-4x` and `.link-helper` — 16px above, grey on hover
 				     rather than teal. --}}
 				<div class="mt-16">
-					<a href="{{ \App\Support\SiteUrl::studentDocuments() }}"
+					<a href="{{ \App\Support\SiteUrl::customerDocuments() }}"
 						class="inline-flex items-center gap-8 transition-colors hover:text-gray-400">
 						<span>Alle Dokumente anzeigen</span>
 						<x-icon.arrow-right />

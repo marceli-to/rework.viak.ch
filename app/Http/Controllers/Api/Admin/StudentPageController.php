@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
  * documents, and *Annullieren* on each booked seat.
  *
  * **Split on the event's date**, as the student portal splits them
- * ([[StudentPortalController]]), not on legacy's flags, which kept 67 seats on
+ * ([[CustomerPortalController]]), not on legacy's flags, which kept 67 seats on
  * courses long over under *Gebuchte Kurse* with a live *Annullieren*.
  * Cancelled seats are listed too, which legacy's page did not: an admin who has
  * just cancelled one should see where it went, and why.

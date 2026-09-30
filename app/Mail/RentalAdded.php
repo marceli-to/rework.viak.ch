@@ -27,7 +27,7 @@ class RentalAdded extends VIAKMail
 		return new Content(markdown: 'mail.booking.rental-added', with: [
 			'course' => $this->course(),
 			'dates' => EventFacts::dates($this->booking->event),
-			'portal' => url(SiteUrl::studentPortal('de')),
+			'portal' => url(SiteUrl::customerPortal('de')),
 		]);
 	}
 

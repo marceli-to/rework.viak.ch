@@ -27,7 +27,7 @@ class SetLocaleFromUrl
 			app()->setLocale($locale);
 
 			/*
-			 * So `route('de.student.profile')` resolves without being handed the
+			 * So `route('de.customer.profile')` resolves without being handed the
 			 * locale it is already inside.
 			 *
 			 * Every route in the prefixed group takes `{locale}`, and the line

@@ -200,7 +200,7 @@
 					     `/dashboard` while there was nothing better
 					     ([[09-public-site]]). --}}
 					<x-ui.button variant="outline"
-						href="{{ \App\Support\SiteUrl::studentEvent($event->uuid) }}"
+						href="{{ \App\Support\SiteUrl::customerEvent($event->uuid) }}"
 						title="Buchung verwalten">
 						Verwalten
 					</x-ui.button>

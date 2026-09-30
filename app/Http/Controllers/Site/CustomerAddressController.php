@@ -28,11 +28,11 @@ use Illuminate\View\View;
  * [[UserAddressPolicy]] whether the address is the caller's. That is the check
  * legacy made nowhere: all 28 of its FormRequests return `true`.
  */
-class StudentAddressController extends Controller
+class CustomerAddressController extends Controller
 {
 	public function create(): View
 	{
-		return view('site.student.address', [
+		return view('site.customer.address', [
 			'address' => null,
 			'countries' => $this->countries(),
 		]);
@@ -51,7 +51,7 @@ class StudentAddressController extends Controller
 	{
 		$request->user()->addresses()->create($request->validated());
 
-		return redirect(SiteUrl::studentProfileEdit())
+		return redirect(SiteUrl::customerProfileEdit())
 			->with('status', 'Die Rechnungsadresse wurde gespeichert.');
 	}
 
@@ -59,7 +59,7 @@ class StudentAddressController extends Controller
 	{
 		$this->authorize('update', $address);
 
-		return view('site.student.address', [
+		return view('site.customer.address', [
 			'address' => $address,
 			'countries' => $this->countries(),
 		]);
@@ -69,7 +69,7 @@ class StudentAddressController extends Controller
 	{
 		$address->update($request->validated());
 
-		return redirect(SiteUrl::studentProfileEdit())
+		return redirect(SiteUrl::customerProfileEdit())
 			->with('status', 'Die Rechnungsadresse wurde gespeichert.');
 	}
 
@@ -88,7 +88,7 @@ class StudentAddressController extends Controller
 
 		$address->delete();
 
-		return redirect(SiteUrl::studentProfileEdit())
+		return redirect(SiteUrl::customerProfileEdit())
 			->with('status', 'Die Rechnungsadresse wurde gelöscht.');
 	}
 

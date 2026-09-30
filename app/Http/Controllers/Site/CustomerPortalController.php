@@ -33,7 +33,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * through `/api/bookings/{booking}/cancel`, and the documents come off the same
  * policy-gated route the invoices link to.
  */
-class StudentPortalController extends Controller
+class CustomerPortalController extends Controller
 {
 	/**
 	 * How many documents the landing screen shows before *Alle Dokumente
@@ -57,7 +57,7 @@ class StudentPortalController extends Controller
 			->with(['event.course', 'event.dates', 'event.location', 'event.experts'])
 			->get());
 
-		return view('site.student.profile', [
+		return view('site.customer.profile', [
 			'user' => $user,
 			'bookmarks' => $user->bookmarks()
 				->with(['course', 'dates', 'location', 'experts'])
@@ -77,7 +77,7 @@ class StudentPortalController extends Controller
 	}
 
 	/**
-	 * The form, on a screen of its own — `/de/student/profil/bearbeiten`.
+	 * The form, on a screen of its own — `/de/konto/bearbeiten`.
 	 *
 	 * **A sibling of the address screens, not a state of the profile** (Marcel,
 	 * 2026-09-22): the form and nothing else, with a *Zurück* where the profile
@@ -95,7 +95,7 @@ class StudentPortalController extends Controller
 	{
 		$user = $request->user()->load('country');
 
-		return view('site.student.edit', [
+		return view('site.customer.edit', [
 			'user' => $user,
 			'addresses' => $user->addresses()->with('country')->orderBy('company')->orderBy('last_name')->get(),
 			'countries' => Country::query()->orderBy('order')->orderBy('name')->get(),
@@ -171,7 +171,7 @@ class StudentPortalController extends Controller
 		 * both ways inside itself, which is the kind of thing that reads as
 		 * sloppiness rather than as a style.
 		 */
-		return redirect(SiteUrl::studentPortal())->with(
+		return redirect(SiteUrl::customerPortal())->with(
 			'status',
 			$user->hasVerifiedEmail()
 				? 'Deine Angaben wurden gespeichert.'
@@ -182,7 +182,7 @@ class StudentPortalController extends Controller
 	/** *Meine Dokumente* — the full list behind the landing screen's five. */
 	public function documents(Request $request): View
 	{
-		return view('site.student.documents', [
+		return view('site.customer.documents', [
 			'documents' => $request->user()->documents()
 				->with('documentable')
 				->latest('date')
@@ -235,7 +235,7 @@ class StudentPortalController extends Controller
 		// denies **silently**. Same call the API makes.
 		$belongs = $request->user()->can('viewForEvent', [Message::class, $event]);
 
-		return view('site.student.event', [
+		return view('site.customer.event', [
 			'event' => $event,
 			'booking' => $booking,
 			'penalty' => [

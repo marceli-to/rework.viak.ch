@@ -206,11 +206,11 @@ describe('deactivating (#16)', function () {
 
 	it('ends a session that was open when the account was deactivated', function () {
 		$student = studentAccount();
-		$this->actingAs($student)->get('/de/student/profil')->assertOk();
+		$this->actingAs($student)->get('/de/konto')->assertOk();
 
 		$student->forceFill(['deactivated_at' => now()])->save();
 
-		$this->get('/de/student/profil')->assertRedirect(route('login'));
+		$this->get('/de/konto')->assertRedirect(route('login'));
 		$this->assertGuest();
 	});
 

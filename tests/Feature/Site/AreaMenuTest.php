@@ -13,10 +13,10 @@ use App\Support\SiteUrl;
 it('lists the areas a person may use, in the profile link\'s order', function () {
 	$all = User::factory()->admin()->expert()->student()->create();
 
-	expect(collect(SiteUrl::areasFor($all, 'de'))->pluck('label')->all())->toBe(['Student', 'Experte', 'Dashboard'])
+	expect(collect(SiteUrl::areasFor($all, 'de'))->pluck('label')->all())->toBe(['Kunde', 'Experte', 'Dashboard'])
 		->and(SiteUrl::areasFor(User::factory()->student()->create(), 'de'))->toHaveCount(1)
 		// Every account is a customer, so an expert has two areas.
-		->and(collect(SiteUrl::areasFor(User::factory()->expert()->create(), 'de'))->pluck('key')->all())->toBe(['student', 'expert'])
+		->and(collect(SiteUrl::areasFor(User::factory()->expert()->create(), 'de'))->pluck('key')->all())->toBe(['customer', 'expert'])
 		->and(SiteUrl::areasFor(null))->toBe([]);
 });
 
@@ -25,7 +25,7 @@ it('makes the profile icon a menu of the areas for a multi-role account', functi
 		->get('/de')
 		->assertOk()
 		->assertSee('aria-haspopup="true"', false)
-		->assertSee('href="'.SiteUrl::studentPortal('de').'"', false)
+		->assertSee('href="'.SiteUrl::customerPortal('de').'"', false)
 		->assertSee('href="'.SiteUrl::expertPortal('de').'"', false)
 		->assertDontSee('href="/dashboard"', false);
 });
@@ -44,7 +44,7 @@ it('offers an admin the other areas in the dashboard shell', function () {
 
 	preg_match('/<meta name="areas" content="([^"]*)"/', $html, $match);
 	expect(json_decode(html_entity_decode($match[1]), true))->toBe([
-		['key' => 'student', 'label' => 'Student', 'href' => SiteUrl::studentPortal()],
+		['key' => 'customer', 'label' => 'Kunde', 'href' => SiteUrl::customerPortal()],
 		['key' => 'expert', 'label' => 'Experte', 'href' => SiteUrl::expertPortal()],
 	]);
 });

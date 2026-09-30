@@ -106,7 +106,7 @@ it('writes legacy text, with this booking in it', function () {
 		->toContain($booking->number)
 		->toContain('CHF 890')
 		->toContain('Visualisierungs-Akademie, Zürich')
-		->toContain('/de/student/profil');
+		->toContain('/de/konto');
 });
 
 it('renders every booking mail without an error', function () {

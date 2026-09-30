@@ -160,7 +160,7 @@
 								     ([[09-public-site]]). It leaves the checkout;
 								     the session keeps the answers, and *Adresse
 								     erfassen* beside it is the way to stay. --}}
-								<a href="{{ \App\Support\SiteUrl::studentPortal() }}"
+								<a href="{{ \App\Support\SiteUrl::customerPortal() }}"
 									class="text-md underline decoration-1 underline-offset-[3px] hover:no-underline lg:text-lg">
 									Adressen verwalten
 								</a>

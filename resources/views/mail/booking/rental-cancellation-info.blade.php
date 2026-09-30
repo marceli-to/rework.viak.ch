@@ -7,7 +7,7 @@
 <p>Ein Mietcomputer für  «{{ $course }}» wurde storniert</p>
 <table class="content-table" cellpadding="0" cellspacing="0">
   <tr>
-    <td>Student:in</td>
+    <td>Kund:in</td>
     <td>{{ $booking->user->name }}</td>
   </tr>
   <tr>

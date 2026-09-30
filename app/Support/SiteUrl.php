@@ -125,31 +125,27 @@ final class SiteUrl
 	}
 
 	/**
-	 * The student portal, and the screens under it ([[08-accounts]]).
+	 * The customer portal, and the screens under it ([[08-accounts]]) —
+	 * `/de/konto` (Marcel, 2026-09-30, `12-customers.md`).
 	 *
-	 * **Legacy's own two trees, kept whole** — `/de/student/profil` for a
-	 * student and `/de/experte/profil` for an expert, rather than one `/de/konto`
-	 * for both. Three accounts hold Admin + Expert + Student and one holds
-	 * Admin + Student, so the two portals are not alternative views of the same
-	 * thing: they show different data and a dual-role user needs both at once.
-	 * The role in the path is what tells them apart, and it is also what the
-	 * role middleware is already guarding.
+	 * Legacy's was `/de/student/profil`; every account is a customer now, and
+	 * that tree 301s here, sub-pages included, so the links in legacy's mails
+	 * and people's bookmarks still land (`routes/web.php`). The expert portal
+	 * keeps legacy's `/de/experte/profil`: it is a different screen over
+	 * different data, and an account can have both.
 	 *
-	 * Every segment comes from `config/site.php` rather than being written into
-	 * the path here, so `/en/student/profile/documents` exists the day `'en'`
-	 * joins `site.locales` (Marcel, 2026-09-22). That is the one thing that
-	 * differs from legacy, which spells both languages out twice in
-	 * `routes/web.php`.
+	 * Every segment comes from `config/site.php`, so `/en/account/documents`
+	 * exists the day `'en'` joins `site.locales`.
 	 */
-	public static function studentPortal(?string $locale = null): string
+	public static function customerPortal(?string $locale = null): string
 	{
 		$locale ??= app()->getLocale();
 
-		return '/'.$locale.'/'.self::segment('student', $locale).'/'.self::segment('profile', $locale);
+		return '/'.$locale.'/'.self::segment('account', $locale);
 	}
 
 	/**
-	 * The profile's edit form — `/de/student/profil/bearbeiten`.
+	 * The profile's edit form — `/de/konto/bearbeiten`.
 	 *
 	 * **A screen of its own, not a panel** (Marcel, 2026-09-22). Legacy toggles
 	 * the form in place off `isEdit`, which is component state, and that does
@@ -165,44 +161,44 @@ final class SiteUrl
 	 * `x-show`, no `x-cloak`. The pencil is a link, *Abbrechen* is a link, and
 	 * the browser's own back button does what it looks like it should.
 	 */
-	public static function studentProfileEdit(?string $locale = null): string
+	public static function customerProfileEdit(?string $locale = null): string
 	{
-		return self::studentPortal($locale).'/'.self::segment('edit', $locale);
+		return self::customerPortal($locale).'/'.self::segment('edit', $locale);
 	}
 
-	/** *Meine Dokumente* — `/de/student/profil/dokumente`. */
-	public static function studentDocuments(?string $locale = null): string
+	/** *Meine Dokumente* — `/de/konto/dokumente`. */
+	public static function customerDocuments(?string $locale = null): string
 	{
-		return self::studentPortal($locale).'/'.self::segment('documents', $locale);
+		return self::customerPortal($locale).'/'.self::segment('documents', $locale);
 	}
 
 	/**
-	 * One booked seat — `/de/student/profil/kurs/veranstaltung/{uuid}`.
+	 * One booked seat — `/de/konto/kurs/veranstaltung/{uuid}`.
 	 *
 	 * The uuid is the **event's**, not the booking's, which is legacy's choice
 	 * and worth keeping: a student has at most one live booking per event, and
 	 * the uuid is the one already on the course page.
 	 */
-	public static function studentEvent(string $uuid, ?string $locale = null): string
+	public static function customerEvent(string $uuid, ?string $locale = null): string
 	{
-		return self::studentPortal($locale)
+		return self::customerPortal($locale)
 			.'/'.self::segment('course', $locale)
 			.'/'.self::segment('event', $locale)
 			.'/'.$uuid;
 	}
 
-	/** *Adresse erfassen* — `/de/student/profil/adresse/erstellen`. */
-	public static function studentAddressCreate(?string $locale = null): string
+	/** *Adresse erfassen* — `/de/konto/adresse/erstellen`. */
+	public static function customerAddressCreate(?string $locale = null): string
 	{
-		return self::studentPortal($locale)
+		return self::customerPortal($locale)
 			.'/'.self::segment('address', $locale)
 			.'/'.self::segment('create', $locale);
 	}
 
-	/** One saved address — `/de/student/profil/adresse/bearbeiten/{uuid}`. */
-	public static function studentAddressEdit(string $uuid, ?string $locale = null): string
+	/** One saved address — `/de/konto/adresse/bearbeiten/{uuid}`. */
+	public static function customerAddressEdit(string $uuid, ?string $locale = null): string
 	{
-		return self::studentPortal($locale)
+		return self::customerPortal($locale)
 			.'/'.self::segment('address', $locale)
 			.'/'.self::segment('edit', $locale)
 			.'/'.$uuid;
@@ -294,7 +290,7 @@ final class SiteUrl
 		// Every account is a customer (`12-customers.md`), so anyone signed in
 		// has the customer portal. An account with another area as well gets
 		// the header's menu of them rather than this link ([[areasFor]]).
-		return self::studentPortal($locale);
+		return self::customerPortal($locale);
 	}
 
 	/**
@@ -304,8 +300,8 @@ final class SiteUrl
 	 * own URLs, so a menu needs no session and nobody is stopped at login
 	 * (`12-customers.md`).
 	 *
-	 * Labelled as legacy's picker names the roles, except *Dashboard* for Admin,
-	 * which is where it leads. In `profileFor()`'s order.
+	 * Labelled as legacy's picker names the roles, *Kunde* for the customer
+	 * (#42), and *Dashboard* for Admin, which is where it leads. In `profileFor()`'s order.
 	 *
 	 * @return list<array{key: string, label: string, href: string}>
 	 */
@@ -317,7 +313,7 @@ final class SiteUrl
 
 		return array_values(array_filter([
 			// Everyone: every account is a customer.
-			['key' => 'student', 'label' => 'Student', 'href' => self::studentPortal($locale)],
+			['key' => 'customer', 'label' => 'Kunde', 'href' => self::customerPortal($locale)],
 			$user->hasRole(Role::Expert) ? ['key' => 'expert', 'label' => 'Experte', 'href' => self::expertPortal($locale)] : null,
 			$user->hasRole(Role::Admin) ? ['key' => 'admin', 'label' => 'Dashboard', 'href' => '/dashboard'] : null,
 		]));

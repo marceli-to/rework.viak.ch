@@ -68,25 +68,25 @@ beforeEach(function () {
 */
 
 it('is behind the same guards as the checkout', function () {
-	$this->get('/de/student/profil')->assertRedirect('/login');
+	$this->get('/de/konto')->assertRedirect('/login');
 
 	// Every account is a customer (`12-customers.md`): staff get in too.
 	$this->actingAs(User::factory()->admin()->create(['email_verified_at' => now()]))
-		->get('/de/student/profil')
+		->get('/de/konto')
 		->assertOk();
 
 	$this->actingAs(User::factory()->expert()->create(['email_verified_at' => now()]))
-		->get('/de/student/profil')
+		->get('/de/konto')
 		->assertOk();
 
 	$this->actingAs(User::factory()->create(['email_verified_at' => null]))
-		->get('/de/student/profil')
+		->get('/de/konto')
 		->assertRedirect('/email/verify');
 });
 
 it('sends an unverified student to the verification notice', function () {
 	$this->actingAs(portalStudent(['email_verified_at' => null]))
-		->get('/de/student/profil')
+		->get('/de/konto')
 		->assertRedirect('/email/verify');
 });
 
@@ -94,11 +94,11 @@ it('serves every screen under the German segments, from config', function () {
 	$user = portalStudent();
 	$booking = portalSeat($user, 30);
 
-	$this->actingAs($user)->get('/de/student/profil')->assertOk();
-	$this->actingAs($user)->get('/de/student/profil/dokumente')->assertOk();
-	$this->actingAs($user)->get('/de/student/profil/adresse/erstellen')->assertOk();
+	$this->actingAs($user)->get('/de/konto')->assertOk();
+	$this->actingAs($user)->get('/de/konto/dokumente')->assertOk();
+	$this->actingAs($user)->get('/de/konto/adresse/erstellen')->assertOk();
 	$this->actingAs($user)
-		->get('/de/student/profil/kurs/veranstaltung/'.$booking->event->uuid)
+		->get('/de/konto/kurs/veranstaltung/'.$booking->event->uuid)
 		->assertOk();
 });
 
@@ -110,7 +110,7 @@ it('serves every screen under the German segments, from config', function () {
 
 it('prints the account without asking the browser for it', function () {
 	$this->actingAs(portalStudent(['company' => 'Nookla GmbH']))
-		->get('/de/student/profil')
+		->get('/de/konto')
 		->assertOk()
 		->assertSee('Mein Profil')
 		->assertSee('Nookla GmbH')
@@ -121,7 +121,7 @@ it('prints the account without asking the browser for it', function () {
 
 it('offers logout as a POST, because a GET that ends a session is one a prefetcher can fire', function () {
 	$this->actingAs(portalStudent())
-		->get('/de/student/profil')
+		->get('/de/konto')
 		->assertOk()
 		->assertSee('action="'.route('logout').'"', escape: false)
 		->assertSee('Logout');
@@ -133,7 +133,7 @@ it('offers logout as a POST, because a GET that ends a session is one a prefetch
  * There it is two spatie flags, and `isConcluded` is set only for a booking
  * somebody already ticked as having attended — so 67 seats on courses that have
  * run are still listed as *Gebuchte Kurse* on the live site, across 63 students,
- * the oldest from March 2023 ([[StudentPortalController::splitBookings]]).
+ * the oldest from March 2023 ([[CustomerPortalController::splitBookings]]).
  */
 it('splits the two course lists on the event’s date, not on a flag nobody ticked', function () {
     $user = portalStudent();
@@ -141,7 +141,7 @@ it('splits the two course lists on the event’s date, not on a flag nobody tick
     $upcoming = portalSeat($user, 30);
     $past = portalSeat($user, -30);
 
-    $response = $this->actingAs($user)->get('/de/student/profil')->assertOk();
+    $response = $this->actingAs($user)->get('/de/konto')->assertOk();
 
     $html = $response->getContent();
 
@@ -157,7 +157,7 @@ it('counts today as upcoming, which legacy’s `date > today` made neither', fun
 	$user = portalStudent();
 	portalSeat($user, 0);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertDontSee('Du hast noch keine Kurse gebucht.');
 });
@@ -166,7 +166,7 @@ it('leaves a cancelled seat out of both lists', function () {
 	$user = portalStudent();
 	portalSeat($user, 30, [], ['cancelled_at' => now()]);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('Du hast noch keine Kurse gebucht.')
 		->assertSee('Du hast noch keine Kurse absolviert.');
@@ -176,7 +176,7 @@ it('offers a laptop only while the booking can still take one for free', functio
 	$user = portalStudent();
 	portalSeat($user, 30, ['rentals_available' => 4]);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('kannst Du bei uns einen Computer mieten', escape: false);
 });
@@ -185,7 +185,7 @@ it('does not offer a laptop on an event that has none', function () {
 	$user = portalStudent();
 	portalSeat($user, 30, ['rentals_available' => 0]);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertDontSee('kannst Du bei uns einen Computer mieten', escape: false);
 });
@@ -194,7 +194,7 @@ it('shows a booked laptop as its own line with its frozen price', function () {
 	$user = portalStudent();
 	portalSeat($user, 30, ['rentals_available' => 4], ['has_rental' => true, 'rental_fee' => 80]);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('Mietcomputer')
 		->assertSee('80.00');
@@ -212,7 +212,7 @@ it('renders the cancellation penalty into the row, for the dialog to read', func
 	// Five days out: inside the 11-day window, so the whole net fee is due.
 	portalSeat($user, 5);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('\u0022penalty\u0022:true', escape: false)
 		->assertSee('\u0022amount\u0022:\u0022600.00\u0022', escape: false)
@@ -223,7 +223,7 @@ it('reports no penalty outside the window', function () {
 	$user = portalStudent();
 	portalSeat($user, 60);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('\u0022penalty\u0022:false', escape: false);
 });
@@ -241,11 +241,11 @@ it('lists the saved invoice addresses and a way to add one, on the edit screen',
 		'country_code' => 'ch',
 	]);
 
-	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+	$this->actingAs($user)->get('/de/konto/bearbeiten')
 		->assertOk()
 		->assertSee('Rechnungsadressen')
 		->assertSee('Muster AG, Anna Muster, Zürich')
-		->assertSee('/de/student/profil/adresse/erstellen');
+		->assertSee('/de/konto/adresse/erstellen');
 });
 
 /*
@@ -264,14 +264,14 @@ it('lists the saved invoice addresses and a way to add one, on the edit screen',
 it('shows the address block on the profile and the form on its own URL', function () {
 	$user = portalStudent(['company' => 'Nookla GmbH']);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('Nookla GmbH')
-		->assertSee('/de/student/profil/bearbeiten')
+		->assertSee('/de/konto/bearbeiten')
 		->assertDontSee('Rechnungsadressen')
 		->assertDontSee('Zugangsdaten');
 
-	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+	$this->actingAs($user)->get('/de/konto/bearbeiten')
 		->assertOk()
 		->assertSee('Profil bearbeiten')
 		->assertSee('Rechnungsadressen')
@@ -287,7 +287,7 @@ it('puts nothing but the form on the edit screen', function () {
 	$user = portalStudent();
 	portalSeat($user, 30);
 
-	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+	$this->actingAs($user)->get('/de/konto/bearbeiten')
 		->assertOk()
 		->assertDontSee('Merkliste')
 		->assertDontSee('Gebuchte Kurse')
@@ -302,13 +302,13 @@ it('puts nothing but the form on the edit screen', function () {
 it('gives the edit screen a Zurück rather than the profile’s Logout', function () {
 	$user = portalStudent();
 
-	$this->actingAs($user)->get('/de/student/profil/bearbeiten')
+	$this->actingAs($user)->get('/de/konto/bearbeiten')
 		->assertOk()
 		->assertSee('Zurück')
-		->assertSee('href="/de/student/profil"', escape: false)
+		->assertSee('href="/de/konto"', escape: false)
 		->assertDontSee('Logout');
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('Logout');
 });
@@ -317,7 +317,7 @@ it('keeps the four lists on the profile', function () {
 	$user = portalStudent();
 	portalSeat($user, 30);
 
-	$this->actingAs($user)->get('/de/student/profil')
+	$this->actingAs($user)->get('/de/konto')
 		->assertOk()
 		->assertSee('Merkliste')
 		->assertSee('Gebuchte Kurse')
@@ -341,13 +341,13 @@ it('sends the address screens back into the form, not to the closed profile', fu
 	]);
 
 	// The back link on both address screens.
-	$this->actingAs($user)->get('/de/student/profil/adresse/erstellen')
+	$this->actingAs($user)->get('/de/konto/adresse/erstellen')
 		->assertOk()
-		->assertSee('href="/de/student/profil/bearbeiten"', escape: false);
+		->assertSee('href="/de/konto/bearbeiten"', escape: false);
 
-	$this->actingAs($user)->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+	$this->actingAs($user)->get('/de/konto/adresse/bearbeiten/'.$address->uuid)
 		->assertOk()
-		->assertSee('href="/de/student/profil/bearbeiten"', escape: false);
+		->assertSee('href="/de/konto/bearbeiten"', escape: false);
 });
 
 it('renders the profile screens without any JavaScript of their own', function () {
@@ -356,7 +356,7 @@ it('renders the profile screens without any JavaScript of their own', function (
 	// No toggle, no `x-show`, no `x-cloak` on the profile column — the pencil
 	// and *Abbrechen* are links. What Alpine is left on the page belongs to the
 	// collapsibles, the basket and the cancellation dialogs.
-	$html = $this->actingAs($user)->get('/de/student/profil/bearbeiten')->assertOk()->getContent();
+	$html = $this->actingAs($user)->get('/de/konto/bearbeiten')->assertOk()->getContent();
 
 	expect($html)->not->toContain('editing');
 });
@@ -371,7 +371,7 @@ it('saves the account through the same Action the API uses', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller-Meier',
 			'phone' => '079 000 00 00',
@@ -381,7 +381,7 @@ it('saves the account through the same Action the API uses', function () {
 			'city' => 'Orsières',
 			'country_code' => 'ch',
 		])
-		->assertRedirect('/de/student/profil')
+		->assertRedirect('/de/konto')
 		->assertSessionHas('status');
 
 	expect($user->refresh()->last_name)->toBe('Haller-Meier');
@@ -397,7 +397,7 @@ it('will not change an email address without the current password', function () 
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
@@ -411,13 +411,13 @@ it('clears verification when the address changes, and says so', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
 			'current_password' => 'password',
 		])
-		->assertRedirect('/de/student/profil')
+		->assertRedirect('/de/konto')
 		->assertSessionHas('status', fn (string $status) => str_contains($status, 'bestätige'));
 
 	expect($user->refresh()->email)->toBe('somewhere-else@example.test')
@@ -442,7 +442,7 @@ it('lists a student’s own documents, behind the policy-gated download route', 
 		'documentable_id' => $booking->id,
 	]);
 
-	$this->actingAs($user)->get('/de/student/profil/dokumente')
+	$this->actingAs($user)->get('/de/konto/dokumente')
 		->assertOk()
 		->assertSee('Teilnahmebestätigung')
 		->assertSee(route('documents.show', $document->uuid));
@@ -461,7 +461,7 @@ it('shows an invoice document with its number, total and status', function () {
 		'documentable_id' => $invoice->id,
 	]);
 
-	$this->actingAs($user)->get('/de/student/profil/dokumente')
+	$this->actingAs($user)->get('/de/konto/dokumente')
 		->assertOk()
 		->assertSee('Rechnung')
 		->assertSee($invoice->number)
@@ -479,7 +479,7 @@ it('shows nobody else’s documents', function () {
 		'date' => today(),
 	]);
 
-	$this->actingAs($mine)->get('/de/student/profil/dokumente')
+	$this->actingAs($mine)->get('/de/konto/dokumente')
 		->assertOk()
 		->assertSee('Es sind noch keine Dokumente vorhanden.');
 });
@@ -495,7 +495,7 @@ it('404s the seat screen for an event the student has not booked', function () {
 	$other = Event::factory()->create(['date' => today()->addDays(30)]);
 
 	$this->actingAs($user)
-		->get('/de/student/profil/kurs/veranstaltung/'.$other->uuid)
+		->get('/de/konto/kurs/veranstaltung/'.$other->uuid)
 		->assertNotFound();
 });
 
@@ -517,7 +517,7 @@ it('shows the course notes and the materials to somebody on the course', functio
 	]);
 
 	$this->actingAs($user)
-		->get('/de/student/profil/kurs/veranstaltung/'.$booking->event->uuid)
+		->get('/de/konto/kurs/veranstaltung/'.$booking->event->uuid)
 		->assertOk()
 		->assertSee('Anreise und Parkplätze')
 		->assertSee('Texturen.zip')
@@ -562,7 +562,7 @@ it('keeps a cancelled seat readable but shuts the thread', function () {
 	]);
 
 	$this->actingAs($user)
-		->get('/de/student/profil/kurs/veranstaltung/'.$booking->event->uuid)
+		->get('/de/konto/kurs/veranstaltung/'.$booking->event->uuid)
 		->assertOk()
 		->assertSee('Annulliert am')
 		->assertDontSee('Anreise und Parkplätze');
@@ -578,7 +578,7 @@ it('creates an invoice address and comes back into the form', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/adresse', [
+		->post('/de/konto/adresse', [
 			'first_name' => 'Anna',
 			'last_name' => 'Muster',
 			'company' => 'Muster AG',
@@ -590,7 +590,7 @@ it('creates an invoice address and comes back into the form', function () {
 		])
 		// Into the form, where the list it belongs to is — not to the read view,
 		// which shows no addresses at all.
-		->assertRedirect('/de/student/profil/bearbeiten')
+		->assertRedirect('/de/konto/bearbeiten')
 		->assertSessionHas('status');
 
 	expect($user->addresses()->count())->toBe(1);
@@ -608,8 +608,8 @@ it('soft-deletes an address rather than losing where an invoice was sent', funct
 	]);
 
 	$this->actingAs($user)
-		->delete('/de/student/profil/adresse/'.$address->uuid)
-		->assertRedirect('/de/student/profil/bearbeiten');
+		->delete('/de/konto/adresse/'.$address->uuid)
+		->assertRedirect('/de/konto/bearbeiten');
 
 	expect($user->addresses()->count())->toBe(0)
 		->and($address->fresh()->trashed())->toBeTrue();
@@ -634,11 +634,11 @@ it('will not let one student edit or delete another’s address', function () {
 	]);
 
 	$this->actingAs($mine)
-		->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+		->get('/de/konto/adresse/bearbeiten/'.$address->uuid)
 		->assertForbidden();
 
 	$this->actingAs($mine)
-		->delete('/de/student/profil/adresse/'.$address->uuid)
+		->delete('/de/konto/adresse/'.$address->uuid)
 		->assertForbidden();
 
 	expect($address->fresh()->trashed())->toBeFalse();
@@ -656,13 +656,13 @@ it('saves with the email resent unchanged, and asks for no password', function (
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'company' => 'Nookla GmbH',
 			'email' => $user->email,
 		])
-		->assertRedirect('/de/student/profil')
+		->assertRedirect('/de/konto')
 		->assertSessionHasNoErrors();
 
 	expect($user->refresh()->company)->toBe('Nookla GmbH')
@@ -673,7 +673,7 @@ it('names the field in German when the password is missing', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
@@ -690,7 +690,7 @@ it('accepts an empty current-password box when nothing needs confirming', functi
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'company' => 'Nookla GmbH',
@@ -699,7 +699,7 @@ it('accepts an empty current-password box when nothing needs confirming', functi
 			'password_confirmation' => null,
 			'current_password' => null,
 		])
-		->assertRedirect('/de/student/profil')
+		->assertRedirect('/de/konto')
 		->assertSessionHasNoErrors();
 
 	expect($user->refresh()->company)->toBe('Nookla GmbH');
@@ -720,14 +720,14 @@ it('accepts an invoice address with a company and no name', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/adresse', [
+		->post('/de/konto/adresse', [
 			'company' => 'Muster AG',
 			'street' => 'Bahnhofstrasse',
 			'zip' => '8001',
 			'city' => 'Zürich',
 			'country_code' => 'ch',
 		])
-		->assertRedirect('/de/student/profil/bearbeiten')
+		->assertRedirect('/de/konto/bearbeiten')
 		->assertSessionHasNoErrors();
 
 	expect($user->addresses()->count())->toBe(1);
@@ -737,7 +737,7 @@ it('accepts one with a name and no company, as before', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/adresse', [
+		->post('/de/konto/adresse', [
 			'first_name' => 'Anna',
 			'last_name' => 'Muster',
 			'street' => 'Bahnhofstrasse',
@@ -754,7 +754,7 @@ it('refuses half a name with no company, because half a name is not one', functi
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/adresse', [
+		->post('/de/konto/adresse', [
 			'first_name' => 'Anna',
 			'street' => 'Bahnhofstrasse',
 			'zip' => '8001',
@@ -770,7 +770,7 @@ it('refuses neither, and says the rule rather than the branch that fired', funct
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/adresse', [
+		->post('/de/konto/adresse', [
 			'street' => 'Bahnhofstrasse',
 			'zip' => '8001',
 			'city' => 'Zürich',
@@ -804,7 +804,7 @@ it('paints form values teal, as production does', function () {
  */
 it('sizes Abbrechen below the button rather than above it', function () {
 	$html = $this->actingAs(portalStudent())
-		->get('/de/student/profil/bearbeiten')
+		->get('/de/konto/bearbeiten')
 		->assertOk()
 		->getContent();
 
@@ -832,7 +832,7 @@ it('draws the delete box as a box, at its own size', function () {
 	]);
 
 	$this->actingAs($user)
-		->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+		->get('/de/konto/adresse/bearbeiten/'.$address->uuid)
 		->assertOk()
 		->assertSee('border-2 border-danger', escape: false)
 		->assertDontSee('border-y-2', escape: false)
@@ -847,12 +847,12 @@ it('titles the address screens the way legacy does', function () {
 		'street' => 'Bahnhofstrasse', 'zip' => '8001', 'city' => 'Zürich', 'country_code' => 'ch',
 	]);
 
-	$this->actingAs($user)->get('/de/student/profil/adresse/erstellen')
+	$this->actingAs($user)->get('/de/konto/adresse/erstellen')
 		->assertOk()
 		->assertSee('Adresse hinzufügen')
 		->assertDontSee('Rechnungsadresse hinzufügen');
 
-	$this->actingAs($user)->get('/de/student/profil/adresse/bearbeiten/'.$address->uuid)
+	$this->actingAs($user)->get('/de/konto/adresse/bearbeiten/'.$address->uuid)
 		->assertOk()
 		->assertSee('Adresse bearbeiten');
 });
@@ -866,7 +866,7 @@ it('capitalises Dir and Deine in the verification notice', function () {
 	$user = portalStudent();
 
 	$this->actingAs($user)
-		->post('/de/student/profil/bearbeiten', [
+		->post('/de/konto/bearbeiten', [
 			'first_name' => 'Antonia',
 			'last_name' => 'Haller',
 			'email' => 'somewhere-else@example.test',
@@ -895,8 +895,22 @@ it('pulls the first invoice address up at desktop, and only there', function () 
 		]);
 	}
 
-	$html = $this->actingAs($user)->get('/de/student/profil/bearbeiten')->assertOk()->getContent();
+	$html = $this->actingAs($user)->get('/de/konto/bearbeiten')->assertOk()->getContent();
 
 	// One row carries it, the other does not.
 	expect(substr_count($html, 'lg:mt-12'))->toBe(1);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Legacy's URL
+|--------------------------------------------------------------------------
+*/
+
+it('sends legacy\'s /de/student/profil tree to /de/konto for good, sub-pages included', function () {
+	$this->get('/de/student/profil')->assertStatus(301)->assertRedirect('/de/konto');
+	$this->get('/de/student/profil/dokumente')->assertStatus(301)->assertRedirect('/de/konto/dokumente');
+	$this->get('/de/student/profil/kurs/veranstaltung/0f0e4a8e-1c1d-4b1a-9d1a-2f7c4d0b5a11')
+		->assertStatus(301)
+		->assertRedirect('/de/konto/kurs/veranstaltung/0f0e4a8e-1c1d-4b1a-9d1a-2f7c4d0b5a11');
 });

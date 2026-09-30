@@ -30,7 +30,7 @@
 			     2026-09-29: the count this once carried is gone, on the
 			     dashboard's composer as well). --}}
 			<p class="text-md sm:mt-12 sm:text-lg lg:text-xl">
-				Sende eine Nachricht an alle Studenten dieses Kurses.
+				Sende eine Nachricht an alle Teilnehmer dieses Kurses.
 			</p>
 			<x-ui.back-link :href="\App\Support\SiteUrl::expertEvent($event->uuid)" />
 		</x-slot:aside>

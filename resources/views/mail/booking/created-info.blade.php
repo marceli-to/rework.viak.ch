@@ -7,7 +7,7 @@
 <p>Für den Kurs «{{ $course }}» ist eine neue Anmeldung eingegangen.</p>
 <table class="content-table" cellpadding="0" cellspacing="0">
   <tr>
-    <td>Student:in</td>
+    <td>Kund:in</td>
     <td>{{ $booking->user->name }}</td>
   </tr>
   <tr>

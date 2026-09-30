@@ -25,7 +25,7 @@ it('sends a student or an expert to their own portal instead of a 403', function
 	$student = User::factory()->student()->create(['email_verified_at' => now()]);
 	$expert = User::factory()->expert()->create(['email_verified_at' => now()]);
 
-	$this->actingAs($student)->get('/dashboard')->assertRedirect('/de/student/profil');
+	$this->actingAs($student)->get('/dashboard')->assertRedirect('/de/konto');
 	$this->actingAs($expert)->get('/dashboard/termine')->assertRedirect('/de/experte/profil');
 });
 

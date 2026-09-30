@@ -11,7 +11,7 @@ use App\Models\UserAddress;
  * Invoice addresses belong to the person who entered them ([[08-accounts]]).
  *
  * 107 users hold the 125 addresses; 14 of them have more than one. Legacy did
- * check ownership here — `StudentAddressController` is three of the nine
+ * check ownership here — `CustomerAddressController` is three of the nine
  * `authorize()` calls in the whole application — so this is a convention being
  * kept rather than a hole being closed.
  */

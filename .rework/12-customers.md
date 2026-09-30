@@ -9,7 +9,7 @@ only book courses, some will do both, and some will only ever order a licence.
 **Scoped 2026-09-30** (Marcel). Two parts:
 
 - **The student role goes; every account is a customer** — the bigger block,
-  planned below and not started.
+  in four stages below. **Stages 1 and 2 done 2026-09-30.**
 - **Switching between the areas one person may use** — legacy's role picker,
   missing here. Built first, because it needs nothing else and the first part
   only changes its labels.
@@ -59,9 +59,18 @@ not a migration against live data.
 
 Too big for one commit, and each stage leaves the suite green:
 
-1. **Stop depending on the role**: the guards, `profileFor()`, and
-   registration read "signed in", not "holds Student". Nothing visible changes.
-2. **The words and the URL**: UI texts, mails, the portal's URL and its 301s.
+1. **Stop depending on the role** — *done*: the portal's and the checkout's
+   guards are `auth` + `verified`, `BookingPolicy::create` lets any account
+   book, `profileFor()` gives anyone signed in the customer portal, and every
+   account has the *Kunde* area. An expert who opens `/dashboard` still lands
+   on the expert portal, as the login lands them.
+2. **The words and the URL** — *done*: the portal is `/de/konto`, and
+   `/de/student/profil/{rest}` 301s to `/de/konto/{rest}`. The code followed:
+   `CustomerPortalController`, `CustomerAddressController`,
+   `views/site/customer/`, `SiteUrl::customerPortal()` and its sub-pages, the
+   `de.customer.*` route names. VIAK's three booking info mails say *Kund:in*
+   where they said *Student:in*; the expert's composer says *an alle
+   Teilnehmer*, since those are a course's participants.
 3. **The dashboard section**: *Studenten* to the customers' section, back end
    and Vue.
 4. **The role itself**: `Role::Student`, the factory state, the port, the
