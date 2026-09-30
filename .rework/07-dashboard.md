@@ -929,9 +929,8 @@ will read it), labelled checkbox groups, the role group as plain checkboxes,
 *Speichern und Weiterbearbeiten*, *Software* out of *Einstellungen*, and
 pencils and search on a phone, which legacy hides.
 
-Open for Marcel: legacy asks *Experte anzeigen?* and *Experte aktiv?* as two
-labelled questions with a *Ja* box each; the rework has two plain checkboxes,
-*Experte anzeigen* and *Experte aktiv*.
+*Experte anzeigen* and *Experte aktiv* stay two plain checkboxes on one line
+(Marcel, 2026-09-30), where legacy asks two questions with a *Ja* box each.
 
 ## Zurich time, 2026-09-30
 
