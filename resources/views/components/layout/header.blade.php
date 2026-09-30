@@ -30,6 +30,11 @@
 	];
 
 	$isHome = request()->getPathInfo() === '/'.$locale;
+
+	// The areas this person may use; more than one makes the profile icon a
+	// menu of them, the rework's role picker ([[SiteUrl::areasFor]]).
+	$areas = \App\Support\SiteUrl::areasFor(auth()->user(), $locale);
+	$areaActive = fn (array $area) => $area['key'] !== 'admin' && request()->routeIs("{$locale}.{$area['key']}.*");
 @endphp
 
 <header class="mb-24 min-h-48 pt-16 sm:min-h-64 sm:pt-28 lg:mb-28 lg:min-h-80" x-data="menu">
@@ -105,11 +110,32 @@
 						     missing: it pointed at `/dashboard` for everyone,
 						     so a signed-out visitor clicking *Profil* landed on
 						     the admin SPA shell ([[SiteUrl::profileFor]]). --}}
-						<a href="{{ \App\Support\SiteUrl::profileFor(auth()->user()) }}" class="block hover:text-teal" title="Profil">
-							{{-- `icons/_profile.scss` sizes this by **height** — 16px, 20px from
-							     the desktop breakpoint — and lets the width follow. --}}
-							<x-icon.profile class="h-16 w-auto! lg:h-20" />
-						</a>
+						@if (count($areas) > 1)
+							{{-- Several areas: the icon opens them, as the dashboard's
+							     burger opens its panel — white, a black rule, bold and
+							     right-aligned, the area you are in teal. Legacy asked
+							     once, on a screen after login ([[SiteUrl::areasFor]]). --}}
+							<div class="relative" x-data="{ areas: false }" @click.outside="areas = false" @keydown.escape="areas = false">
+								<button type="button" class="block hover:text-teal" title="Profil" aria-haspopup="true" :aria-expanded="areas" @click="areas = ! areas">
+									<x-icon.profile class="h-16 w-auto! lg:h-20" />
+								</button>
+								<ul x-show="areas" x-cloak
+									class="absolute top-full right-0 z-[201] mt-12 w-200 border border-black bg-white px-16 py-8 text-right text-lg font-bold lg:text-2xl">
+									@foreach ($areas as $area)
+										<li>
+											<a href="{{ $area['href'] }}"
+												@class(['block py-8 hover:text-teal', 'text-teal' => $areaActive($area)])>{{ $area['label'] }}</a>
+										</li>
+									@endforeach
+								</ul>
+							</div>
+						@else
+							<a href="{{ \App\Support\SiteUrl::profileFor(auth()->user()) }}" class="block hover:text-teal" title="Profil">
+								{{-- `icons/_profile.scss` sizes this by **height** — 16px, 20px from
+								     the desktop breakpoint — and lets the width follow. --}}
+								<x-icon.profile class="h-16 w-auto! lg:h-20" />
+							</a>
+						@endif
 					</li>
 				</ul>
 			</nav>
@@ -174,12 +200,25 @@
 					</a>
 				</li>
 
-				<li>
-					<a href="{{ \App\Support\SiteUrl::profileFor(auth()->user()) }}"
-						class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
-						Profil
-					</a>
-				</li>
+				{{-- Several areas are several items here, where the one word was;
+				     one area keeps *Profil*. --}}
+				@if (count($areas) > 1)
+					@foreach ($areas as $area)
+						<li>
+							<a href="{{ $area['href'] }}"
+								@class(['flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white', 'text-white' => $areaActive($area)])>
+								{{ $area['label'] }}
+							</a>
+						</li>
+					@endforeach
+				@else
+					<li>
+						<a href="{{ \App\Support\SiteUrl::profileFor(auth()->user()) }}"
+							class="flex min-h-48 items-center justify-end border-t border-black text-3xl font-bold hover:text-white">
+							Profil
+						</a>
+					</li>
+				@endif
 			</ul>
 		</div>
 

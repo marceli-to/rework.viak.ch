@@ -21,6 +21,9 @@ import IconProfile from '@/components/icons/Profile.vue';
  *   pinned to the right edge of the column and the full height of the screen:
  *   a close cross, then every other section right-aligned, bold, 42px apart.
  *
+ * An admin who is also an expert or a student finds those areas in the panel,
+ * before *Logout* (`12-customers.md`), where legacy asked on a screen after login.
+ *
  * `sections` keep legacy's labels and order, with the chunk's decisions applied
  * ([[07-dashboard]]): *Startseite*, *Heroes* and *Team* are gone from
  * *Seiteninhalte*, *Testimonials* is new.
@@ -68,6 +71,15 @@ watch(() => route.fullPath, () => {
 });
 
 const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+// The public areas this admin may also use — the student and expert portals —
+// from the shell's meta tag ([[SiteUrl::areasFor]]). Plain links: they leave the SPA.
+let areas = [];
+try {
+	areas = JSON.parse(document.querySelector('meta[name="areas"]')?.content ?? '[]');
+} catch {
+	areas = [];
+}
 </script>
 
 <template>
@@ -147,6 +159,11 @@ const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 						</ul>
 					</template>
 					<RouterLink v-else :to="item.to" class="block py-8 hover:text-teal" active-class="text-teal">{{ item.label }}</RouterLink>
+				</li>
+
+				<!-- The other areas, where legacy's role picker offered them: after the sections, before Logout. -->
+				<li v-for="area in areas" :key="area.key" class="text-right">
+					<a :href="area.href" class="block py-8 hover:text-teal">{{ area.label }}</a>
 				</li>
 
 				<li>

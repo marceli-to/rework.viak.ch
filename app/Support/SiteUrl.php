@@ -278,8 +278,9 @@ final class SiteUrl
 	 *
 	 * Legacy's `MenuItemProfile` does the same three-way choice and adds a
 	 * fourth case this does not have: a `selected-role` in the session, set by a
-	 * role-picker screen that four accounts see after logging in. That screen is
-	 * not built, so the precedence below decides for them — **student first**,
+	 * role-picker screen that four accounts see after logging in. The rework
+	 * has no such screen: the header offers every area instead ([[areasFor]],
+	 * `12-customers.md`), and this picks the icon's own link — **student first**,
 	 * because a multi-role account browsing the public site is the one buying,
 	 * and the other portals are one link away from there.
 	 *
@@ -303,6 +304,31 @@ final class SiteUrl
 
 		// Admin-only: the dashboard is theirs and has no public portal.
 		return '/dashboard';
+	}
+
+	/**
+	 * Every area this person may use, for the header's profile menu — the
+	 * rework's answer to legacy's role picker (`auth/roles.blade.php`), which
+	 * asked after login and kept the answer in the session. The areas have their
+	 * own URLs, so a menu needs no session and nobody is stopped at login
+	 * (`12-customers.md`).
+	 *
+	 * Labelled as legacy's picker names the roles, except *Dashboard* for Admin,
+	 * which is where it leads. In `profileFor()`'s order.
+	 *
+	 * @return list<array{key: string, label: string, href: string}>
+	 */
+	public static function areasFor(?User $user, ?string $locale = null): array
+	{
+		if ($user === null) {
+			return [];
+		}
+
+		return array_values(array_filter([
+			$user->hasRole(Role::Student) ? ['key' => 'student', 'label' => 'Student', 'href' => self::studentPortal($locale)] : null,
+			$user->hasRole(Role::Expert) ? ['key' => 'expert', 'label' => 'Experte', 'href' => self::expertPortal($locale)] : null,
+			$user->hasRole(Role::Admin) ? ['key' => 'admin', 'label' => 'Dashboard', 'href' => '/dashboard'] : null,
+		]));
 	}
 
 	public static function home(?string $locale = null): string

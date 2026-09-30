@@ -15,6 +15,10 @@
 	{{-- The admin's name for the shell's corner; the SPA has no other way to
 	     know who is signed in without asking. --}}
 	<meta name="admin-name" content="{{ auth()->user()?->first_name }}">
+	{{-- The public areas this admin may also use, for the burger panel
+	     ([[SiteUrl::areasFor]]): an admin who teaches or books reaches them
+	     from here, as legacy's role picker let them choose. --}}
+	<meta name="areas" content="{{ json_encode(array_values(array_filter(\App\Support\SiteUrl::areasFor(auth()->user()), fn ($area) => $area['key'] !== 'admin'))) }}">
 	<title>Dashboard • {{ config('app.name') }}</title>
 	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg">

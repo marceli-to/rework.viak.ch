@@ -75,6 +75,17 @@ keeps the answer in the session (`09-public-site.md`, item 6). Five accounts
 hold more than one role today (four all three, one admin + student).
 
 The rework does not copy the extra screen: the three areas already have their
-own URLs, so there is nothing to remember. **The header's profile icon opens a
-menu of the areas the person may use** (*Mein Konto*, *Expertenbereich*,
-*Dashboard*), and an account with one area keeps the plain link to it.
+own URLs, so there is nothing to remember. Built as:
+
+- **On the site, the profile icon opens a menu of the areas the person may
+  use** ([[SiteUrl::areasFor]]): *Student*, *Experte*, *Dashboard*, as
+  legacy's picker names the roles, the one you are in teal. White, a black
+  rule, bold and right-aligned, as the dashboard's burger panel. An account
+  with one area keeps the plain link. On a phone the areas are items in the
+  menu list, where *Profil* was.
+- **On the dashboard, the burger panel lists the other areas** before
+  *Logout*, from a `<meta name="areas">` in the shell.
+- *Student* becomes the customer's word with stage 2 above.
+
+Checked in the browser as `dev-all@` on the course list, the expert portal
+and the dashboard.
