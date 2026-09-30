@@ -15,6 +15,7 @@ use App\Models\Location;
 use App\Models\Software;
 use App\Models\Tag;
 use App\Models\User;
+use App\Support\LegacyTime;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -329,15 +330,15 @@ class PortCourses extends Command
 
 			$event = Event::create([
 				'uuid' => $row->uuid,
-				'deleted_at' => $row->deleted_at,
+				'deleted_at' => LegacyTime::local($row->deleted_at),
 				'date' => $dates->first()->date ?? $row->date,
 				'registration_until' => $row->registration_until,
 				'min_participants' => $row->min_participants,
 				'max_participants' => $row->max_participants,
 				'state' => $state,
-				'confirmed_at' => $row->confirmed_at,
-				'cancelled_at' => $row->cancelled_at,
-				'closed_at' => $row->closed_at,
+				'confirmed_at' => LegacyTime::local($row->confirmed_at),
+				'cancelled_at' => LegacyTime::local($row->cancelled_at),
+				'closed_at' => LegacyTime::local($row->closed_at),
 				// A count of laptops, not a switch — `(bool)` here made every
 				// room with any machines a room with unlimited ones (`Todo.md`,
 				// *Rental capacity*).

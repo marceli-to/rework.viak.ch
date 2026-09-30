@@ -65,7 +65,12 @@ return [
 	|
 	*/
 
-	'timezone' => 'UTC',
+	// Zurich, where every reader of this app is (Marcel, 2026-09-30, open
+	// question #40). Legacy ran in UTC and every time it showed was two hours
+	// off in summer. The database connections are pinned to `+00:00`
+	// (`config/database.php`), and the port shifts legacy's moments
+	// ([[LegacyTime]]).
+	'timezone' => 'Europe/Zurich',
 
 	/*
 	|--------------------------------------------------------------------------

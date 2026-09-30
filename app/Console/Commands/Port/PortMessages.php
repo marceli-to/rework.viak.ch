@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\Media;
 use App\Models\Message;
 use App\Models\User;
+use App\Support\LegacyTime;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -93,9 +94,9 @@ class PortMessages extends Command
 			]);
 
 			$message->forceFill([
-				'created_at' => $row->created_at,
-				'updated_at' => $row->updated_at,
-				'deleted_at' => $row->deleted_at,
+				'created_at' => LegacyTime::local($row->created_at),
+				'updated_at' => LegacyTime::local($row->updated_at),
+				'deleted_at' => LegacyTime::local($row->deleted_at),
 			])->save();
 
 			$messageMap[$row->id] = $message->id;
@@ -118,7 +119,7 @@ class PortMessages extends Command
 				DB::table('message_user')->insertOrIgnore([
 					'message_id' => $messageId,
 					'user_id' => $userId,
-					'created_at' => $row->created_at,
+					'created_at' => LegacyTime::local($row->created_at),
 				]);
 
 				$recipients++;

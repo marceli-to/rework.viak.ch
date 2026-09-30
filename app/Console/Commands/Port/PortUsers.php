@@ -16,6 +16,7 @@ use App\Models\ExpertProfile;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Support\LegacyInvoiceAddress;
+use App\Support\LegacyTime;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -166,11 +167,11 @@ class PortUsers extends Command
 			$user->forceFill([
 				'uuid' => $row->uuid,
 				'password' => $row->password,
-				'email_verified_at' => $row->email_verified_at,
+				'email_verified_at' => LegacyTime::local($row->email_verified_at),
 				'remember_token' => $row->remember_token,
-				'created_at' => $row->created_at,
-				'updated_at' => $row->updated_at,
-				'deleted_at' => $row->deleted_at,
+				'created_at' => LegacyTime::local($row->created_at),
+				'updated_at' => LegacyTime::local($row->updated_at),
+				'deleted_at' => LegacyTime::local($row->deleted_at),
 			])->save();
 
 			$map[$row->id] = $user->id;
@@ -284,7 +285,7 @@ class PortUsers extends Command
 				'valid_from' => $row->valid_from,
 				'valid_to' => $row->valid_to,
 				'remarks' => $row->remarks,
-				'deleted_at' => $row->deleted_at,
+				'deleted_at' => LegacyTime::local($row->deleted_at),
 			])->id;
 		}
 
@@ -352,9 +353,9 @@ class PortUsers extends Command
 				// on the fee is captured at booking time ([[03-invoices]]).
 				'rental_fee' => $row->has_rental ? config('invoice.rental_fee') : 0,
 				'invoice_address' => LegacyInvoiceAddress::parse($row->invoice_address),
-				'booked_at' => $row->booked_at,
-				'cancelled_at' => $row->cancelled_at,
-				'participated_at' => $participated[$row->id] ?? null,
+				'booked_at' => LegacyTime::local($row->booked_at),
+				'cancelled_at' => LegacyTime::local($row->cancelled_at),
+				'participated_at' => LegacyTime::local($participated[$row->id] ?? null),
 			]);
 		}
 	}

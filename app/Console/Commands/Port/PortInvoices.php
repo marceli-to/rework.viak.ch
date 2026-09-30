@@ -12,6 +12,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\User;
 use App\Support\LegacyInvoiceAddress;
+use App\Support\LegacyTime;
 use App\Support\Vat;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
@@ -130,8 +131,8 @@ class PortInvoices extends Command
 				// Verbatim, knowingly wrong on every row — see the finding
 				// below and `Todo.md`. Deciding it here would bury it.
 				'due_at' => $row->due_at,
-				'paid_at' => $row->paid_at,
-				'cancelled_at' => $row->cancelled_at,
+				'paid_at' => LegacyTime::local($row->paid_at),
+				'cancelled_at' => LegacyTime::local($row->cancelled_at),
 				'cancellation_reason' => $this->cancellationReason($row),
 				'invoice_address' => LegacyInvoiceAddress::parse($row->invoice_address),
 				'net' => $row->total,
@@ -139,14 +140,14 @@ class PortInvoices extends Command
 				'vat' => $row->vat,
 				'grand_total' => $row->grand_total,
 				'filename' => $row->filename,
-				'created_at' => $row->created_at,
-				'updated_at' => $row->updated_at,
+				'created_at' => LegacyTime::local($row->created_at),
+				'updated_at' => LegacyTime::local($row->updated_at),
 				// The 8 soft-deleted invoices come across still soft-deleted.
 				// Same rule as the events and discount codes in [[PortUsers]],
 				// plus one of its own: their numbers must stay taken, or the
 				// next invoice this system issues reuses a number that is on a
 				// document somebody already has.
-				'deleted_at' => $row->deleted_at,
+				'deleted_at' => LegacyTime::local($row->deleted_at),
 			])->save();
 
 			$this->portLine($invoice, $row, $booking);
@@ -187,8 +188,8 @@ class PortInvoices extends Command
 			'vat_rate' => $isRental ? InvoiceItemType::Rental->vatRate() : '0.00',
 			'vat' => $row->vat,
 			'total' => $row->grand_total,
-			'created_at' => $row->created_at,
-			'updated_at' => $row->updated_at,
+			'created_at' => LegacyTime::local($row->created_at),
+			'updated_at' => LegacyTime::local($row->updated_at),
 		])->save();
 	}
 
