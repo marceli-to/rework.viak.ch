@@ -319,7 +319,9 @@ nothing and may well be a company. Nothing gates on the role yet, so this is a
 note for when the SPA routes are built rather than a fix: *has an account* is not
 one of the three capabilities, and should not be made into one.
 
-The roles stay as they are — the pivot decision in `02-courses-events.md` holds.
+~~The roles stay as they are.~~ **Superseded 2026-09-30**: the student role
+goes and every account is a customer (`12-customers.md`). Admin and Expert
+stay, so the pivot decision in `02-courses-events.md` holds.
 
 ## Open questions
 

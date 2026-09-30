@@ -423,6 +423,9 @@ The same applies to the checkout record this chunk introduces for the order-leve
 discount: bookings *and* licence lines point at it, so it is not a bookings-only
 row even while bookings are the only thing pointing at it.
 
+**The flow is being rethought** (2026-09-30, `13-checkout.md`): the basket
+open to everyone, card payment for licences, no guest checkout.
+
 **The checkout is Blade + Alpine, server-driven** — a POST per step with the state
 in the session, not legacy's four-view client wizard. That falls out of the rule
 this chunk already sets: the server prices the basket and refuses a checkout whose

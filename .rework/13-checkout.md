@@ -1,0 +1,69 @@
+# 13 — The checkout, rethought (not yet built)
+
+The checkout chunk 06 built is legacy's: courses only, an account before the
+basket, no payment. With licences for sale (chunk 05) that no longer fits.
+
+## Status
+
+**Scoped 2026-09-30** (Marcel), with three answers the same day, below.
+Designed before anything is built, because it replaces the flow in
+`06-bookings.md` rather than adding to it. Waits on the licence answers
+(#33–39) for the licence lines themselves; the flow can be designed now.
+
+## What there is today
+
+- **The basket needs an account.** `/de/checkout/basket` and every step after
+  it sit behind `auth`, `verified` and `role:student`, as in legacy. The basket
+  itself has no server state (its contents are in the browser, its prices come
+  from `/api/basket/price`), so the login guard protects nothing there.
+- **Four steps after it**: address, payment, summary, confirmation. A POST per
+  step, the answers in the session ([[CheckoutSession]]).
+- **Payment takes no payment.** The step is a paragraph: an invoice follows
+  once the course is confirmed, payable by QR bill or card. The card link in
+  the mail is a placeholder (#28).
+
+## Answered 2026-09-30 (Marcel)
+
+- **No guest checkout.** Buying needs an account, courses and licences alike.
+- **Stripe** for card payment, as legacy used.
+- **A licence can go to another address.** A company buying licences names an
+  e-mail the licences are sent to, besides the invoice address.
+
+## Why courses and licences pay differently
+
+Already settled in `05-licences.md`, and the reason for this chunk:
+
+- **A course is invoiced when its event is confirmed**, a mean 27.7 days after
+  the booking. Until then there may be nothing to charge for, so nothing is
+  paid at checkout.
+- **A licence is invoiced when it is bought.** Nothing can call it off, so it
+  is paid then.
+- **A basket holding both makes two invoices on two days.**
+
+## The proposed flow
+
+1. **The basket is open to everyone.** Courses and licences, priced by the
+   server as now. No login to look at it.
+2. **Login or registration at *Weiter*,** where the invoice address is needed,
+   and back into the flow afterwards, basket intact.
+3. **Address**: the invoice address, as now. **For licences, the delivery
+   e-mail**, defaulting to the account's own.
+4. **Payment**, only for what is paid now:
+   - *courses only*: no payment step; the text that says the invoice follows
+     confirmation, as today;
+   - *licences only*: Stripe, card, now;
+   - *both*: the licence part by card now, the course part as a booking whose
+     invoice follows confirmation. The summary says which is which.
+5. **Summary**, then **confirmation**, listing what was booked and what was
+   paid.
+
+## Open for the design
+
+- **Where the card is taken**: Stripe Checkout (their page, the least to
+  build and the least PCI scope) or Payment Element on our page. Stripe
+  Checkout is the default proposal.
+- **A payment that fails or is abandoned**: the licence order waits unpaid, and
+  the course part of a mixed basket is booked anyway, or both wait.
+- **The delivery e-mail**: remembered on the account or asked each time.
+- **The card link on a course invoice** (#28): the same Stripe integration, so
+  it is designed here and built with it.
