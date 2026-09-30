@@ -22,8 +22,8 @@ export const closeEvent = (event, attended) => client.post(`/admin/events/${even
 /** A seat missed at closing: attended after all, and its confirmation sent ([[EventPageController::confirm]]). */
 export const confirmAttendance = (event, booking) => client.post(`/admin/events/${event}/bookings/${booking}/confirm`).then((r) => r.data.data);
 
-/** *Teilnehmer hinzufügen*: book a student onto the date ([[CreateBookingForUser]]). */
-export const bookStudent = (event, student) => client.post(`/admin/events/${event}/bookings`, { student }).then((r) => r.data.data);
+/** *Teilnehmer hinzufügen*: book a customer onto the date ([[CreateBookingForUser]]). */
+export const bookCustomer = (event, customer) => client.post(`/admin/events/${event}/bookings`, { customer }).then((r) => r.data.data);
 
 /** A note to everyone on the course, with its files, in one multipart POST. */
 export function postMessage(event, { subject, body, copyToMe, attachments }) {

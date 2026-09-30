@@ -83,7 +83,7 @@ it('links a row to its PDF through the guarded route, and marks only the owed on
 	$row = $this->actingAs($this->admin)->getJson('/api/admin/invoices?status=offen')->json('data.0');
 	expect($row['document'])->toBe(route('documents.show', $document))
 		->and($row['editable'])->toBeTrue()
-		->and($row['student'])->toBe(['name' => 'Antonia Haller', 'city' => 'Orsières']);
+		->and($row['customer'])->toBe(['name' => 'Antonia Haller', 'city' => 'Orsières']);
 
 	$this->actingAs($this->admin)->get($row['document'])->assertOk();
 

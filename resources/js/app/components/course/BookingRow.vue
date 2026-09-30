@@ -34,7 +34,7 @@ defineProps({ booking: { type: Object, required: true } });
 				     it falls, and `items-start` keeps each at its own height. -->
 				<div class="mt-4 flex flex-wrap items-start gap-8">
 					<EventState :state="booking.event.state" class="mt-0! flex" />
-					<!-- A seat on an event legacy deleted: kept as history, not opened ([[StudentPageController]]). -->
+					<!-- A seat on an event legacy deleted: kept as history, not opened ([[CustomerPageController]]). -->
 					<Badge v-if="booking.deleted" variant="danger">Veranstaltung gelöscht</Badge>
 					<slot name="badges" />
 				</div>

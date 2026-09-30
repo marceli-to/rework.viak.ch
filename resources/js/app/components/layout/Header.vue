@@ -33,7 +33,7 @@ const route = useRoute();
 const main = [
 	{ label: 'Kurse', to: { name: 'courses' }, match: ['courses', 'course', 'event'] },
 	{ label: 'Experten', to: { name: 'experts' }, match: ['experts', 'expert'] },
-	{ label: 'Studenten', to: { name: 'students' }, match: ['students', 'student'] },
+	{ label: 'Kunden', to: { name: 'customers' }, match: ['customers', 'customer'] },
 ];
 
 const overflow = [

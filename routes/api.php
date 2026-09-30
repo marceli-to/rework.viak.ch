@@ -77,9 +77,10 @@ Route::middleware('auth:sanctum')->group(function (): void {
  * The public and portal endpoints above stay where they are; the course and
  * event writes moved in here with their forms.
  */
-// `{expert}` and `{student}` are people holding that role, by uuid, and nobody else.
+// `{expert}` is a person holding that role, by uuid, and nobody else. `{customer}`
+// is any account: every account is a customer (`12-customers.md`).
 Route::bind('expert', fn (string $uuid) => User::query()->withRole(Role::Expert)->where('uuid', $uuid)->firstOrFail());
-Route::bind('student', fn (string $uuid) => User::query()->withRole(Role::Student)->where('uuid', $uuid)->firstOrFail());
+Route::bind('customer', fn (string $uuid) => User::query()->where('uuid', $uuid)->firstOrFail());
 
 Route::middleware(['auth:sanctum', 'role:admin'])
 	->prefix('admin')
@@ -117,13 +118,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::post('experts/{expert}/media', [Admin\MediaController::class, 'expertStore']);
 		Route::patch('experts/{expert}/media/order', [Admin\MediaController::class, 'expertOrder']);
 
-		Route::get('students', [Admin\StudentController::class, 'index']);
-		Route::post('students', [Admin\StudentController::class, 'store']);
-		Route::get('students/{student}', [Admin\StudentController::class, 'show']);
-		Route::put('students/{student}', [Admin\StudentController::class, 'update']);
-		Route::patch('students/{student}/state', [Admin\StudentController::class, 'state']);
-		Route::get('students/{student}/page', [Admin\StudentPageController::class, 'show']);
-		Route::patch('bookings/{booking}/cancel', [Admin\StudentPageController::class, 'cancel']);
+		Route::get('customers', [Admin\CustomerController::class, 'index']);
+		Route::post('customers', [Admin\CustomerController::class, 'store']);
+		Route::get('customers/{customer}', [Admin\CustomerController::class, 'show']);
+		Route::put('customers/{customer}', [Admin\CustomerController::class, 'update']);
+		Route::patch('customers/{customer}/state', [Admin\CustomerController::class, 'state']);
+		Route::get('customers/{customer}/page', [Admin\CustomerPageController::class, 'show']);
+		Route::patch('bookings/{booking}/cancel', [Admin\CustomerPageController::class, 'cancel']);
 
 		Route::get('discount-codes', [Admin\DiscountCodeController::class, 'index']);
 		Route::post('discount-codes', [Admin\DiscountCodeController::class, 'store']);

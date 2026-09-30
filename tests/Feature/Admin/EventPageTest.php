@@ -30,24 +30,24 @@ beforeEach(function () {
 });
 
 it('books a student onto the date, once', function () {
-	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['student' => $this->student->uuid])
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $this->student->uuid])
 		->assertCreated();
 
 	expect($this->event->bookings()->active()->where('user_id', $this->student->id)->exists())->toBeTrue();
 	Events::assertDispatched(BookingMade::class);
 
-	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['student' => $this->student->uuid])
+	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $this->student->uuid])
 		->assertStatus(422);
 });
 
 it('books no deactivated account, and nothing on a date that is over', function () {
 	$this->student->forceFill(['deactivated_at' => now()])->save();
-	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['student' => $this->student->uuid])
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $this->student->uuid])
 		->assertStatus(422);
 
 	$other = User::factory()->student()->create();
 	$this->event->forceFill(['state' => EventState::Cancelled])->save();
-	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['student' => $other->uuid])
+	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $other->uuid])
 		->assertStatus(422);
 
 	expect(Booking::query()->count())->toBe(0);
@@ -116,7 +116,7 @@ it('uploads course documents with their Bezeichnung', function () {
 });
 
 it('keeps all of it to admins', function () {
-	$this->actingAs($this->student)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['student' => $this->student->uuid])->assertForbidden();
+	$this->actingAs($this->student)->postJson("/api/admin/events/{$this->event->uuid}/bookings", ['customer' => $this->student->uuid])->assertForbidden();
 	$this->get("/api/admin/events/{$this->event->uuid}/participants")->assertForbidden();
 	$this->postJson("/api/admin/events/{$this->event->uuid}/messages", ['subject' => 'x', 'body' => '<p>x</p>'])->assertForbidden();
 });

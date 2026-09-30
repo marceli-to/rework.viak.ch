@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { fetchStudents } from '@/api/students';
+import { fetchCustomers } from '@/api/customers';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
@@ -13,12 +13,12 @@ import NoResults from '@/components/ui/NoResults.vue';
 /**
  * *Studenten* — legacy's `views/student/Index.vue` ([[07-dashboard]], step 6).
  *
- * *Aktive Studenten*: name and city, the address, the phone, each row with
+ * *Aktive Kunden*: name and city, the address, the phone, each row with
  * the pencil and the arrow to the student's page. **Searched and paged on the
  * server**, where legacy loaded all 570: fifty at a time, *Weitere laden* for
  * the next. The search is in the URL, so the way back from a form keeps it.
  *
- * *Deaktivierte Studenten* below, closed unless a search finds someone in it
+ * *Deaktivierte Kunden* below, closed unless a search finds someone in it
  * — the accounts that are switched off instead of deleted (#16).
  */
 const route = useRoute();
@@ -45,7 +45,7 @@ async function load() {
 	error.value = null;
 
 	try {
-		const [first, off] = await Promise.all([fetchStudents({ search: search.value }), fetchStudents({ search: search.value, deactivated: true })]);
+		const [first, off] = await Promise.all([fetchCustomers({ search: search.value }), fetchCustomers({ search: search.value, deactivated: true })]);
 		if (ask !== asked) return;
 
 		active.value = first.data;
@@ -63,7 +63,7 @@ async function load() {
 async function loadMore() {
 	more.value = true;
 	try {
-		const next = await fetchStudents({ search: search.value, page: page.value + 1 });
+		const next = await fetchCustomers({ search: search.value, page: page.value + 1 });
 		active.value.push(...next.data);
 		page.value = next.meta.current_page;
 		lastPage.value = next.meta.last_page;
@@ -79,7 +79,7 @@ watch(search, load, { immediate: true });
 
 <template>
 	<section>
-		<ListHeader title="Studenten" :create="{ name: 'student.create' }">
+		<ListHeader title="Kunden" :create="{ name: 'customer.create' }">
 			<template #search>
 				<SearchField :model-value="search" @update:model-value="setSearch" />
 			</template>
@@ -91,23 +91,23 @@ watch(search, load, { immediate: true });
 		<!-- Legacy's `.collapsible-container`, `mt-12x md:mt-16x`: 24px, 32 from lg. Only *Kurse* has the tight 6px. -->
 		<div v-else class="mt-24 lg:mt-32">
 			<Collapsible expanded :count="total">
-				<template #title>Aktive Studenten</template>
+				<template #title>Aktive Kunden</template>
 				<EditableListItem
-					v-for="student in active"
-					:key="student.uuid"
-					:edit="{ name: 'student.edit', params: { uuid: student.uuid } }"
-					:show="{ name: 'student.show', params: { uuid: student.uuid } }"
+					v-for="customer in active"
+					:key="customer.uuid"
+					:edit="{ name: 'customer.edit', params: { uuid: customer.uuid } }"
+					:show="{ name: 'customer.show', params: { uuid: customer.uuid } }"
 					wide
 				>
-					<div class="col-span-12 sm:col-span-4">{{ student.name }}<template v-if="student.city">, {{ student.city }}</template></div>
+					<div class="col-span-12 sm:col-span-4">{{ customer.name }}<template v-if="customer.city">, {{ customer.city }}</template></div>
 					<div class="col-span-12 min-w-0 truncate sm:col-span-4">
-						<a :href="`mailto:${student.email}`" class="hover:text-teal">{{ student.email }}</a>
+						<a :href="`mailto:${customer.email}`" class="hover:text-teal">{{ customer.email }}</a>
 					</div>
 					<div class="col-span-12 pr-40 sm:col-span-4">
-						<a v-if="student.phone" :href="`tel:${student.phone.replace(/\s+/g, '')}`" class="hover:text-teal">{{ student.phone }}</a>
+						<a v-if="customer.phone" :href="`tel:${customer.phone.replace(/\s+/g, '')}`" class="hover:text-teal">{{ customer.phone }}</a>
 					</div>
 				</EditableListItem>
-				<NoResults v-if="!active.length">Keine Studenten gefunden.</NoResults>
+				<NoResults v-if="!active.length">Keine Kunden gefunden.</NoResults>
 
 				<Button v-if="page < lastPage" variant="secondary" class="mt-32 w-full" :disabled="more" @click="loadMore">
 					{{ more ? 'Wird geladen …' : `Weitere laden (${active.length} von ${total})` }}
@@ -116,18 +116,18 @@ watch(search, load, { immediate: true });
 
 			<!-- Keyed on the search, so a search with hits in here opens it. -->
 			<Collapsible v-if="deactivated.length" :key="`deaktiviert-${search}`" :expanded="Boolean(search)" :count="deactivated.length">
-				<template #title>Deaktivierte Studenten</template>
+				<template #title>Deaktivierte Kunden</template>
 				<EditableListItem
-					v-for="student in deactivated"
-					:key="student.uuid"
-					:edit="{ name: 'student.edit', params: { uuid: student.uuid } }"
-					:show="{ name: 'student.show', params: { uuid: student.uuid } }"
+					v-for="customer in deactivated"
+					:key="customer.uuid"
+					:edit="{ name: 'customer.edit', params: { uuid: customer.uuid } }"
+					:show="{ name: 'customer.show', params: { uuid: customer.uuid } }"
 					dimmed
 					wide
 				>
-					<div class="col-span-12 sm:col-span-4">{{ student.name }}<template v-if="student.city">, {{ student.city }}</template></div>
-					<div class="col-span-12 min-w-0 truncate sm:col-span-4">{{ student.email }}</div>
-					<div class="col-span-12 pr-40 sm:col-span-4">{{ student.phone }}</div>
+					<div class="col-span-12 sm:col-span-4">{{ customer.name }}<template v-if="customer.city">, {{ customer.city }}</template></div>
+					<div class="col-span-12 min-w-0 truncate sm:col-span-4">{{ customer.email }}</div>
+					<div class="col-span-12 pr-40 sm:col-span-4">{{ customer.phone }}</div>
 				</EditableListItem>
 			</Collapsible>
 		</div>

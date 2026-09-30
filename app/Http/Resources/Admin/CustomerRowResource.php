@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * @mixin User
  */
-class StudentRowResource extends JsonResource
+class CustomerRowResource extends JsonResource
 {
 	public function toArray(Request $request): array
 	{

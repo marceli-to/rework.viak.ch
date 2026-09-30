@@ -27,7 +27,7 @@ class InvoiceController extends Controller
 {
 	private const PER_PAGE = 50;
 
-	/** The list's German name in the query, as *Studenten*'s `?deaktiviert` is. */
+	/** The list's German name in the query, as *Kunden*' `?deaktiviert` is. */
 	private const STATUSES = [
 		'offen' => InvoiceStatus::Open,
 		'faellig' => InvoiceStatus::Overdue,

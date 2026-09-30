@@ -12,7 +12,6 @@ use App\Actions\Media\DeleteMedia;
 use App\Actions\Media\UploadMedia;
 use App\Actions\Messages\PostMessage;
 use App\Enums\EventState;
-use App\Enums\Role;
 use App\Exceptions\SeatNotAvailable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Media\UploadEventMediaRequest;
@@ -58,7 +57,7 @@ class EventPageController extends Controller
 			->values()
 			->map(fn (Booking $booking) => [
 				'uuid' => $booking->uuid,
-				'student' => $booking->user->uuid,
+				'customer' => $booking->user->uuid,
 				'name' => $booking->user->name,
 				'city' => $booking->user->city,
 				// Legacy's fallback: the person's firm, else the one they bill to.
@@ -170,14 +169,15 @@ class EventPageController extends Controller
 	 */
 	public function book(Request $request, Event $event, CreateBookingForUser $create): JsonResponse
 	{
-		$uuid = $request->validate(['student' => ['required', 'uuid']])['student'];
-		$student = User::query()->withRole(Role::Student)->where('uuid', $uuid)->firstOrFail();
+		// Any account: every account is a customer (`12-customers.md`).
+		$uuid = $request->validate(['customer' => ['required', 'uuid']])['customer'];
+		$customer = User::query()->where('uuid', $uuid)->firstOrFail();
 
-		abort_if($student->deactivated_at !== null, 422, 'Dieses Konto ist deaktiviert.');
+		abort_if($customer->deactivated_at !== null, 422, 'Dieses Konto ist deaktiviert.');
 		abort_if(in_array($event->state, [EventState::Closed, EventState::Cancelled], true), 422, 'Diese Veranstaltung ist abgeschlossen oder abgesagt.');
 
 		try {
-			$booking = $create->execute($event, $student);
+			$booking = $create->execute($event, $customer);
 		} catch (SeatNotAvailable $problem) {
 			abort(422, $problem->getMessage());
 		}

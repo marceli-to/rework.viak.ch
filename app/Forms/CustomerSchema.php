@@ -24,7 +24,7 @@ use App\Enums\Role;
  * Legacy's required fields are kept, phone included. Five of the 570 students
  * miss one of them (checked 2026-09-29), and their first edit asks for it.
  */
-final class StudentSchema extends Schema
+final class CustomerSchema extends Schema
 {
 	public function fields(): array
 	{

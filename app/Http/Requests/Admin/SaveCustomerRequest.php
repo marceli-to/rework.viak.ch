@@ -5,24 +5,24 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin;
 
 use App\Forms\Schema;
-use App\Forms\StudentSchema;
+use App\Forms\CustomerSchema;
 use App\Models\User;
 
 /**
  * The dashboard's student form ([[07-dashboard]], step 6), the shape
- * [[StudentFormResource]] hands out: the person and the roles
+ * [[CustomerFormResource]] hands out: the person and the roles
  * ([[SavePersonRequest]]), and the invoice addresses.
  */
-class SaveStudentRequest extends SavePersonRequest
+class SaveCustomerRequest extends SavePersonRequest
 {
 	protected function schema(): Schema
 	{
-		return new StudentSchema;
+		return new CustomerSchema;
 	}
 
 	protected function person(): ?User
 	{
-		return $this->route('student');
+		return $this->route('customer');
 	}
 
 	/**

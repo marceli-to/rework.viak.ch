@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { fetchStudent, saveStudent, setStudentActive } from '@/api/students';
+import { fetchCustomer, saveCustomer, setCustomerActive } from '@/api/customers';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import { shortDate } from '@/support/format';
@@ -9,7 +9,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
  * *Student hinzufügen* / *bearbeiten* — legacy's `views/student/Form.vue`
- * ([[07-dashboard]], step 6): the fields are [[StudentSchema]].
+ * ([[07-dashboard]], step 6): the fields are [[CustomerSchema]].
  *
  * **Deactivated, never deleted** (#16): where legacy's red box said *Student
  * löschen*, this one deactivates the account, and reactivates it. Bookings,
@@ -35,7 +35,7 @@ async function toggle(form, meta, patchMeta) {
 
 	busy.value = true;
 	try {
-		const record = await setStudentActive(meta.uuid, active);
+		const record = await setCustomerActive(meta.uuid, active);
 		patchMeta({ deactivated_at: record.deactivated_at });
 		toast(active ? 'Konto reaktiviert' : 'Konto deaktiviert');
 	} catch (problem) {
@@ -48,19 +48,19 @@ async function toggle(form, meta, patchMeta) {
 
 <template>
 	<ResourceForm
-		schema="student"
-		:load="fetchStudent"
-		:save="saveStudent"
-		:list="{ name: 'students' }"
-		:edit="(uuid) => ({ name: 'student.edit', params: { uuid } })"
-		noun="Student"
-		:titles="{ create: 'Student hinzufügen', edit: 'Student bearbeiten' }"
+		schema="customer"
+		:load="fetchCustomer"
+		:save="saveCustomer"
+		:list="{ name: 'customers' }"
+		:edit="(uuid) => ({ name: 'customer.edit', params: { uuid } })"
+		noun="Kunde"
+		:titles="{ create: 'Kunde hinzufügen', edit: 'Kunde bearbeiten' }"
 		:note="note"
 	>
 		<template #danger="{ form, meta, patchMeta }">
 			<template v-if="meta.deactivated_at">
 				<h2 class="mb-8 font-bold sm:mb-16">Konto reaktivieren</h2>
-				<p class="mb-12 lg:mb-16">Mit dieser Aktion kann sich der Student wieder anmelden und buchen.</p>
+				<p class="mb-12 lg:mb-16">Mit dieser Aktion kann sich der Kunde wieder anmelden und buchen.</p>
 				<div class="mt-12 sm:mt-24">
 					<Button variant="danger" class="w-full" :disabled="busy" @click="toggle(form, meta, patchMeta)">Reaktivieren</Button>
 				</div>
@@ -69,7 +69,7 @@ async function toggle(form, meta, patchMeta) {
 				<h2 class="mb-8 font-bold sm:mb-16">Konto deaktivieren</h2>
 				<p v-if="meta.is_self">Du kannst dein eigenes Konto nicht deaktivieren.</p>
 				<template v-else>
-					<p class="mb-12 lg:mb-16">Mit dieser Aktion kann sich der Student nicht mehr anmelden. Buchungen, Rechnungen und Dokumente bleiben erhalten.</p>
+					<p class="mb-12 lg:mb-16">Mit dieser Aktion kann sich der Kunde nicht mehr anmelden. Buchungen, Rechnungen und Dokumente bleiben erhalten.</p>
 					<div class="mt-12 sm:mt-24">
 						<Button variant="danger" class="w-full" :disabled="busy" @click="toggle(form, meta, patchMeta)">Deaktivieren</Button>
 					</div>

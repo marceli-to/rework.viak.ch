@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { cancelBooking, fetchStudentPage } from '@/api/students';
+import { cancelBooking, fetchCustomerPage } from '@/api/customers';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import { returnTo } from '@/router';
@@ -19,7 +19,7 @@ import NoResults from '@/components/ui/NoResults.vue';
 /**
  * A student's own page — legacy's `student/Show.vue` ([[07-dashboard]], step 7):
  * the address, *Gebuchte Kurse* with *Annullieren*, *Absolvierte Kurse*,
- * *Dokumente*. What changed ([[StudentPageController]]):
+ * *Dokumente*. What changed ([[CustomerPageController]]):
  *
  * - **The lists split on the course's date**, not legacy's flags, so a course
  *   that has run never keeps a live *Annullieren*.
@@ -35,7 +35,7 @@ const busy = ref(null);
 
 async function load() {
 	try {
-		page.value = await fetchStudentPage(route.params.uuid);
+		page.value = await fetchCustomerPage(route.params.uuid);
 	} catch (problem) {
 		error.value = problem.message;
 	}
@@ -50,7 +50,7 @@ const STATUS_TONES = { Bezahlt: 'success', Offen: 'neutral', Fällig: 'danger', 
 
 async function cancel(booking) {
 	const { penalty } = booking;
-	const who = `${page.value.student.name} wird von ${booking.course.title} (${shortDate(booking.event.date)}) abgemeldet.`;
+	const who = `${page.value.customer.name} wird von ${booking.course.title} (${shortDate(booking.event.date)}) abgemeldet.`;
 
 	const answer = penalty.applies
 		? await confirm('Bitte Annullation bestätigen!', `${who}\n\nDie kurzfristige Annullation kostet gemäss AGB ${chf(penalty.amount)} (${penalty.rate} % der Kurskosten, abzüglich allfälliger Rabatte). Soll das verrechnet werden?`, {
@@ -83,22 +83,22 @@ async function cancel(booking) {
 	<section v-else>
 		<ArticleText>
 			<template #aside>
-				<h1 class="font-bold text-teal">Profil Student</h1>
-				<BackLink :to="returnTo({ name: 'students' })" />
+				<h1 class="font-bold text-teal">Profil Kunde</h1>
+				<BackLink :to="returnTo({ name: 'customers' })" />
 			</template>
 
 			<p>
-				<template v-if="page.student.company">{{ page.student.company }}<br /></template>
-				{{ page.student.name }}<br />
-				<template v-if="page.student.street">{{ page.student.street }}<br /></template>
-				{{ page.student.city }}<template v-if="page.student.country"><br />{{ page.student.country }}</template>
+				<template v-if="page.customer.company">{{ page.customer.company }}<br /></template>
+				{{ page.customer.name }}<br />
+				<template v-if="page.customer.street">{{ page.customer.street }}<br /></template>
+				{{ page.customer.city }}<template v-if="page.customer.country"><br />{{ page.customer.country }}</template>
 			</p>
 			<p class="mt-16">
-				<a :href="`mailto:${page.student.email}`" class="hover:text-teal">{{ page.student.email }}</a><br />
-				<a v-if="page.student.phone" :href="`tel:${page.student.phone}`" class="hover:text-teal">{{ page.student.phone }}</a>
+				<a :href="`mailto:${page.customer.email}`" class="hover:text-teal">{{ page.customer.email }}</a><br />
+				<a v-if="page.customer.phone" :href="`tel:${page.customer.phone}`" class="hover:text-teal">{{ page.customer.phone }}</a>
 			</p>
-			<p v-if="page.student.deactivated_at" class="mt-16"><Badge variant="danger">Konto deaktiviert seit {{ shortDate(page.student.deactivated_at.slice(0, 10)) }}</Badge></p>
-			<div class="mt-24 sm:flex"><Button :to="{ name: 'student.edit', params: { uuid: page.student.uuid } }">Bearbeiten</Button></div>
+			<p v-if="page.customer.deactivated_at" class="mt-16"><Badge variant="danger">Konto deaktiviert seit {{ shortDate(page.customer.deactivated_at.slice(0, 10)) }}</Badge></p>
+			<div class="mt-24 sm:flex"><Button :to="{ name: 'customer.edit', params: { uuid: page.customer.uuid } }">Bearbeiten</Button></div>
 		</ArticleText>
 
 		<div class="mt-32 sm:mt-48">
@@ -112,7 +112,7 @@ async function cancel(booking) {
 						<Button v-if="!booking.deleted" variant="danger" :disabled="busy === booking.uuid" @click="cancel(booking)">Annullieren</Button>
 					</template>
 				</BookingRow>
-				<NoResults v-if="!page.booked.length">Student hat noch keine gebuchten Kurse.</NoResults>
+				<NoResults v-if="!page.booked.length">Kunde hat noch keine gebuchten Kurse.</NoResults>
 			</Collapsible>
 
 			<Collapsible :count="page.past.length">
@@ -122,7 +122,7 @@ async function cancel(booking) {
 						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
 					</template>
 				</BookingRow>
-				<NoResults v-if="!page.past.length">Student hat noch keine absolvierten Kurse.</NoResults>
+				<NoResults v-if="!page.past.length">Kunde hat noch keine absolvierten Kurse.</NoResults>
 			</Collapsible>
 
 			<Collapsible v-if="page.cancelled.length" :count="page.cancelled.length">

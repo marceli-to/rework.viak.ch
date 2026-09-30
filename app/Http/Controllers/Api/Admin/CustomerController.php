@@ -6,11 +6,10 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Accounts\CreateAccount;
 use App\Actions\Accounts\RequireEmailConfirmation;
-use App\Enums\Role;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\SaveStudentRequest;
-use App\Http\Resources\Admin\StudentFormResource;
-use App\Http\Resources\Admin\StudentRowResource;
+use App\Http\Requests\Admin\SaveCustomerRequest;
+use App\Http\Resources\Admin\CustomerFormResource;
+use App\Http\Resources\Admin\CustomerRowResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -19,18 +18,19 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * *Studenten* ([[07-dashboard]], step 6) — legacy's `Dashboard/StudentController`.
+ * *Kunden* ([[07-dashboard]], step 6) — legacy's `Dashboard/StudentController`, whose
+ * *Studenten* it was.
  *
- * A student is anyone holding the Student role; `{student}` binds nobody else.
+ * Every account is a customer (`12-customers.md`); `{customer}` binds any of them.
  * **Nobody is deleted** (#16): an account is deactivated, and the list keeps
  * the deactivated apart.
  */
-class StudentController extends Controller
+class CustomerController extends Controller
 {
 	private const PER_PAGE = 50;
 
 	/**
-	 * **Searched and paginated on the server**: 570 students, about 200 more a
+	 * **Searched and paginated on the server**: some 580 accounts, about 200 more a
 	 * year, where legacy loaded them all. Every word of the search has to match
 	 * one of name, e-mail, city, phone or company.
 	 *
@@ -40,50 +40,49 @@ class StudentController extends Controller
 	public function index(Request $request): AnonymousResourceCollection
 	{
 		$query = User::query()
-			->withRole(Role::Student)
 			->when($request->boolean('deaktiviert'), fn (Builder $query) => $query->whereNotNull('deactivated_at'), fn (Builder $query) => $query->whereNull('deactivated_at'))
 			->tap(fn (Builder $query) => $this->search($query, (string) $request->query('suche', '')))
 			->orderBy('last_name')
 			->orderBy('first_name');
 
-		return StudentRowResource::collection($request->boolean('deaktiviert') ? $query->get() : $query->paginate(self::PER_PAGE));
+		return CustomerRowResource::collection($request->boolean('deaktiviert') ? $query->get() : $query->paginate(self::PER_PAGE));
 	}
 
-	public function show(User $student): StudentFormResource
+	public function show(User $customer): CustomerFormResource
 	{
-		return new StudentFormResource($this->loaded($student));
+		return new CustomerFormResource($this->loaded($customer));
 	}
 
 	/** Invited to set their own password ([[CreateAccount]]). */
-	public function store(SaveStudentRequest $request, CreateAccount $create): JsonResponse
+	public function store(SaveCustomerRequest $request, CreateAccount $create): JsonResponse
 	{
-		$student = DB::transaction(function () use ($request, $create): User {
-			$student = $create->execute($request->userAttributes(), $request->roles());
-			$this->saveAddresses($student, $request->addresses());
+		$customer = DB::transaction(function () use ($request, $create): User {
+			$customer = $create->execute($request->userAttributes(), $request->roles());
+			$this->saveAddresses($customer, $request->addresses());
 
-			return $student;
+			return $customer;
 		});
 
-		return (new StudentFormResource($this->loaded($student)))->response()->setStatusCode(201);
+		return (new CustomerFormResource($this->loaded($customer)))->response()->setStatusCode(201);
 	}
 
 	/**
 	 * An address the admin changes must be confirmed by the person
 	 * ([[RequireEmailConfirmation]]).
 	 */
-	public function update(SaveStudentRequest $request, User $student, RequireEmailConfirmation $confirm): StudentFormResource
+	public function update(SaveCustomerRequest $request, User $customer, RequireEmailConfirmation $confirm): CustomerFormResource
 	{
-		DB::transaction(function () use ($request, $student): void {
-			$student->update($request->userAttributes());
-			$student->syncRoles($request->roles());
-			$this->saveAddresses($student, $request->addresses());
+		DB::transaction(function () use ($request, $customer): void {
+			$customer->update($request->userAttributes());
+			$customer->syncRoles($request->roles());
+			$this->saveAddresses($customer, $request->addresses());
 		});
 
-		if ($student->wasChanged('email')) {
-			$confirm->execute($student);
+		if ($customer->wasChanged('email')) {
+			$confirm->execute($customer);
 		}
 
-		return new StudentFormResource($this->loaded($student));
+		return new CustomerFormResource($this->loaded($customer));
 	}
 
 	/**
@@ -91,15 +90,15 @@ class StudentController extends Controller
 	 * (#16). A deactivated account cannot sign in, and a session already open
 	 * ends on its next request ([[SignOutDeactivated]]). Not your own.
 	 */
-	public function state(Request $request, User $student): StudentFormResource
+	public function state(Request $request, User $customer): CustomerFormResource
 	{
 		$active = $request->validate(['active' => ['required', 'boolean']])['active'];
 
-		abort_if(! $active && $student->is($request->user()), 422, 'Du kannst dein eigenes Konto nicht deaktivieren.');
+		abort_if(! $active && $customer->is($request->user()), 422, 'Du kannst dein eigenes Konto nicht deaktivieren.');
 
-		$student->forceFill(['deactivated_at' => $active ? null : now()])->save();
+		$customer->forceFill(['deactivated_at' => $active ? null : now()])->save();
 
-		return new StudentFormResource($this->loaded($student));
+		return new CustomerFormResource($this->loaded($customer));
 	}
 
 	/** Every word somewhere: *anna zürich* finds Anna Muster in Zürich. */
@@ -124,7 +123,7 @@ class StudentController extends Controller
 	 *
 	 * @param  array<int, array<string, mixed>>  $rows
 	 */
-	private function saveAddresses(User $student, array $rows): void
+	private function saveAddresses(User $customer, array $rows): void
 	{
 		$kept = [];
 
@@ -132,16 +131,16 @@ class StudentController extends Controller
 			$uuid = $row['uuid'];
 			unset($row['uuid']);
 
-			$address = $uuid ? $student->addresses()->where('uuid', $uuid)->first() : null;
-			$address ? $address->update($row) : $address = $student->addresses()->create($row);
+			$address = $uuid ? $customer->addresses()->where('uuid', $uuid)->first() : null;
+			$address ? $address->update($row) : $address = $customer->addresses()->create($row);
 			$kept[] = $address->getKey();
 		}
 
-		$student->addresses()->whereKeyNot($kept)->get()->each->delete();
+		$customer->addresses()->whereKeyNot($kept)->get()->each->delete();
 	}
 
-	private function loaded(User $student): User
+	private function loaded(User $customer): User
 	{
-		return $student->load(['addresses' => fn ($query) => $query->orderBy('id')]);
+		return $customer->load(['addresses' => fn ($query) => $query->orderBy('id')]);
 	}
 }

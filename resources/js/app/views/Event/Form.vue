@@ -153,7 +153,7 @@ async function close() {
 
 				<ActionBox tone="warning">
 					<h2 class="mb-8 font-bold sm:mb-16">Veranstaltung absagen</h2>
-					<p class="mb-12 lg:mb-16">Mit dieser Aktion wird die Veranstaltung abgesagt. Für den Kurs angemeldete Studenten werden per Mail informiert.</p>
+					<p class="mb-12 lg:mb-16">Mit dieser Aktion wird die Veranstaltung abgesagt. Für den Kurs angemeldete Teilnehmer werden per Mail informiert.</p>
 					<div class="mt-12 sm:mt-24">
 						<Button variant="warning" class="w-full" :disabled="busy" @click="act(meta, patchMeta, 'cancelled', 'Bitte «Veranstaltung absagen» bestätigen!')">Absagen</Button>
 					</div>

@@ -8,7 +8,7 @@ use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
-use App\Forms\StudentSchema;
+use App\Forms\CustomerSchema;
 use App\Forms\TermSchema;
 use App\Forms\TestimonialSchema;
 use App\Models\User;
@@ -43,7 +43,7 @@ it('draws what it validates: every required field is marked, every marked one re
 	[TestimonialSchema::class, 'testimonial'],
 	[EventSchema::class, 'event'],
 	[ExpertSchema::class, 'expert'],
-	[StudentSchema::class, 'student'],
+	[CustomerSchema::class, 'customer'],
 	[DiscountCodeSchema::class, 'discount-code'],
 	[TermSchema::class, 'term'],
 	[LocationSchema::class, 'location'],
@@ -57,7 +57,7 @@ it('gives every form field a starting value, so create and edit have one shape',
 		->unique()->sort()->values()->all();
 
 	expect(collect((new $schema)->defaults())->keys()->sort()->values()->all())->toBe($names);
-})->with([CourseSchema::class, TestimonialSchema::class, EventSchema::class, ExpertSchema::class, StudentSchema::class, DiscountCodeSchema::class, TermSchema::class, LocationSchema::class, ProfileSchema::class]);
+})->with([CourseSchema::class, TestimonialSchema::class, EventSchema::class, ExpertSchema::class, CustomerSchema::class, DiscountCodeSchema::class, TermSchema::class, LocationSchema::class, ProfileSchema::class]);
 
 it('names a repeater row’s fields for the messages', function () {
 	expect((new CourseSchema)->attributes())->toMatchArray(['videos.*.title' => 'Titel', 'subtitle' => 'Subtitel'])

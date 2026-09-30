@@ -16,7 +16,7 @@ namespace App\Forms;
  * number, date, amount and student are the form's note, not fields.
  *
  * The portal's rule for who is billed: a pair of names or a firm, either alone
- * is enough ([[StoreAddressRequest]], [[StudentSchema]]).
+ * is enough ([[StoreAddressRequest]], [[CustomerSchema]]).
  */
 final class InvoiceSchema extends Schema
 {

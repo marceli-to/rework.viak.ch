@@ -16,7 +16,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  */
 const note = (meta) =>
 	[
-		`Rechnung ${meta.number} vom ${shortDate(meta.date)} über CHF ${Number(meta.grand_total).toFixed(2)}${meta.student ? `, ${meta.student}` : ''}.`,
+		`Rechnung ${meta.number} vom ${shortDate(meta.date)} über CHF ${Number(meta.grand_total).toFixed(2)}${meta.customer ? `, ${meta.customer}` : ''}.`,
 		meta.printed?.length ? `Heute steht darauf: ${meta.printed.join(', ')}. Die Felder sind aus dem Profil vorausgefüllt.` : null,
 		meta.editable ? 'Beim Speichern wird das PDF neu erstellt.' : 'Bezahlt oder storniert: die Adresse wird nicht mehr geändert.',
 	]

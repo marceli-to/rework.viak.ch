@@ -35,7 +35,7 @@ use Laravel\Sanctum\HasApiTokens;
  * Implements `MustVerifyEmail` deliberately ([[08-accounts]]).
  *
  * Legacy carried the column and the trait but never the contract, so nothing
- * enforced it — and `StudentController::update` changed an address without
+ * enforced it — and `CustomerController::update` changed an address without
  * clearing `email_verified_at`, meaning a brand-new address inherited verified
  * status without ever being proven. 16 of the 578 users are unverified today.
  */

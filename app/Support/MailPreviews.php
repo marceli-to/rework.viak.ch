@@ -117,7 +117,7 @@ final class MailPreviews
 	public function all(): array
 	{
 		return [
-			'registrierung' => ['Student registers, or an address changes', fn () => new EmailVerification($this->student)],
+			'registrierung' => ['Customer registers, or an address changes', fn () => new EmailVerification($this->student)],
 			'zugang' => ['Admin creates an account', fn () => new AccountInvitation($this->student)],
 			'passwort' => ['Password reset', fn () => new PasswordReset($this->student, 'vorschau')],
 			'buchung' => ['Booking made: student', fn () => new BookingCompleted($this->booking)],
@@ -126,11 +126,11 @@ final class MailPreviews
 			'miete-buero' => ['Booking made with a laptop, or one added: office', fn () => new RentalAddedInfoAdmin($this->rental)],
 			'miete' => ['Laptop added later: student', fn () => new RentalAdded($this->rental)],
 			'miete-storno' => ['Laptop dropped: office', fn () => new RentalCancelledInfoAdmin($this->rental)],
-			'annullation' => ['Student cancels, no penalty', fn () => new BookingCancelledStudent($this->booking)],
-			'annullation-gutschrift' => ['Student cancels, no penalty, invoice already paid', fn () => new BookingCancelledStudent($this->credited)],
-			'annullation-kosten' => ['Student cancels late: penalty invoice attached', fn () => new BookingCancelledWithPenalty($this->booking, '445.00', 50, false, $this->invoice)],
-			'annullation-kosten-bezahlt' => ['Student cancels late, invoice already paid', fn () => new BookingCancelledWithPenalty($this->credited, '445.00', 50, true, null)],
-			'abmeldung-buero' => ['Student cancels: office', fn () => new BookingCancelledInfoAdmin($this->event, null)],
+			'annullation' => ['Customer cancels, no penalty', fn () => new BookingCancelledStudent($this->booking)],
+			'annullation-gutschrift' => ['Customer cancels, no penalty, invoice already paid', fn () => new BookingCancelledStudent($this->credited)],
+			'annullation-kosten' => ['Customer cancels late: penalty invoice attached', fn () => new BookingCancelledWithPenalty($this->booking, '445.00', 50, false, $this->invoice)],
+			'annullation-kosten-bezahlt' => ['Customer cancels late, invoice already paid', fn () => new BookingCancelledWithPenalty($this->credited, '445.00', 50, true, null)],
+			'abmeldung-buero' => ['Customer cancels: office', fn () => new BookingCancelledInfoAdmin($this->event, null)],
 			'min' => ['Seats reach the minimum: office', fn () => new ParticipantsChange($this->event, 'min')],
 			'max' => ['Seats reach the maximum: office', fn () => new ParticipantsChange($this->event, 'max')],
 			'unter-min' => ['Seats drop below the minimum: office', fn () => new ParticipantsChange($this->event, 'belowMin')],

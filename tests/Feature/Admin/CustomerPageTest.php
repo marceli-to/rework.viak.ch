@@ -36,16 +36,16 @@ it('lists booked, past and cancelled seats apart, with what cancelling would cos
 	$gone = studentSeat($this->student, 60);
 	$gone->forceFill(['cancelled_at' => now(), 'cancellation_reason' => BookingCancellationReason::Student])->save();
 
-	$this->actingAs($this->admin)->getJson("/api/admin/students/{$this->student->uuid}/page")
+	$this->actingAs($this->admin)->getJson("/api/admin/customers/{$this->student->uuid}/page")
 		->assertOk()
-		->assertJsonPath('data.student.email', $this->student->email)
+		->assertJsonPath('data.customer.email', $this->student->email)
 		->assertJsonPath('data.booked.0.uuid', $soon->uuid)
 		->assertJsonPath('data.booked.0.penalty', ['applies' => true, 'amount' => '600.00', 'rate' => 100])
 		->assertJsonPath('data.booked.1.uuid', $later->uuid)
 		->assertJsonPath('data.booked.1.penalty.applies', false)
 		->assertJsonPath('data.past.0.uuid', $past->uuid)
 		->assertJsonPath('data.cancelled.0.uuid', $gone->uuid)
-		->assertJsonPath('data.cancelled.0.reason', 'Durch Student');
+		->assertJsonPath('data.cancelled.0.reason', 'Durch Kunde');
 });
 
 it('charges the cost when the admin says so', function () {
@@ -93,7 +93,7 @@ it('wants the answer, and refuses a seat that is gone or on a course that has ru
 it('keeps the page and the cancel to admins', function () {
 	$booking = studentSeat($this->student, 5);
 
-	$this->actingAs($this->student)->getJson("/api/admin/students/{$this->student->uuid}/page")->assertForbidden();
+	$this->actingAs($this->student)->getJson("/api/admin/customers/{$this->student->uuid}/page")->assertForbidden();
 	$this->patchJson("/api/admin/bookings/{$booking->uuid}/cancel", ['charge_penalty' => false])->assertForbidden();
 	expect($booking->refresh()->isCancelled())->toBeFalse();
 });
@@ -104,7 +104,7 @@ it('shows a seat on an event legacy deleted, and does not cancel it', function (
 	$gone = studentSeat($this->student, 30);
 	$gone->event->course->delete();
 
-	$this->actingAs($this->admin)->getJson("/api/admin/students/{$this->student->uuid}/page")
+	$this->actingAs($this->admin)->getJson("/api/admin/customers/{$this->student->uuid}/page")
 		->assertOk()
 		->assertJsonPath('data.past.0.uuid', $booking->uuid)
 		->assertJsonPath('data.past.0.deleted', true)

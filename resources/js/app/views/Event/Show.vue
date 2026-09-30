@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { bookStudent, confirmAttendance, downloadParticipants, fetchEventPage, removeFile } from '@/api/events';
-import { fetchStudents } from '@/api/students';
+import { bookCustomer, confirmAttendance, downloadParticipants, fetchEventPage, removeFile } from '@/api/events';
+import { fetchCustomers } from '@/api/customers';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import { returnTo } from '@/router';
@@ -70,7 +70,7 @@ const search = ref('');
 const found = ref([]);
 const searching = ref(false);
 const booking = ref(null);
-const booked = computed(() => new Set(page.value?.participants.map((participant) => participant.student)));
+const booked = computed(() => new Set(page.value?.participants.map((participant) => participant.customer)));
 
 watch(search, async (value) => {
 	if (!value.trim()) {
@@ -79,7 +79,7 @@ watch(search, async (value) => {
 	}
 	searching.value = true;
 	try {
-		const reply = await fetchStudents({ search: value });
+		const reply = await fetchCustomers({ search: value });
 		if (value === search.value) found.value = reply.data;
 	} finally {
 		searching.value = false;
@@ -91,11 +91,11 @@ function closeAdding() {
 	search.value = '';
 }
 
-async function add(student) {
-	booking.value = student.uuid;
+async function add(customer) {
+	booking.value = customer.uuid;
 	try {
-		await bookStudent(page.value.event.uuid, student.uuid);
-		toast(`${student.name} wurde hinzugefügt.`);
+		await bookCustomer(page.value.event.uuid, customer.uuid);
+		toast(`${customer.name} wurde hinzugefügt.`);
 		closeAdding();
 		await load();
 	} catch (problem) {
@@ -183,7 +183,7 @@ async function remove(file) {
 						class="mt-16 grid grid-cols-12 gap-x-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:gap-x-40 lg:text-xl"
 					>
 						<div class="col-span-12 sm:col-span-2">
-							<RouterLink :to="{ name: 'student.show', params: { uuid: participant.student } }" class="hover:text-teal">{{ participant.name }}</RouterLink>
+							<RouterLink :to="{ name: 'customer.show', params: { uuid: participant.customer } }" class="hover:text-teal">{{ participant.name }}</RouterLink>
 						</div>
 						<div class="col-span-6 sm:col-span-2">{{ participant.city }}</div>
 						<div class="col-span-6 sm:col-span-2">{{ participant.company }}</div>
@@ -255,12 +255,12 @@ async function remove(file) {
 
 		<Lightbox v-if="adding" title="Teilnehmer hinzufügen" @close="closeAdding">
 			<SearchField v-model="search" />
-			<NoResults v-if="search && !searching && !found.length">Keine Studenten gefunden.</NoResults>
+			<NoResults v-if="search && !searching && !found.length">Keine Kunden gefunden.</NoResults>
 			<ul v-if="found.length" class="mt-16 text-lg">
-				<li v-for="student in found" :key="student.uuid" class="flex items-center justify-between gap-16 border-b border-gray-400 py-8">
-					<span class="min-w-0">{{ student.name }}<template v-if="student.city">, {{ student.city }}</template><br /><span class="text-md text-gray-600">{{ student.email }}</span></span>
-					<em v-if="booked.has(student.uuid)" class="shrink-0 italic">bereits gebucht</em>
-					<Button v-else class="shrink-0" :disabled="booking === student.uuid" @click="add(student)">Hinzufügen</Button>
+				<li v-for="customer in found" :key="customer.uuid" class="flex items-center justify-between gap-16 border-b border-gray-400 py-8">
+					<span class="min-w-0">{{ customer.name }}<template v-if="customer.city">, {{ customer.city }}</template><br /><span class="text-md text-gray-600">{{ customer.email }}</span></span>
+					<em v-if="booked.has(customer.uuid)" class="shrink-0 italic">bereits gebucht</em>
+					<Button v-else class="shrink-0" :disabled="booking === customer.uuid" @click="add(customer)">Hinzufügen</Button>
 				</li>
 			</ul>
 		</Lightbox>

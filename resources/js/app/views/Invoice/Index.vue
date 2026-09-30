@@ -125,7 +125,7 @@ watch(search, load, { immediate: true });
 					<div class="col-span-12 sm:col-span-2">Nummer</div>
 					<div class="col-span-12 sm:col-span-2">Datum</div>
 					<div class="col-span-12 sm:col-span-2">Betrag</div>
-					<div class="col-span-12 sm:col-span-6">Student</div>
+					<div class="col-span-12 sm:col-span-6">Kunde</div>
 				</div>
 				<EditableListItem
 					v-for="invoice in lists[group.status].rows"
@@ -141,7 +141,7 @@ watch(search, load, { immediate: true });
 					<div class="col-span-12 sm:col-span-2">{{ shortDate(invoice.date) }}</div>
 					<div class="col-span-12 sm:col-span-2">{{ amount(invoice) }}</div>
 					<div class="col-span-12 pr-40 sm:col-span-6">
-						<template v-if="invoice.student">{{ invoice.student.name }}<template v-if="invoice.student.city">, {{ invoice.student.city }}</template></template>
+						<template v-if="invoice.customer">{{ invoice.customer.name }}<template v-if="invoice.customer.city">, {{ invoice.customer.city }}</template></template>
 					</div>
 				</EditableListItem>
 				<NoResults v-if="!lists[group.status].rows.length">{{ search ? 'Keine Rechnungen gefunden.' : group.empty }}</NoResults>

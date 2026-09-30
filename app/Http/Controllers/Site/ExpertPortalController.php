@@ -96,7 +96,7 @@ class ExpertPortalController extends Controller
 	 *
 	 * Deliberately the same Action and the same FormRequest rather than the
 	 * expert-specific copy legacy keeps: `Api/ExpertController::update` and
-	 * `Api/StudentController::update` differ only in which fields they validate,
+	 * `Api/CustomerController::update` differ only in which fields they validate,
 	 * and both change an email address without confirming it or resetting
 	 * `email_verified_at` ([[08-accounts]], finding 2).
 	 */

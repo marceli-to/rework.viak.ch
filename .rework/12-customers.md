@@ -9,7 +9,7 @@ only book courses, some will do both, and some will only ever order a licence.
 **Scoped 2026-09-30** (Marcel). Two parts:
 
 - **The student role goes; every account is a customer** — the bigger block,
-  in four stages below. **Stages 1 and 2 done 2026-09-30.**
+  in four stages below. **Stages 1 to 3 done 2026-09-30.**
 - **Switching between the areas one person may use** — legacy's role picker,
   missing here. Built first, because it needs nothing else and the first part
   only changes its labels.
@@ -71,8 +71,16 @@ Too big for one commit, and each stage leaves the suite green:
    `de.customer.*` route names. VIAK's three booking info mails say *Kund:in*
    where they said *Student:in*; the expert's composer says *an alle
    Teilnehmer*, since those are a course's participants.
-3. **The dashboard section**: *Studenten* to the customers' section, back end
-   and Vue.
+3. **The dashboard section** — *done*: *Kunden* in the menu, `/dashboard/kunden`
+   and `/dashboard/kunde/{uuid}`, *Aktive* / *Deaktivierte Kunden*, *Profil
+   Kunde*, *Kunde* over the invoice list's column. `/api/admin/customers`,
+   `{customer}`, `CustomerController`, `CustomerPageController`,
+   `CustomerSchema`, `views/Customer/`, `api/customers.js`; the JSON says
+   `customer` where it said `student`. **The list is every account** (595
+   active on the dev data, 573 before): staff are customers too, and
+   *Teilnehmer hinzufügen* finds any account. A cancellation by the customer
+   reads *Durch Kunde*. Where a course's participants are meant (the
+   composer, the call-off box) the word is *Teilnehmer*.
 4. **The role itself**: `Role::Student`, the factory state, the port, the
    `role_user` rows.
 

@@ -12,11 +12,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * A student as the dashboard's form holds them — the shape
- * [[SaveStudentRequest]] takes back ([[07-dashboard]]).
+ * [[SaveCustomerRequest]] takes back ([[07-dashboard]]).
  *
  * @mixin User
  */
-class StudentFormResource extends JsonResource
+class CustomerFormResource extends JsonResource
 {
 	use PersonFields;
 

@@ -25,7 +25,7 @@ class InvoiceRowResource extends JsonResource
 			'grand_total' => (string) $this->grand_total,
 			'status' => $this->status->value,
 			'editable' => $this->isPending(),
-			'student' => $this->user ? ['name' => $this->user->name, 'city' => $this->user->city] : null,
+			'customer' => $this->user ? ['name' => $this->user->name, 'city' => $this->user->city] : null,
 			// Through the policy-guarded route, not the public disk legacy linked to.
 			'document' => $this->document ? route('documents.show', $this->document) : null,
 		];

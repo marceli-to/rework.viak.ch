@@ -72,7 +72,7 @@ enum BookingCancellationReason: string
 	public function label(): ?string
 	{
 		return match ($this) {
-			self::Student => 'Durch Student',
+			self::Student => 'Durch Kunde',
 			self::Administrator => 'Durch VIAK',
 			self::AdministratorWaived => 'Durch VIAK, ohne Kosten',
 			self::EventCancelled => null,

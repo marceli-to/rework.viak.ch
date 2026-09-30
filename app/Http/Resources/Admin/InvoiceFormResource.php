@@ -57,7 +57,7 @@ class InvoiceFormResource extends JsonResource
 			'number' => $this->number,
 			'date' => $this->date?->toDateString(),
 			'grand_total' => (string) $this->grand_total,
-			'student' => $user?->name,
+			'customer' => $user?->name,
 			'editable' => $this->isPending(),
 			'printed' => isset($address['lines']) ? $this->billingLines() : null,
 			'document' => $this->document ? route('documents.show', $this->document) : null,

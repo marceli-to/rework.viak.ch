@@ -74,7 +74,7 @@ async function send() {
 	<ArticleText v-else>
 		<template #aside>
 			<h1 class="font-bold text-teal">Nachricht erstellen</h1>
-			<p class="text-md sm:mt-12 sm:text-lg lg:text-xl">Sende eine Nachricht an alle Studenten dieses Kurses.</p>
+			<p class="text-md sm:mt-12 sm:text-lg lg:text-xl">Sende eine Nachricht an alle Teilnehmer dieses Kurses.</p>
 			<BackLink :to="back()" />
 		</template>
 

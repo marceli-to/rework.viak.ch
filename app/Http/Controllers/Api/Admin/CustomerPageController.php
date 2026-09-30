@@ -27,11 +27,11 @@ use Illuminate\Http\Request;
  * Cancelled seats are listed too, which legacy's page did not: an admin who has
  * just cancelled one should see where it went, and why.
  */
-class StudentPageController extends Controller
+class CustomerPageController extends Controller
 {
-	public function show(User $student, CancellationPenalty $penalty): JsonResponse
+	public function show(User $customer, CancellationPenalty $penalty): JsonResponse
 	{
-		$student->load('country');
+		$customer->load('country');
 
 		/*
 		 * **Deleted events and courses included.** Legacy deleted events that
@@ -40,7 +40,7 @@ class StudentPageController extends Controller
 		 * and the page fails (Marcel, 2026-09-29, on a ported student). Such a
 		 * seat is marked `deleted`, and gets no *Details* and no *Annullieren*.
 		 */
-		$bookings = $student->bookings()
+		$bookings = $customer->bookings()
 			->with([
 				'event' => fn ($query) => $query->withTrashed(),
 				'event.course' => fn ($query) => $query->withTrashed(),
@@ -61,16 +61,16 @@ class StudentPageController extends Controller
 		];
 
 		return response()->json(['data' => [
-			'student' => [
-				'uuid' => $student->uuid,
-				'name' => $student->name,
-				'company' => $student->company,
-				'street' => trim("{$student->street} {$student->street_no}"),
-				'city' => trim("{$student->zip} {$student->city}"),
-				'country' => strtolower((string) $student->country_code) !== 'ch' ? $student->country?->getTranslation('name', 'de') : null,
-				'email' => $student->email,
-				'phone' => $student->phone,
-				'deactivated_at' => $student->deactivated_at?->toIso8601String(),
+			'customer' => [
+				'uuid' => $customer->uuid,
+				'name' => $customer->name,
+				'company' => $customer->company,
+				'street' => trim("{$customer->street} {$customer->street_no}"),
+				'city' => trim("{$customer->zip} {$customer->city}"),
+				'country' => strtolower((string) $customer->country_code) !== 'ch' ? $customer->country?->getTranslation('name', 'de') : null,
+				'email' => $customer->email,
+				'phone' => $customer->phone,
+				'deactivated_at' => $customer->deactivated_at?->toIso8601String(),
 			],
 			'booked' => $bookings->reject->isCancelled()->filter($this->upcoming(...))
 				->sortBy(fn (Booking $booking) => $booking->event->date)->values()
@@ -85,7 +85,7 @@ class StudentPageController extends Controller
 					'cancelled_at' => $booking->cancelled_at->toIso8601String(),
 					'reason' => $booking->cancellation_reason?->label(),
 				]),
-			'documents' => $student->documents()->with('documentable')->latest('date')->get()
+			'documents' => $customer->documents()->with('documentable')->latest('date')->get()
 				->map(fn (UserDocument $document) => $this->document($document)),
 		]]);
 	}

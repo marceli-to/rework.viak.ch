@@ -12,7 +12,7 @@ use App\Forms\InvoiceSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\Schema;
-use App\Forms\StudentSchema;
+use App\Forms\CustomerSchema;
 use App\Forms\TermSchema;
 use App\Forms\TestimonialSchema;
 use App\Http\Controllers\Controller;
@@ -31,7 +31,7 @@ class FormController extends Controller
 		'testimonial' => TestimonialSchema::class,
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,
-		'student' => StudentSchema::class,
+		'customer' => CustomerSchema::class,
 		'discount-code' => DiscountCodeSchema::class,
 		'term' => TermSchema::class,
 		'location' => LocationSchema::class,
