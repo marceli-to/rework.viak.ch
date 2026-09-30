@@ -63,9 +63,9 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~41~~ | ~~A confirmation missed at closing: a per-seat send, or never?~~ — **answered 2026-09-30: per seat, and built.** *Bestätigen* under a *Nicht teilgenommen* badge on a closed date. See `07-dashboard.md`, *Attendance is asked when closing* | — | — |
 | 42 | **Kunden instead of Studenten**: with licences for sale, not every account books courses. Is *Kunde / Kunden* the word for everyone with an account (the portal, the dashboard's list, mails)? | Client | `12-customers.md`, stage 2 (the words). Asked 2026-09-30 |
 | 43 | **The customer portal's URL**: `/de/konto` or similar, with a 301 from `/de/student/profil` | Marcel | `12-customers.md`, stage 2 |
-| 44 | **Stripe**: Checkout (Stripe's page) or Payment Element (on ours)? | Marcel | `13-checkout.md`, payment |
-| 45 | **A failed or abandoned card payment** in a mixed basket: book the course part anyway, or hold both? | Marcel, then the client | `13-checkout.md` |
-| 46 | **The licence delivery e-mail**: remembered on the account, or asked at each order? | Marcel | `13-checkout.md`, address step |
+| ~~44~~ | ~~Stripe: Checkout or Payment Element?~~ — **answered 2026-09-30: Stripe Checkout**, Stripe's own page. See `13-checkout.md` | — | — |
+| ~~45~~ | ~~A failed card payment in a mixed basket?~~ — **answered 2026-09-30: the course is booked anyway**; the licence order waits unpaid. See `13-checkout.md` | — | — |
+| ~~46~~ | ~~The licence delivery e-mail: account or per order?~~ — **answered 2026-09-30: on the account.** See `13-checkout.md` | — | — |
 | ~~21~~ | ~~Who signs a participation confirmation?~~ — **withdrawn 2026-09-23: the question rested on a misreading.** Legacy's signature partial is not empty, and every prod confirmation is signed. Restored | — | — |
 
 ### ~~21. Who signs a participation confirmation?~~

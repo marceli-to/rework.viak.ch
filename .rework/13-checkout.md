@@ -27,7 +27,8 @@ Designed before anything is built, because it replaces the flow in
 - **No guest checkout.** Buying needs an account, courses and licences alike.
 - **Stripe** for card payment, as legacy used.
 - **A licence can go to another address.** A company buying licences names an
-  e-mail the licences are sent to, besides the invoice address.
+  e-mail the licences are sent to, besides the invoice address (on the account,
+  below).
 
 ## Why courses and licences pay differently
 
@@ -57,13 +58,23 @@ Already settled in `05-licences.md`, and the reason for this chunk:
 5. **Summary**, then **confirmation**, listing what was booked and what was
    paid.
 
-## Open for the design
+## Answered 2026-09-30, second round (Marcel)
 
-- **Where the card is taken**: Stripe Checkout (their page, the least to
-  build and the least PCI scope) or Payment Element on our page. Stripe
-  Checkout is the default proposal.
-- **A payment that fails or is abandoned**: the licence order waits unpaid, and
-  the course part of a mixed basket is booked anyway, or both wait.
-- **The delivery e-mail**: remembered on the account or asked each time.
+- **The card is taken on Stripe's page** (Stripe Checkout, #44): the least to
+  build, and card data never touches this app. The summary's *Bezahlen* sends
+  the customer there; Stripe sends them back to the confirmation, and a
+  webhook, not the return, marks the licence order paid.
+- **A failed or abandoned payment does not undo the course** (#45). In a mixed
+  basket the course is booked at *Bestellen* as today, and its mails go out;
+  the licence order waits unpaid, and the customer can pay it later from their
+  account. VIAK orders nothing from the reseller for an unpaid order.
+- **The licence delivery e-mail lives on the account** (#46): a field on the
+  customer's profile, empty meaning the account's own address, shown and
+  editable at the address step when the basket holds a licence.
+
+## Still open for the design
+
 - **The card link on a course invoice** (#28): the same Stripe integration, so
   it is designed here and built with it.
+- **Paying a waiting licence order later**: from where on the account, and
+  whether VIAK is told about orders left unpaid.
