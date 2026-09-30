@@ -49,12 +49,11 @@ Measured 2026-09-30: `student` appears in 188 files. The shape of it:
 legacy afresh, so the change is "the port no longer writes the student role",
 not a migration against live data.
 
-## Decisions it needs
+## Decided 2026-09-30
 
-1. **The word.** *Kunde* / *Kunden* is the obvious one; it is the client's to
-   confirm (#42).
-2. **The URL** of the portal, e.g. `/de/konto`, with the 301 from
-   `/de/student/profil` and its sub-pages.
+1. **The word is *Kunde / Kunden*** (#42).
+2. **The portal is `/de/konto`** (#43), with a 301 from `/de/student/profil`
+   and everything under it.
 
 ## Staging
 

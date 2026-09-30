@@ -40,9 +40,13 @@ class BookingPolicy
 		return $this->owns($user, $booking) || $user->isAdmin();
 	}
 
+	/**
+	 * Anyone with an account may book: every account is a customer
+	 * (`12-customers.md`). Legacy asked for the Student role.
+	 */
 	public function create(User $user): bool
 	{
-		return $user->isStudent() || $user->isAdmin();
+		return true;
 	}
 
 	private function owns(User $user, Booking $booking): bool

@@ -122,13 +122,14 @@ Route::prefix('{locale}')
 			 * carries a `basket` segment nothing has ever used; adopting it
 			 * would be a decision rather than a port, and it waits for one.
 			 *
-			 * The guards are legacy's too: its whole checkout group is
-			 * `auth:sanctum, verified` plus `role:student`. Nothing here is a
+			 * The guards are an account, verified. Legacy also asked for
+			 * `role:student`; every account is a customer now
+			 * (`12-customers.md`), so there is no role to ask for. Nothing here is a
 			 * `Route::view` for long — the remaining steps POST — but the
 			 * basket itself needs no server state, because the selection is in
 			 * the browser and the price comes from `/api/basket/price`.
 			 */
-			Route::middleware(['auth', 'verified', 'role:student'])
+			Route::middleware(['auth', 'verified'])
 				->prefix($segments['checkout'])
 				->group(function () use ($locale): void {
 					/*
@@ -178,10 +179,11 @@ Route::prefix('{locale}')
 			 * sees are different screens over different data, not two views of
 			 * one. See [[SiteUrl::studentPortal]].
 			 *
-			 * The guard is legacy's — `auth`, `verified`, `role:student` —
-			 * and it is the same one the checkout carries.
+			 * The guard is `auth` and `verified`, the checkout's: legacy's
+			 * `role:student` went when every account became a customer
+			 * (`12-customers.md`).
 			 */
-			Route::middleware(['auth', 'verified', 'role:student'])
+			Route::middleware(['auth', 'verified'])
 				->prefix($segments['student'].'/'.$segments['profile'])
 				->group(function () use ($locale, $segments): void {
 					Route::get('/', [StudentPortalController::class, 'index'])

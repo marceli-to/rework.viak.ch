@@ -70,13 +70,18 @@ beforeEach(function () {
 it('is behind the same guards as the checkout', function () {
 	$this->get('/de/student/profil')->assertRedirect('/login');
 
+	// Every account is a customer (`12-customers.md`): staff get in too.
 	$this->actingAs(User::factory()->admin()->create(['email_verified_at' => now()]))
 		->get('/de/student/profil')
-		->assertForbidden();
+		->assertOk();
 
 	$this->actingAs(User::factory()->expert()->create(['email_verified_at' => now()]))
 		->get('/de/student/profil')
-		->assertForbidden();
+		->assertOk();
+
+	$this->actingAs(User::factory()->create(['email_verified_at' => null]))
+		->get('/de/student/profil')
+		->assertRedirect('/email/verify');
 });
 
 it('sends an unverified student to the verification notice', function () {

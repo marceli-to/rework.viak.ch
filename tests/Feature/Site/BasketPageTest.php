@@ -28,15 +28,14 @@ it('sends a guest to the login rather than showing a basket', function () {
 });
 
 /**
- * Legacy wraps every checkout step in `role:student` inside a group that is
- * already `auth:sanctum, verified` — so an admin who is not also a student gets
- * a 403. Roles are capabilities rather than a rank ([[Role]]), and a booking
- * belongs to a `user_id`.
+ * Legacy wraps every checkout step in `role:student`, so an admin who was not
+ * also a student got a 403. Every account is a customer now
+ * (`12-customers.md`): any verified account may buy.
  */
-it('is a student’s page, and an admin without that role is refused', function () {
+it('is open to any account, an admin without the student role too', function () {
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
 
-	$this->actingAs($admin)->get('/de/checkout/basket')->assertForbidden();
+	$this->actingAs($admin)->get('/de/checkout/basket')->assertOk();
 });
 
 it('sends an unverified student to the verification notice', function () {

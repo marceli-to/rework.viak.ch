@@ -273,16 +273,13 @@ final class SiteUrl
 	}
 
 	/**
-	 * Where the header's *Profil* points, which depends on who is looking
-	 * ([[08-accounts]]).
+	 * Where the header's *Profil* points: the login for a guest, the customer
+	 * portal for anyone signed in ([[08-accounts]], `12-customers.md`).
 	 *
-	 * Legacy's `MenuItemProfile` does the same three-way choice and adds a
-	 * fourth case this does not have: a `selected-role` in the session, set by a
-	 * role-picker screen that four accounts see after logging in. The rework
-	 * has no such screen: the header offers every area instead ([[areasFor]],
-	 * `12-customers.md`), and this picks the icon's own link — **student first**,
-	 * because a multi-role account browsing the public site is the one buying,
-	 * and the other portals are one link away from there.
+	 * Legacy's `MenuItemProfile` chose between three portals by role and a
+	 * `selected-role` from its role-picker screen. Here an account with more
+	 * than the customer area gets the header's menu of them instead
+	 * ([[areasFor]]), so this link is only ever shown to a customer.
 	 *
 	 * Until now the icon pointed at `/dashboard` for everyone, **including a
 	 * guest** — so *Profil* on the live rebuild sent a signed-out visitor to the
@@ -294,16 +291,10 @@ final class SiteUrl
 			return route('login');
 		}
 
-		if ($user->hasRole(Role::Student)) {
-			return self::studentPortal($locale);
-		}
-
-		if ($user->hasRole(Role::Expert)) {
-			return self::expertPortal($locale);
-		}
-
-		// Admin-only: the dashboard is theirs and has no public portal.
-		return '/dashboard';
+		// Every account is a customer (`12-customers.md`), so anyone signed in
+		// has the customer portal. An account with another area as well gets
+		// the header's menu of them rather than this link ([[areasFor]]).
+		return self::studentPortal($locale);
 	}
 
 	/**
@@ -325,7 +316,8 @@ final class SiteUrl
 		}
 
 		return array_values(array_filter([
-			$user->hasRole(Role::Student) ? ['key' => 'student', 'label' => 'Student', 'href' => self::studentPortal($locale)] : null,
+			// Everyone: every account is a customer.
+			['key' => 'student', 'label' => 'Student', 'href' => self::studentPortal($locale)],
 			$user->hasRole(Role::Expert) ? ['key' => 'expert', 'label' => 'Experte', 'href' => self::expertPortal($locale)] : null,
 			$user->hasRole(Role::Admin) ? ['key' => 'admin', 'label' => 'Dashboard', 'href' => '/dashboard'] : null,
 		]));

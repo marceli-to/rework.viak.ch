@@ -15,6 +15,8 @@ it('lists the areas a person may use, in the profile link\'s order', function ()
 
 	expect(collect(SiteUrl::areasFor($all, 'de'))->pluck('label')->all())->toBe(['Student', 'Experte', 'Dashboard'])
 		->and(SiteUrl::areasFor(User::factory()->student()->create(), 'de'))->toHaveCount(1)
+		// Every account is a customer, so an expert has two areas.
+		->and(collect(SiteUrl::areasFor(User::factory()->expert()->create(), 'de'))->pluck('key')->all())->toBe(['student', 'expert'])
 		->and(SiteUrl::areasFor(null))->toBe([]);
 });
 
@@ -42,6 +44,7 @@ it('offers an admin the other areas in the dashboard shell', function () {
 
 	preg_match('/<meta name="areas" content="([^"]*)"/', $html, $match);
 	expect(json_decode(html_entity_decode($match[1]), true))->toBe([
+		['key' => 'student', 'label' => 'Student', 'href' => SiteUrl::studentPortal()],
 		['key' => 'expert', 'label' => 'Experte', 'href' => SiteUrl::expertPortal()],
 	]);
 });

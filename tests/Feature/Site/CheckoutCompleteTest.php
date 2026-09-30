@@ -248,8 +248,9 @@ it('tells the browser to empty its basket on the confirmation', function () {
 it('keeps every checkout step behind the same guards', function (string $url) {
 	$this->get($url)->assertRedirect('/login');
 
+	// Any account may buy, an admin without the student role too (`12-customers.md`).
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
-	$this->actingAs($admin)->get($url)->assertForbidden();
+	$this->actingAs($admin)->get($url)->assertOk();
 })->with([
 	'/de/checkout/payment',
 	'/de/checkout/summary',

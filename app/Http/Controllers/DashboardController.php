@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,8 +25,10 @@ class DashboardController extends Controller
 	{
 		$user = $request->user();
 
+		// An expert to the expert portal, as the login lands them; anyone else
+		// to the customer portal, since every account is a customer.
 		if (! $user->isAdmin()) {
-			return redirect(SiteUrl::profileFor($user));
+			return redirect($user->hasRole(Role::Expert) ? SiteUrl::expertPortal() : SiteUrl::profileFor($user));
 		}
 
 		return view('dashboard');

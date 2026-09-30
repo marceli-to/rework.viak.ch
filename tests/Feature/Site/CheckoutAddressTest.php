@@ -37,8 +37,9 @@ beforeEach(function () {
 it('is behind the same guards as the rest of the checkout', function () {
 	$this->get('/de/checkout/address')->assertRedirect('/login');
 
+	// Any account may buy (`12-customers.md`).
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
-	$this->actingAs($admin)->get('/de/checkout/address')->assertForbidden();
+	$this->actingAs($admin)->get('/de/checkout/address')->assertOk();
 });
 
 it('prints the customer’s own address without asking the browser for it', function () {
