@@ -100,6 +100,17 @@ class Course extends Model
 			->withoutGlobalScopes();
 	}
 
+	/**
+	 * *07*, not *7* — legacy's `getCourseNumberAttribute()`, and how the
+	 * dashboard and the portals print it, so the titles after it line up. The
+	 * column stays an integer; this is display only (`courseNumber()` in
+	 * `support/format.js` is the SPA's twin).
+	 */
+	public function displayNumber(): string
+	{
+		return str_pad((string) $this->number, 2, '0', STR_PAD_LEFT);
+	}
+
 	public function scopePublished(Builder $query): Builder
 	{
 		return $query->where('publish', true);

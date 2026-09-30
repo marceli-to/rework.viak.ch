@@ -102,8 +102,8 @@ async function cancel(booking) {
 		</ArticleText>
 
 		<div class="mt-32 sm:mt-48">
-			<Collapsible expanded>
-				<template #title>Gebuchte Kurse<Badge v-if="page.booked.length" variant="solid" class="ml-12">{{ page.booked.length }}</Badge></template>
+			<Collapsible expanded :count="page.booked.length">
+				<template #title>Gebuchte Kurse</template>
 				<BookingRow v-for="booking in page.booked" :key="booking.uuid" :booking="booking">
 					<template #badges>
 						<Badge v-if="booking.has_rental">Mietcomputer</Badge>
@@ -115,8 +115,8 @@ async function cancel(booking) {
 				<NoResults v-if="!page.booked.length">Student hat noch keine gebuchten Kurse.</NoResults>
 			</Collapsible>
 
-			<Collapsible>
-				<template #title>Absolvierte Kurse<Badge v-if="page.past.length" variant="solid" class="ml-12">{{ page.past.length }}</Badge></template>
+			<Collapsible :count="page.past.length">
+				<template #title>Absolvierte Kurse</template>
 				<BookingRow v-for="booking in page.past" :key="booking.uuid" :booking="booking">
 					<template #badges>
 						<AttendanceBadge :participated="booking.participated" :closed="booking.event.state === 'closed'" />
@@ -125,8 +125,8 @@ async function cancel(booking) {
 				<NoResults v-if="!page.past.length">Student hat noch keine absolvierten Kurse.</NoResults>
 			</Collapsible>
 
-			<Collapsible v-if="page.cancelled.length">
-				<template #title>Annullierte Kurse<Badge v-if="page.cancelled.length" variant="solid" class="ml-12">{{ page.cancelled.length }}</Badge></template>
+			<Collapsible v-if="page.cancelled.length" :count="page.cancelled.length">
+				<template #title>Annullierte Kurse</template>
 				<BookingRow v-for="booking in page.cancelled" :key="booking.uuid" :booking="booking">
 					<template #badges>
 						<Badge variant="danger">Annulliert am {{ shortDate(booking.cancelled_at.slice(0, 10)) }}</Badge>
@@ -135,8 +135,8 @@ async function cancel(booking) {
 				</BookingRow>
 			</Collapsible>
 
-			<Collapsible>
-				<template #title>Dokumente<Badge v-if="page.documents.length" variant="solid" class="ml-12">{{ page.documents.length }}</Badge></template>
+			<Collapsible :count="page.documents.length">
+				<template #title>Dokumente</template>
 				<!-- The portal's document row (`row/document.blade.php`), 4 / 3 / 5, with legacy's teal *Download* at the end. -->
 				<article v-for="document in page.documents" :key="document.uuid" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">

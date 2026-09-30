@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { closeEvent, deleteEvent, fetchEvent, fetchEventPage, saveEvent, setEventState } from '@/api/events';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
+import { courseNumber } from '@/support/format';
 import ActionBox from '@/components/form/ActionBox.vue';
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/form/Checkbox.vue';
@@ -38,7 +39,7 @@ const busy = ref(false);
 
 /** Confirm or cancel, after asking, then show what the server says now. */
 async function act(meta, patchMeta, state, question) {
-	if (!(await confirm(question, `${meta.course.number} ${meta.course.title}`))) return;
+	if (!(await confirm(question, `${courseNumber(meta.course.number)} ${meta.course.title}`))) return;
 
 	busy.value = true;
 	try {
@@ -106,7 +107,7 @@ async function close() {
 		:deletion="{
 			title: 'Veranstaltung löschen',
 			text: 'Mit dieser Aktion wird die Veranstaltung gelöscht.',
-			question: (form, meta) => `${meta.course.number} ${meta.course.title}, ${day(form.dates[0]?.date)}`,
+			question: (form, meta) => `${courseNumber(meta.course.number)} ${meta.course.title}, ${day(form.dates[0]?.date)}`,
 		}"
 		:blocked="(meta) => (meta.bookings ? `Diese Veranstaltung kann nicht gelöscht werden, da ${bookings(meta.bookings)} vorhanden sind.` : null)"
 		:locked="(meta) => meta.is_past"

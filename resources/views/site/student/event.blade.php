@@ -3,7 +3,7 @@
 	$title = $event->course->getTranslation('title', $locale);
 	// The dashboard's heading for the same event: the course number before the
 	// name ([[Event/Show]]). The browser tab keeps the bare name.
-	$heading = $event->course->number.' '.$title;
+	$heading = $event->course->displayNumber().' '.$title;
 @endphp
 
 <x-layout.site :title="$title" :heading="$heading" auth>

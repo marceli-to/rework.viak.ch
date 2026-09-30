@@ -3,7 +3,6 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchInvoices } from '@/api/invoices';
 import { shortDate } from '@/support/format';
-import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
@@ -27,6 +26,9 @@ import NoResults from '@/components/ui/NoResults.vue';
  *   Legacy put it third and closed, behind the 542 paid ones, though it is the
  *   list somebody has to act on.
  * - A search opens every list it found something in.
+ *
+ * Legacy's column labels over each list came back on 2026-09-30, after a
+ * comparison with its screen.
  */
 const route = useRoute();
 const router = useRouter();
@@ -89,7 +91,8 @@ async function loadMore(status) {
 // Legacy's list showed every group but the open one only when it had rows.
 const shown = computed(() => GROUPS.filter((group) => group.empty || lists[group.status].total > 0));
 
-const amount = (invoice) => `CHF ${Number(invoice.grand_total).toFixed(2)}`;
+// Bare, as legacy has it: the column says *Betrag*, and every invoice is in francs.
+const amount = (invoice) => Number(invoice.grand_total).toFixed(2);
 
 watch(search, load, { immediate: true });
 </script>
@@ -105,11 +108,25 @@ watch(search, load, { immediate: true });
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
 
-		<div v-else class="mt-12">
+		<!-- Legacy's `.collapsible-container`, `mt-12x md:mt-16x`: 24px, 32 from lg. Only *Kurse* has the tight 6px. -->
+		<div v-else class="mt-24 lg:mt-32">
 			<!-- Keyed on the search, so a search with hits in a closed list opens it. -->
-			<Collapsible v-for="group in shown" :key="`${group.status}-${search}`" :expanded="group.open || (Boolean(search) && lists[group.status].total > 0)">
-				<template #title>{{ group.title }}<Badge v-if="lists[group.status].total" variant="solid" class="ml-12">{{ lists[group.status].total }}</Badge></template>
+			<Collapsible v-for="group in shown" :key="`${group.status}-${search}`" :expanded="group.open || (Boolean(search) && lists[group.status].total > 0)" :count="lists[group.status].total">
+				<template #title>{{ group.title }}</template>
 
+				<!-- Legacy's `stacked-list-item--header` (`lists/_stacked.scss`), measured 2026-09-30: no rule, 8px above
+				     and below the labels, 16px at 1.4, white and stuck to the top while the list scrolls under it, and
+				     only 8px down to the first row. Only where the list has rows, as legacy, and not on a phone, where
+				     the columns stack and legacy's four labels stood alone over nothing. -->
+				<div
+					v-if="lists[group.status].rows.length"
+					class="sticky top-0 z-20 hidden grid-cols-12 gap-x-16 bg-white py-8 sm:mt-32 sm:grid sm:text-lg sm:leading-[1.4] lg:gap-x-40 sm:[&+article]:mt-8!"
+				>
+					<div class="col-span-12 sm:col-span-2">Nummer</div>
+					<div class="col-span-12 sm:col-span-2">Datum</div>
+					<div class="col-span-12 sm:col-span-2">Betrag</div>
+					<div class="col-span-12 sm:col-span-6">Student</div>
+				</div>
 				<EditableListItem
 					v-for="invoice in lists[group.status].rows"
 					:key="invoice.uuid"

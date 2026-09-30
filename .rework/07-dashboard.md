@@ -32,10 +32,10 @@ screens. Where things stand, in the sections below:
 - **Answered 2026-09-30**: #40 (the app runs in Zurich time, *Zurich time*)
   and #41 (a seat missed at closing is confirmed afterwards, *Attendance is
   asked when closing*).
+- **Compared with legacy on 2026-09-30**: *Kurse*, the course form,
+  *Experten* and its form, *Studenten*, *Rabatt-Codes*, *Einstellungen*,
+  *Rechnungen*, at 1710px and 390px. See *The walkthrough against legacy*.
 - **Next**: step 8 (homepage, *Aktuelles*) waits on the client (#22, #23).
-  Not yet looked at against legacy: *Kurse* and the course form, *Experten*,
-  *Studenten*' list, *Rabatt-Codes*, *Einstellungen*, *Rechnungen*. A
-  walkthrough of those, at phone width too, is the obvious next pass.
 
 What exists at the end of 2026-09-24:
 
@@ -886,6 +886,47 @@ the edit form, two screens for one decision):
   the same confirmation closing sends. Only on a closed date, only a live
   seat of that date, and only one not yet attended, so nobody gets a
   second. Checked in the browser on event a85ae67b (Ursula Roth).
+
+## The walkthrough against legacy, 2026-09-30
+
+Each list and form beside legacy's at `viak.ch.test`, measured where they
+differed. Fixed:
+
+- **The lists sat 20px high.** Legacy's `.collapsible-container` is
+  `mt-12x md:mt-16x`, 24px and 32 from `lg`; only *Kurse*' course list has
+  the tight `is-course-events` 6px. The other lists had copied *Kurse*' 12px.
+  *Experten*, *Studenten*, *Rabatt-Codes*, *Einstellungen* and *Rechnungen*
+  now measure as legacy's: rule, heading and first row to the pixel.
+- **A count made the heading taller**: the badge is 23px on an 18px line, so
+  a heading with one was 45px where legacy's is 40. `ui/Collapsible.vue` takes
+  a `count` now, as its Blade twin does, and draws the badge with `-my-4`;
+  the twelve hand-placed badges are gone.
+- **The heading's label is 14/16/18px** in the Vue collapsible, as legacy's;
+  it inherited 16px on a phone.
+- **Course numbers have two digits**, *07 Rhino*, as legacy prints them
+  (`Course::displayNumber()`, `courseNumber()` in `support/format.js`), on
+  the dashboard and the portals. The number column stays an integer; *Kurse*'
+  search finds *07*.
+- ***Rechnungen* has legacy's column labels back** (*Nummer*, *Datum*,
+  *Betrag*, *Student*), sticky over each list, and from `sm` only: on a phone
+  legacy stacks them into four lines over nothing. Amounts are bare, *600.00*,
+  as legacy's, now that the column says *Betrag*.
+- ***Rabatt-Codes***: a validity reads *22.01.2026 – 22.01.2027*, legacy's
+  en dash, not *bis*.
+- **The header fits a phone.** Legacy's menu is 3xl with 48px gaps on a phone
+  and its page scrolls sideways to 768px; the rework's did too, to 452. 18px
+  and 24px apart below `sm` fit 390px with both icons.
+
+Left as they are, all decided earlier: the short date and the badges on
+*Kurse*, the usage badge on a discount code, no DE/EN switch and three
+toolbar buttons on the course form (with the text in black, as the student
+will read it), labelled checkbox groups, the role group as plain checkboxes,
+*Speichern und Weiterbearbeiten*, *Software* out of *Einstellungen*, and
+pencils and search on a phone, which legacy hides.
+
+Open for Marcel: legacy asks *Experte anzeigen?* and *Experte aktiv?* as two
+labelled questions with a *Ja* box each; the rework has two plain checkboxes,
+*Experte anzeigen* and *Experte aktiv*.
 
 ## Zurich time, 2026-09-30
 

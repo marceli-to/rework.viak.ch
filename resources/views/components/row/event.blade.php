@@ -92,7 +92,7 @@
 					<h2 class="font-bold">
 						<a href="{{ \App\Support\SiteUrl::course($event->course->getTranslation('slug', $locale)) }}"
 							title="{{ $event->course->getTranslation('title', $locale) }}"
-							class="hover:text-teal">{{ $event->course->number }} {{ $event->course->getTranslation('title', $locale) }}</a>
+							class="hover:text-teal">{{ $event->course->displayNumber() }} {{ $event->course->getTranslation('title', $locale) }}</a>
 					</h2>
 
 					{{-- Each day on one line with its hours, not bold — the dashboard's

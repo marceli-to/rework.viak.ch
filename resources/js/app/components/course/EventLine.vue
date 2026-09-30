@@ -4,7 +4,7 @@ import EventState from './EventState.vue';
 import Badge from '@/components/ui/Badge.vue';
 import IconEdit from '@/components/icons/Edit.vue';
 import IconArrowRight from '@/components/icons/ArrowRight.vue';
-import { shortDate } from '@/support/format';
+import { courseNumber, shortDate } from '@/support/format';
 
 /**
  * One course date in *Kurse*'s chronological mode — legacy's
@@ -43,7 +43,7 @@ defineProps({
 			</div>
 
 			<div class="sm:col-span-6">
-				<h2 class="font-bold"><em class="not-italic">{{ course.number }}</em><span class="ml-8">{{ course.title }}</span></h2>
+				<h2 class="font-bold"><em class="not-italic">{{ courseNumber(course.number) }}</em><span class="ml-8">{{ course.title }}</span></h2>
 				<template v-if="event.online">Onlinekurs</template>
 				<a v-else-if="event.map" :href="event.map" target="_blank" rel="noopener" title="Karte öffnen" class="hover:text-teal">{{ event.location }}</a>
 				<span v-else>{{ event.location }}</span>

@@ -11,6 +11,14 @@ export function longDate(iso) {
 }
 
 /**
+ * A course number as legacy prints it, *07* rather than *7*, so the titles
+ * after it line up (`Course::displayNumber()` on the server).
+ */
+export function courseNumber(number) {
+	return String(number ?? '').padStart(2, '0');
+}
+
+/**
  * The short form, *24.09.2026* — where the long one breaks over two lines,
  * as it did in the date column of *Kurse* by date (Marcel, 2026-09-24).
  */

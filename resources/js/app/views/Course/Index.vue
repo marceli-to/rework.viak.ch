@@ -4,7 +4,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { fetchCourses, saveCourseOrder } from '@/api/courses';
 import { useSortable } from '@/composables/useSortable';
 import { toast } from '@/composables/useToast';
-import { fold } from '@/support/format';
+import { courseNumber, fold } from '@/support/format';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import Loading from '@/components/ui/Loading.vue';
 import EventLine from '@/components/course/EventLine.vue';
@@ -61,12 +61,12 @@ const events = computed(() =>
 	courses.value
 		.flatMap((course) => course.events.map((event) => ({ event, course })))
 		.filter(({ event, course }) =>
-			matches([course.number, course.title, event.experts.join(' '), event.online ? 'online' : event.location, event.date].join(' ')),
+			matches([courseNumber(course.number), course.title, event.experts.join(' '), event.online ? 'online' : event.location, event.date].join(' ')),
 		)
 		.sort((a, b) => (a.event.date < b.event.date ? -1 : a.event.date > b.event.date ? 1 : 0)),
 );
 
-const visibleCourses = computed(() => (search.value ? courses.value.filter((course) => matches(`${course.number} ${course.title}`)) : courses.value));
+const visibleCourses = computed(() => (search.value ? courses.value.filter((course) => matches(`${courseNumber(course.number)} ${course.title}`)) : courses.value));
 
 const { dragging, handlers } = useSortable(courses, async (list) => {
 	try {
@@ -127,7 +127,7 @@ onMounted(async () => {
 			>
 				<template #title>
 					<!-- Legacy's space and 12px margin both, as it renders them. -->
-					{{ course.number }} <span class="ml-12 inline-block font-normal">{{ course.title }}</span>
+					{{ courseNumber(course.number) }} <span class="ml-12 inline-block font-normal">{{ course.title }}</span>
 				</template>
 
 				<template #action>

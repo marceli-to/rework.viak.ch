@@ -45,9 +45,10 @@ onMounted(async () => {
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="!lists" class="mt-32" />
 
-		<div v-else class="mt-12">
-			<Collapsible v-for="(kind, key) in KINDS" :key="key" :expanded="open === key">
-				<template #title>{{ kind.title }}<Badge v-if="lists[key].length" variant="solid" class="ml-12">{{ lists[key].length }}</Badge></template>
+		<!-- Legacy's `.collapsible-container`, `mt-12x md:mt-16x`: 24px, 32 from lg. Only *Kurse* has the tight 6px. -->
+		<div v-else class="mt-24 lg:mt-32">
+			<Collapsible v-for="(kind, key) in KINDS" :key="key" :expanded="open === key" :count="lists[key].length">
+				<template #title>{{ kind.title }}</template>
 
 				<EditableListItem
 					v-for="item in lists[key]"

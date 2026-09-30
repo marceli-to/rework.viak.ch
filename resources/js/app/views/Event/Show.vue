@@ -6,11 +6,10 @@ import { fetchStudents } from '@/api/students';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import { returnTo } from '@/router';
-import { shortDate } from '@/support/format';
+import { courseNumber, shortDate } from '@/support/format';
 import ArticleText from '@/components/layout/ArticleText.vue';
 import AttendanceBadge from '@/components/course/AttendanceBadge.vue';
 import BackLink from '@/components/ui/BackLink.vue';
-import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EventRow from '@/components/course/EventRow.vue';
@@ -158,20 +157,20 @@ async function remove(file) {
 	<section v-else>
 		<ArticleText>
 			<template #aside>
-				<h1 class="font-bold text-teal">{{ page.course.number }} {{ page.course.title }}</h1>
+				<h1 class="font-bold text-teal">{{ courseNumber(page.course.number) }} {{ page.course.title }}</h1>
 				<BackLink :to="returnTo({ name: 'courses' })" />
 			</template>
 		</ArticleText>
 
 		<!-- The aside has no column beside it here, so the lists keep clear of *Zurück*. -->
 		<div class="mt-32 sm:mt-48">
-			<Collapsible expanded>
+			<Collapsible expanded :count="page.participants.length">
 				<template #title>Informationen</template>
 				<EventRow :event="page.event" :details="false" />
 			</Collapsible>
 
 			<Collapsible expanded>
-				<template #title>Teilnehmer<Badge v-if="page.participants.length" variant="solid" class="ml-12">{{ page.participants.length }}</Badge></template>
+				<template #title>Teilnehmer</template>
 
 				<template v-if="page.participants.length">
 					<!-- Legacy's stacked row, 2/2/2/3/1/2 of twelve. -->
@@ -213,8 +212,8 @@ async function remove(file) {
 				</div>
 			</Collapsible>
 
-			<Collapsible v-if="page.participants.length">
-				<template #title>Nachrichten<Badge v-if="page.messages.length" variant="solid" class="ml-12">{{ page.messages.length }}</Badge></template>
+			<Collapsible v-if="page.participants.length" :count="page.messages.length">
+				<template #title>Nachrichten</template>
 
 				<!-- The portals' message row and box ([[MessageRow]], `row/message.blade.php`). -->
 				<MessageRow v-for="message in page.messages" :key="message.uuid" :message="message" />
@@ -227,8 +226,8 @@ async function remove(file) {
 				</div>
 			</Collapsible>
 
-			<Collapsible>
-				<template #title>Kurs-Dokumente<Badge v-if="page.files.length" variant="solid" class="ml-12">{{ page.files.length }}</Badge></template>
+			<Collapsible :count="page.files.length">
+				<template #title>Kurs-Dokumente</template>
 
 				<!-- The portal's file row ([[FileRow]]): name, uploaded, size, *Download* over *Löschen*. -->
 				<FileRow v-for="file in page.files" :key="file.uuid" :file="file">

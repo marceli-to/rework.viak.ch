@@ -47,7 +47,7 @@ const spent = computed(() => shown.value.filter((code) => !code.redeemable));
 
 const amount = (code) => (code.type === 'percent' ? `${Number(code.amount)}%` : `CHF ${Number(code.amount).toFixed(2)}`);
 const dates = (code) =>
-	code.valid_from || code.valid_to ? `Gültig: ${shortDate(code.valid_from) || '…'} bis ${shortDate(code.valid_to) || '…'}` : null;
+	code.valid_from || code.valid_to ? `Gültig: ${shortDate(code.valid_from) || '…'} – ${shortDate(code.valid_to) || '…'}` : null;
 const usage = (code) => (code.usage_limit === '' ? `${code.times_used} eingelöst, unbegrenzt` : `${code.times_used} von ${code.usage_limit} eingelöst`);
 
 onMounted(async () => {
@@ -72,9 +72,10 @@ onMounted(async () => {
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
 
-		<div v-else class="mt-12">
-			<Collapsible v-for="group in [{ title: 'Gültige Codes', rows: valid, open: true }, { title: 'Verwendete oder abgelaufene Codes', rows: spent, open: false }]" :key="`${group.title}-${group.open || search}`" :expanded="group.open || (Boolean(search) && group.rows.length > 0)">
-				<template #title>{{ group.title }}<Badge v-if="group.rows.length" variant="solid" class="ml-12">{{ group.rows.length }}</Badge></template>
+		<!-- Legacy's `.collapsible-container`, `mt-12x md:mt-16x`: 24px, 32 from lg. Only *Kurse* has the tight 6px. -->
+		<div v-else class="mt-24 lg:mt-32">
+			<Collapsible v-for="group in [{ title: 'Gültige Codes', rows: valid, open: true }, { title: 'Verwendete oder abgelaufene Codes', rows: spent, open: false }]" :key="`${group.title}-${group.open || search}`" :expanded="group.open || (Boolean(search) && group.rows.length > 0)" :count="group.rows.length">
+				<template #title>{{ group.title }}</template>
 				<EditableListItem
 					v-for="code in group.rows"
 					:key="code.uuid"

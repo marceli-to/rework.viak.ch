@@ -75,7 +75,8 @@ onMounted(async () => {
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
 
-		<div v-else class="mt-12">
+		<!-- Legacy's `.collapsible-container`, `mt-12x md:mt-16x`: 24px, 32 from lg. Only *Kurse* has the tight 6px. -->
+		<div v-else class="mt-24 lg:mt-32">
 			<Collapsible expanded>
 				<template #title>Aktive Experten</template>
 				<EditableListItem

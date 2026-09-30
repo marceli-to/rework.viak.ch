@@ -81,8 +81,10 @@ const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 			<div class="col-span-12 sm:col-span-8">
 				<nav class="flex justify-between" aria-label="Dashboard">
-					<ul class="flex text-3xl font-bold sm:text-lg lg:text-2xl">
-						<li v-for="item in main" :key="item.label" class="mr-48 flex last:mr-0">
+					<!-- Legacy's 3xl and 48px on a phone put *Studenten* and both icons past the edge at 390px
+					     (its own page scrolls sideways to 768). 18px and 24px apart fit, measured 2026-09-30. -->
+					<ul class="flex text-xl font-bold sm:text-lg lg:text-2xl">
+						<li v-for="item in main" :key="item.label" class="mr-24 flex last:mr-0 sm:mr-48">
 							<RouterLink :to="item.to" class="transition-colors duration-100 ease-in hover:text-teal" :class="{ 'text-teal': isActive(item) }">
 								{{ item.label }}
 							</RouterLink>

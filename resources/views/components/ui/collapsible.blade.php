@@ -38,13 +38,12 @@
      is followed by the browse pair, and there it keeps its margin. --}}
 {{-- `dashboard` is the heading of `ui/Collapsible.vue`, for the portals behind
      the login, which draw what the dashboard draws (Marcel, 2026-09-30): 16px
-     above and 6px below at a line height of 1, nothing under the `<h2>`, the
-     type of the block rather than a size of its own, and the triangle 20px
-     down rather than centred. The public site keeps legacy's taller heading. --}}
+     above and 6px below at a line height of 1, nothing under the `<h2>`, and
+     the triangle 20px down rather than centred. The public site keeps legacy's taller heading. --}}
 <section {{ $attributes->class(['border-t border-gray-600 sm:border-t-2 sm:text-lg lg:text-xl', $last ? 'mb-0' : 'mb-64']) }} x-data="{ open: @js($expanded) }">
 	<h2 @class([
-		'leading-none font-bold text-gray-600',
-		'mb-4 text-md sm:text-lg lg:text-xl' => ! $dashboard,
+		'text-md leading-none font-bold text-gray-600 sm:text-lg lg:text-xl',
+		'mb-4' => ! $dashboard,
 	])>
 		<button type="button"
 			@class([
@@ -60,8 +59,10 @@
 			     solid badge, open or shut (Marcel, 2026-09-29). Legacy's
 			     `Count.vue` printed a bold *(3)* only while shut. The portal's
 			     lists are the only callers; the course page passes nothing. --}}
+			{{-- `-my-4` keeps the heading at its 40px: the badge is taller than
+			     the line it sits on. --}}
 			@if ($count)
-				<x-ui.badge variant="solid" class="ml-12">{{ $count }}</x-ui.badge>
+				<x-ui.badge variant="solid" class="-my-4 ml-12">{{ $count }}</x-ui.badge>
 			@endif
 
 			{{-- Legacy's chevron is a CSS triangle rather than an icon

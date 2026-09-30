@@ -1,5 +1,6 @@
 <script setup>
 import { provide, ref } from 'vue';
+import Badge from './Badge.vue';
 
 /**
  * `resources/views/components/ui/collapsible.blade.php` in legacy's dashboard
@@ -11,6 +12,9 @@ import { provide, ref } from 'vue';
  * of 1 (40px in all, where the site's is 58), no gap under it, and the triangle
  * 20px down rather than centred. 64px to the next block, as on the site.
  *
+ * The label is 14/16/18px, as legacy's and the site's are; left to inherit it
+ * was 16px on a phone (measured against legacy at 390px, 2026-09-30).
+ *
  * `dimmed` is legacy's `is-hidden` — an unpublished course, every child at 80 %
  * opacity. The `action` slot is legacy's too: something absolutely placed
  * against the block, which on *Kurse* is the course's edit pencil.
@@ -20,6 +24,9 @@ const props = defineProps({
 	dimmed: { type: Boolean, default: false },
 	// Legacy's `is-invalid`: the title goes red when a field inside failed.
 	invalid: { type: Boolean, default: false },
+	// How many are inside, as a solid badge beside the title, open or shut
+	// (Marcel, 2026-09-29) — the Blade twin's `count`. Nothing for a zero.
+	count: { type: Number, default: 0 },
 });
 
 const open = ref(props.expanded);
@@ -31,7 +38,7 @@ provide('collapsibleOpen', open);
 
 <template>
 	<section class="relative mb-64 border-t border-gray-600 sm:border-t-2 sm:text-lg lg:text-xl" :class="{ '[&_*]:opacity-80': dimmed }">
-		<h2 class="leading-none font-bold" :class="invalid ? 'text-danger' : 'text-gray-600'">
+		<h2 class="text-md leading-none font-bold sm:text-lg lg:text-xl" :class="invalid ? 'text-danger' : 'text-gray-600'">
 			<button
 				type="button"
 				class="relative block w-full pt-16 pb-6 text-left leading-none transition-colors hover:text-gray-400"
@@ -39,6 +46,9 @@ provide('collapsibleOpen', open);
 				@click="open = !open"
 			>
 				<slot name="title" />
+				<!-- `-my-4`: the badge is 23px high on an 18px line, and without it the heading grew
+				     from legacy's 40px to 45 wherever there was a count (measured 2026-09-30). -->
+				<Badge v-if="count" variant="solid" class="-my-4 ml-12">{{ count }}</Badge>
 				<span
 					aria-hidden="true"
 					class="absolute top-20 right-0 block size-0 border-x-[6px] border-x-transparent"

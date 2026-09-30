@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchStudents } from '@/api/students';
 import Button from '@/components/ui/Button.vue';
-import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
@@ -89,9 +88,10 @@ watch(search, load, { immediate: true });
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
 
-		<div v-else class="mt-12">
-			<Collapsible expanded>
-				<template #title>Aktive Studenten<Badge v-if="total" variant="solid" class="ml-12">{{ total }}</Badge></template>
+		<!-- Legacy's `.collapsible-container`, `mt-12x md:mt-16x`: 24px, 32 from lg. Only *Kurse* has the tight 6px. -->
+		<div v-else class="mt-24 lg:mt-32">
+			<Collapsible expanded :count="total">
+				<template #title>Aktive Studenten</template>
 				<EditableListItem
 					v-for="student in active"
 					:key="student.uuid"
@@ -115,8 +115,8 @@ watch(search, load, { immediate: true });
 			</Collapsible>
 
 			<!-- Keyed on the search, so a search with hits in here opens it. -->
-			<Collapsible v-if="deactivated.length" :key="`deaktiviert-${search}`" :expanded="Boolean(search)">
-				<template #title>Deaktivierte Studenten<Badge v-if="deactivated.length" variant="solid" class="ml-12">{{ deactivated.length }}</Badge></template>
+			<Collapsible v-if="deactivated.length" :key="`deaktiviert-${search}`" :expanded="Boolean(search)" :count="deactivated.length">
+				<template #title>Deaktivierte Studenten</template>
 				<EditableListItem
 					v-for="student in deactivated"
 					:key="student.uuid"
