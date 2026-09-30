@@ -917,6 +917,11 @@ differed. Fixed:
   and its page scrolls sideways to 768px; the rework's did too, to 452. 18px
   and 24px apart below `sm` fit 390px with both icons.
 
+- **The event page's participant row** was legacy's 2/2/2/3/1/2: *Mietcomputer*
+  overran its one column and *Nicht teilgenommen* its two. Now 2/2/2/3/3 with
+  the seat's badges together against the far edge, *Mietcomputer* one of
+  them, as the expert portal's twin draws the row.
+
 Left as they are, all decided earlier: the short date and the badges on
 *Kurse*, the usage badge on a discount code, no DE/EN switch and three
 toolbar buttons on the course form (with the text in black, as the student

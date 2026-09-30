@@ -10,6 +10,7 @@ import { courseNumber, shortDate } from '@/support/format';
 import ArticleText from '@/components/layout/ArticleText.vue';
 import AttendanceBadge from '@/components/course/AttendanceBadge.vue';
 import BackLink from '@/components/ui/BackLink.vue';
+import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EventRow from '@/components/course/EventRow.vue';
@@ -164,16 +165,18 @@ async function remove(file) {
 
 		<!-- The aside has no column beside it here, so the lists keep clear of *Zurück*. -->
 		<div class="mt-32 sm:mt-48">
-			<Collapsible expanded :count="page.participants.length">
+			<Collapsible expanded>
 				<template #title>Informationen</template>
 				<EventRow :event="page.event" :details="false" />
 			</Collapsible>
 
-			<Collapsible expanded>
+			<Collapsible expanded :count="page.participants.length">
 				<template #title>Teilnehmer</template>
 
 				<template v-if="page.participants.length">
-					<!-- Legacy's stacked row, 2/2/2/3/1/2 of twelve. -->
+					<!-- Legacy's stacked row was 2/2/2/3/1/2 of twelve: *Mietcomputer* overran its one column and
+					     *Nicht teilgenommen* its two at desktop width (2026-09-30). Now as the expert portal's twin
+					     draws it: 2/2/2/3, then the seat's badges together against the far edge, the laptop one too. -->
 					<article
 						v-for="participant in page.participants"
 						:key="participant.uuid"
@@ -187,10 +190,12 @@ async function remove(file) {
 						<div class="col-span-12 min-w-0 truncate sm:col-span-3">
 							<a :href="`mailto:${participant.email}`" class="hover:text-teal">{{ participant.email }}</a>
 						</div>
-						<div class="col-span-6 sm:col-span-1">{{ participant.has_rental ? 'Mietcomputer' : '' }}</div>
-						<div class="col-span-6 flex flex-col items-end gap-8 sm:col-span-2">
-							<!-- Recorded when the date was closed ([[EventPageController::close]]). -->
-							<AttendanceBadge :participated="participant.participated" :closed="closed" />
+						<div class="col-span-12 mt-8 flex flex-col items-end gap-8 sm:col-span-3 sm:mt-0">
+							<div class="flex flex-wrap justify-end gap-8">
+								<Badge v-if="participant.has_rental">Mietcomputer</Badge>
+								<!-- Recorded when the date was closed ([[EventPageController::close]]). -->
+								<AttendanceBadge :participated="participant.participated" :closed="closed" />
+							</div>
 							<Button v-if="closed && !participant.participated" variant="success" :disabled="confirming === participant.uuid" @click="confirmSeat(participant)">Bestätigen</Button>
 						</div>
 					</article>
