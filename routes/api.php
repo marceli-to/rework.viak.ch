@@ -152,6 +152,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('events/{event}/page', [Admin\EventPageController::class, 'show']);
 		Route::post('events/{event}/close', [Admin\EventPageController::class, 'close']);
 		Route::post('events/{event}/bookings', [Admin\EventPageController::class, 'book']);
+		Route::post('events/{event}/bookings/{booking:uuid}/confirm', [Admin\EventPageController::class, 'confirm']);
 		Route::get('events/{event}/participants', [Admin\EventPageController::class, 'participants']);
 		Route::post('events/{event}/messages', [Admin\EventPageController::class, 'message']);
 		Route::post('events/{event}/files', [Admin\EventPageController::class, 'upload']);

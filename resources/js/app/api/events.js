@@ -19,6 +19,9 @@ export const fetchEventPage = (uuid) => client.get(`/admin/events/${uuid}/page`)
 /** *Veranstaltung abschliessen*, with the seats that attended ([[EventPageController::close]]). */
 export const closeEvent = (event, attended) => client.post(`/admin/events/${event}/close`, { attended }).then((r) => r.data.data);
 
+/** A seat missed at closing: attended after all, and its confirmation sent ([[EventPageController::confirm]]). */
+export const confirmAttendance = (event, booking) => client.post(`/admin/events/${event}/bookings/${booking}/confirm`).then((r) => r.data.data);
+
 /** *Teilnehmer hinzufügen*: book a student onto the date ([[CreateBookingForUser]]). */
 export const bookStudent = (event, student) => client.post(`/admin/events/${event}/bookings`, { student }).then((r) => r.data.data);
 

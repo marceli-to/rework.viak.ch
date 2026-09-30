@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Media\UploadEventMediaRequest;
 use App\Http\Requests\Messages\PostEventMessageRequest;
 use App\Http\Resources\Admin\EventRowResource;
+use App\Jobs\SendParticipationConfirmation;
 use App\Models\Booking;
 use App\Models\Event;
 use App\Models\Media;
@@ -133,6 +134,30 @@ class EventPageController extends Controller
 			'state' => $event->refresh()->state->value,
 			'attended' => $event->bookings()->active()->whereNotNull('participated_at')->count(),
 		]]);
+	}
+
+	/**
+	 * *Teilnahme bestätigen*: one seat missed when the date was closed
+	 * (Marcel, 2026-09-30, open question #41). Records it as attended and
+	 * sends it the confirmation closing would have sent, the same job
+	 * ([[SendClosingMails]]). **Only on a closed date and only for a live seat
+	 * not yet attended**: closing is where attendance is asked, and a seat that
+	 * already has its confirmation does not get a second.
+	 */
+	public function confirm(Event $event, Booking $booking): JsonResponse
+	{
+		abort_unless($booking->event_id === $event->id, 404);
+		abort_unless($event->state === EventState::Closed, 422, 'Eine Teilnahme wird bestätigt, wenn die Veranstaltung abgeschlossen ist.');
+		abort_if($booking->isCancelled(), 422, 'Diese Buchung ist annulliert.');
+		abort_if($booking->hasParticipated(), 422, 'Diese Teilnahme ist bereits bestätigt.');
+
+		DB::transaction(function () use ($event, $booking): void {
+			$booking->forceFill(['participated_at' => now()])->save();
+
+			SendParticipationConfirmation::dispatch($booking->setRelation('event', $event->loadMissing(['course', 'dates', 'experts', 'location'])));
+		});
+
+		return response()->json(['data' => ['participated' => true]]);
 	}
 
 	/**

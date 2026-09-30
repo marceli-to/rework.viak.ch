@@ -127,3 +127,38 @@ it('writes legacy text', function () {
 		->toContain('Teilnahmebestätigung – Rhino Einstiegskurs')
 		->toContain('Hiermit bestätigen wir Deine Teilnahme an unserem Kurs:');
 });
+
+it('confirms a seat missed at closing, afterwards and once', function () {
+	$came = $this->came->bookings()->first();
+	$missed = $this->missed->bookings()->first();
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/close", ['attended' => [$came->uuid]])->assertOk();
+	Mail::fake();
+
+	$confirm = "/api/admin/events/{$this->event->uuid}/bookings/{$missed->uuid}/confirm";
+	$this->postJson($confirm)->assertOk()->assertJsonPath('data.participated', true);
+
+	expect($missed->refresh()->hasParticipated())->toBeTrue();
+	Mail::assertQueued(EventClosedStudent::class, 1);
+	Mail::assertQueued(EventClosedStudent::class, fn ($mail) => $mail->hasTo($this->missed->email));
+
+	// Not twice, and not for the seat closing already confirmed.
+	$this->postJson($confirm)->assertStatus(422);
+	$this->postJson("/api/admin/events/{$this->event->uuid}/bookings/{$came->uuid}/confirm")->assertStatus(422);
+	Mail::assertQueued(EventClosedStudent::class, 1);
+});
+
+it('confirms a seat only on a closed date, only its own, and only for admins', function () {
+	$missed = $this->missed->bookings()->first();
+	Mail::fake();
+
+	$this->actingAs($this->admin)->postJson("/api/admin/events/{$this->event->uuid}/bookings/{$missed->uuid}/confirm")->assertStatus(422);
+
+	$other = Event::factory()->create(['state' => EventState::Closed]);
+	$this->postJson("/api/admin/events/{$other->uuid}/bookings/{$missed->uuid}/confirm")->assertNotFound();
+
+	$this->event->update(['state' => EventState::Closed]);
+	$this->actingAs($this->missed)->postJson("/api/admin/events/{$this->event->uuid}/bookings/{$missed->uuid}/confirm")->assertForbidden();
+
+	expect($missed->refresh()->hasParticipated())->toBeFalse();
+	Mail::assertNothingQueued();
+});

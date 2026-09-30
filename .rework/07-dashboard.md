@@ -29,8 +29,9 @@ screens. Where things stand, in the sections below:
   their own upload screen, *Bezeichnung* back on both portals), messages
   ([[MessageRow]], the portal's composer), empty lists ([[NoResults]]),
   square badges `px-6 py-2`.
-- **Open for Marcel**: #40 (time zone) and #41 (a confirmation missed at
-  closing) in `Open-Questions.md`.
+- **Answered 2026-09-30**: #40 (the app runs in Zurich time, *Zurich time*)
+  and #41 (a seat missed at closing is confirmed afterwards, *Attendance is
+  asked when closing*).
 - **Next**: step 8 (homepage, *Aktuelles*) waits on the client (#22, #23).
   Not yet looked at against legacy: *Kurse* and the course form, *Experten*,
   *Studenten*' list, *Rabatt-Codes*, *Einstellungen*, *Rechnungen*. A
@@ -878,8 +879,37 @@ the edit form, two screens for one decision):
   seats. Only once the date has run, and only once.
 - **The plain state switch refuses `closed`** ([[SetEventStateRequest]]), and
   the per-seat tick endpoint is gone.
-- Not built: sending a confirmation afterwards to someone missed. Once closed,
-  the attendance is fixed, as before.
+- **A seat missed at closing is confirmed afterwards** (Marcel, 2026-09-30,
+  #41). On a closed date, a *Nicht teilgenommen* badge has *Bestätigen* under
+  it: a confirm dialog, then `POST /api/admin/events/{event}/bookings/{booking}/confirm`
+  ([[EventPageController::confirm]]) records the seat as attended and queues
+  the same confirmation closing sends. Only on a closed date, only a live
+  seat of that date, and only one not yet attended, so nobody gets a
+  second. Checked in the browser on event a85ae67b (Ursula Roth).
+
+## Zurich time, 2026-09-30
+
+Open question #40, Marcel: yes. Legacy and the rework ran in UTC, so every
+time shown was two hours off in summer, and a date read off a moment
+(*Annulliert am …*) was the day before for anything after 22:00.
+
+- **`app.timezone` is `Europe/Zurich`.** Moments are stored as Zurich wall
+  clock; `toIso8601String()` sends them with `+02:00`, so the SPA's
+  `slice(0, 10)` takes the Zurich day.
+- **Both MySQL connections are pinned to `+00:00`.** Every moment is a
+  `TIMESTAMP`, which MySQL converts through the session's zone. Left at
+  `SYSTEM` it was CEST on a Mac and whatever the host is in production; pinned,
+  a string reads back as it was written on any server. A named zone would need
+  time-zone tables a host may not have.
+- **The port shifts legacy's moments** from UTC ([[LegacyTime]]): read at
+  `+00:00`, legacy's strings are UTC (its messages begin at 04:00 that way,
+  06:00 in Zurich). Days (`date`, `due_at`, an event's days) are not moments
+  and go across as they are.
+- **The local database predates this.** Rows written before it read two hours
+  early until the database is re-ported, or shifted once with
+  `convert_tz(col, '+00:00', 'SYSTEM')` over every `TIMESTAMP` column.
+- `failed_jobs.failed_at` defaults to MySQL's `CURRENT_TIMESTAMP`, which is UTC
+  at `+00:00`. Nothing reads it but a person.
 
 ## Back is where you came from, 2026-09-29
 

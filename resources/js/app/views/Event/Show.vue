@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { bookStudent, downloadParticipants, fetchEventPage, removeFile } from '@/api/events';
+import { bookStudent, confirmAttendance, downloadParticipants, fetchEventPage, removeFile } from '@/api/events';
 import { fetchStudents } from '@/api/students';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
@@ -33,6 +33,8 @@ import NoResults from '@/components/ui/NoResults.vue';
  *   form's lightbox, not ticked here (Marcel, 2026-09-29): legacy's tick and
  *   *Teilgenommen?* are gone. Under the list,
  *   *Teilnehmer hinzufügen* and *Teilnehmerliste* with the download icon.
+ *   On a closed date, a seat left unticked has *Bestätigen* under its badge
+ *   (Marcel, 2026-09-30): attended after all, and its confirmation sent.
  * - *Nachrichten*, legacy's messages module ([[MessageRow]]): a row per note
  *   that opens it in legacy's box, and the plus to *Nachricht erstellen*. Only with participants,
  *   as legacy.
@@ -103,6 +105,24 @@ async function add(student) {
 	}
 }
 
+// A seat missed at closing ([[EventPageController::confirm]]).
+const confirming = ref(null);
+
+async function confirmSeat(participant) {
+	if (!(await confirm('Teilnahme bestätigen?', `${participant.name} wird als teilgenommen erfasst und erhält die Teilnahmebestätigung per E-Mail.`))) return;
+
+	confirming.value = participant.uuid;
+	try {
+		await confirmAttendance(page.value.event.uuid, participant.uuid);
+		participant.participated = true;
+		toast(`Die Teilnahmebestätigung an ${participant.name} wird gesendet.`);
+	} catch (problem) {
+		toast(problem.message, 'error');
+	} finally {
+		confirming.value = null;
+	}
+}
+
 const downloading = ref(false);
 
 async function pdf() {
@@ -169,9 +189,10 @@ async function remove(file) {
 							<a :href="`mailto:${participant.email}`" class="hover:text-teal">{{ participant.email }}</a>
 						</div>
 						<div class="col-span-6 sm:col-span-1">{{ participant.has_rental ? 'Mietcomputer' : '' }}</div>
-						<div class="col-span-6 flex items-start justify-end sm:col-span-2">
+						<div class="col-span-6 flex flex-col items-end gap-8 sm:col-span-2">
 							<!-- Recorded when the date was closed ([[EventPageController::close]]). -->
 							<AttendanceBadge :participated="participant.participated" :closed="closed" />
+							<Button v-if="closed && !participant.participated" variant="success" :disabled="confirming === participant.uuid" @click="confirmSeat(participant)">Bestätigen</Button>
 						</div>
 					</article>
 				</template>
