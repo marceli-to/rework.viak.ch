@@ -20,7 +20,7 @@
 	</x-layout.article>
 
 	<div class="mt-48 lg:mt-64">
-		<x-ui.collapsible title="Dokumente" :expanded="true" :count="$documents->count()">
+		<x-ui.collapsible dashboard title="Dokumente" :expanded="true" :count="$documents->count()">
 			@forelse ($documents as $document)
 				<x-row.document :document="$document" />
 			@empty

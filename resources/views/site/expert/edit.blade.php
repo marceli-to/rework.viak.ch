@@ -86,7 +86,7 @@
 			     at `mt-6x sm:mt-9x md:mt-12x`. The student's carries a second
 			     one above it for the addresses; without it this is the whole
 			     tail of the form. --}}
-			<x-ui.collapsible title="Zugangsdaten" class="mt-24 sm:mt-36 lg:mt-48" :expanded="false">
+			<x-ui.collapsible dashboard title="Zugangsdaten" class="mt-24 sm:mt-36 lg:mt-48" :expanded="false">
 				<x-form.field name="email" label="E-Mail" type="email" :value="$user->email" autocomplete="email" />
 
 				<x-form.field name="password" label="Passwort" type="password"

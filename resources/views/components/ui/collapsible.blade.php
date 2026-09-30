@@ -1,4 +1,4 @@
-@props(['title', 'expanded' => true, 'count' => null, 'last' => false])
+@props(['title', 'expanded' => true, 'count' => null, 'last' => false, 'dashboard' => false])
 
 {{--
 	`components/_collapsible.scss` and `components/lists/_global.scss:53`
@@ -36,10 +36,22 @@
      final block on the page takes no 64px under it. A prop rather than a
      `last-of-type:` variant, because on the course page the last collapsible
      is followed by the browse pair, and there it keeps its margin. --}}
+{{-- `dashboard` is the heading of `ui/Collapsible.vue`, for the portals behind
+     the login, which draw what the dashboard draws (Marcel, 2026-09-30): 16px
+     above and 6px below at a line height of 1, nothing under the `<h2>`, the
+     type of the block rather than a size of its own, and the triangle 20px
+     down rather than centred. The public site keeps legacy's taller heading. --}}
 <section {{ $attributes->class(['border-t border-gray-600 sm:border-t-2 sm:text-lg lg:text-xl', $last ? 'mb-0' : 'mb-64']) }} x-data="{ open: @js($expanded) }">
-	<h2 class="mb-4 text-md leading-none font-bold text-gray-600 sm:text-lg lg:text-xl">
+	<h2 @class([
+		'leading-none font-bold text-gray-600',
+		'mb-4 text-md sm:text-lg lg:text-xl' => ! $dashboard,
+	])>
 		<button type="button"
-			class="relative block w-full py-8 pb-12 text-left transition-colors hover:text-gray-400 sm:py-16 sm:pb-24"
+			@class([
+				'relative block w-full text-left transition-colors hover:text-gray-400',
+				'py-8 pb-12 sm:py-16 sm:pb-24' => ! $dashboard,
+				'pt-16 pb-6 leading-none' => $dashboard,
+			])
 			@click="open = ! open"
 			:aria-expanded="open">
 			{{ $title }}
@@ -55,7 +67,11 @@
 			{{-- Legacy's chevron is a CSS triangle rather than an icon
 			     (`%icon-chevron-up` / `-down`): 12×9, borders only. --}}
 			<span aria-hidden="true"
-				class="absolute top-1/2 right-0 block size-0 -translate-y-1/2 border-x-[6px] border-x-transparent"
+				@class([
+					'absolute right-0 block size-0 border-x-[6px] border-x-transparent',
+					'top-1/2 -translate-y-1/2' => ! $dashboard,
+					'top-20' => $dashboard,
+				])
 				:class="open ? 'border-b-[9px] border-b-current' : 'border-t-[9px] border-t-current'"></span>
 		</button>
 	</h2>

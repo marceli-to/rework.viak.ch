@@ -1,30 +1,31 @@
 @php
 	$locale = app()->getLocale();
 	$title = $event->course->getTranslation('title', $locale);
+	// The dashboard's heading for the same event: the course number before the
+	// name ([[Event/Show]]). The browser tab keeps the bare name.
+	$heading = $event->course->number.' '.$title;
 @endphp
 
-<x-layout.site :title="$title" :heading="$title" auth>
+<x-layout.site :title="$title" :heading="$heading" auth>
 	{{--
 		One booked seat — `backend/student/views/Course.vue`.
 
 		Three blocks under the heading: the booking itself, the notes the expert
 		or VIAK posted to the course, and the course materials.
 
-		**The heading is black here, not teal.** `article.content-text--event`
-		is the one variant of the block that restates `h1 { color: $color-primary }`
-		(`layout/_article.scss:140`) — because on this page the heading is the
-		course's name rather than the screen's, so it reads as content rather
-		than as a label.
+		**The heading is the dashboard's**: teal, with the course number
+		(Marcel, 2026-09-30). Legacy's
+		`article.content-text--event` drew it black and without the number.
 	--}}
 	<x-layout.article>
 		<x-slot:aside>
-			<h1 class="hidden font-bold sm:block">{{ $title }}</h1>
+			<h1 class="hidden font-bold text-teal sm:block">{{ $heading }}</h1>
 			<x-ui.back-link :href="\App\Support\SiteUrl::studentPortal()" />
 		</x-slot:aside>
 	</x-layout.article>
 
 	<div class="mt-48 lg:mt-64">
-		<x-ui.collapsible title="Buchung" :expanded="true">
+		<x-ui.collapsible dashboard title="Buchung" :expanded="true">
 			<x-row.event :event="$event" :booking="$booking">
 				{{-- The seat's own badges beside the course's state, as the
 				     dashboard's student page draws them: *Annulliert am …* for a
@@ -95,7 +96,7 @@
 		     what it draws is a row with 35 characters of the body and an
 		     *Anzeigen* that opens the message in a lightbox
 		     ([[x-row.message]]). --}}
-		<x-ui.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
+		<x-ui.collapsible dashboard title="Nachrichten" :expanded="false" :count="$messages->count()">
 			@forelse ($messages as $message)
 				<x-row.message :message="$message" />
 			@empty
@@ -121,7 +122,7 @@
 		     was uploaded, how big it is, and the buttons
 		     ([[x-row.file]]). The student passes no `action`, so the column
 		     holds the *Download* alone; the expert's passes a *Löschen*. --}}
-		<x-ui.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
+		<x-ui.collapsible dashboard title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
 			@forelse ($files as $file)
 				<x-row.file :file="$file" />
 			@empty

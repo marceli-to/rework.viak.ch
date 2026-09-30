@@ -62,7 +62,7 @@
 			**Badges and a grey *Details***, as the dashboard's *Kurse* draws the
 			same row (Marcel, 2026-09-29): legacy's teal *Detail* is gone.
 		--}}
-		<x-ui.collapsible title="Bevorstehende Kurse" :expanded="true" :count="$upcoming->count()">
+		<x-ui.collapsible dashboard title="Bevorstehende Kurse" :expanded="true" :count="$upcoming->count()">
 			@forelse ($upcoming as $event)
 				<x-row.event :event="$event" :showExperts="false" :showFee="false"
 					:bookings="$event->bookings_count" :rentals="$event->rentals_taken_count">
@@ -82,7 +82,7 @@
 			link. An expert still wants the participant list of a course that has
 			run: it is who was in the room.
 		--}}
-		<x-ui.collapsible title="Vergangene Kurse" :expanded="false" :count="$past->count()">
+		<x-ui.collapsible dashboard title="Vergangene Kurse" :expanded="false" :count="$past->count()">
 			@forelse ($past as $event)
 				<x-row.event :event="$event" :showExperts="false" :showFee="false"
 					:bookings="$event->bookings_count" :rentals="$event->rentals_taken_count">

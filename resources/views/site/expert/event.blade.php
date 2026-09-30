@@ -1,10 +1,13 @@
 @php
 	$locale = app()->getLocale();
 	$title = $event->course->getTranslation('title', $locale);
+	// The dashboard's heading for the same event: the course number before the
+	// name ([[Event/Show]]). The browser tab keeps the bare name.
+	$heading = $event->course->number.' '.$title;
 	$cancelled = $event->state === \App\Enums\EventState::Cancelled;
 @endphp
 
-<x-layout.site :title="$title" :heading="$title" auth>
+<x-layout.site :title="$title" :heading="$heading" auth>
 	{{--
 		One course an expert teaches — `backend/expert/views/Course.vue`
 		([[08-accounts]], [[09-public-site]]).
@@ -14,9 +17,8 @@
 		the first two replaced by the booking, which is the whole difference
 		between owning a seat and running the room.
 
-		**The heading is black, not teal**, as it is on the student's: the
-		`article.content-text--event` variant restates `h1 { color: $color-primary }`
-		because here the heading is the course's name rather than the screen's.
+		**The heading is the dashboard's**: teal, with the course number
+		(Marcel, 2026-09-30). Legacy drew it black and without the number.
 
 		**Every block on this page is behind an object-level check.** Legacy gates
 		the lot with `role:admin,expert` — so any of the 18 accounts holding the
@@ -26,7 +28,7 @@
 	--}}
 	<x-layout.article>
 		<x-slot:aside>
-			<h1 class="hidden font-bold sm:block">{{ $title }}</h1>
+			<h1 class="hidden font-bold text-teal sm:block">{{ $heading }}</h1>
 			<x-ui.back-link :href="\App\Support\SiteUrl::expertPortal()" />
 		</x-slot:aside>
 	</x-layout.article>
@@ -41,7 +43,7 @@
 		{{-- *Informationen* — the row, without a fee and without *mit …*: what
 		     the course costs is the student's question, and naming the expert on
 		     the expert's own screen is noise. --}}
-		<x-ui.collapsible title="Informationen" :expanded="true">
+		<x-ui.collapsible dashboard title="Informationen" :expanded="true">
 			<x-row.event :event="$event" :showExperts="false" :showFee="false"
 				:bookings="$bookings->count()" :rentals="$bookings->where('has_rental', true)->count()" />
 		</x-ui.collapsible>
@@ -64,7 +66,7 @@
 			contact details are in the participant list, and the participant list
 			is the one thing here that is not built ([[09-public-site]]).
 		--}}
-		<x-ui.collapsible title="Teilnehmer" :expanded="true" :count="$bookings->count()">
+		<x-ui.collapsible dashboard title="Teilnehmer" :expanded="true" :count="$bookings->count()">
 			@forelse ($bookings as $booking)
 				@php
 					// The firm, from the seat's own record first and the invoice
@@ -144,7 +146,7 @@
 			(`v-if="data.participants.length"`), which is a reasonable thing to
 			do with a form that mails a list of nought — kept.
 		--}}
-		<x-ui.collapsible title="Nachrichten" :expanded="false" :count="$messages->count()">
+		<x-ui.collapsible dashboard title="Nachrichten" :expanded="false" :count="$messages->count()">
 			@forelse ($messages as $message)
 				<x-row.message :message="$message" />
 			@empty
@@ -176,7 +178,7 @@
 			anything. In the rework it cannot arise at all, because a `media` row
 			has one owner ([[MediaPolicy::delete]]).
 		--}}
-		<x-ui.collapsible title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
+		<x-ui.collapsible dashboard title="Kurs-Dokumente" :expanded="false" :count="$files->count()">
 			@forelse ($files as $file)
 				<x-row.file :file="$file">
 					<x-slot:action>

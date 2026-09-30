@@ -67,7 +67,7 @@
 	     container's 48, so the gap between the two groups is 64 rather than
 	     112 — legacy's arithmetic, kept by keeping its markup. --}}
 	<div class="mt-48 lg:mt-64">
-		<x-ui.collapsible title="Merkliste" :expanded="false" :count="$bookmarks->count()">
+		<x-ui.collapsible dashboard title="Merkliste" :expanded="false" :count="$bookmarks->count()">
 			@forelse ($bookmarks as $event)
 				{{-- The heart and the basket buttons, which is what a bookmark
 				     row is for. `x-card.event` draws the same pair on the
@@ -115,7 +115,7 @@
 			@endforelse
 		</x-ui.collapsible>
 
-		<x-ui.collapsible title="Gebuchte Kurse" :expanded="true" :count="$upcoming->count()">
+		<x-ui.collapsible dashboard title="Gebuchte Kurse" :expanded="true" :count="$upcoming->count()">
 			@forelse ($upcoming as $booking)
 				<x-row.event :event="$booking->event" :booking="$booking">
 
@@ -204,7 +204,7 @@
 			beside it. The reasoning and the measurement are in
 			[[StudentPortalController::splitBookings]].
 		--}}
-		<x-ui.collapsible title="Absolvierte Kurse" :expanded="false" :count="$past->count()">
+		<x-ui.collapsible dashboard title="Absolvierte Kurse" :expanded="false" :count="$past->count()">
 			@forelse ($past as $booking)
 				<x-row.event :event="$booking->event" :booking="$booking">
 					{{-- Whether the seat attended, as the dashboard's student
@@ -224,7 +224,7 @@
 	</div>
 
 	<div class="mt-48 lg:mt-64">
-		<x-ui.collapsible title="Dokumente" :expanded="false" :count="$documentCount">
+		<x-ui.collapsible dashboard title="Dokumente" :expanded="false" :count="$documentCount">
 			@forelse ($documents as $document)
 				<x-row.document :document="$document" />
 			@empty

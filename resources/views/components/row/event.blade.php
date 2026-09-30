@@ -92,16 +92,16 @@
 					<h2 class="font-bold">
 						<a href="{{ \App\Support\SiteUrl::course($event->course->getTranslation('slug', $locale)) }}"
 							title="{{ $event->course->getTranslation('title', $locale) }}"
-							class="hover:text-teal">{{ $event->course->getTranslation('title', $locale) }}</a>
+							class="hover:text-teal">{{ $event->course->number }} {{ $event->course->getTranslation('title', $locale) }}</a>
 					</h2>
 
 					{{-- Each day on one line with its hours, not bold — the dashboard's
 					     `BookingRow.vue`, which reads better than legacy's bold date
-					     over its hours (Marcel, 2026-09-29). The course's name is the
-					     one bold line. No course number, which the dashboard shows:
-					     it is VIAK's internal reference and the public site never
-					     prints it. One block broken with `<br>`, because a `<div>`
-					     per day rounds each line box separately. --}}
+					     over its hours (Marcel, 2026-09-29). The course's number and
+					     name are the one bold line, the number as the dashboard has
+					     it (Marcel, 2026-09-30); only the portals draw this row. One
+					     block broken with `<br>`, because a `<div>` per day rounds
+					     each line box separately. --}}
 					<div>
 						@foreach ($event->dates as $date)
 							{{ $date->date->translatedFormat('d. F Y') }}, {{ $time($date->time_start) }} – {{ $time($date->time_end) }} Uhr

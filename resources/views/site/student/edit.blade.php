@@ -101,7 +101,7 @@
 				fixed is the way back: those screens return *here* rather than to
 				a profile that does not show them ([[StudentAddressController]]).
 			--}}
-			<x-ui.collapsible title="Rechnungsadressen" class="mt-56" :expanded="true">
+			<x-ui.collapsible dashboard title="Rechnungsadressen" class="mt-56" :expanded="true">
 				@forelse ($addresses as $address)
 					{{--
 						`.stacked-list-item` with the pencil pinned to its right
@@ -143,7 +143,7 @@
 				</div>
 			</x-ui.collapsible>
 
-			<x-ui.collapsible title="Zugangsdaten" class="mt-32 sm:mt-48" :expanded="false">
+			<x-ui.collapsible dashboard title="Zugangsdaten" class="mt-32 sm:mt-48" :expanded="false">
 				<x-form.field name="email" label="E-Mail" type="email" :value="$user->email" autocomplete="email" />
 
 				<x-form.field name="password" label="Passwort" type="password"

@@ -2268,6 +2268,13 @@ and stays 1:1.
 - Empty lists through `x-ui.no-results` (`ui/NoResults.vue`), same wording as the
   dashboard; the 20px plus.
 
-What still differs, on purpose: the headings (the portal's course name is black
-and has no number) and the collapsible's heading spacing, which is the site's
-variant rather than the dashboard's tighter one.
+The last two differences went on 2026-09-30 (Marcel):
+
+- **The event page's heading** is the dashboard's: teal, with the course
+  number (*23 Twinmotion Einführungskurs*). The browser tab keeps the bare
+  name. The rows carry the number too, as `BookingRow.vue` does.
+- **The collapsible's heading** is the dashboard's tighter one on every portal
+  screen: `x-ui.collapsible dashboard`, the heading of `ui/Collapsible.vue`
+  (16px above, 6px below, line height 1, the triangle 20px down). The public
+  site keeps legacy's taller heading. Measured against the dashboard's event
+  page: the same height.
