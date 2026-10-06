@@ -86,8 +86,7 @@ const available = computed(() => props.testimonials.filter((item) => !picked.val
 			<NoResults v-if="!available.length">Alle Testimonials sind bereits ausgewählt.</NoResults>
 			<ul class="text-lg">
 				<li v-for="item in available" :key="item.uuid" class="border-b border-gray-400 py-12 first:pt-0 last:border-b-0 last:pb-0">
-					<p class="font-bold">{{ item.name }}</p>
-					<p v-if="item.context">{{ item.context }}</p>
+					<p class="font-bold">{{ item.name }}<template v-if="item.context"> ({{ item.context }})</template></p>
 					<p class="mt-8 line-clamp-3" :title="item.quote">„{{ item.quote }}“</p>
 					<div class="mt-12 flex items-center justify-between gap-16">
 						<div class="flex min-w-0 flex-wrap gap-8">
