@@ -167,12 +167,14 @@
 			</x-ui.button>
 		</div>
 
-		{{-- `.card-teaser-training` — the teal promo box under the filter. --}}
-		<div class="mt-32 block bg-teal p-12 text-white">
+		{{-- `.card-teaser-training` — the teal promo box under the filter. Legacy's
+		     is an `<a>` to `/de/individualschulungen` with no hover of its own; ours
+		     goes to Firmenschulung, which that URL 301s to. --}}
+		<a href="{{ \App\Support\SiteUrl::training() }}" class="mt-32 block bg-teal p-12 text-white">
 			<p class="text-lg leading-[1.4] font-bold break-words hyphens-auto text-white lg:text-xl">
 				Wünschen Sie eine massgeschneiderte Individualschulung für Einzelpersonen oder Ihre Firma?
 			</p>
 			<x-icon.arrow-right class="mt-16" />
-		</div>
+		</a>
 	</form>
 </div>
