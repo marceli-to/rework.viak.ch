@@ -49,7 +49,7 @@ talked about*, not *disputed*.
   and *Team* collapsibles from legacy's Kontakt page, merged. The parity build
   keeps them where legacy has them; the merge is phase two.
 - **Kontakt** — link it to Firmenschulung, and **add the form**. **The form is
-  built, 2026-10-06**: a second block under the address, drawn like the first,
+  built, 2026-10-06**: an open collapsible, *Kontaktformular*, under the address,
   with the mockup's three fields; #24 is answered in [[ContactController]]. The
   Firmenschulung link waits for that page. Legacy's Kontakt
   has no form at all (address, map, and four collapsibles), so the form is new,

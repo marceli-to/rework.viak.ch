@@ -29,9 +29,9 @@ function contactPayload(array $overrides = []): array
 	];
 }
 
-it('draws the form on Kontakt, under the address', function () {
+it('draws the form on Kontakt, in its own collapsible under the address', function () {
 	$this->get('/de/kontakt')
-		->assertSeeInOrder(['Get in touch', 'Nachricht senden', 'name="name"', 'name="email"', 'name="message"', 'Anreise'], false)
+		->assertSeeInOrder(['Get in touch', 'Kontaktformular', 'name="name"', 'name="email"', 'name="message"', 'Nachricht senden', 'Anreise'], false)
 		->assertSee('action="/de/kontakt"', false);
 });
 

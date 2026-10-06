@@ -14,8 +14,8 @@
 	never rendered: legacy's `team_members` table is empty.
 
 	**The contact form is new** (the 2026-09-23 review's Kontakt marker 2; legacy
-	has none), built 2026-10-06 as a second block drawn like the first:
-	*Nachricht senden* in the aside, the mockup's three fields in the column.
+	has none), built 2026-10-06 as an open collapsible, *Kontaktformular*, before
+	Anreise, the mockup's three fields in the copy's column.
 	Where it sends and why nothing is stored is [[ContactController]].
 --}}
 <x-layout.site title="Kontakt" heading="Kontakt">
@@ -42,39 +42,39 @@
 		</div>
 	</article>
 
-	{{-- The form, as a second block like the first. `#nachricht` is where a
-	     sent or refused form lands, so the answer is on screen. --}}
-	<article id="nachricht" class="mb-48 scroll-mt-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mb-64 lg:gap-40">
-		<aside class="text-teal sm:col-span-4">
-			<h2 class="font-bold">Nachricht senden</h2>
-		</aside>
+	{{-- The form in a collapsible of its own, open, the first block under the
+	     address (Marcel, 2026-10-06). It keeps to the column the other blocks'
+	     copy sits in. `#nachricht` is where a sent or refused form lands, so
+	     the answer is on screen. --}}
+	<x-ui.collapsible title="Kontaktformular" id="nachricht" class="scroll-mt-16">
+		<div class="pt-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+			<div class="sm:col-span-8 sm:col-start-5">
+				@if (session('contact') === 'sent')
+					<x-ui.toast variant="success">Danke, deine Nachricht ist bei uns angekommen.</x-ui.toast>
+				@elseif ($errors->any())
+					<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
+				@endif
 
-		<div class="mt-24 sm:col-span-8 sm:mt-0">
-			@if (session('contact') === 'sent')
-				<x-ui.toast variant="success">Danke, deine Nachricht ist bei uns angekommen.</x-ui.toast>
-			@elseif ($errors->any())
-				<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
-			@endif
+				<form method="POST" action="{{ \App\Support\SiteUrl::contact() }}">
+					@csrf
 
-			<form method="POST" action="{{ \App\Support\SiteUrl::contact() }}">
-				@csrf
+					<x-form.field name="name" label="Name" required autocomplete="name" :value="auth()->user()?->name" />
+					<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" :value="auth()->user()?->email" />
+					<x-form.textarea name="message" label="Nachricht" required />
 
-				<x-form.field name="name" label="Name" required autocomplete="name" :value="auth()->user()?->name" />
-				<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" :value="auth()->user()?->email" />
-				<x-form.textarea name="message" label="Nachricht" required />
+					{{-- The honeypot ([[ContactController]]): off screen, out of the
+					     tab order, and hidden from screen readers, so only a bot
+					     fills it in. --}}
+					<div class="absolute -left-[9999px]" aria-hidden="true">
+						<label for="website">Website</label>
+						<input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+					</div>
 
-				{{-- The honeypot ([[ContactController]]): off screen, out of the
-				     tab order, and hidden from screen readers, so only a bot
-				     fills it in. --}}
-				<div class="absolute -left-[9999px]" aria-hidden="true">
-					<label for="website">Website</label>
-					<input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
-				</div>
-
-				<x-ui.button type="submit">Nachricht senden</x-ui.button>
-			</form>
+					<x-ui.button type="submit">Nachricht senden</x-ui.button>
+				</form>
+			</div>
 		</div>
-	</article>
+	</x-ui.collapsible>
 
 	<x-ui.collapsible title="Anreise">
 		@include('site.contact._directions')
