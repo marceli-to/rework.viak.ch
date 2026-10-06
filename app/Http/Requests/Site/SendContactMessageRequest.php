@@ -22,7 +22,7 @@ class SendContactMessageRequest extends FormRequest
 			'email' => ['required', 'email', 'max:255'],
 			'message' => ['required', 'string', 'max:5000'],
 			'website' => ['nullable'],
-			'cf-turnstile-response' => [new Turnstile($this->ip())],
+			'cf-turnstile-response' => [new Turnstile('contact', $this->ip())],
 		];
 	}
 

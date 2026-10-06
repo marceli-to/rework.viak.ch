@@ -73,7 +73,7 @@
 					<input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
 				</div>
 
-				<x-form.turnstile />
+				<x-form.turnstile action="contact" />
 
 				<x-ui.button type="submit">Nachricht senden</x-ui.button>
 			</form>

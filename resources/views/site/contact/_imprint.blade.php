@@ -150,6 +150,8 @@
 	<ul>
 	<li><strong><a href="https://www.metanet.ch/de" rel="nofollow noopener noreferrer" target="_blank">METANET:</a></strong> Hosting; Anbieterin: METANET&nbsp;AG (Schweiz); Angaben zum Datenschutz: <a href="https://www.metanet.ch/de/ueber-metanet/datenschutzerklaerung" rel="nofollow noopener noreferrer" target="_blank">Datenschutzerklärung</a>, <a href="https://www.metanet.ch/media/57/download/Technisch_organisatorische_Massnahmen_v1_0_a.pdf" rel="nofollow noopener noreferrer" target="_blank">«Technisch-organisatorische Massnahmen»</a>.
 	</li>
+	<li><strong><a href="https://www.cloudflare.com/application-services/products/turnstile/" rel="nofollow noopener noreferrer" target="_blank">Cloudflare Turnstile:</a></strong> Schutz des Kontaktformulars vor Spam und missbräuchlicher Nutzung; Anbieterin: Cloudflare, Inc. (USA); Angaben zum Datenschutz: <a href="https://www.cloudflare.com/de-de/privacypolicy/" rel="nofollow noopener noreferrer" target="_blank">Datenschutzerklärung</a>, <a href="https://www.cloudflare.com/en-gb/turnstile-privacy-policy/" rel="nofollow noopener noreferrer" target="_blank">«Turnstile Privacy Addendum»</a>.
+	</li>
 	</ul>
 	<h3>11.2 Kontaktmöglichkeiten</h3>
 	<p>Wir nutzen Dienste von ausgewählten Anbietern, um mit Dritten wie beispielsweise potenziellen sowie bestehenden Kundinnen und Kunden besser kommunizieren zu können.</p>

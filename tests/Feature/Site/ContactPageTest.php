@@ -73,3 +73,10 @@ it('draws the map’s box without a key, and loads Google only with one', functi
 
 	$this->get('/de/kontakt')->assertSee('maps.googleapis.com/maps/api/js?key=test-key', false);
 });
+
+/** Invisible Turnstile requires the privacy policy to cite Cloudflare's addendum. */
+it('names Cloudflare Turnstile in the Datenschutzerklärung, with its privacy addendum', function () {
+	$this->get('/de/kontakt')
+		->assertSee('Cloudflare Turnstile:')
+		->assertSee('href="https://www.cloudflare.com/en-gb/turnstile-privacy-policy/"', false);
+});

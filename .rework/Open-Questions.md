@@ -398,14 +398,14 @@ the same breath.
 
 ## Not questions — pending actions
 
-- **Turnstile at cutover: real keys, and a line in the Datenschutzerklärung.**
-  The Kontakt form checks Cloudflare Turnstile ([[Turnstile]], 2026-10-06). It
-  needs the client's own site and secret key in `TURNSTILE_SITE_KEY` /
-  `TURNSTILE_SECRET_KEY` (a Cloudflare account, the domain as the widget's
-  hostname); without them the check is off and only the honeypot and the rate
-  limit remain. The widget loads Cloudflare's script on Kontakt, and the
-  Datenschutzerklärung (`site/contact/_imprint`) names Google Maps but not
-  Cloudflare: its wording is VIAK's to add.
+- **Turnstile at cutover: the production hostname.** The Kontakt form checks
+  Cloudflare Turnstile ([[Turnstile]], 2026-10-06), widget
+  `0x4AAAAAAFPGhsBYEI29m__y`, **invisible**. Its keys are in the local `.env`;
+  production needs the same pair and `TURNSTILE_HOSTNAMES` set to the live
+  hostname only (no `.test`, no localhost), and that hostname registered on
+  the widget. The Datenschutzerklärung names Cloudflare Turnstile and its
+  Privacy Addendum under 11.1, which invisible mode requires: **VIAK should
+  read that entry**, as it is legal copy written by us.
 - **`ALTER TABLE invoices MODIFY due_at TIMESTAMP NULL DEFAULT NULL;` on the live
   site.** Stops open invoices having their deadline bumped daily. Recovers
   nothing already lost, removes none of the decisions above, and is worth doing

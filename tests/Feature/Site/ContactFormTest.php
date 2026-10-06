@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 use App\Mail\ContactMessage;
 use App\Models\User;
+use App\Rules\Turnstile;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * The Kontakt form ([[ContactController]], `Open-Questions.md` #24): mailed to
@@ -101,9 +103,14 @@ it('fills in a signed-in visitor’s name and address', function () {
  * Cloudflare Turnstile ([[Turnstile]]): checked only with keys, and then the
  * token must be one Cloudflare vouches for.
  */
-function withTurnstile(): void
+function withTurnstile(array $overrides = []): void
 {
-	config(['services.turnstile' => ['site_key' => 'site-key', 'secret_key' => 'secret-key']]);
+	config(['services.turnstile' => ['site_key' => 'site-key', 'secret_key' => 'secret-key', 'hostnames' => ['rework.viak.ch.test'], ...$overrides]]);
+}
+
+function cloudflareSays(array $answer = []): void
+{
+	Http::fake(['challenges.cloudflare.com/*' => Http::response(['success' => true, 'action' => 'contact', 'hostname' => 'rework.viak.ch.test', ...$answer])]);
 }
 
 it('leaves Turnstile out without keys, page and check alike', function () {
@@ -118,14 +125,18 @@ it('leaves Turnstile out without keys, page and check alike', function () {
 it('draws the widget with a site key, once, in German', function () {
 	withTurnstile();
 
-	$html = $this->get('/de/kontakt')->assertSee('data-sitekey="site-key"', false)->assertSee('data-language="de"', false)->getContent();
+	$html = $this->get('/de/kontakt')
+		->assertSee('data-sitekey="site-key"', false)
+		->assertSee('data-action="contact"', false)
+		->assertSee('data-language="de"', false)
+		->getContent();
 
 	expect(substr_count($html, 'challenges.cloudflare.com/turnstile/v0/api.js'))->toBe(1);
 });
 
-it('sends when Cloudflare vouches for the token', function () {
+it('sends when Cloudflare vouches for the token, this form’s action and this site', function () {
 	withTurnstile();
-	Http::fake(['challenges.cloudflare.com/*' => Http::response(['success' => true])]);
+	cloudflareSays();
 
 	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasNoErrors();
 
@@ -139,12 +150,63 @@ it('refuses a missing token, a rejected one, and one Cloudflare could not check'
 	withTurnstile();
 	$error = ['cf-turnstile-response' => 'Die Sicherheitsprüfung ist fehlgeschlagen. Bitte versuche es nochmals.'];
 
-	Http::fake(['challenges.cloudflare.com/*' => Http::response(['success' => false])]);
+	cloudflareSays(['success' => false]);
 	$this->post('/de/kontakt', contactPayload())->assertSessionHasErrors($error);
 	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'bad']))->assertSessionHasErrors($error);
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => str_repeat('x', 2049)]))->assertSessionHasErrors($error);
+
+	Http::fake(['challenges.cloudflare.com/*' => Http::response('', 500)]);
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors($error);
 
 	Http::fake(['challenges.cloudflare.com/*' => Http::failedConnection()]);
 	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors($error);
 
 	Mail::assertNothingQueued();
+});
+
+it('refuses a token made for another form or another site', function () {
+	withTurnstile();
+	$error = ['cf-turnstile-response' => 'Die Sicherheitsprüfung ist fehlgeschlagen. Bitte versuche es nochmals.'];
+
+	cloudflareSays(['action' => 'login']);
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors($error);
+
+	cloudflareSays(['hostname' => 'elsewhere.example']);
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors($error);
+
+	Mail::assertNothingQueued();
+});
+
+it('refuses everything when no hostname is configured, without asking Cloudflare', function () {
+	withTurnstile(['hostnames' => []]);
+	Http::fake();
+
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors('cf-turnstile-response');
+
+	Http::assertNothingSent();
+});
+
+it('takes Cloudflare’s test secret at its word locally, and never in production', function () {
+	withTurnstile(['secret_key' => '1x0000000000000000000000000000000AA', 'hostnames' => []]);
+	Http::fake(['challenges.cloudflare.com/*' => Http::response(['success' => true, 'hostname' => 'example.com'])]);
+
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasNoErrors();
+
+	// The rule itself: a production request would stop at CSRF first, since
+	// the test suite's CSRF pass is for the testing environment only.
+	app()['env'] = 'production';
+	$check = Validator::make(['token' => 'fresh-token'], ['token' => [new Turnstile('contact')]]);
+
+	expect($check->fails())->toBeTrue();
+});
+
+it('takes a token once, even when Cloudflare would take it again', function () {
+	withTurnstile();
+	cloudflareSays();
+
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasNoErrors();
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors('cf-turnstile-response');
+
+	Http::assertSentCount(1);
+	Mail::assertQueuedCount(1);
 });

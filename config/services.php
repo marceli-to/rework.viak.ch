@@ -34,6 +34,10 @@ return [
 	'turnstile' => [
 		'site_key' => env('TURNSTILE_SITE_KEY'),
 		'secret_key' => env('TURNSTILE_SECRET_KEY'),
+
+		// The frontend hostnames a token may come from, comma-separated: this
+		// deployment's own. Production's must not include a local one.
+		'hostnames' => array_values(array_filter(array_map('trim', explode(',', (string) env('TURNSTILE_HOSTNAMES', ''))))),
 	],
 
 	'postmark' => [
