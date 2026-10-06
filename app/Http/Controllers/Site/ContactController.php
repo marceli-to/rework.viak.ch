@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\RateLimiter;
  * the page's confirmation and no copy. **Nothing is stored**, so the mail is
  * the record.
  *
- * Spam is kept out without a third-party captcha, which would need a consent
- * question: a honeypot field, and five messages an hour from one address.
+ * Spam is kept out three ways: **Cloudflare Turnstile** (Marcel, 2026-10-06,
+ * [[Turnstile]]), a honeypot field, and five messages an hour from one address.
+ * Turnstile loads Cloudflare's script on Kontakt, which the
+ * Datenschutzerklärung does not yet name (`Open-Questions.md`).
  */
 class ContactController extends Controller
 {

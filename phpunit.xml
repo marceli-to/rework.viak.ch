@@ -21,6 +21,9 @@
         <!-- The invoice PDF test decodes its QR bill with Imagick, which needs more than PHP's default 128M. -->
         <ini name="memory_limit" value="512M"/>
         <env name="APP_ENV" value="testing"/>
+        <!-- No Turnstile unless a test asks for it: nothing reaches Cloudflare. -->
+        <env name="TURNSTILE_SITE_KEY" value=""/>
+        <env name="TURNSTILE_SECRET_KEY" value=""/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>

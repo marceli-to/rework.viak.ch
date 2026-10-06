@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Mail\ContactMessage;
 use App\Models\User;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -93,4 +95,56 @@ it('fills in a signed-in visitor’s name and address', function () {
 	$this->actingAs($user)->get('/de/kontakt')
 		->assertSee('value="Remo Kast"', false)
 		->assertSee('value="remo@example.test"', false);
+});
+
+/**
+ * Cloudflare Turnstile ([[Turnstile]]): checked only with keys, and then the
+ * token must be one Cloudflare vouches for.
+ */
+function withTurnstile(): void
+{
+	config(['services.turnstile' => ['site_key' => 'site-key', 'secret_key' => 'secret-key']]);
+}
+
+it('leaves Turnstile out without keys, page and check alike', function () {
+	Http::fake();
+
+	$this->get('/de/kontakt')->assertDontSee('challenges.cloudflare.com')->assertDontSee('cf-turnstile');
+	$this->post('/de/kontakt', contactPayload())->assertSessionHasNoErrors();
+
+	Http::assertNothingSent();
+});
+
+it('draws the widget with a site key, once, in German', function () {
+	withTurnstile();
+
+	$html = $this->get('/de/kontakt')->assertSee('data-sitekey="site-key"', false)->assertSee('data-language="de"', false)->getContent();
+
+	expect(substr_count($html, 'challenges.cloudflare.com/turnstile/v0/api.js'))->toBe(1);
+});
+
+it('sends when Cloudflare vouches for the token', function () {
+	withTurnstile();
+	Http::fake(['challenges.cloudflare.com/*' => Http::response(['success' => true])]);
+
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasNoErrors();
+
+	Http::assertSent(fn (Request $request) => $request['secret'] === 'secret-key'
+		&& $request['response'] === 'token'
+		&& $request['remoteip'] === '127.0.0.1');
+	Mail::assertQueued(ContactMessage::class);
+});
+
+it('refuses a missing token, a rejected one, and one Cloudflare could not check', function () {
+	withTurnstile();
+	$error = ['cf-turnstile-response' => 'Die Sicherheitsprüfung ist fehlgeschlagen. Bitte versuche es nochmals.'];
+
+	Http::fake(['challenges.cloudflare.com/*' => Http::response(['success' => false])]);
+	$this->post('/de/kontakt', contactPayload())->assertSessionHasErrors($error);
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'bad']))->assertSessionHasErrors($error);
+
+	Http::fake(['challenges.cloudflare.com/*' => Http::failedConnection()]);
+	$this->post('/de/kontakt', contactPayload(['cf-turnstile-response' => 'token']))->assertSessionHasErrors($error);
+
+	Mail::assertNothingQueued();
 });

@@ -24,6 +24,18 @@ return [
 		'key' => env('GOOGLEMAPS_APIKEY'),
 	],
 
+	/*
+	 * Cloudflare Turnstile on the Kontakt form ([[ContactController]]). Without
+	 * a secret the check is skipped, as the map is without its key: locally
+	 * and in tests nothing reaches Cloudflare. Cloudflare's test keys
+	 * (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`)
+	 * always pass, for trying the widget out.
+	 */
+	'turnstile' => [
+		'site_key' => env('TURNSTILE_SITE_KEY'),
+		'secret_key' => env('TURNSTILE_SECRET_KEY'),
+	],
+
 	'postmark' => [
 		'key' => env('POSTMARK_API_KEY'),
 	],
