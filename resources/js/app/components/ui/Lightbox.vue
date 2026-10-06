@@ -12,11 +12,13 @@ import Overlay from './Overlay.vue';
  * window's top and right edges, outside the box. Legacy does that only on its
  * cropper and puts the cross beside the title everywhere else; Marcel wanted
  * the two to look the same (2026-09-24), and the dashboard is not held to
- * parity. `wide` is the cropper's fixed 900px box.
+ * parity. `wide` is the cropper's fixed 900px box; `narrow` a fixed 600px
+ * one, for a list whose long lines would otherwise stretch it to 900.
  */
 defineProps({
 	title: { type: String, default: null },
 	wide: { type: Boolean, default: false },
+	narrow: { type: Boolean, default: false },
 	closeOnBackdrop: { type: Boolean, default: true },
 });
 
@@ -35,7 +37,7 @@ const emit = defineEmits(['close']);
 			<IconCross />
 		</button>
 
-		<div class="relative max-w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:p-24" :class="wide ? 'w-[90%] sm:w-900' : 'sm:max-w-900 sm:min-w-600'">
+		<div class="relative max-w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:p-24" :class="wide ? 'w-[90%] sm:w-900' : narrow ? 'w-[90%] sm:w-600' : 'sm:max-w-900 sm:min-w-600'">
 			<div class="max-h-[90vh] overflow-y-auto px-4">
 				<h1 v-if="title" class="mb-12 font-bold whitespace-pre-line text-teal">{{ title }}</h1>
 				<div :class="{ 'mt-24': title }"><slot /></div>

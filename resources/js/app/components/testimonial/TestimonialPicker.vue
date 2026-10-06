@@ -43,15 +43,8 @@ const add = (uuid) => !picked.value.includes(uuid) && (picked.value = [...picked
 // an added quote simply leaves its list.
 const adding = ref(false);
 
-/** What is left to add, grouped as the testimonial form groups its subjects. */
-const groups = computed(() => {
-	const groups = {};
-	for (const item of props.testimonials) {
-		if (picked.value.includes(item.uuid)) continue;
-		(groups[item.subject_label] ??= []).push(item);
-	}
-	return Object.entries(groups).map(([label, items]) => ({ label, items }));
-});
+/** What is left to add, in the testimonials' own order. */
+const available = computed(() => props.testimonials.filter((item) => !picked.value.includes(item.uuid)));
 </script>
 
 <template>
@@ -87,21 +80,24 @@ const groups = computed(() => {
 
 		<NoResults v-if="!rows.length">Noch keine Testimonials ausgewählt.</NoResults>
 
-		<Lightbox v-if="adding" title="Testimonial hinzufügen" @close="adding = false">
-			<NoResults v-if="!groups.length">Alle Testimonials sind bereits ausgewählt.</NoResults>
-			<template v-for="group in groups" :key="group.label">
-				<h2 class="mt-24 text-lg font-bold first:mt-0">{{ group.label }}</h2>
-				<ul class="text-lg">
-					<li v-for="item in group.items" :key="item.uuid" class="flex items-center justify-between gap-16 border-b border-gray-400 py-8">
-						<span class="min-w-0">
-							{{ item.name }}<template v-if="item.context"> ({{ item.context }})</template>
-							<Badge v-if="!item.publish" class="ml-8">nicht publiziert</Badge>
-							<span class="line-clamp-2 block text-md text-gray-600" :title="item.quote">„{{ item.quote }}“</span>
-						</span>
+		<!-- Each quote as the row it will become: who said it, the quote at the
+		     same size, then what it is about as a badge beside the button. -->
+		<Lightbox v-if="adding" title="Testimonial hinzufügen" narrow @close="adding = false">
+			<NoResults v-if="!available.length">Alle Testimonials sind bereits ausgewählt.</NoResults>
+			<ul class="text-lg">
+				<li v-for="item in available" :key="item.uuid" class="border-b border-gray-400 py-12 first:pt-0 last:border-b-0 last:pb-0">
+					<p class="font-bold">{{ item.name }}</p>
+					<p v-if="item.context">{{ item.context }}</p>
+					<p class="mt-8 line-clamp-3" :title="item.quote">„{{ item.quote }}“</p>
+					<div class="mt-12 flex items-center justify-between gap-16">
+						<div class="flex min-w-0 flex-wrap gap-8">
+							<Badge>{{ item.subject_label }}</Badge>
+							<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
+						</div>
 						<Button class="shrink-0" @click="add(item.uuid)">Hinzufügen</Button>
-					</li>
-				</ul>
-			</template>
+					</div>
+				</li>
+			</ul>
 		</Lightbox>
 	</div>
 </template>
