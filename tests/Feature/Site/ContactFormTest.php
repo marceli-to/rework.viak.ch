@@ -91,12 +91,13 @@ it('takes five messages an hour from one address, then refuses', function () {
 	Mail::assertQueuedCount(5);
 });
 
-it('fills in a signed-in visitor’s name and address', function () {
+// No prefill from the account (Marcel, 2026-10-06), as on Firmenschulung.
+it('leaves the fields empty for a signed-in visitor', function () {
 	$user = User::factory()->create(['first_name' => 'Remo', 'last_name' => 'Kast', 'email' => 'remo@example.test']);
 
 	$this->actingAs($user)->get('/de/kontakt')
-		->assertSee('value="Remo Kast"', false)
-		->assertSee('value="remo@example.test"', false);
+		->assertDontSee('value="Remo Kast"', false)
+		->assertDontSee('value="remo@example.test"', false);
 });
 
 /**

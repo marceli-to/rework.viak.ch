@@ -25,8 +25,8 @@
 	<form method="POST" action="{{ \App\Support\SiteUrl::contact() }}">
 		@csrf
 
-		<x-form.field name="name" label="Name" required autocomplete="name" :value="auth()->user()?->name" />
-		<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" :value="auth()->user()?->email" />
+		<x-form.field name="name" label="Name" required autocomplete="name" />
+		<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" />
 		<x-form.textarea name="message" label="Nachricht" required />
 
 		{{-- The honeypot ([[ContactController]]): off screen, out of the
