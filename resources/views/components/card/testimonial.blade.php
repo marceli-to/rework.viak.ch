@@ -6,7 +6,8 @@
 @endphp
 
 {{--
-	One quote on Firmenschulung (Marcel, 2026-10-06): the expert and team
+	One quote, on Firmenschulung and a course page's *Kundenmeinungen*
+	(Marcel, 2026-10-06): the expert and team
 	cards' frame ([[card.team]]), a 1px teal border with 8px inside, 16 from
 	lg, so the quotes read as the site's cards rather than as Kontakt's rows.
 	The quote leads; who said it stands under it, the name bold and black,

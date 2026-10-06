@@ -87,6 +87,9 @@ class CourseController extends Controller
 		return view('site.courses.show', [
 			'course' => $course,
 			'browse' => $this->browse($course),
+			// *Kundenmeinungen*: the published testimonials about this course
+			// ([[Course::testimonialsAbout]]).
+			'testimonials' => $course->testimonialsAbout()->published()->ordered()->get(),
 			/*
 			 * Two flat id lists rather than a query per card. Both are empty for
 			 * a guest, which is the common case and costs nothing.

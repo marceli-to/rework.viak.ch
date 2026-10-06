@@ -37,7 +37,9 @@ class Testimonial extends Model
 
 	/**
 	 * What it is about: a course, a software, or null for VIAK as a whole.
-	 * Set on the testimonial, once; where it is *shown* is `placements()`.
+	 * Set on the testimonial, once. A course subject also *shows* it, on that
+	 * course's page ([[Course::testimonialsAbout]]); everywhere else it is
+	 * shown is `placements()`.
 	 */
 	public function subject(): MorphTo
 	{
@@ -93,8 +95,15 @@ class Testimonial extends Model
 	 */
 	public function placements(): array
 	{
+		// A published course shows the testimonials about it without being
+		// picked ([[Course::testimonialsAbout]]), so its page counts as one.
+		$courses = $this->courses;
+		if ($this->subject instanceof Course && $this->subject->publish && ! $courses->contains($this->subject)) {
+			$courses = $courses->concat([$this->subject]);
+		}
+
 		return [
-			...$this->courses->sortBy('number')->map(fn (Course $course) => [
+			...$courses->sortBy('number')->map(fn (Course $course) => [
 				'type' => 'course',
 				'uuid' => $course->uuid,
 				'label' => $course->number.' '.$course->getTranslation('title', 'de'),

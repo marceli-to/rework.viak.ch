@@ -79,3 +79,24 @@ it('places a testimonial on a page only once', function () {
 
 	expect(fn () => $course->testimonials()->attach($testimonial))->toThrow(QueryException::class);
 });
+
+/**
+ * A course shows the testimonials about it without picking them (#18,
+ * 2026-10-06), so *Verwendet auf* names it, once, and only while it is
+ * published.
+ */
+it('counts the published course it is about as a place it stands', function () {
+	$course = Course::factory()->create(['number' => 7, 'title' => ['de' => 'Rhino Kurs'], 'publish' => true]);
+	$hidden = Course::factory()->create(['publish' => false]);
+	$about = Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $course->id]);
+	$alsoPicked = Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $course->id]);
+	$course->testimonials()->attach($alsoPicked);
+	$aboutHidden = Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $hidden->id]);
+
+	$this->actingAs(User::factory()->admin()->create(['email_verified_at' => now()]));
+	$labels = fn (Testimonial $testimonial) => array_column($this->getJson("/api/admin/testimonials/{$testimonial->uuid}")->json('data.placements'), 'label');
+
+	expect($labels($about))->toBe(['7 Rhino Kurs'])
+		->and($labels($alsoPicked))->toBe(['7 Rhino Kurs'])
+		->and($labels($aboutHidden))->toBe([]);
+});

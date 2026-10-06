@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\CourseVideo;
 use App\Models\Event;
 use App\Models\Location;
+use App\Models\Testimonial;
 use App\Models\User;
 use App\Support\SiteUrl;
 use Illuminate\Testing\TestResponse;
@@ -246,4 +247,26 @@ it('carries the rental dialog and the confirmation once, however many events it 
 
 	$page->assertSee('Nein, ich bringe meinen eigenen Laptop')
 		->assertSee(SiteUrl::checkout('basket'));
+});
+
+/**
+ * *Kundenmeinungen* (#18, 2026-10-06): the published testimonials about this
+ * course, in their own order, as cards. Nothing picks them.
+ */
+it('shows the published testimonials about the course under Kundenmeinungen', function () {
+	$course = detailCourse();
+	$other = Course::factory()->create();
+	Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $course->id, 'order' => 2, 'name' => 'Zweite Person', 'quote' => ['de' => 'Zweites Zitat']]);
+	Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $course->id, 'order' => 1, 'name' => 'Erste Person', 'quote' => ['de' => 'Erstes Zitat']]);
+	Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $course->id, 'publish' => false, 'quote' => ['de' => 'Verstecktes Zitat']]);
+	Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $other->id, 'quote' => ['de' => 'Fremdes Zitat']]);
+
+	coursePage($course)
+		->assertSeeInOrder(['Weitere Informationen', 'Kundenmeinungen', '„Erstes Zitat“', 'Erste Person', '„Zweites Zitat“', 'Zweite Person'], false)
+		->assertDontSee('Verstecktes Zitat')
+		->assertDontSee('Fremdes Zitat');
+});
+
+it('leaves Kundenmeinungen out when nothing is about the course', function () {
+	coursePage()->assertDontSee('Kundenmeinungen');
 });

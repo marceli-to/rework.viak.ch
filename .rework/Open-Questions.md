@@ -38,7 +38,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | ~~16~~ | ~~Is a user with financial history ever deleted, or only deactivated?~~ — **answered 2026-09-24: deactivated.** See `07-dashboard.md` | — | — |
 | ~~17~~ | ~~Are the historical PDFs carried across?~~ — **settled 2026-09-18: yes, and they are.** `port:documents` carries all 1,005 distinct files, repairing the 271 broken paths on the way. The legacy tree is not repaired (2026-09-29) | — | — |
-| 18 | Do the Elfsight review widgets come across, get replaced, or go? — **mostly answered 2026-09-23: replaced** by a `Testimonial` backend module. Left: does the course page's column move to it too? | Marcel, then the client | The Kundenmeinungen column on the course page |
+| ~~18~~ | ~~Do the Elfsight review widgets come across, get replaced, or go?~~ **Answered**: replaced by `Testimonial` (2026-09-23); the course page's column shows the published testimonials **about** the course, automatically (Marcel, 2026-10-06) | Marcel | Built |
 | 19 | The 67 past courses listed as *Gebuchte Kurse* on the live site | Marcel | **Nothing here** — the rework splits on the date. A live-site tidy-up, or nothing |
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
 | ~~22~~ | ~~Deleting an event with active bookings tells nobody?~~ — **withdrawn 2026-09-24: the premise was wrong.** Legacy's dashboard refuses the delete while active bookings exist; only the server-side check is missing, in both. Now a rule in `10-mail.md`, *Oddities* | — | — |
@@ -305,7 +305,13 @@ knowingly wrong. Pick one, in the port.
 The rework is pinned to 8.3 because Herd serves 8.3 locally. If production runs
 8.4, raise the pin. Only bites at deploy time.
 
-### 18. Do the Elfsight review widgets come across, get replaced, or go?
+### ~~18. Do the Elfsight review widgets come across, get replaced, or go?~~
+
+**Answered and built 2026-10-06 (Marcel):** the course page's *Kundenmeinungen*
+column shows the published testimonials whose subject is the course, in the
+testimonials' order, as the Firmenschulung cards. Nothing picks them
+(`Course::testimonialsAbout`); the dashboard's *Verwendet auf* counts that
+course while it is published. Course placements stay unused for now.
 
 **Mostly answered 2026-09-23, in the mockup review**: "Testimonials als Backend
 Modul ersetzt bestehende Google Rez." — the widgets are replaced by quotes VIAK

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
@@ -66,6 +67,18 @@ class Course extends Model
 	public function videos(): HasMany
 	{
 		return $this->hasMany(CourseVideo::class);
+	}
+
+	/**
+	 * The testimonials **about** this course, the ones whose subject it is.
+	 * The course page's *Kundenmeinungen* shows these, published and in the
+	 * testimonials' own order (Marcel, 2026-10-06, `Open-Questions.md` #18):
+	 * automatic, not picked, so `testimonials()` (placements) stays unused on a
+	 * course for now.
+	 */
+	public function testimonialsAbout(): MorphMany
+	{
+		return $this->morphMany(Testimonial::class, 'subject');
 	}
 
 	public function categories(): MorphToMany

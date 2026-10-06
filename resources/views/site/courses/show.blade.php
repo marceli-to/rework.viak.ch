@@ -150,7 +150,7 @@
 			</x-ui.collapsible>
 		@endif
 
-		@if ($booking || $content || $course->reviews)
+		@if ($booking || $content || $testimonials->isNotEmpty())
 			<x-ui.collapsible title="Weitere Informationen">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					@if ($booking)
@@ -161,17 +161,19 @@
 						<x-ui.rich-text :html="$content" class="mb-16 sm:col-span-4 sm:mb-0" />
 					@endif
 
-					{{-- **Empty on every course today, deliberately.** Legacy's
-					     `courses.reviews` is not testimonials: all 32 non-empty
-					     rows are an Elfsight widget embed, so the Kundenmeinungen
-					     cards on the live page are Google reviews drawn by a
-					     third party at run time. `PortCourses` reports the
-					     column rather than carrying a third-party script over —
-					     see `Open-Questions.md` #12. The column is here so that
-					     whatever is decided has somewhere to land. --}}
-					@if ($course->reviews)
+					{{-- Legacy's column was an Elfsight widget of Google reviews
+					     (`courses.reviews`, `Open-Questions.md` #12), not carried
+					     over. It now holds the published testimonials **about**
+					     this course, automatically (#18, Marcel, 2026-10-06), as
+					     the cards Firmenschulung shows, stacked. --}}
+					@if ($testimonials->isNotEmpty())
 						<div class="mb-16 sm:col-span-4 sm:mb-0">
 							<header><h2 class="font-bold">Kundenmeinungen</h2></header>
+							<div class="mt-12 flex flex-col gap-16">
+								@foreach ($testimonials as $testimonial)
+									<x-card.testimonial :testimonial="$testimonial" />
+								@endforeach
+							</div>
 						</div>
 					@endif
 				</div>
