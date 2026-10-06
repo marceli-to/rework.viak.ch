@@ -54,7 +54,9 @@ talked about*, not *disputed*.
   with the mockup's three fields; #24 is answered in [[ContactController]]. Legacy's Kontakt
   has no form at all (address, map, and four collapsibles), so the form is new,
   and it is the first public form that sends a mail to VIAK rather than to the
-  customer. It waits on mail, which does not exist yet.
+  customer. It waits on mail, which does not exist yet. **Neither form
+  prefills from the account** (Marcel, 2026-10-06): Kontakt and Firmenschulung
+  start empty for a signed-in visitor too; a refused send keeps what was typed.
 - **Firmenschulung** — show reviews. That is the `Testimonial` model below.
   **Built 2026-10-06** (Marcel's calls): `/de/firmenschulung`, 301 from
   `/de/individualschulungen`; **legacy's copy**, not the mockup's filler, drawn
