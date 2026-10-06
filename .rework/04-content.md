@@ -65,6 +65,14 @@ talked about*, not *disputed*.
   holding placements ([[Page]]), so the homepage takes the same route. Kontakt
   links here from its form (marker 1). Not in the nav.
 
+  **Reshaped the same day** (Marcel): no collapsibles. The enquiry form
+  follows the copy in its column under an `h2` *Anfragen* (the copy's opening
+  line is an `h2` too), and the testimonials are cards below it in *Über
+  uns*'s grid, the team card's teal frame, the author bold and black. In the
+  nav after all (see *Über uns* below). The dashboard picker adds through a
+  `+` at the top right that opens a lightbox, as *Teilnehmer hinzufügen*
+  does, instead of a select.
+
   **Built from the mockup, not rebuilt at parity** (Marcel, 2026-09-24). Legacy's
   page is `/de/individualschulungen`: a six-image slider and five paragraphs
   of *Individualschulungen für Firmen und Einzelpersonen*, no form. It is

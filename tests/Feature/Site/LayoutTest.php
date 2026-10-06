@@ -158,7 +158,7 @@ it('steps the container gutter the way the design does', function () {
 		->assertSee('px-8', false)
 		->assertSee('sm:max-w-[calc(100%-32px)]', false)
 		->assertSee('sm:px-16', false)
-		->assertSee('lg:max-w-[1100px]', false);
+		->assertSee('lg:max-w-[1200px]', false);
 });
 
 /**

@@ -38,8 +38,9 @@ it('renders at /de/firmenschulung with legacy’s copy, then the enquiry', funct
 			'Individualschulungen für Firmen und Einzelpersonen',
 			'Was ist Ihr Thema?<br>Bestimmt finden wir',
 			'href="tel:+41435014040"',
-			'Anfrage senden',
+			'Anfragen',
 			'name="company"', 'name="name"', 'name="email"', 'name="message"',
+			'Anfrage senden',
 		], false);
 });
 
@@ -49,8 +50,8 @@ it('301s legacy’s indexed url to it, and lists it in the sitemap', function ()
 	$this->get('/sitemap.xml')->assertSee('/de/firmenschulung');
 });
 
-it('stays out of the nav, and Kontakt links to it', function () {
-	$this->get('/de/kurse')->assertDontSee('href="/de/firmenschulung"', false);
+it('is in the nav, and Kontakt links to it', function () {
+	$this->get('/de/kurse')->assertSee('href="/de/firmenschulung"', false);
 	$this->get('/de/kontakt')->assertSee('href="/de/firmenschulung"', false)->assertSee('Anfrage für eine Firmenschulung?');
 });
 
@@ -105,15 +106,15 @@ it('shows the testimonials picked for it, in their order, published only', funct
 	$page->testimonials()->attach([$second->id => ['order' => 2], $first->id => ['order' => 1], $hidden->id => ['order' => 3]]);
 
 	$this->get('/de/firmenschulung')
-		->assertSeeInOrder(['Kundenmeinungen', 'Erste Person', '„Erstes Zitat“', 'Zweite Person', '„Zweites Zitat“'], false)
+		->assertSeeInOrder(['Anfragen', '„Erstes Zitat“', 'Erste Person', '„Zweites Zitat“', 'Zweite Person'], false)
 		->assertDontSee('Verstecktes Zitat')
 		->assertDontSee('Nicht gewählt');
 });
 
-it('leaves Kundenmeinungen out until one is picked', function () {
+it('shows no testimonial cards until one is picked', function () {
 	Testimonial::factory()->create();
 
-	$this->get('/de/firmenschulung')->assertDontSee('Kundenmeinungen');
+	$this->get('/de/firmenschulung')->assertDontSee('<blockquote', false);
 });
 
 it('fills in a signed-in visitor’s company, name and address', function () {

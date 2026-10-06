@@ -1,17 +1,11 @@
 {{--
 	*Kundenmeinungen* (the review's Firmenschulung marker 1): the testimonials
 	picked for this page in the dashboard, in their order, published only
-	([[Page]]). One row each, as Kontakt's blocks are made of: who said it in
-	the aside, the quote in the column.
+	([[Page]]). Cards in a grid, with no collapsible and no heading around them
+	(Marcel, 2026-10-06): the grid is *Über uns*'s, three across from lg.
 --}}
-@foreach ($testimonials as $testimonial)
-	<x-card.text>
-		<x-slot:aside>
-			<h2>{{ $testimonial->name }}</h2>
-			@if ($context = $testimonial->getTranslation('context', app()->getLocale(), false))
-				<p>{{ $context }}</p>
-			@endif
-		</x-slot:aside>
-		<p>„{{ $testimonial->getTranslation('quote', app()->getLocale()) }}“</p>
-	</x-card.text>
-@endforeach
+<div class="grid grid-cols-12 gap-16 lg:gap-40">
+	@foreach ($testimonials as $testimonial)
+		<x-card.testimonial :testimonial="$testimonial" class="col-span-12 sm:col-span-6 lg:col-span-4" />
+	@endforeach
+</div>

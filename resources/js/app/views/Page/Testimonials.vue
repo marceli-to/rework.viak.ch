@@ -57,8 +57,9 @@ async function save() {
 		<Loading v-else-if="loading" class="mt-32" />
 
 		<template v-else>
-			<h2 class="mt-32 text-lg font-bold sm:text-xl">Kundenmeinungen</h2>
-			<TestimonialPicker v-model="picked" :testimonials="testimonials" />
+			<TestimonialPicker v-model="picked" :testimonials="testimonials" class="mt-32">
+				<template #title><h2 class="text-lg font-bold sm:text-xl">Kundenmeinungen</h2></template>
+			</TestimonialPicker>
 			<Button class="mt-32 w-full" :disabled="saving" @click="save">Speichern</Button>
 		</template>
 	</section>
