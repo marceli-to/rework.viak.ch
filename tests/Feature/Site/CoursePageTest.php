@@ -262,7 +262,7 @@ it('shows the published testimonials about the course under Kundenmeinungen', fu
 	Testimonial::factory()->create(['subject_type' => Course::class, 'subject_id' => $other->id, 'quote' => ['de' => 'Fremdes Zitat']]);
 
 	coursePage($course)
-		->assertSeeInOrder(['Weitere Informationen', 'Kundenmeinungen', '„Erstes Zitat“', 'Erste Person', '„Zweites Zitat“', 'Zweite Person'], false)
+		->assertSeeInOrder(['Kundenmeinungen', '„Erstes Zitat“', 'Erste Person', '„Zweites Zitat“', 'Zweite Person'], false)
 		->assertDontSee('Verstecktes Zitat')
 		->assertDontSee('Fremdes Zitat');
 });

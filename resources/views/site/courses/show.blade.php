@@ -150,7 +150,7 @@
 			</x-ui.collapsible>
 		@endif
 
-		@if ($booking || $content || $testimonials->isNotEmpty())
+		@if ($booking || $content)
 			<x-ui.collapsible title="Weitere Informationen">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					@if ($booking)
@@ -160,22 +160,22 @@
 					@if ($content)
 						<x-ui.rich-text :html="$content" class="mb-16 sm:col-span-4 sm:mb-0" />
 					@endif
+				</div>
+			</x-ui.collapsible>
+		@endif
 
-					{{-- Legacy's column was an Elfsight widget of Google reviews
-					     (`courses.reviews`, `Open-Questions.md` #12), not carried
-					     over. It now holds the published testimonials **about**
-					     this course, automatically (#18, Marcel, 2026-10-06), as
-					     the cards Firmenschulung shows, stacked. --}}
-					@if ($testimonials->isNotEmpty())
-						<div class="mb-16 sm:col-span-4 sm:mb-0">
-							<header><h2 class="font-bold">Kundenmeinungen</h2></header>
-							<div class="mt-12 flex flex-col gap-16">
-								@foreach ($testimonials as $testimonial)
-									<x-card.testimonial :testimonial="$testimonial" />
-								@endforeach
-							</div>
-						</div>
-					@endif
+		{{-- Legacy's Kundenmeinungen was a column in *Weitere Informationen*
+		     holding an Elfsight widget of Google reviews (`courses.reviews`,
+		     `Open-Questions.md` #12), not carried over. It is its own collapsible
+		     now (Marcel, 2026-10-06): the published testimonials **about** this
+		     course, automatically (#18), as Firmenschulung's cards in *Über
+		     uns*'s grid. --}}
+		@if ($testimonials->isNotEmpty())
+			<x-ui.collapsible title="Kundenmeinungen">
+				<div class="grid grid-cols-12 gap-16 lg:gap-40">
+					@foreach ($testimonials as $testimonial)
+						<x-card.testimonial :testimonial="$testimonial" class="col-span-12 sm:col-span-6 lg:col-span-4" />
+					@endforeach
 				</div>
 			</x-ui.collapsible>
 		@endif
