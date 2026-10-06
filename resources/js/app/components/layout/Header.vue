@@ -124,12 +124,12 @@ try {
 		</div>
 
 		<!-- `.site-menu__overflow-items`: right edge on the column's —
-		     `calc((100% - 1100px) / 2)` at desktop, 16px below it. Legacy pads
+		     `calc((100% - 1200px) / 2)` at desktop, 16px below it. Legacy pads
 		     it 20px and its cross is an inline link whose line box adds 2 more;
 		     22px puts every item where production has it. -->
 		<div
 			v-show="open"
-			class="fixed top-0 right-16 z-[501] h-full w-240 border-l border-black bg-white pt-22 lg:right-[calc((100%-1100px)/2)]"
+			class="fixed top-0 right-16 z-[501] h-full w-240 border-l border-black bg-white pt-22 lg:right-[calc((100%-1200px)/2)]"
 			@keydown.esc="open = false"
 		>
 			<ul class="mr-16 flex flex-col items-end text-3xl font-bold sm:text-lg lg:text-2xl">

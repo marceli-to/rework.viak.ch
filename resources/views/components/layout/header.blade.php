@@ -9,7 +9,7 @@
 	 * 12-column grid of two `span-6` lists — the nav links spread with
 	 * `space-between`, the icons pushed right with `flex-end`.
 	 *
-	 * All four nav items are always shown.
+	 * All five nav items are always shown.
 	 */
 	$locale = app()->getLocale();
 
@@ -25,6 +25,9 @@
 	 */
 	$nav = [
 		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
+		// *Software* holds its place until its page is built (2026-10-06): no
+		// route yet, so `#` and nothing to light it.
+		['label' => 'Software', 'href' => '#', 'match' => []],
 		// *Firmenschulung* joined on Marcel's call (2026-10-06), against the
 		// mockup review's marker 8, which kept it out of the menu.
 		['label' => 'Firmenschulung', 'href' => \App\Support\SiteUrl::training(), 'match' => "{$locale}.training"],
@@ -71,20 +74,26 @@
 			the very top of the 80px header row (its box is 28→54px, the row is
 			28→108px) while the logo has a 4px top margin and hangs below it. An
 			earlier pass centred it, which is what put the items in the wrong place.
+
+			**From md, not sm** (2026-10-06). Five links need 351px of text at sm's
+			18px, and between 640 and ~760px the bar has about 354px for the links
+			*and* the icons: the logo is a fixed 199px and gives nothing back. So
+			the burger and its panel cover that band too, and the bar starts at
+			768px. The `sm:` classes on this column are left as they were.
 		--}}
-		<div class="col-span-12 hidden sm:col-span-8 sm:block">
+		<div class="col-span-12 hidden sm:col-span-8 md:block">
 			<nav class="grid grid-cols-12 gap-x-16 lg:gap-x-40" aria-label="Hauptnavigation">
 				{{-- `menu/_site.scss`: bold, 24px, 16px at sm, 20px at lg. Legacy's
 				     three links fill a `span-6` — on production Kurse begins at the
 				     column's left edge and Kontakt ends exactly at its right.
 
-				     **Four do not fit in it.** With Firmenschulung the list overflowed
-				     below 1280px and *Über uns* broke onto two lines, so the links take
-				     `span-10` (`span-9` from lg) and the icons, which need little, the
-				     rest. `span-9` alone still ran Kontakt into the icons below ~740px. Each link stays
-				     on one line, and `gap-x` keeps them apart where `justify-between`
-				     alone would let them touch. --}}
-				<ul class="col-span-10 flex justify-between gap-x-8 text-3xl font-bold whitespace-nowrap sm:text-lg lg:col-span-9 lg:gap-x-24 lg:text-2xl">
+				     **Five do not fit in it** (Software and Firmenschulung joined, 2026-10-06):
+				     the list overflowed and *Über uns* broke onto two lines. So the links
+				     take `span-10` (`span-9` from lg), the icons, which need little, the
+				     rest, and each link stays on one line. `gap-x-6` is only a floor:
+				     `justify-between` still spreads them when there is room, and 6px is
+				     what lets them fit at 768 and 1024. --}}
+				<ul class="col-span-10 flex justify-between gap-x-6 text-3xl font-bold whitespace-nowrap sm:text-lg lg:col-span-9 lg:text-2xl">
 					@foreach ($nav as $item)
 						<li class="flex items-center">
 							<a href="{{ $item['href'] }}"
@@ -155,7 +164,7 @@
 	</div>
 
 	{{--
-		`menu/_site.scss` under `bp-xs`: a teal panel behind an 8px white frame
+		`menu/_site.scss` under `bp-xs` (here up to md, see the bar above): a teal panel behind an 8px white frame
 		that stops short of the bottom, links right-aligned over black rules, and
 		a white bar carrying the social links and the close control.
 
@@ -163,7 +172,7 @@
 		than the icon it uses on desktop.
 	--}}
 	<div x-show="open" x-cloak
-		class="fixed inset-0 z-[201] flex flex-col border-8 border-b-0 border-white bg-teal sm:hidden"
+		class="fixed inset-0 z-[201] flex flex-col border-8 border-b-0 border-white bg-teal md:hidden"
 		@keydown.escape.window="close()">
 		<div class="flex-1 p-8">
 			{{-- The logo heads the panel, as `menu.blade.php` has it: the link
@@ -252,7 +261,7 @@
 	{{-- `icons/_menu.scss`: the burger is **fixed at the bottom right**, 32×24,
 	     not in the header bar. --}}
 	<button type="button" x-show="! open"
-		class="fixed right-20 bottom-20 z-[99] h-24 w-32 sm:hidden"
+		class="fixed right-20 bottom-20 z-[99] h-24 w-32 md:hidden"
 		@click="toggle()" :aria-expanded="open" aria-label="Menü">
 		<x-icon.burger class="w-full!" />
 	</button>

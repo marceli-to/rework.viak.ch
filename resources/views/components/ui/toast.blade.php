@@ -6,7 +6,7 @@
 	for a failed login, for "added to basket", and through the booking flow.
 
 	The anchoring is the fiddly part: from `sm` it is not `right: 16px` but
-	`calc((100% - 1100px) / 2 + 16px)`, so it lines up with the **container's**
+	`calc((100% - 1200px) / 2 + 16px)`, so it lines up with the **container's**
 	right edge rather than the window's. Below `sm` it is simply inset 16.
 
 	Sizes are legacy's: 16px, 18px from `bp-md`; 360px wide from `sm` and 480
@@ -30,7 +30,7 @@
 	$fill = ['error' => 'bg-danger', 'success' => 'bg-success', 'info' => 'bg-gray-600'];
 	$edge = ['error' => 'border-danger', 'success' => 'border-success', 'info' => 'border-gray-600'];
 
-	$position = 'fixed top-16 left-16 z-[1001] w-[calc(100%-32px)] cursor-pointer text-lg text-white sm:top-16 sm:left-auto sm:w-auto sm:max-w-360 sm:right-[calc((100%-1100px)/2+16px)] lg:max-w-480 lg:text-xl';
+	$position = 'fixed top-16 left-16 z-[1001] w-[calc(100%-32px)] cursor-pointer text-lg text-white sm:top-16 sm:left-auto sm:w-auto sm:max-w-360 sm:right-[calc((100%-1200px)/2+16px)] lg:max-w-480 lg:text-xl';
 	$inner = 'flex items-center border p-8 sm:px-16';
 
 	/* The one expression both bindings key off, so the store's variant names

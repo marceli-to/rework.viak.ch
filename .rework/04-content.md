@@ -135,8 +135,13 @@ same day:
 - **The nav renames Experten to *Über uns*, and nothing else.** *Angebot*
   (homepage marker 8) waits for the homepage. **Amended the same day**:
   Firmenschulung is in the nav after Kurse, Marcel's call against marker 8.
-  Four links do not fit legacy's `span-6`, so they take `span-10` (`span-9`
-  from lg) and stay on one line (`layout/header.blade.php`).
+  *Software* sits after Kurse with a `#` link until its page is built. Five
+  links do not fit legacy's `span-6`, so they take `span-10` (`span-9` from
+  lg), stay on one line with a 6px minimum gap, and **the bar starts at md**
+  (768) rather than sm: below ~760px there is no room beside the fixed 199px
+  logo, so the burger covers 640–767 too. **The container went from 1100 to
+  1200px** for the same reason (Marcel), site and dashboard alike
+  (`layout/header.blade.php`, `layout/site.blade.php`).
 - **The team is a dashboard module**, *Seiteninhalte → Team*: name, *Funktion*,
   a portrait on the shared image section, publish, dragged into order.
   `TeamMember`, not an account. Legacy's table is empty, so nothing is ported,

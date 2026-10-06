@@ -15,7 +15,7 @@ const EDGE = { success: 'border-success', error: 'border-danger', info: 'border-
 		v-for="item in toasts.slice(-1)"
 		:key="item.id"
 		role="status"
-		class="fixed top-16 left-16 z-[1001] w-[calc(100%-32px)] cursor-pointer text-lg text-white sm:left-auto sm:w-auto sm:max-w-360 sm:right-[calc((100%-1100px)/2+16px)] lg:max-w-480 lg:text-xl"
+		class="fixed top-16 left-16 z-[1001] w-[calc(100%-32px)] cursor-pointer text-lg text-white sm:left-auto sm:w-auto sm:max-w-360 sm:right-[calc((100%-1200px)/2+16px)] lg:max-w-480 lg:text-xl"
 		:class="FILL[item.tone] ?? FILL.success"
 		@click="dismiss(item.id)"
 	>

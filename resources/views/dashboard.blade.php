@@ -2,7 +2,7 @@
 {{--
 	The dashboard's SPA shell ([[07-dashboard]]) — legacy's
 	`web.layout.backend`, which is the site's own frame: the teal `<html>` of the
-	signed-in screens and the white 1100px column, with
+	signed-in screens and the white 1200px column, with
 	`components/layout/site.blade.php`'s body classes copied here rather than
 	shared, because the SPA draws everything inside it
 	([[viak-dashboard-looks-like-the-site]]).
@@ -29,7 +29,7 @@
 
 	@vite(['resources/css/app.css', 'resources/js/app/app.js'])
 </head>
-<body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1100px] lg:text-3xl">
+<body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1200px] lg:text-3xl">
 	<div id="app"></div>
 </body>
 </html>

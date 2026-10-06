@@ -19,7 +19,7 @@
 	 * exists to prevent.
 	 *
 	 * Raised from 500 to 1200 on 2026-09-22 for that, and 1200 because it clears
-	 * the widest thing the design has — the 1100px container. Unused tokens are
+	 * the widest thing the design has — the 1200px container. Unused tokens are
 	 * pruned from the build (42 of these reach the stylesheet today), so the
 	 * ceiling costs lines in this file and nothing in the bundle. Raise it again
 	 * rather than reaching for an arbitrary value.

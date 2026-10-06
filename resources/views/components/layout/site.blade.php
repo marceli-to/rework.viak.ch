@@ -55,7 +55,7 @@
 
 <!DOCTYPE html>
 {{-- `auth` is legacy's `is-auth` on `<html>` (`layout/_base.scss:10`): the
-     teal fills the gutters either side of the white 1100px column on every
+     teal fills the gutters either side of the white 1200px column on every
      screen that is part of signing in or buying. The body keeps its white and
      its `min-h-screen`, so the teal shows at the sides and never below. --}}
 <html lang="{{ str_replace('_', '-', $locale) }}" @class(['overflow-y-scroll', 'bg-teal' => $auth])>
@@ -113,7 +113,7 @@
      `layout/_base.scss`.
 
      The gutter is **16px on phones and 32px from 700px up**, then a centred
-     1100px column — and legacy splits each one **half into a max-width and half
+     1200px column — and legacy splits each one **half into a max-width and half
      into padding**: `calc(100% - 16px)` with 8px of padding, then
      `calc(100% - 32px)` with 16.
 
@@ -122,16 +122,18 @@
      is not the same. The body is painted, so where its **box** ends is
      visible: legacy's stops 8px short of the window and lets `is-auth` teal
      through on both sides, while a `w-full` body covered them. Only the phone
-     and tablet steps were wrong — `max-w-[1100px]` was already doing this at
+     and tablet steps were wrong — `max-w-[1200px]` was already doing this at
      desktop, which is why the gutters showed there and nowhere else.
 
-     At desktop the body is 1100 **including** its padding, so the content
-     measures 1068.
+     At desktop the body is 1200 **including** its padding, so the content
+     measures 1168. **Legacy's is 1100** (content 1068); widened on Marcel's
+     call (2026-10-06) to give the nav's five links room. The dashboard,
+     both toasts and the dashboard's side panel follow the same number.
 
      **`bg-white` is load-bearing** for the same reason. Legacy paints the body
      white (`layout/_base.scss:26`); a transparent one would let `is-auth`
      through the whole page rather than only past the column's edges. --}}
-<body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1100px] lg:text-3xl">
+<body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1200px] lg:text-3xl">
 	{{-- Legacy keeps these apart — `seo_title` and `page_title` are two
 	     sections — and the course page is where they differ: the tab says the
 	     course, the phone's header row says **Kurse**. Everywhere else they are

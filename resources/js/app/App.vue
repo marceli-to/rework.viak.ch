@@ -7,7 +7,7 @@ import Toast from '@/components/ui/Toast.vue';
 
 /**
  * The shell ([[07-dashboard]]): the site's header with legacy's dashboard menu,
- * and the screen under it — inside the site's white 1100px column, which
+ * and the screen under it — inside the site's white 1200px column, which
  * `resources/views/dashboard.blade.php` draws.
  */
 </script>
