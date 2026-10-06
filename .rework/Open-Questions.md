@@ -215,7 +215,8 @@ or a blog with its own pages, categories and URLs.
 Marked open in the review, but with eleven markers — the most decided of the
 open screens. They are listed in `04-content.md` under *The mockup review*. The
 nav change in marker 8 (*Angebot* replacing *Kurse* and *Software*,
-Firmenschulung out of the menu) is site-wide, not a homepage detail.
+Firmenschulung out of the menu) is site-wide, not a homepage detail. Half of it
+is overruled: Firmenschulung went into the menu on 2026-10-06 (Marcel).
 
 **Decides:** the phase-two homepage, and the nav on every page.
 

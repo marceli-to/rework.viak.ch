@@ -9,7 +9,7 @@
 	 * 12-column grid of two `span-6` lists — the nav links spread with
 	 * `space-between`, the icons pushed right with `flex-end`.
 	 *
-	 * All three nav items are always shown, as on the live site.
+	 * All four nav items are always shown.
 	 */
 	$locale = app()->getLocale();
 
@@ -25,6 +25,9 @@
 	 */
 	$nav = [
 		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
+		// *Firmenschulung* joined on Marcel's call (2026-10-06), against the
+		// mockup review's marker 8, which kept it out of the menu.
+		['label' => 'Firmenschulung', 'href' => \App\Support\SiteUrl::training(), 'match' => "{$locale}.training"],
 		// *Über uns* took Experten's place (2026-10-06), and an expert's own page
 		// still lights it: the experts are on *Über uns* now.
 		['label' => 'Über uns', 'href' => \App\Support\SiteUrl::about(), 'match' => ["{$locale}.about", "{$locale}.experts.*"]],
@@ -71,10 +74,17 @@
 		--}}
 		<div class="col-span-12 hidden sm:col-span-8 sm:block">
 			<nav class="grid grid-cols-12 gap-x-16 lg:gap-x-40" aria-label="Hauptnavigation">
-				{{-- `menu/_site.scss`: bold, 24px, 16px at sm, 20px at lg. The three
-				     links fill the full `span-6` — on production Kurse begins at the
-				     column's left edge and Kontakt ends exactly at its right. --}}
-				<ul class="col-span-6 flex justify-between text-3xl font-bold sm:text-lg lg:text-2xl">
+				{{-- `menu/_site.scss`: bold, 24px, 16px at sm, 20px at lg. Legacy's
+				     three links fill a `span-6` — on production Kurse begins at the
+				     column's left edge and Kontakt ends exactly at its right.
+
+				     **Four do not fit in it.** With Firmenschulung the list overflowed
+				     below 1280px and *Über uns* broke onto two lines, so the links take
+				     `span-10` (`span-9` from lg) and the icons, which need little, the
+				     rest. `span-9` alone still ran Kontakt into the icons below ~740px. Each link stays
+				     on one line, and `gap-x` keeps them apart where `justify-between`
+				     alone would let them touch. --}}
+				<ul class="col-span-10 flex justify-between gap-x-8 text-3xl font-bold whitespace-nowrap sm:text-lg lg:col-span-9 lg:gap-x-24 lg:text-2xl">
 					@foreach ($nav as $item)
 						<li class="flex items-center">
 							<a href="{{ $item['href'] }}"
@@ -85,7 +95,7 @@
 					@endforeach
 				</ul>
 
-				<ul class="col-span-6 flex justify-end">
+				<ul class="col-span-2 flex justify-end lg:col-span-3">
 					{{-- Hidden while the basket is empty, as legacy hides it with
 					     `!hide` at a count of zero — which is why the live header
 					     usually shows only the account icon. --}}

@@ -133,7 +133,10 @@ same day:
   experts exactly as the Experten page listed them, and the team. An expert's
   own page keeps its URL and lights *Über uns* in the nav.
 - **The nav renames Experten to *Über uns*, and nothing else.** *Angebot*
-  (homepage marker 8) waits for the homepage.
+  (homepage marker 8) waits for the homepage. **Amended the same day**:
+  Firmenschulung is in the nav after Kurse, Marcel's call against marker 8.
+  Four links do not fit legacy's `span-6`, so they take `span-10` (`span-9`
+  from lg) and stay on one line (`layout/header.blade.php`).
 - **The team is a dashboard module**, *Seiteninhalte → Team*: name, *Funktion*,
   a portrait on the shared image section, publish, dragged into order.
   `TeamMember`, not an account. Legacy's table is empty, so nothing is ported,
