@@ -9,6 +9,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Site\AboutController;
 use App\Http\Controllers\Site\CheckoutController;
+use App\Http\Controllers\Site\ContactController;
 use App\Http\Controllers\Site\CourseController;
 use App\Http\Controllers\Site\CustomerAddressController;
 use App\Http\Controllers\Site\CustomerPortalController;
@@ -114,6 +115,10 @@ Route::prefix('{locale}')
 			 */
 			Route::view($segments['contact'], 'site.contact.index')
 				->name("{$locale}.contact");
+
+			// The form on it: mailed, never stored ([[ContactController]]).
+			Route::post($segments['contact'], [ContactController::class, 'store'])
+				->name("{$locale}.contact.send");
 
 			/*
 			 * Paying an invoice by card — the course confirmation mail links

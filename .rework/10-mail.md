@@ -72,6 +72,8 @@ in a scenario (below).
 | Rental added later | `RentalAdded` | student | rental invoice | Buchung Mietcomputer für *course* | **Built 2026-09-29**: `SetRental` announces [[RentalChanged]]. No attachment is ever possible: a laptop is added only before the seat is invoiced, and bills on the course's invoice |
 | | `RentalAddedInfoAdmin` | admin | — | ″ | **Built** |
 | Rental removed | `RentalCancelledInfoAdmin` | admin | — | Stornierung Mietcomputer für *course* | **Built** |
+| Kontakt form sent | — (new, legacy has no form) | admin, Reply-To the sender | — | Kontaktanfrage von *name* | **Built 2026-10-06** as `ContactMessage` ([[ContactController]]) |
+| | — | the sender | — | Danke für deine Nachricht | **Built 2026-10-06** as `ContactMessageConfirmation` |
 | Seats reach minimum | `ParticipantsMin` | admin | — | Min. Teilnehmerzahl erreicht – *course* | **Built 2026-09-29**: the three are one `ParticipantsChange` ([[SendThresholdMails]]) |
 | Seats reach maximum | `ParticipantsMax` | admin | — | Max. Teilnehmerzahl erreicht – *course* | **Built** |
 | Seats drop below minimum | `ParticipantsBelowMin` | admin | — | Min. Teilnehmerzahl unterschritten – *course* | **Built** |

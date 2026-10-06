@@ -13,8 +13,10 @@
 	the 2026-09-23 review's Team mockup has them (`04-content.md`). Team had
 	never rendered: legacy's `team_members` table is empty.
 
-	The mockup review also approved a **contact form** for this page. Legacy has
-	none; it waits on mail and on `Open-Questions.md` #24.
+	**The contact form is new** (the 2026-09-23 review's Kontakt marker 2; legacy
+	has none), built 2026-10-06 as a second block drawn like the first:
+	*Nachricht senden* in the aside, the mockup's three fields in the column.
+	Where it sends and why nothing is stored is [[ContactController]].
 --}}
 <x-layout.site title="Kontakt" heading="Kontakt">
 	{{-- `section.container-contact`, 48px under it and 64 from `bp-md`. --}}
@@ -37,6 +39,40 @@
 			<div class="mt-16 sm:mt-24 lg:mt-32">
 				<x-ui.map />
 			</div>
+		</div>
+	</article>
+
+	{{-- The form, as a second block like the first. `#nachricht` is where a
+	     sent or refused form lands, so the answer is on screen. --}}
+	<article id="nachricht" class="mb-48 scroll-mt-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mb-64 lg:gap-40">
+		<aside class="text-teal sm:col-span-4">
+			<h2 class="font-bold">Nachricht senden</h2>
+		</aside>
+
+		<div class="mt-24 sm:col-span-8 sm:mt-0">
+			@if (session('contact') === 'sent')
+				<x-ui.toast variant="success">Danke, deine Nachricht ist bei uns angekommen.</x-ui.toast>
+			@elseif ($errors->any())
+				<x-ui.toast>Es ist ein Fehler aufgetreten.</x-ui.toast>
+			@endif
+
+			<form method="POST" action="{{ \App\Support\SiteUrl::contact() }}">
+				@csrf
+
+				<x-form.field name="name" label="Name" required autocomplete="name" :value="auth()->user()?->name" />
+				<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" :value="auth()->user()?->email" />
+				<x-form.textarea name="message" label="Nachricht" required />
+
+				{{-- The honeypot ([[ContactController]]): off screen, out of the
+				     tab order, and hidden from screen readers, so only a bot
+				     fills it in. --}}
+				<div class="absolute -left-[9999px]" aria-hidden="true">
+					<label for="website">Website</label>
+					<input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+				</div>
+
+				<x-ui.button type="submit">Nachricht senden</x-ui.button>
+			</form>
 		</div>
 	</article>
 
