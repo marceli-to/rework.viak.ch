@@ -123,8 +123,8 @@ Route::prefix('{locale}')
 
 			/*
 			 * Firmenschulung (`04-content.md`, #25): legacy's copy, an enquiry
-			 * form and the testimonials picked for it. In the nav since
-			 * 2026-10-06, and Kontakt links to it. Legacy's indexed `/de/individualschulungen` 301s here.
+			 * form and the testimonials picked for it. Not in the nav; Kontakt,
+			 * the Kurse filter and (later) the homepage link to it. Legacy's indexed `/de/individualschulungen` 301s here.
 			 */
 			Route::get($segments['training'], [TrainingController::class, 'show'])
 				->name("{$locale}.training");

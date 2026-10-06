@@ -15,8 +15,7 @@ it('puts the burger at the bottom right, out of the header bar', function () {
 	$html = $this->get('/de')->getContent();
 
 	// `icons/_menu.scss`: fixed, 32×24, bottom 20 right 20, above the page.
-	// Up to md rather than sm: five nav links do not fit beside the logo below it.
-	expect($html)->toContain('fixed right-20 bottom-20 z-[99] h-24 w-32 md:hidden');
+	expect($html)->toContain('fixed right-20 bottom-20 z-[99] h-24 w-32 sm:hidden');
 });
 
 it('gives the mobile menu legacy’s teal panel and white frame', function () {

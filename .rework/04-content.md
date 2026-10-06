@@ -68,8 +68,8 @@ talked about*, not *disputed*.
   **Reshaped the same day** (Marcel): no collapsibles. The enquiry form
   follows the copy in its column under an `h2` *Anfragen* (the copy's opening
   line is an `h2` too), and the testimonials are cards below it in *Über
-  uns*'s grid, the team card's teal frame, the author bold and black. In the
-  nav after all (see *Über uns* below). The dashboard picker adds through a
+  uns*'s grid, the team card's teal frame, the author bold and black. Still
+  not in the nav (see *Über uns* below). The dashboard picker adds through a
   `+` at the top right that opens a lightbox, as *Teilnehmer hinzufügen*
   does, instead of a select.
 
@@ -142,14 +142,14 @@ same day:
   own page keeps its URL and lights *Über uns* in the nav.
 - **The nav renames Experten to *Über uns*, and nothing else.** *Angebot*
   (homepage marker 8) waits for the homepage. **Amended the same day**:
-  Firmenschulung is in the nav after Kurse, Marcel's call against marker 8.
-  *Software* sits after Kurse with a `#` link until its page is built. Five
+  *Software* sits after Kurse with a `#` link until its page is built. Four
   links do not fit legacy's `span-6`, so they take `span-10` (`span-9` from
-  lg), stay on one line with a 6px minimum gap, and **the bar starts at md**
-  (768) rather than sm: below ~760px there is no room beside the fixed 199px
-  logo, so the burger covers 640–767 too. **The container went from 1100 to
-  1200px** for the same reason (Marcel), site and dashboard alike
-  (`layout/header.blade.php`, `layout/site.blade.php`).
+  lg) and stay on one line; the bar still starts at sm. **The container went
+  from 1100 to 1200px** (Marcel), site and dashboard alike
+  (`layout/header.blade.php`, `layout/site.blade.php`). Firmenschulung was a
+  menu item for a few hours and came out again (Marcel): marker 8 stands, the
+  homepage, the course pages (the Kurse filter's teal box) and Kontakt link
+  to it.
 - **The team is a dashboard module**, *Seiteninhalte → Team*: name, *Funktion*,
   a portrait on the shared image section, publish, dragged into order.
   `TeamMember`, not an account. Legacy's table is empty, so nothing is ported,

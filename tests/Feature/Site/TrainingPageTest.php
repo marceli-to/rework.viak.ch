@@ -8,6 +8,7 @@ use App\Models\Testimonial;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 /**
  * Firmenschulung (`04-content.md`, #25): legacy's copy at a new URL, an
@@ -50,8 +51,11 @@ it('301s legacy’s indexed url to it, and lists it in the sitemap', function ()
 	$this->get('/sitemap.xml')->assertSee('/de/firmenschulung');
 });
 
-it('is in the nav, and Kontakt links to it', function () {
-	$this->get('/de/kurse')->assertSee('href="/de/firmenschulung"', false);
+it('stays out of the nav, and Kontakt and the Kurse filter link to it', function () {
+	$html = $this->get('/de/kurse')->assertSee('href="/de/firmenschulung"', false)->getContent();
+	$nav = Str::between($html, 'aria-label="Hauptnavigation"', '</nav>');
+
+	expect($nav)->toContain('Kontakt')->not->toContain('/de/firmenschulung');
 	$this->get('/de/kontakt')->assertSee('href="/de/firmenschulung"', false)->assertSee('Anfrage für eine Firmenschulung?');
 });
 
