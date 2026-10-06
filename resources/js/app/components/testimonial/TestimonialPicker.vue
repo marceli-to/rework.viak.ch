@@ -67,7 +67,8 @@ const available = computed(() => props.testimonials.filter((item) => !picked.val
 			wide
 		>
 			<div class="col-span-12 sm:col-span-4">
-				{{ item.name }}<template v-if="item.context"> ({{ item.context }})</template>
+				<span class="block font-bold">{{ item.name }}</span>
+				<span v-if="item.context" class="block">{{ item.context }}</span>
 				<span v-if="!item.publish" class="mt-8 block"><Badge>nicht publiziert</Badge></span>
 			</div>
 			<div class="col-span-12 pr-40 sm:col-span-8">
