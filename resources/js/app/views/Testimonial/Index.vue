@@ -49,22 +49,29 @@ onMounted(async () => {
 			:dimmed="!item.publish"
 			wide
 		>
-			<div class="col-span-12 text-lg max-sm:pr-40 sm:col-span-4">{{ item.subject_label }}</div>
+			<!-- Who said it first, then what it is about as a badge (Marcel,
+			     2026-10-06), as the page picker's rows have it. -->
+			<div class="col-span-12 text-lg max-sm:pr-40 sm:col-span-4">
+				<span class="block font-bold">{{ item.name }}</span>
+				<span v-if="item.context" class="block">{{ item.context }}</span>
+				<span class="mt-8 flex flex-wrap gap-8">
+					<Badge>{{ item.subject_label }}</Badge>
+					<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
+				</span>
+			</div>
 
 			<!-- Clear of the pencil, which sits over this column's right edge. -->
 			<div class="col-span-12 max-sm:mt-8 sm:col-span-8 sm:flex sm:gap-x-16 sm:pr-40 lg:gap-x-40">
 				<div class="min-w-0 flex-1">
 					<p class="line-clamp-3" :title="item.quote">„{{ item.quote }}“</p>
-					<p class="text-lg">
-						{{ item.name }}<template v-if="item.context"> ({{ item.context }})</template>
-						<span v-if="!item.publish" class="mt-8 block"><Badge>nicht publiziert</Badge></span>
-					</p>
 				</div>
 
 				<div class="shrink-0 text-lg max-sm:mt-8 sm:max-w-240">
 					<template v-if="item.placements.length">
 						Verwendet auf:
-						<span v-for="place in item.placements" :key="`${place.type}-${place.uuid}`" class="block">{{ place.label }}</span>
+						<span class="mt-4 flex flex-wrap gap-8">
+							<Badge v-for="place in item.placements" :key="`${place.type}-${place.uuid}`">{{ place.label }}</Badge>
+						</span>
 					</template>
 					<Badge v-else>Noch nicht verwendet</Badge>
 				</div>
