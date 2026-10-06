@@ -3,10 +3,11 @@
 	three parts and its order: the Über uns text, the experts, the team.
 
 	**The mockup's content in the site's look** (Marcel, 2026-10-06): no new
-	type, cards or spacing, only blocks the site already has. Each part is a
-	collapsible, as the Kontakt and course pages are made of, all three open.
+	type, cards or spacing, only blocks the site already has. It opens as
+	Kontakt does, then the experts and the team as open collapsibles.
 
-	- *Über uns* is the text that was Kontakt's shut block, moved here whole.
+	- *Über uns* is the text that was Kontakt's shut block, moved here whole and
+	  drawn like Kontakt's opening block ([[about._intro]]).
 	- *Experten* is legacy's Experten page as it was
 	  (`web/pages/experts/list.blade.php`), which `/de/experten` now 301s to:
 	  cards `span-6`, `span-4` from sm, 16px apart and 40 from lg.
@@ -14,9 +15,7 @@
 	  block shows only once someone is published.
 --}}
 <x-layout.site title="Über uns" heading="Über uns">
-	<x-ui.collapsible title="Über uns">
-		@include('site.about._intro')
-	</x-ui.collapsible>
+	@include('site.about._intro')
 
 	<x-ui.collapsible title="Experten" :last="$team->isEmpty()">
 		<div class="grid grid-cols-12 gap-16 lg:gap-40">

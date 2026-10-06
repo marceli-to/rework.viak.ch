@@ -113,8 +113,9 @@ The Team mockup (*build*, markers 1–3), at `/de/ueber-uns`. Marcel's calls, th
 same day:
 
 - **The mockup's content in the site's look.** No Poppins, no centred heading,
-  no outlined cards of its own: the page is three collapsibles, as Kontakt and
-  the course page are made of. **This is the rule for every new page**: the
+  no outlined cards of its own. The text opens the page as Kontakt's address
+  does (the title teal bold in the aside, the copy in the column, its old
+  heading the bold first line), then the experts and the team as collapsibles. **This is the rule for every new page**: the
   mockups say what a page holds, the current site says how it looks.
 - **One page, and `/de/experten` 301s to it.** *Über uns* is the text that was
   Kontakt's shut block (moved, so Kontakt now has Anreise and Impressum), the
