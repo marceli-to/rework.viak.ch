@@ -3,13 +3,13 @@
 	title in the aside, bold teal like *Get in touch*, and the copy in the
 	column. The copy is legacy's Über uns partial, which sat in a shut block on
 	Kontakt; its heading, *Seit 20 Jahren dabei und doch brandneu!*, is the
-	column's bold first line now. The rest is regular weight, as the course
-	page's hero column is.
+	column's bold first line now. **The copy is black and regular weight**, not
+	Kontakt's bold teal: only the title is teal (Marcel, 2026-10-06).
 --}}
 {{-- `section.container-contact`'s spacing: 48px under it, 64 from lg. --}}
-<article class="mb-48 text-teal sm:grid sm:grid-cols-12 sm:gap-16 lg:mb-64 lg:gap-40">
+<article class="mb-48 sm:grid sm:grid-cols-12 sm:gap-16 lg:mb-64 lg:gap-40">
 	{{-- `xs:hide`, as on Kontakt: on a phone the header row already says Über uns. --}}
-	<aside class="max-sm:hidden sm:col-span-4">
+	<aside class="text-teal max-sm:hidden sm:col-span-4">
 		<h1 class="font-bold">Über uns</h1>
 	</aside>
 
