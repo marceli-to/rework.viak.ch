@@ -404,8 +404,9 @@ the same breath.
   production needs the same pair and `TURNSTILE_HOSTNAMES` set to the live
   hostname only (no `.test`, no localhost), and that hostname registered on
   the widget. The Datenschutzerklärung names Cloudflare Turnstile and its
-  Privacy Addendum under 11.1, which invisible mode requires: **VIAK should
-  read that entry**, as it is legal copy written by us.
+  Privacy Addendum under 11.1, which invisible mode requires. **Confirmed
+  2026-10-06** (Marcel): the widget is saved as invisible, and the entry is
+  accepted.
 - **`ALTER TABLE invoices MODIFY due_at TIMESTAMP NULL DEFAULT NULL;` on the live
   site.** Stops open invoices having their deadline bumped daily. Recovers
   nothing already lost, removes none of the decisions above, and is worth doing
