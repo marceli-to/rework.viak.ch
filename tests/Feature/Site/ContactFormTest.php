@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 use App\Mail\ContactMessage;
-use App\Mail\ContactMessageConfirmation;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * The Kontakt form ([[ContactController]], `Open-Questions.md` #24): mailed to
- * the office with a confirmation to the sender, never stored, and kept from
+ * the office only, never stored, and kept from
  * bots by a honeypot and a limit per address.
  */
 beforeEach(function () {
@@ -35,7 +34,7 @@ it('draws the form on Kontakt, in its own collapsible under the address', functi
 		->assertSee('action="/de/kontakt"', false);
 });
 
-it('mails the office, with the sender to reply to, and confirms to the sender', function () {
+it('mails the office only, with the sender to reply to', function () {
 	$this->post('/de/kontakt', contactPayload())
 		->assertRedirect('/de/kontakt#nachricht')
 		->assertSessionHas('contact', 'sent');
@@ -44,18 +43,15 @@ it('mails the office, with the sender to reply to, and confirms to the sender', 
 		&& $mail->hasReplyTo('anna@example.test', 'Anna Muster')
 		&& $mail->text === contactPayload()['message']);
 
-	Mail::assertQueued(ContactMessageConfirmation::class, fn (ContactMessageConfirmation $mail) => $mail->hasTo('anna@example.test'));
+	Mail::assertQueuedCount(1);
 });
 
-it('renders both mails with the message, its line breaks kept and its markup escaped', function () {
+it('renders the message as a row of the table, its line breaks kept and its markup escaped', function () {
 	$office = (new ContactMessage('Anna Muster', 'anna@example.test', "Zeile eins\n<b>Zeile zwei</b>"))->render();
-	$copy = (new ContactMessageConfirmation('Anna Muster', 'anna@example.test', 'Hallo'))->render();
 
-	expect($office)->toContain('Zeile eins<br>')
+	expect($office)->toMatch('/>Nachricht<\/td>\s*<td[^>]*vertical-align: top[^>]*>Zeile eins<br>/')
 		->toContain('&lt;b&gt;Zeile zwei&lt;/b&gt;')
-		->toContain('anna@example.test')
-		->and($copy)->toContain('Hallo Anna Muster')
-		->toContain('Danke für deine Nachricht');
+		->toContain('anna@example.test');
 });
 
 it('says it was sent, on the page it lands on', function () {
@@ -88,7 +84,7 @@ it('takes five messages an hour from one address, then refuses', function () {
 
 	$this->post('/de/kontakt', contactPayload())->assertSessionHasErrors('message');
 
-	Mail::assertQueuedCount(10);
+	Mail::assertQueuedCount(5);
 });
 
 it('fills in a signed-in visitor’s name and address', function () {

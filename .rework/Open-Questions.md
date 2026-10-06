@@ -43,7 +43,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~20~~ | ~~Which chunk installs dompdf?~~ — **answered 2026-09-22 by building it**: `dompdf/dompdf` and `sprain/swiss-qr-bill`, both checked against Laravel 13 / PHP 8.4. All three documents exist. See `03-invoices.md` | — | — |
 | ~~22~~ | ~~Deleting an event with active bookings tells nobody?~~ — **withdrawn 2026-09-24: the premise was wrong.** Legacy's dashboard refuses the delete while active bookings exist; only the server-side check is missing, in both. Now a rule in `10-mail.md`, *Oddities* | — | — |
 | ~~23~~ | ~~A late booker gets every earlier course message, one mail each — keep, digest, or drop?~~ — **answered 2026-09-24 by Marcel: keep it as legacy does.** See `10-mail.md`, *Oddities* | — | — |
-| 24 | ~~Where do the new Kontakt and Firmenschulung forms send, and what do they keep?~~ **Answered 2026-10-06**: to `config('mail.admin')` with the sender as Reply-To, a confirmation to the sender, nothing stored; a honeypot and 5 an hour per IP ([[ContactController]]). Firmenschulung follows the same answer | Marcel | Built for Kontakt |
+| 24 | ~~Where do the new Kontakt and Firmenschulung forms send, and what do they keep?~~ **Answered 2026-10-06**: to `config('mail.admin')` with the sender as Reply-To, no copy to the sender, nothing stored; a honeypot and 5 an hour per IP ([[ContactController]]). Firmenschulung follows the same answer | Marcel | Built for Kontakt |
 | ~~26~~ | ~~Admin-created students: a set-password invite?~~ — **answered 2026-09-24: yes.** See `07-dashboard.md` | — | — |
 | ~~27~~ | ~~What belongs on the dashboard's landing page?~~ — **answered 2026-09-24: nothing yet; it stays empty.** | — | — |
 | 28 | **Card payment for an invoice**: legacy's `/de/zahlung/rechnung/{uuid}` (Stripe). Still wanted? The course confirmation mail links to it; the rework serves a placeholder there (2026-09-29) | Marcel, then the client | Cutover. **Waits for chunk 05**: designed with the licence checkout (Marcel, 2026-09-29) |
@@ -365,8 +365,8 @@ cutover's critical path.
 ### ~~24. Where do the new Kontakt and Firmenschulung forms send, and what do they keep?~~
 
 **Answered 2026-10-06 (Marcel), and built for Kontakt.** The office address
-(`config('mail.admin')`), Reply-To the sender; a confirmation mail to the
-sender; **nothing stored**. Spam: a honeypot field and five messages an hour
+(`config('mail.admin')`), Reply-To the sender; **no mail to the sender**
+(dropped the same day); **nothing stored**. Spam: a honeypot field and five messages an hour
 per IP, no captcha. Firmenschulung's enquiry takes the same answer.
 
 

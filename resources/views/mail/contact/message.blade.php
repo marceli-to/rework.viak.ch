@@ -14,6 +14,9 @@
     <td>E-Mail</td>
     <td><a href="mailto:{{ $email }}">{{ $email }}</a></td>
   </tr>
+  <tr>
+    <td>Nachricht</td>
+    <td style="vertical-align: top;">{!! nl2br(e($text)) !!}</td>
+  </tr>
 </table>
-<p>{!! nl2br(e($text)) !!}</p>
 @endcomponent
