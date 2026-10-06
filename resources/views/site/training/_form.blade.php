@@ -15,13 +15,13 @@
 
 	<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 		<div class="sm:col-span-6">
-			<x-form.field name="company" label="Firma" required autocomplete="organization" :value="auth()->user()?->company" />
+			<x-form.field name="company" label="Firma" required autocomplete="organization" />
 		</div>
 		<div class="sm:col-span-6">
-			<x-form.field name="name" label="Ansprechperson" required autocomplete="name" :value="auth()->user()?->name" />
+			<x-form.field name="name" label="Ansprechperson" required autocomplete="name" />
 		</div>
 	</div>
-	<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" :value="auth()->user()?->email" />
+	<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" />
 	<x-form.textarea name="message" label="Nachricht" required placeholder="Gewünschte Software, Teamgrösse, Zeitrahmen …" />
 
 	{{-- The honeypot, as on Kontakt. --}}

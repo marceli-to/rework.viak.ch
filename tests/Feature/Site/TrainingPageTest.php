@@ -121,11 +121,13 @@ it('shows no testimonial cards until one is picked', function () {
 	$this->get('/de/firmenschulung')->assertDontSee('<blockquote', false);
 });
 
-it('fills in a signed-in visitor’s company, name and address', function () {
+// No prefill from the account (Marcel, 2026-10-06). A refused send still
+// keeps what was typed (`old()` in the field).
+it('leaves the fields empty for a signed-in visitor', function () {
 	$user = User::factory()->create(['first_name' => 'Remo', 'last_name' => 'Kast', 'company' => 'Kast AG', 'email' => 'remo@example.test']);
 
 	$this->actingAs($user)->get('/de/firmenschulung')
-		->assertSee('value="Kast AG"', false)
-		->assertSee('value="Remo Kast"', false)
-		->assertSee('value="remo@example.test"', false);
+		->assertDontSee('value="Kast AG"', false)
+		->assertDontSee('value="Remo Kast"', false)
+		->assertDontSee('value="remo@example.test"', false);
 });
