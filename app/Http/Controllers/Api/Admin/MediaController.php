@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\MediaResource;
 use App\Models\Course;
 use App\Models\Media;
+use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -35,8 +36,9 @@ use Illuminate\Validation\Rule;
  * show is deleted; and the **art-directed mobile variant** forrerzimmermann
  * offers, which nothing on this site asks for.
  *
- * **A course's images, and an expert's portraits** — the same section, the
- * same Actions; only the owner differs, so each route has a one-line door.
+ * **A course's images, an expert's portraits and a team member's** — the same
+ * section, the same Actions; only the owner differs, so each route has a
+ * one-line door.
  */
 class MediaController extends Controller
 {
@@ -50,6 +52,11 @@ class MediaController extends Controller
 		return $this->images($expert);
 	}
 
+	public function teamMemberIndex(TeamMember $teamMember): AnonymousResourceCollection
+	{
+		return $this->images($teamMember);
+	}
+
 	public function store(Request $request, Course $course, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
 		return $this->upload($request, $course, $upload, $attach, $role);
@@ -58,6 +65,11 @@ class MediaController extends Controller
 	public function expertStore(Request $request, User $expert, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
 		return $this->upload($request, $expert, $upload, $attach, $role);
+	}
+
+	public function teamMemberStore(Request $request, TeamMember $teamMember, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
+	{
+		return $this->upload($request, $teamMember, $upload, $attach, $role);
 	}
 
 	/** Alt text and caption — legacy's *Bildbeschreibung* and *Bildlegende*. */
@@ -99,6 +111,11 @@ class MediaController extends Controller
 	public function expertOrder(Request $request, User $expert, ReorderMedia $reorder): JsonResponse
 	{
 		return $this->reorder($request, $expert, $reorder);
+	}
+
+	public function teamMemberOrder(Request $request, TeamMember $teamMember, ReorderMedia $reorder): JsonResponse
+	{
+		return $this->reorder($request, $teamMember, $reorder);
 	}
 
 	public function destroy(Media $media, DeleteMedia $delete): JsonResponse

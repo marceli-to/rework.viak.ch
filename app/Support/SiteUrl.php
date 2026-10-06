@@ -40,12 +40,16 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('course', $locale).'/'.$slug;
 	}
 
-	/** The Experten page — `/de/experten`. */
-	public static function experts(?string $locale = null): string
+	/**
+	 * *Über uns* — `/de/ueber-uns`: the Über uns text, the experts and the team
+	 * on one page (the 2026-09-23 review's Team mockup). It replaced legacy's
+	 * Experten page, whose `/de/experten` 301s here ([[04-content]]).
+	 */
+	public static function about(?string $locale = null): string
 	{
 		$locale ??= app()->getLocale();
 
-		return '/'.$locale.'/'.self::segment('experts', $locale);
+		return '/'.$locale.'/'.self::segment('about', $locale);
 	}
 
 	/**

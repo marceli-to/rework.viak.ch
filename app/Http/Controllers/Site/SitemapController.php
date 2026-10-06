@@ -35,7 +35,7 @@ class SitemapController extends Controller
 				->map(fn (Course $course) => $course->getTranslation('slug', $locale, false))
 				->filter()
 				->map(fn (string $slug) => SiteUrl::course($slug, $locale)),
-			SiteUrl::experts($locale),
+			SiteUrl::about($locale),
 			...User::query()->publiclyListedExperts()->get()
 				->map(fn (User $expert) => SiteUrl::expert($expert, $locale)),
 			SiteUrl::contact($locale),

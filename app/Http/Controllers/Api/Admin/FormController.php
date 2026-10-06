@@ -13,6 +13,7 @@ use App\Forms\InvoiceSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\Schema;
+use App\Forms\TeamMemberSchema;
 use App\Forms\TermSchema;
 use App\Forms\TestimonialSchema;
 use App\Http\Controllers\Controller;
@@ -29,6 +30,7 @@ class FormController extends Controller
 	private const FORMS = [
 		'course' => CourseSchema::class,
 		'testimonial' => TestimonialSchema::class,
+		'team-member' => TeamMemberSchema::class,
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,
 		'customer' => CustomerSchema::class,

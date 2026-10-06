@@ -25,8 +25,8 @@ import IconProfile from '@/components/icons/Profile.vue';
  * before *Logout* (`12-customers.md`), where legacy asked on a screen after login.
  *
  * `sections` keep legacy's labels and order, with the chunk's decisions applied
- * ([[07-dashboard]]): *Startseite*, *Heroes* and *Team* are gone from
- * *Seiteninhalte*, *Testimonials* is new.
+ * ([[07-dashboard]]): *Startseite* and *Heroes* are gone from *Seiteninhalte*,
+ * *Testimonials* is new, and *Team* is back for the *Über uns* page (2026-10-06).
  */
 const route = useRoute();
 
@@ -51,6 +51,7 @@ const overflow = [
 		key: 'content',
 		children: [
 			{ label: 'Testimonials', to: { name: 'content.testimonials' } },
+			{ label: 'Team', to: { name: 'content.team' } },
 			{ label: 'News', to: { name: 'content.news' } },
 		],
 	},

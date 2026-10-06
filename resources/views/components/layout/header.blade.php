@@ -25,7 +25,9 @@
 	 */
 	$nav = [
 		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
-		['label' => 'Experten', 'href' => \App\Support\SiteUrl::experts(), 'match' => "{$locale}.experts.*"],
+		// *Über uns* took Experten's place (2026-10-06), and an expert's own page
+		// still lights it: the experts are on *Über uns* now.
+		['label' => 'Über uns', 'href' => \App\Support\SiteUrl::about(), 'match' => ["{$locale}.about", "{$locale}.experts.*"]],
 		['label' => 'Kontakt', 'href' => \App\Support\SiteUrl::contact(), 'match' => "{$locale}.contact"],
 	];
 

@@ -108,6 +108,16 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('testimonials/{testimonial}', [Admin\TestimonialController::class, 'update']);
 		Route::delete('testimonials/{testimonial}', [Admin\TestimonialController::class, 'destroy']);
 
+		Route::get('team-members', [Admin\TeamMemberController::class, 'index']);
+		Route::post('team-members/order', [Admin\TeamMemberController::class, 'order']);
+		Route::post('team-members', [Admin\TeamMemberController::class, 'store']);
+		Route::get('team-members/{teamMember}', [Admin\TeamMemberController::class, 'show']);
+		Route::put('team-members/{teamMember}', [Admin\TeamMemberController::class, 'update']);
+		Route::delete('team-members/{teamMember}', [Admin\TeamMemberController::class, 'destroy']);
+		Route::get('team-members/{teamMember}/media', [Admin\MediaController::class, 'teamMemberIndex']);
+		Route::post('team-members/{teamMember}/media', [Admin\MediaController::class, 'teamMemberStore']);
+		Route::patch('team-members/{teamMember}/media/order', [Admin\MediaController::class, 'teamMemberOrder']);
+
 		Route::get('experts', [Admin\ExpertController::class, 'index']);
 		Route::post('experts/order', [Admin\ExpertController::class, 'order']);
 		Route::post('experts', [Admin\ExpertController::class, 'store']);

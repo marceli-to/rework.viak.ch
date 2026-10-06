@@ -162,6 +162,24 @@ const routes = [
 		component: () => import('@/views/Testimonial/Form.vue'),
 		meta: { title: 'Testimonial bearbeiten' },
 	},
+	{
+		path: '/dashboard/team',
+		name: 'content.team',
+		component: () => import('@/views/TeamMember/Index.vue'),
+		meta: { title: 'Team' },
+	},
+	{
+		path: '/dashboard/team/erfassen',
+		name: 'content.team-member.create',
+		component: () => import('@/views/TeamMember/Form.vue'),
+		meta: { title: 'Teammitglied erfassen' },
+	},
+	{
+		path: '/dashboard/team/:uuid',
+		name: 'content.team-member.edit',
+		component: () => import('@/views/TeamMember/Form.vue'),
+		meta: { title: 'Teammitglied bearbeiten' },
+	},
 	pending('news', 'content.news', 'News'),
 	{
 		path: '/dashboard/einstellungen',

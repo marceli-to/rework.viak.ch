@@ -34,7 +34,7 @@ it('names the fixed pages, the published courses and the listed experts, on the 
 		"{$host}/de",
 		"{$host}/de/kurse",
 		"{$host}/de/kurs/rhino-einstiegskurs",
-		"{$host}/de/experten",
+		"{$host}/de/ueber-uns",
 		"{$host}/de/experte/remo-kast/{$this->expert->uuid}",
 		"{$host}/de/kontakt",
 	]);

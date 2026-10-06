@@ -7,6 +7,7 @@ use App\Http\Controllers\Dev\MailPreviewController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\Site\AboutController;
 use App\Http\Controllers\Site\CheckoutController;
 use App\Http\Controllers\Site\CourseController;
 use App\Http\Controllers\Site\CustomerAddressController;
@@ -82,17 +83,26 @@ Route::prefix('{locale}')
 				->name("{$locale}.courses.legacy");
 
 			/*
-			 * The Experten page and one expert ([[09-public-site]]), on
-			 * legacy's URLs unchanged — see [[SiteUrl::expert]] for why this one
-			 * keeps its uuid when the course URL did not.
+			 * *Über uns* — the Über uns text, the experts and the team, merged
+			 * from legacy's Experten page and two of Kontakt's blocks
+			 * ([[04-content]], decided 2026-10-06). Legacy's `/de/experten` is
+			 * indexed, so it 301s here.
+			 */
+			Route::get($segments['about'], AboutController::class)
+				->name("{$locale}.about");
+
+			Route::redirect($segments['experts'], SiteUrl::about($locale), 301)
+				->name("{$locale}.experts.index");
+
+			/*
+			 * One expert ([[09-public-site]]), on legacy's URL unchanged — see
+			 * [[SiteUrl::expert]] for why this one keeps its uuid when the
+			 * course URL did not.
 			 *
 			 * The expert portal lives under the same `experte` segment, at
 			 * `/de/experte/profil/…`, and never collides with this: the second
 			 * segment here must be a uuid, and every portal path's is a word.
 			 */
-			Route::get($segments['experts'], [ExpertController::class, 'index'])
-				->name("{$locale}.experts.index");
-
 			Route::get($segments['expert'].'/{slug}/{uuid}', [ExpertController::class, 'show'])
 				->whereUuid('uuid')
 				->name("{$locale}.experts.show");

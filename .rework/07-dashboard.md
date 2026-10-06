@@ -210,7 +210,7 @@ screen there.
 |---|---|---|
 | Startseite (the grid) | **drop** — confirmed | The homepage is built differently, from the mockup; its editable parts become a `HomeSchema` once #23 is answered |
 | Heroes | **drop** — confirmed | Legacy's homepage slider draws from them, but the mockups have no slider |
-| Team | **new, later** — confirmed | Not carried across; team members are introduced with the phase-two Team page, as whatever that page needs |
+| Team | **built 2026-10-06** | *Seiteninhalte → Team*, for the *Über uns* page (`04-content.md`): name, *Funktion*, portrait, publish, dragged into order |
 | News | **change** | Five items, still in use — becomes `Article` if Aktuelles/the blog goes ahead (#22) |
 | — | **new: Testimonials** | Quote, name, context, published, order — no photo, no placement flag. Kit form #2 |
 | — | **new: Media** | The forrerzimmermann grid/uploader/cropper, which the image field picks from |

@@ -27,14 +27,18 @@ it('carries the address, and the phone and mail as links', function () {
 		->assertSee('href="mailto:hallo@visualisierungs-akademie.ch"', false);
 });
 
-it('opens Anreise and leaves Über uns and Impressum shut, without a flash', function () {
+it('opens Anreise and leaves Impressum shut, without a flash', function () {
 	$html = $this->get('/de/kontakt')->getContent();
 
 	expect($html)
 		->toContain('x-data="{ open: true }"')
-		->and(substr_count($html, 'x-data="{ open: false }"'))->toBe(2)
+		->and(substr_count($html, 'x-data="{ open: false }"'))->toBe(1)
 		// A shut block is cloaked, or it paints open for a frame first.
-		->and(preg_match_all('/<div x-show="open"\s+x-cloak\s*>/', $html))->toBe(2);
+		->and(preg_match_all('/<div x-show="open"\s+x-cloak\s*>/', $html))->toBe(1);
+});
+
+it('leaves Über uns to its own page', function () {
+	$this->get('/de/kontakt')->assertDontSee('Seit 20 Jahren dabei und doch brandneu!');
 });
 
 /**
@@ -45,8 +49,6 @@ it('opens Anreise and leaves Über uns and Impressum shut, without a flash', fun
 it('carries the Impressum and the whole Datenschutzerklärung', function () {
 	$this->get('/de/kontakt')
 		->assertSee('MWST-Nr. CHE-110.279.761 MWST')
-		->assertSee('Seit 20 Jahren dabei und doch brandneu!')
-		->assertSee("Seminare unter dem Titel '2sek Manager'", false)
 		->assertSee('1. Kontaktadressen')
 		->assertSee('8.3 Zählpixel')
 		->assertSee('Wir können diese Datenschutzerklärung jederzeit anpassen und ergänzen.');

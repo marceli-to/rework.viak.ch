@@ -12,21 +12,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * The Experten page and one expert's page — legacy's `ExpertController`,
- * rebuilt ([[09-public-site]]).
+ * One expert's page — legacy's `ExpertController`, rebuilt ([[09-public-site]]).
+ * The list that was its other half is on *Über uns* now ([[AboutController]]).
  */
 class ExpertController extends Controller
 {
-	public function index(): View
-	{
-		return view('site.experts.index', [
-			'experts' => User::query()
-				->publiclyListedExperts()
-				->with(['media', 'eventsAsExpert' => $this->teaching(...)])
-				->get(),
-		]);
-	}
-
 	/**
 	 * Resolved by **uuid**, as legacy does; the slug is decorative and a stale
 	 * one 301s to the current spelling ([[SiteUrl::expert]]).
@@ -36,7 +26,7 @@ class ExpertController extends Controller
 		$expert = User::query()
 			->publiclyListedExperts()
 			->where('users.uuid', $uuid)
-			->with(['expertProfile', 'media', 'eventsAsExpert' => $this->teaching(...)])
+			->with(['expertProfile', 'media', 'eventsAsExpert' => self::teaching(...)])
 			->firstOrFail();
 
 		if ($slug !== SiteUrl::expertSlug($expert)) {
@@ -47,7 +37,7 @@ class ExpertController extends Controller
 	}
 
 	/**
-	 * The course dates behind the *Kurse* list on both pages — legacy's
+	 * The course dates behind the *Kurse* list here and on the cards on *Über uns* — legacy's
 	 * `User::getCourses()`, every event of theirs from today on.
 	 *
 	 * **Three filters legacy does not have**: published, not cancelled, and a
@@ -63,7 +53,7 @@ class ExpertController extends Controller
 	 * different order on seven of the ten experts. `upcoming()` is not used for
 	 * that reason — it orders by date.
 	 */
-	private function teaching(BelongsToMany $query): void
+	public static function teaching(BelongsToMany $query): void
 	{
 		$query
 			->published()

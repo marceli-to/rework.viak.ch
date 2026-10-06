@@ -2137,6 +2137,10 @@ directories.
 
 ## The Experten pages — 2026-09-24
 
+> **2026-10-06:** the list moved onto *Über uns* (`/de/ueber-uns`) unchanged,
+> and `/de/experten` 301s there (`04-content.md`, *Über uns*). One expert's page
+> is as below.
+
 `/de/experten` and `/de/experte/{slug}/{uuid}`, legacy's `ExpertController`
 rebuilt. Measured against production at 1482px on the same day: every card,
 the overlay, the hero and the course list land on production's pixel, save the
@@ -2176,6 +2180,9 @@ the SCSS, and `resize_window` cannot be trusted to prove them.
   compare the two sites by uuid, not by name.
 
 ## The Kontakt page — 2026-09-24
+
+> **2026-10-06:** the *Über uns* block moved to its own page (`04-content.md`,
+> *Über uns*). Kontakt is Anreise and Impressum now.
 
 `/de/kontakt`, a `Route::view` — legacy's controller existed only to hand the
 page its team members. Measured against production at 1482px the same day:

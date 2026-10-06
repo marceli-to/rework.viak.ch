@@ -4,7 +4,8 @@ The marketing site the mockups describe, and the admin surface that edits it.
 
 ## Status
 
-Not built. Scoped 2026-09-16 against the 24 mockups in `history/mockup/`.
+Scoped 2026-09-16 against the 24 mockups in `history/mockup/`. **The first new
+page is built: *Über uns*, 2026-10-06** (see *Über uns*, below). The rest is not.
 
 **Split by the 2026-09-18 phasing decision** (`00-foundation.md`): the **field
 kit** is parity work — it is what the admin screens replacing the legacy
@@ -105,6 +106,27 @@ talked about*, not *disputed*.
   marked open.
 - **Aktuelles depends on the blog question.** `Article` stays in the cost table
   but is not started until #22 is answered.
+
+## Über uns — built 2026-10-06
+
+The Team mockup (*build*, markers 1–3), at `/de/ueber-uns`. Marcel's calls, the
+same day:
+
+- **The mockup's content in the site's look.** No Poppins, no centred heading,
+  no outlined cards of its own: the page is three collapsibles, as Kontakt and
+  the course page are made of. **This is the rule for every new page**: the
+  mockups say what a page holds, the current site says how it looks.
+- **One page, and `/de/experten` 301s to it.** *Über uns* is the text that was
+  Kontakt's shut block (moved, so Kontakt now has Anreise and Impressum), the
+  experts exactly as the Experten page listed them, and the team. An expert's
+  own page keeps its URL and lights *Über uns* in the nav.
+- **The nav renames Experten to *Über uns*, and nothing else.** *Angebot*
+  (homepage marker 8) waits for the homepage.
+- **The team is a dashboard module**, *Seiteninhalte → Team*: name, *Funktion*,
+  a portrait on the shared image section, publish, dragged into order.
+  `TeamMember`, not an account. Legacy's table is empty, so nothing is ported,
+  and the block stays off the page until someone is published. **Who is on the
+  team is the client's to fill in.**
 
 ## The mockups are 24 files but about nine templates
 

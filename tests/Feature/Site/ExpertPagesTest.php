@@ -11,7 +11,8 @@ use App\Models\User;
 use App\Support\SiteUrl;
 
 /**
- * The Experten page and one expert's page ([[09-public-site]]).
+ * The experts on *Über uns*, which was the Experten page, and one expert's page
+ * ([[09-public-site]], [[04-content]]).
  *
  * Both were measured against production on 2026-09-24, and the numbers are in
  * the views. What is asserted here is what a measurement cannot catch: who is
@@ -43,9 +44,8 @@ it('lists the experts with both flags set, in their order', function () {
 	listedExpert('Nicht', 'Sichtbar', ['visible' => false]);
 	listedExpert('Nicht', 'Publiziert', ['publish' => false]);
 
-	$this->get('/de/experten')
+	$this->get('/de/ueber-uns')
 		->assertOk()
-		->assertSee('<title>Experten • Visualisierungs-Akademie</title>', false)
 		->assertSeeInOrder(['Remo Kast', 'Helge Maus'])
 		->assertDontSee('Sichtbar')
 		->assertDontSee('Publiziert');
@@ -57,7 +57,7 @@ it('links each card to legacy’s url, slug spelled the way legacy spells it', f
 	expect(SiteUrl::expert($expert))->toBe("/de/experte/daniel-naehring/{$expert->uuid}")
 		->and(SiteUrl::expertSlug(listedExpert('Güneş', 'Direk')))->toBe('guenes-direk');
 
-	$this->get('/de/experten')->assertSee("/de/experte/daniel-naehring/{$expert->uuid}", false);
+	$this->get('/de/ueber-uns')->assertSee("/de/experte/daniel-naehring/{$expert->uuid}", false);
 });
 
 /**
@@ -70,11 +70,11 @@ it('names the courses an expert teaches, once each, in the order legacy does', f
 	$later = teaches($expert, 'Visualisieren mit SketchUp', ['date' => today()->addMonth()]);
 	teaches($expert, 'Visualisieren mit SketchUp', ['date' => today()->addMonths(3), 'course_id' => $later->course_id]);
 
-	$this->get('/de/experten')
+	$this->get('/de/ueber-uns')
 		->assertSee('Kurse:')
 		->assertSeeInOrder(['Interior Design mit SketchUp', 'Visualisieren mit SketchUp']);
 
-	expect(substr_count($this->get('/de/experten')->getContent(), 'Visualisieren mit SketchUp'))->toBe(1);
+	expect(substr_count($this->get('/de/ueber-uns')->getContent(), 'Visualisieren mit SketchUp'))->toBe(1);
 });
 
 it('leaves out dates that have run, are cancelled, unpublished, or belong to a hidden course', function () {
@@ -84,7 +84,7 @@ it('leaves out dates that have run, are cancelled, unpublished, or belong to a h
 	teaches($expert, 'Entwurf', ['publish' => false]);
 	teaches($expert, 'Versteckt', [], ['publish' => false]);
 
-	$this->get('/de/experten')
+	$this->get('/de/ueber-uns')
 		->assertDontSee('Kurse:')
 		->assertDontSee('Vergangen')
 		->assertDontSee('Abgesagt')
@@ -118,7 +118,7 @@ it('uses the square teaser on the card and the 16:9 visual on the page', functio
 	Media::factory()->for($expert, 'mediable')->create(['file' => 'kast-teaser.jpg', 'is_teaser' => true]);
 	Media::factory()->for($expert, 'mediable')->create(['file' => 'kast-og.jpg', 'is_og' => true]);
 
-	$this->get('/de/experten')->assertSee('kast-teaser.jpg')->assertDontSee('kast-visual.jpg');
+	$this->get('/de/ueber-uns')->assertSee('kast-teaser.jpg')->assertDontSee('kast-visual.jpg');
 
 	$this->get(SiteUrl::expert($expert))
 		->assertSee('kast-visual.jpg')
@@ -147,9 +147,13 @@ it('does not take the expert portal’s paths', function () {
 	$this->get('/de/experte/profil/bearbeiten')->assertRedirect(route('login'));
 });
 
-it('points the nav at the Experten page and lights it there', function () {
-	$this->get('/de/kurse')->assertSee('href="/de/experten"', false);
+it('301s legacy’s Experten page to Über uns', function () {
+	$this->get('/de/experten')->assertMovedPermanently()->assertRedirect('/de/ueber-uns');
+});
 
-	expect($this->get('/de/experten')->getContent())
-		->toMatch('/<a[^>]*href="\/de\/experten"[^>]*text-teal/s');
+it('lights Über uns on an expert’s own page', function () {
+	$expert = listedExpert();
+
+	expect($this->get(SiteUrl::expert($expert))->getContent())
+		->toMatch('/<a[^>]*href="\/de\/ueber-uns"[^>]*text-teal/s');
 });

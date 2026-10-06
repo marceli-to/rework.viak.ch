@@ -3,16 +3,15 @@
 	Measured against production on 2026-09-24.
 
 	An `article.content-text` — *Get in touch* in the aside, the address and the
-	map in the column, all of it bold teal — then three collapsibles: Anreise
-	open, Über uns and Impressum shut. The copy is legacy's, carried across
-	verbatim from its partials into `_directions`, `_about` and `_imprint` — save
-	one fix: legacy's *Escher-Wyss-PlatzWer* is two sentences run together, and
-	reads *Escher-Wyss-Platz. Wer* here (Marcel, 2026-09-24).
+	map in the column, all of it bold teal — then two collapsibles: Anreise open,
+	Impressum shut. The copy is legacy's, carried across verbatim from its
+	partials into `_directions` and `_imprint` — save one fix: legacy's
+	*Escher-Wyss-PlatzWer* is two sentences run together, and reads
+	*Escher-Wyss-Platz. Wer* here (Marcel, 2026-09-24).
 
-	**Legacy has a fourth block, Team, and it has never rendered**: it shows
-	`team_members` with `publish` set, and the table is empty. It is left out
-	rather than built against nothing; the 2026-09-23 review gives the team its
-	own page in phase two (`04-content.md`).
+	**Legacy's Über uns and Team blocks moved to *Über uns*** (2026-10-06), as
+	the 2026-09-23 review's Team mockup has them (`04-content.md`). Team had
+	never rendered: legacy's `team_members` table is empty.
 
 	The mockup review also approved a **contact form** for this page. Legacy has
 	none; it waits on mail and on `Open-Questions.md` #24.
@@ -43,10 +42,6 @@
 
 	<x-ui.collapsible title="Anreise">
 		@include('site.contact._directions')
-	</x-ui.collapsible>
-
-	<x-ui.collapsible title="Über uns" :expanded="false">
-		@include('site.contact._about')
 	</x-ui.collapsible>
 
 	<x-ui.collapsible title="Impressum" :expanded="false" last>

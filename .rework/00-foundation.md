@@ -463,7 +463,7 @@ uuid:
 | Home | `/de` — and `/` | `/de`, with `/` canonical to it |
 | Course list | `/de/kurse` | unchanged |
 | Course detail | `/de/kurs/{slug}/{uuid}` | **`/de/kurs/{slug}`**, 301 from the uuid form |
-| Experts | `/de/experten`, `/de/experte/{slug}/{uuid}` | same treatment |
+| Experts | `/de/experten`, `/de/experte/{slug}/{uuid}` | the list **301s to `/de/ueber-uns`** (2026-10-06, `04-content.md`); one expert unchanged |
 | Contact | `/de/kontakt` | unchanged |
 | Firmenschulung | `/de/individualschulungen` | unchanged |
 
