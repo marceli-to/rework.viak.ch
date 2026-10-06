@@ -73,6 +73,12 @@ class Testimonial extends Model
 		return $this->morphedByMany(Course::class, 'placeable', 'testimonial_placements')->withPivot('order');
 	}
 
+	/** The fixed pages it stands on — Firmenschulung ([[Page]]). */
+	public function pages(): MorphToMany
+	{
+		return $this->morphedByMany(Page::class, 'placeable', 'testimonial_placements')->withPivot('order');
+	}
+
 	/** The software pages it stands on. */
 	public function software(): MorphToMany
 	{
@@ -81,7 +87,7 @@ class Testimonial extends Model
 
 	/**
 	 * Every page it stands on, for *Verwendet auf* — courses by number and
-	 * title, then software. The homepage joins this when it has a record.
+	 * title, then software, then the fixed pages ([[Page]]).
 	 *
 	 * @return array<int, array{type: string, uuid: string, label: string}>
 	 */
@@ -97,6 +103,11 @@ class Testimonial extends Model
 				'type' => 'software',
 				'uuid' => $software->uuid,
 				'label' => $software->getTranslation('title', 'de'),
+			])->values()->all(),
+			...$this->pages->map(fn (Page $page) => [
+				'type' => 'page',
+				'uuid' => $page->uuid,
+				'label' => $page->label(),
 			])->values()->all(),
 		];
 	}

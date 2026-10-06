@@ -180,6 +180,12 @@ const routes = [
 		component: () => import('@/views/TeamMember/Form.vue'),
 		meta: { title: 'Teammitglied bearbeiten' },
 	},
+	{
+		path: '/dashboard/seite/:page',
+		name: 'content.page',
+		component: () => import('@/views/Page/Testimonials.vue'),
+		meta: { title: 'Seite' },
+	},
 	pending('news', 'content.news', 'News'),
 	{
 		path: '/dashboard/einstellungen',

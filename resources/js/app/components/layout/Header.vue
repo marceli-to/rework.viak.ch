@@ -52,6 +52,7 @@ const overflow = [
 		children: [
 			{ label: 'Testimonials', to: { name: 'content.testimonials' } },
 			{ label: 'Team', to: { name: 'content.team' } },
+			{ label: 'Firmenschulung', to: { name: 'content.page', params: { page: 'firmenschulung' } } },
 			{ label: 'News', to: { name: 'content.news' } },
 		],
 	},

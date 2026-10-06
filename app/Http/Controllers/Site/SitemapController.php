@@ -39,6 +39,7 @@ class SitemapController extends Controller
 			...User::query()->publiclyListedExperts()->get()
 				->map(fn (User $expert) => SiteUrl::expert($expert, $locale)),
 			SiteUrl::contact($locale),
+			SiteUrl::training($locale),
 		])->map(fn (string $path) => SiteUrl::canonical($path));
 
 		return response()

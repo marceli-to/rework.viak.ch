@@ -73,6 +73,7 @@ in a scenario (below).
 | | `RentalAddedInfoAdmin` | admin | — | ″ | **Built** |
 | Rental removed | `RentalCancelledInfoAdmin` | admin | — | Stornierung Mietcomputer für *course* | **Built** |
 | Kontakt form sent | — (new, legacy has no form) | admin, Reply-To the sender | — | Kontaktanfrage von *name* | **Built 2026-10-06** as `ContactMessage` ([[ContactController]]) |
+| Firmenschulung enquiry | — (new) | admin, Reply-To the contact person | — | Anfrage Firmenschulung von *Firma* | **Built 2026-10-06** as `TrainingEnquiry` ([[TrainingController]]) |
 | Seats reach minimum | `ParticipantsMin` | admin | — | Min. Teilnehmerzahl erreicht – *course* | **Built 2026-09-29**: the three are one `ParticipantsChange` ([[SendThresholdMails]]) |
 | Seats reach maximum | `ParticipantsMax` | admin | — | Max. Teilnehmerzahl erreicht – *course* | **Built** |
 | Seats drop below minimum | `ParticipantsBelowMin` | admin | — | Min. Teilnehmerzahl unterschritten – *course* | **Built** |

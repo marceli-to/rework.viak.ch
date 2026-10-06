@@ -108,6 +108,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('testimonials/{testimonial}', [Admin\TestimonialController::class, 'update']);
 		Route::delete('testimonials/{testimonial}', [Admin\TestimonialController::class, 'destroy']);
 
+		// A fixed page's testimonials, picked in the dashboard ([[Page]]).
+		Route::get('pages/{page}/testimonials', [Admin\PageTestimonialController::class, 'show']);
+		Route::put('pages/{page}/testimonials', [Admin\PageTestimonialController::class, 'update']);
+
 		Route::get('team-members', [Admin\TeamMemberController::class, 'index']);
 		Route::post('team-members/order', [Admin\TeamMemberController::class, 'order']);
 		Route::post('team-members', [Admin\TeamMemberController::class, 'store']);

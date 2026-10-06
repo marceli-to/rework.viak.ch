@@ -37,6 +37,7 @@ it('names the fixed pages, the published courses and the listed experts, on the 
 		"{$host}/de/ueber-uns",
 		"{$host}/de/experte/remo-kast/{$this->expert->uuid}",
 		"{$host}/de/kontakt",
+		"{$host}/de/firmenschulung",
 	]);
 });
 

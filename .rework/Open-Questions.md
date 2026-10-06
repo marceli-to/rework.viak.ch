@@ -47,7 +47,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~26~~ | ~~Admin-created students: a set-password invite?~~ — **answered 2026-09-24: yes.** See `07-dashboard.md` | — | — |
 | ~~27~~ | ~~What belongs on the dashboard's landing page?~~ — **answered 2026-09-24: nothing yet; it stays empty.** | — | — |
 | 28 | **Card payment for an invoice**: legacy's `/de/zahlung/rechnung/{uuid}` (Stripe). Still wanted? The course confirmation mail links to it; the rework serves a placeholder there (2026-09-29) | Marcel, then the client | Cutover. **Waits for chunk 05**: designed with the licence checkout (Marcel, 2026-09-29) |
-| 25 | Firmenschulung's URL, and does it launch before cutover? | Marcel | The 301 for the indexed `/de/individualschulungen` — without the new page it has nowhere to go |
+| 25 | ~~Firmenschulung's URL, and does it launch before cutover?~~ **Answered 2026-10-06**: `/de/firmenschulung`, `/de/individualschulungen` 301s to it; built | Marcel | Built |
 | 29 | Who manages the GTM container `GTM-M3L7WVP` and the ad accounts, VIAK or an agency? | Client | `11-tracking.md` step 2's container changes, and UTM templates on campaigns |
 | 30 | Which ad networks, exactly? Google Ads and Meta today; LinkedIn, ChatGPT, others planned? | Client | Nothing in code; which tags go into GTM |
 | 31 | The answer options for *Wie wurdest du auf uns aufmerksam?*, and is it optional? | Client | `11-tracking.md` step 4 |
@@ -352,7 +352,11 @@ done it, so the mail says nothing new.
 **Decided 2026-09-29 (Marcel): no.** `NotifyParticipantThreshold` records the
 band but announces nothing for a seat whose reason is `EventCancelled`.
 
-### 25. Firmenschulung's URL, and does it launch before cutover?
+### ~~25. Firmenschulung's URL, and does it launch before cutover?~~
+
+**Answered and built 2026-10-06 (Marcel):** `/de/firmenschulung`, with a 301
+from legacy's `/de/individualschulungen`. It ships with the rest at cutover.
+
 
 Decided 2026-09-24 that Firmenschulung is built from the mockup and legacy's
 `/de/individualschulungen` is not rebuilt (`04-content.md`). That leaves the

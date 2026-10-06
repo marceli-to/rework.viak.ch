@@ -6,6 +6,14 @@
 <x-card.text>
 	<x-slot:aside>
 		<h2>Nachricht senden</h2>
+
+		{{-- The review's Kontakt marker 1: the way to Firmenschulung, drawn as
+		     the registration page's *Bereits registriert?*. `no-underline!`
+		     beats the card's own link underline. --}}
+		<a href="{{ \App\Support\SiteUrl::training() }}" class="mt-16 mb-24 inline-flex flex-col items-start no-underline! hover:text-teal sm:mb-0">
+			<span>Anfrage für eine Firmenschulung?</span>
+			<x-icon.arrow-right class="mt-8" />
+		</a>
 	</x-slot:aside>
 
 	@if (session('contact') === 'sent')

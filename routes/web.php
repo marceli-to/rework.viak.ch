@@ -17,6 +17,7 @@ use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\SitemapController;
+use App\Http\Controllers\Site\TrainingController;
 use App\Http\Middleware\SetLocaleFromUrl;
 use App\Support\SiteUrl;
 use Illuminate\Support\Facades\Route;
@@ -119,6 +120,17 @@ Route::prefix('{locale}')
 			// The form on it: mailed, never stored ([[ContactController]]).
 			Route::post($segments['contact'], [ContactController::class, 'store'])
 				->name("{$locale}.contact.send");
+
+			/*
+			 * Firmenschulung (`04-content.md`, #25): legacy's copy, an enquiry
+			 * form and the testimonials picked for it. Not in the nav; Kontakt
+			 * links to it. Legacy's indexed `/de/individualschulungen` 301s here.
+			 */
+			Route::get($segments['training'], [TrainingController::class, 'show'])
+				->name("{$locale}.training");
+			Route::post($segments['training'], [TrainingController::class, 'store'])
+				->name("{$locale}.training.send");
+			Route::redirect($segments['training_legacy'], SiteUrl::training($locale), 301);
 
 			/*
 			 * Paying an invoice by card — the course confirmation mail links

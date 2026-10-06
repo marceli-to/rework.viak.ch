@@ -465,7 +465,7 @@ uuid:
 | Course detail | `/de/kurs/{slug}/{uuid}` | **`/de/kurs/{slug}`**, 301 from the uuid form |
 | Experts | `/de/experten`, `/de/experte/{slug}/{uuid}` | the list **301s to `/de/ueber-uns`** (2026-10-06, `04-content.md`); one expert unchanged |
 | Contact | `/de/kontakt` | unchanged |
-| Firmenschulung | `/de/individualschulungen` | unchanged |
+| Firmenschulung | `/de/individualschulungen` | **301 to `/de/firmenschulung`** (2026-10-06, #25) |
 
 **Chunk 02 as built does not match this** — it serves `/kurse` and
 `/kurse/{slug}`, with neither the prefix nor the singular `kurs`. The

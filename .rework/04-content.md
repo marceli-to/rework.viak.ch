@@ -48,14 +48,22 @@ talked about*, not *disputed*.
   team. So the mockup's Team page is legacy's Experten page and the *Über uns*
   and *Team* collapsibles from legacy's Kontakt page, merged. The parity build
   keeps them where legacy has them; the merge is phase two.
-- **Kontakt** — link it to Firmenschulung, and **add the form**. **The form is
+- **Kontakt** — link it to Firmenschulung (built 2026-10-06, under *Nachricht
+  senden*), and **add the form**. **The form is
   built, 2026-10-06**: an open collapsible, *Kontaktformular*, under the address,
-  with the mockup's three fields; #24 is answered in [[ContactController]]. The
-  Firmenschulung link waits for that page. Legacy's Kontakt
+  with the mockup's three fields; #24 is answered in [[ContactController]]. Legacy's Kontakt
   has no form at all (address, map, and four collapsibles), so the form is new,
   and it is the first public form that sends a mail to VIAK rather than to the
   customer. It waits on mail, which does not exist yet.
 - **Firmenschulung** — show reviews. That is the `Testimonial` model below.
+  **Built 2026-10-06** (Marcel's calls): `/de/firmenschulung`, 301 from
+  `/de/individualschulungen`; **legacy's copy**, not the mockup's filler, drawn
+  as *Über uns* opens; then open collapsibles *Anfrage* (Firma,
+  Ansprechperson, E-Mail, Nachricht, to the office as Kontakt's is) and
+  *Kundenmeinungen*, the testimonials **picked for it** in *Seiteninhalte →
+  Firmenschulung*. That picker is the first: a fixed page is a `Page` row
+  holding placements ([[Page]]), so the homepage takes the same route. Kontakt
+  links here from its form (marker 1). Not in the nav.
 
   **Built from the mockup, not rebuilt at parity** (Marcel, 2026-09-24). Legacy's
   page is `/de/individualschulungen`: a six-image slider and five paragraphs

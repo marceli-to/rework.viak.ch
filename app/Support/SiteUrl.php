@@ -102,6 +102,17 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('payment', $locale).'/'.self::segment('invoice', $locale).'/'.$uuid;
 	}
 
+	/**
+	 * Firmenschulung — `/de/firmenschulung` (`Open-Questions.md` #25). Legacy's
+	 * `/de/individualschulungen` is indexed and 301s here.
+	 */
+	public static function training(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('training', $locale);
+	}
+
 	/** The Kontakt page — `/de/kontakt`. */
 	public static function contact(?string $locale = null): string
 	{
