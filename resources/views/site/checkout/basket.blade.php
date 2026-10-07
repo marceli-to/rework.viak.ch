@@ -28,12 +28,10 @@
 		     reaches by clicking *Warenkorb* in the confirmation. --}}
 		<template x-if="settled && ! items.length">
 			{{-- `.checkout-basket-empty`: 12px above, 24 from `sm`, 36 from `lg`.
-			     Legacy stops at the sentence; the way on to the courses is new
-			     (Marcel, 2026-10-07), the site's teal button. --}}
-			<div class="mt-12 sm:mt-24 lg:mt-36">
-				<p>Dein Warenkorb ist leer...</p>
-				<x-ui.button href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 lg:mt-32">Kurse entdecken</x-ui.button>
-			</div>
+			     Legacy stops at *leer...*; the link home is new (Marcel,
+			     2026-10-07), drawn as a link in running text is
+			     (`%link-underline`: 3px offset, 1px). --}}
+			<p class="mt-12 sm:mt-24 lg:mt-36">Dein Warenkorb ist leer. Zurück zur <a href="{{ \App\Support\SiteUrl::home() }}" class="underline decoration-1 underline-offset-3 hover:text-teal">Startseite</a>.</p>
 		</template>
 
 		<template x-if="items.length">

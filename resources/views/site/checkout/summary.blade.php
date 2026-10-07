@@ -177,10 +177,7 @@
 
 		<template x-if="settled && ! items.length">
 			{{-- As the basket's empty state ([[checkout.basket]]). --}}
-			<div class="mt-12 sm:mt-24 lg:mt-36">
-				<p>Dein Warenkorb ist leer...</p>
-				<x-ui.button href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 lg:mt-32">Kurse entdecken</x-ui.button>
-			</div>
+			<p class="mt-12 sm:mt-24 lg:mt-36">Dein Warenkorb ist leer. Zurück zur <a href="{{ \App\Support\SiteUrl::home() }}" class="underline decoration-1 underline-offset-3 hover:text-teal">Startseite</a>.</p>
 		</template>
 	</div>
 </x-layout.site>

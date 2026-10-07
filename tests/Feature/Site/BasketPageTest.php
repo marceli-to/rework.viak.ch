@@ -50,9 +50,8 @@ it('gives a student the shell, on legacy’s URL and behind the teal gutters', f
 		->assertOk()
 		->assertSee('Mein Warenkorb')
 		->assertSee('Schritt 1/4')
-		->assertSee('Dein Warenkorb ist leer...')
-		// and the way on from an empty one
-		->assertSeeInOrder(['Dein Warenkorb ist leer...', 'href="/de/kurse"', 'Kurse entdecken'], false)
+		// and the way home from an empty one
+		->assertSeeInOrder(['Dein Warenkorb ist leer. Zurück zur', 'href="/de"', 'Startseite</a>'], false)
 		// `is-auth` on `<html>`, as every step of legacy's checkout has it.
 		->assertSee('class="overflow-y-scroll bg-teal"', false)
 		->assertSee('x-data="basketList"', false);
