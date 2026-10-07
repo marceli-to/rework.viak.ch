@@ -18,6 +18,12 @@
     <td>E-Mail</td>
     <td><a href="mailto:{{ $email }}">{{ $email }}</a></td>
   </tr>
+  @if (filled($phone))
+  <tr>
+    <td>Telefon</td>
+    <td><a href="tel:{{ preg_replace('/[^0-9+]/', '', $phone) }}">{{ $phone }}</a></td>
+  </tr>
+  @endif
   <tr>
     <td>Nachricht</td>
     <td style="vertical-align: top;">{!! nl2br(e($text)) !!}</td>

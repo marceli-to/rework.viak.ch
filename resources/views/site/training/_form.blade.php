@@ -1,7 +1,7 @@
 {{--
 	Firmenschulung's enquiry ([[TrainingController]]), the fields as Kontakt's
-	form has them (`contact/_form`): the mockup's four, Firma and
-	Ansprechperson side by side from sm. Inside the *Anfrage* collapsible's
+	form has them (`contact/_form`): the mockup's four and an optional phone
+	number (Marcel, 2026-10-07), in pairs side by side from sm. Inside the *Anfrage* collapsible's
 	card (`training.index`).
 --}}
 @if (session('training') === 'sent')
@@ -21,7 +21,14 @@
 			<x-form.field name="name" label="Ansprechperson" required autocomplete="name" />
 		</div>
 	</div>
-	<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" />
+	<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+		<div class="sm:col-span-6">
+			<x-form.field name="email" label="E-Mail" type="email" required autocomplete="email" />
+		</div>
+		<div class="sm:col-span-6">
+			<x-form.field name="phone" label="Telefon" type="tel" autocomplete="tel" />
+		</div>
+	</div>
 	<x-form.textarea name="message" label="Nachricht" required placeholder="Gewünschte Software, Teamgrösse, Zeitrahmen …" />
 
 	{{-- The honeypot, as on Kontakt. --}}

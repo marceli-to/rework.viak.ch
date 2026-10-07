@@ -51,9 +51,9 @@ class TrainingController extends Controller
 
 		RateLimiter::hit($key, 3600);
 
-		['company' => $company, 'name' => $name, 'email' => $email, 'message' => $text] = $request->validated();
+		$data = $request->validated();
 
-		Mail::to(config('mail.admin'))->send(new TrainingEnquiry($company, $name, $email, $text));
+		Mail::to(config('mail.admin'))->send(new TrainingEnquiry($data['company'], $data['name'], $data['email'], $data['phone'] ?? null, $data['message']));
 
 		return $back->with('training', 'sent');
 	}

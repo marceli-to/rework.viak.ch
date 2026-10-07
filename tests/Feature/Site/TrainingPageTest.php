@@ -26,6 +26,7 @@ function trainingPayload(array $overrides = []): array
 		'company' => 'Architekturbüro Muster',
 		'name' => 'Anna Muster',
 		'email' => 'anna@example.test',
+		'phone' => '044 123 45 67',
 		'message' => "Rhino für sechs Leute, im Frühling.\nBei uns im Büro.",
 		...$overrides,
 	];
@@ -40,7 +41,7 @@ it('renders at /de/firmenschulung with legacy’s copy, then the enquiry', funct
 			'Was ist Ihr Thema?<br>Bestimmt finden wir',
 			'href="tel:+41435014040"',
 			'Anfrage', 'Firmenschulung anfragen',
-			'name="company"', 'name="name"', 'name="email"', 'name="message"',
+			'name="company"', 'name="name"', 'name="email"', 'name="phone"', 'name="message"',
 			'Anfrage senden',
 		], false);
 });
@@ -66,16 +67,25 @@ it('mails the enquiry to the office only, with the contact person to reply to', 
 
 	Mail::assertQueued(TrainingEnquiry::class, fn (TrainingEnquiry $mail) => $mail->hasTo('office@viak.test')
 		&& $mail->hasReplyTo('anna@example.test', 'Anna Muster')
-		&& $mail->company === 'Architekturbüro Muster');
+		&& $mail->company === 'Architekturbüro Muster'
+		&& $mail->phone === '044 123 45 67');
 	Mail::assertQueuedCount(1);
 });
 
 it('renders the mail as a table, the message last and top-aligned', function () {
-	$html = (new TrainingEnquiry('Büro <AG>', 'Anna Muster', 'anna@example.test', "eins\nzwei"))->render();
+	$html = (new TrainingEnquiry('Büro <AG>', 'Anna Muster', 'anna@example.test', '044 123 45 67', "eins\nzwei"))->render();
 
 	expect($html)->toContain('Über die Seite Firmenschulung')->not->toContain('Büro <AG>')
 		->and($html)->toContain('Büro &lt;AG&gt;')
+		->toMatch('/>Telefon<\/td>\s*<td[^>]*><a href="tel:0441234567"[^>]*>044 123 45 67<\/a>/')
 		->toMatch('/>Nachricht<\/td>\s*<td[^>]*vertical-align: top[^>]*>eins<br>/');
+});
+
+it('lets the phone number be empty, and leaves its row out of the mail', function () {
+	$this->post('/de/firmenschulung', trainingPayload(['phone' => '']))->assertSessionHasNoErrors();
+
+	Mail::assertQueued(TrainingEnquiry::class, fn (TrainingEnquiry $mail) => $mail->phone === null);
+	expect((new TrainingEnquiry('Büro', 'Anna', 'anna@example.test', null, 'Text'))->render())->not->toContain('>Telefon</td>');
 });
 
 it('asks for all four fields, in German, and sends nothing', function () {

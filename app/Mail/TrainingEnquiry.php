@@ -18,6 +18,7 @@ class TrainingEnquiry extends VIAKMail
 		public readonly string $company,
 		public readonly string $name,
 		public readonly string $email,
+		public readonly ?string $phone,
 		public readonly string $text,
 	) {
 		parent::__construct();
