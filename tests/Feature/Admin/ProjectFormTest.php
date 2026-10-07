@@ -33,7 +33,7 @@ it('keeps the Vorhaben to admins', function () {
 });
 
 it('creates one at the end of the list, its slug from the title', function () {
-	Project::factory()->create(['order' => 4]);
+	Project::factory()->create(['slug' => ['de' => 'anderes-vorhaben'], 'order' => 4]);
 
 	$uuid = $this->actingAs($this->admin)->postJson('/api/admin/projects', projectPayload(['title' => 'Mit KI gestalten']))
 		->assertCreated()
