@@ -223,6 +223,21 @@ homepage (homepage marker 1). First pass, built to be reshaped:
     signup reaches no Mailchimp list**: `NewsletterController` validates,
     guards (Turnstile, honeypot, 5/h) and logs, until `Open-Questions.md` #13
     says whether the integration stays.
+- **Marker 4, the Firmenschulung teaser** (2026-10-07), after *Nächste
+  Kurstermine*, a second call to action beside the call band, which stays:
+  the band is for whoever does not know yet, the teaser for a company that
+  does. The mockup's copy fixed in `site/landing/_training.blade.php`, with
+  **no form on the homepage**: *Firmenschulung anfragen* goes to the page's
+  form (`#anfrage`), as the mockup's button does, so there is one form to
+  keep. Marcel picked a **grey panel** from four layouts (after a framed card
+  and an image beside the copy): `gray-200` at half strength, the pitch in
+  six columns, the four facts in the other six as label and value rows with
+  dividers between, centred against the pitch. No image. The mockup's
+  *Zuletzt geschult* line is left out and the price is the mockup's, both
+  `Open-Questions.md` #40.
+- **The homepage view is `site/landing/index`** (2026-10-07), each section a
+  partial as Kontakt's are: `_intro`, `_projects`, `_call`, `_events`,
+  `_training`, `_footer`.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial
