@@ -130,3 +130,14 @@ it('serves the form with every course to pick from', function () {
 	expect($offers['type'])->toBe('offers')
 		->and($offers['options'][0])->toMatchArray(['label' => 'Entwurf', 'publish' => false]);
 });
+
+it('keeps the page’s meta description and keywords', function () {
+	$uuid = $this->actingAs($this->admin)
+		->postJson('/api/admin/projects', projectPayload(['seo_description' => 'Räume zeigen lernen.', 'seo_tags' => 'Enscape, Twinmotion']))
+		->assertCreated()
+		->assertJsonPath('data.seo_description', 'Räume zeigen lernen.')
+		->json('data.uuid');
+
+	expect(Project::query()->where('uuid', $uuid)->first())
+		->getTranslation('seo_tags', 'de')->toBe('Enscape, Twinmotion');
+});

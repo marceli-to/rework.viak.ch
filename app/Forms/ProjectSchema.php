@@ -30,11 +30,16 @@ final class ProjectSchema extends Schema
 			Field::row([
 				Field::checkbox('publish')->label('Publizieren'),
 			]),
+			// As the course form has them; the page falls back to the lead.
+			Field::section('Metatags + SEO', [
+				Field::textarea('seo_description')->label('SEO - Beschreibung')->rules(['max:1000']),
+				Field::textarea('seo_tags')->label('SEO - Keywords')->rules(['max:1000']),
+			]),
 		];
 	}
 
 	public function defaults(): array
 	{
-		return ['title' => '', 'teaser' => '', 'lead' => '', 'text' => '', 'courses' => [], 'publish' => false];
+		return ['title' => '', 'teaser' => '', 'lead' => '', 'text' => '', 'courses' => [], 'publish' => false, 'seo_description' => '', 'seo_tags' => ''];
 	}
 }

@@ -27,6 +27,22 @@ it('renders the title, lead and text, and the picked courses in their order', fu
 		->assertDontSee('Entwurf');
 });
 
+it('carries its own meta description and keywords, the lead standing in for a missing description', function () {
+	Project::factory()->create([
+		'slug' => ['de' => 'mit-seo'],
+		'lead' => ['de' => 'Die Einleitung.'],
+		'seo_description' => ['de' => 'Eigene Beschreibung.'],
+		'seo_tags' => ['de' => 'Enscape, Twinmotion'],
+	]);
+	Project::factory()->create(['slug' => ['de' => 'ohne-seo'], 'lead' => ['de' => 'Die Einleitung.']]);
+
+	$this->get('/de/vorhaben/mit-seo')
+		->assertSee('<meta name="description" content="Eigene Beschreibung.">', false)
+		->assertSee('<meta name="keywords" content="Enscape, Twinmotion">', false);
+	$this->get('/de/vorhaben/ohne-seo')
+		->assertSee('<meta name="description" content="Die Einleitung.">', false);
+});
+
 it('is not there unpublished, or under another slug', function () {
 	Project::factory()->create(['slug' => ['de' => 'entwurf'], 'publish' => false]);
 

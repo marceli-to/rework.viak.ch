@@ -266,6 +266,10 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial
   picker's rows, bin and `+` lightbox, with a search.
+- **Metatags + SEO** (Marcel, 2026-10-07): the Vorhaben form has the course
+  form's section, *SEO - Beschreibung* and *SEO - Keywords*
+  (`seo_description`, `seo_tags`), for the page's meta tags. Without a
+  description the lead stands in, as it did before.
 - **Dev data**: `php artisan db:seed --class=ProjectSeeder` makes the six with
   the mockups' filler copy and their offer lists matched to real courses by
   number. Not for production; which of the six are real is still

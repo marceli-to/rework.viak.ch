@@ -19,9 +19,12 @@
 	$title = $project->getTranslation('title', $locale);
 	$lead = $project->getTranslation('lead', $locale, false);
 	$text = $project->getTranslation('text', $locale, false);
+	// *Metatags + SEO* from the form; without a description, the lead stands in.
+	$description = $project->getTranslation('seo_description', $locale, false) ?: $lead;
+	$keywords = $project->getTranslation('seo_tags', $locale, false);
 @endphp
 
-<x-layout.site :title="$title" :heading="$title" :description="$lead ?: null">
+<x-layout.site :title="$title" :heading="$title" :description="$description ?: null" :keywords="$keywords ?: null">
 	<article class="mb-48 sm:grid sm:grid-cols-12 sm:gap-16 lg:mb-64 lg:gap-40">
 		{{-- `xs:hide`, as on Kontakt: on a phone the header row already says it. --}}
 		<aside class="text-teal max-sm:hidden sm:col-span-4">

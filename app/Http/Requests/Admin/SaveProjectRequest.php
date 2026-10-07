@@ -41,6 +41,8 @@ class SaveProjectRequest extends FormRequest
 			'teaser' => $de('teaser'),
 			'lead' => $de('lead'),
 			'text' => $de('text'),
+			'seo_description' => $de('seo_description'),
+			'seo_tags' => $de('seo_tags'),
 			'publish' => (bool) ($data['publish'] ?? false),
 		];
 	}

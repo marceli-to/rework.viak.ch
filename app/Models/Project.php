@@ -23,10 +23,10 @@ class Project extends Model
 	use HasTranslations;
 	use HasUuid;
 
-	protected $fillable = ['title', 'slug', 'teaser', 'lead', 'text', 'publish', 'order'];
+	protected $fillable = ['title', 'slug', 'teaser', 'lead', 'text', 'seo_description', 'seo_tags', 'publish', 'order'];
 
 	/** @var array<int, string> */
-	public $translatable = ['title', 'slug', 'teaser', 'lead', 'text'];
+	public $translatable = ['title', 'slug', 'teaser', 'lead', 'text', 'seo_description', 'seo_tags'];
 
 	protected function casts(): array
 	{

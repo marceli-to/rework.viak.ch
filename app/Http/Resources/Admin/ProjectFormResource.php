@@ -28,6 +28,8 @@ class ProjectFormResource extends JsonResource
 			'teaser' => $de('teaser'),
 			'lead' => $de('lead'),
 			'text' => $de('text'),
+			'seo_description' => $de('seo_description'),
+			'seo_tags' => $de('seo_tags'),
 			'courses' => $this->courses->pluck('uuid')->all(),
 			'publish' => $this->publish,
 		];
