@@ -262,6 +262,14 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   *Was möchtest du machen?* and *Beliebte Angebote* are. *Alle Kurse und
   Termine* moved up beside the heading, as the mockup's section heads carry
   their link.
+- **The testimonials are a slider** (Marcel, 2026-10-07), on the homepage and
+  Firmenschulung, whose *Kundenmeinungen* also lost its collapsible for a
+  bold `h2`: `x-testimonial.slider`, Swiper as the intro's, three cards from
+  lg, two from sm, one on a phone, a page at a time, autoplay every 6s
+  (paused under the pointer, stopped by a dot or a swipe, off for reduced
+  motion), no arrows, round dots under it, hidden when every card fits. A
+  course page's *Kundenmeinungen* stays a collapsible grid, as all its
+  sections are collapsibles.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial

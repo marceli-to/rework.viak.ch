@@ -24,9 +24,12 @@
 		</x-card.text>
 	</x-ui.collapsible>
 
+	{{-- Under a heading, not a collapsible, as on the homepage (Marcel,
+	     2026-10-07); the Anfrage collapsible's 64px below is the gap. --}}
 	@if ($testimonials->isNotEmpty())
-		<x-ui.collapsible title="Kundenmeinungen" last>
-			@include('site.training._testimonials')
-		</x-ui.collapsible>
+		<section>
+			<h2 class="mb-16 font-bold lg:mb-24">Kundenmeinungen</h2>
+			<x-testimonial.slider :testimonials="$testimonials" />
+		</section>
 	@endif
 </x-layout.site>

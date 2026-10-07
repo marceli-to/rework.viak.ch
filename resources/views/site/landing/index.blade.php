@@ -22,10 +22,10 @@
 
 	@if ($testimonials->isNotEmpty())
 		{{-- Marker 10, picked in *Seiteninhalte → Startseite*: Firmenschulung's
-		     cards in its grid, under a heading as the other sections have. --}}
+		     slider, under a heading as the other sections have. --}}
 		<section class="mt-48 lg:mt-64">
 			<h2 class="mb-16 font-bold lg:mb-24">Kundenmeinungen</h2>
-			@include('site.training._testimonials')
+			<x-testimonial.slider :testimonials="$testimonials" />
 		</section>
 	@endif
 

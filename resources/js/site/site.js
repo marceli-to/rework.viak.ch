@@ -19,6 +19,7 @@ import fileDrop from './components/file-drop';
 import menu from './components/menu';
 import portal from './stores/portal';
 import slider from './components/slider';
+import testimonialSlider from './components/testimonial-slider';
 import toast from './stores/toast';
 
 Alpine.store('basket', basket);
@@ -52,6 +53,7 @@ Alpine.data('basketList', basketList);
 Alpine.data('fileDrop', fileDrop);
 Alpine.data('editor', editor);
 Alpine.data('slider', slider);
+Alpine.data('testimonialSlider', testimonialSlider);
 
 window.Alpine = Alpine;
 Alpine.start();
