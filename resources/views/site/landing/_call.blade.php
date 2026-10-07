@@ -16,16 +16,27 @@
 	  button in the band; the tiles above are links.
 	- **The tiles' padding** (Marcel): 8px in, 16 from lg, the grid's own
 	  gap, and the two halves centred on each other from sm.
+
+	**Beside the Vorhaben tiles from lg** (`beside`, Marcel, 2026-10-07):
+	the band becomes their right-hand column ([[landing._projects]]), as tall
+	as the tiles, the copy at the top and the number and button at the foot,
+	the sentence a step smaller to fit the narrower column. Without tiles it
+	stands alone, as below lg.
 --}}
-<aside class="mt-48 bg-teal p-8 text-white sm:grid sm:grid-cols-12 sm:items-center sm:gap-16 lg:mt-64 lg:gap-40 lg:p-16">
+@php($beside ??= false)
+<aside @class([
+	'mt-48 bg-teal p-8 text-white sm:grid sm:grid-cols-12 sm:items-center sm:gap-16 lg:p-16',
+	'lg:col-span-4 lg:mt-0 lg:flex lg:flex-col lg:items-start lg:justify-between' => $beside,
+	'lg:mt-64 lg:gap-40' => ! $beside,
+])>
 	<div class="sm:col-span-8">
 		<h2 class="text-2xl leading-[1.2] font-bold text-balance sm:text-3xl lg:text-4xl">Nicht sicher, was du brauchst?</h2>
-		<p class="mt-8 max-w-[34em] text-lg leading-[1.4] text-pretty lg:mt-16 lg:text-2xl">
+		<p @class(['mt-8 max-w-[34em] text-lg leading-[1.4] text-pretty lg:mt-16', $beside ? 'lg:text-xl' : 'lg:text-2xl'])>
 			Ruf an und sprich mit jemandem, der die Tools täglich nutzt. Etwa zwanzig Minuten, kostenlos, unverbindlich.
 		</p>
 	</div>
 
-	<div class="mt-24 flex flex-col items-start gap-16 sm:col-span-4 sm:mt-0 sm:items-end">
+	<div @class(['mt-24 flex flex-col items-start gap-16 sm:col-span-4 sm:mt-0 sm:items-end', 'lg:mt-32 lg:items-start' => $beside])>
 		<p class="text-2xl leading-[1.2] font-bold tabular-nums sm:text-3xl lg:text-4xl">
 			<a href="tel:+41435014040" class="whitespace-nowrap hover:underline hover:decoration-2 hover:underline-offset-4">+41 43 501 40 40</a>
 		</p>

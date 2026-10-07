@@ -261,6 +261,12 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   collapsibles (Marcel, the same day): *Slideshow Bilder*, *Über uns*,
   *Rezensionen*; images save at once, *Über uns* and *Rezensionen* each with
   their own *Speichern* inside.
+- **Vorhaben tiles and call band are one section** (Marcel, 2026-10-07):
+  from lg the tiles take eight columns, two to a row, and the band stands
+  beside them in four as a teal column as tall as the tiles (copy at the
+  top, number and *Rückruf vereinbaren* at the foot). Below lg the tiles stay
+  three across and the band follows under them; with no tiles it stands
+  alone.
 - **The homepage view is `site/landing/index`** (2026-10-07), each section a
   partial as Kontakt's are: `_intro`, `_projects`, `_call`, `_events`,
   `_training`, `_featured`, `_about`, `_footer`.

@@ -2,11 +2,13 @@
 <x-layout.site title="Home" :image="$og ? '/storage/uploads/'.$og->file : null">
 	@include('site.landing._intro')
 
+	{{-- The Vorhaben tiles carry the call band beside them; without tiles
+	     the band stands alone. --}}
 	@if ($projects->isNotEmpty())
 		@include('site.landing._projects')
+	@else
+		@include('site.landing._call')
 	@endif
-
-	@include('site.landing._call')
 
 	@if ($events->isNotEmpty())
 		@include('site.landing._events')
