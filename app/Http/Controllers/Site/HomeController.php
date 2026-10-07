@@ -48,11 +48,6 @@ class HomeController extends Controller
 				->with(['course', 'dates', 'location', 'experts'])
 				->limit(self::EVENTS)
 				->get(),
-			/*
-			 * The Firmenschulung teaser's image (marker 4): the one the
-			 * dashboard gave that page, its *Vorschau* if it has one.
-			 */
-			'trainingImage' => Page::for('firmenschulung')->teaser(),
 		]);
 	}
 }

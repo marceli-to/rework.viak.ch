@@ -5,17 +5,13 @@ import { fetchPageTestimonials, savePageTestimonials } from '@/api/pages';
 import { toast } from '@/composables/useToast';
 import Button from '@/components/ui/Button.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
-import ImageSection from '@/components/media/ImageSection.vue';
 import Loading from '@/components/ui/Loading.vue';
 import TestimonialPicker from '@/components/testimonial/TestimonialPicker.vue';
 
 /**
  * *Seiteninhalte → Firmenschulung* ([[07-dashboard]]): the testimonials the
- * page shows under *Kundenmeinungen*, picked and ordered ([[Page]]), and its
- * images: the first, or the one marked *Vorschau*, is the homepage's
- * Firmenschulung teaser (`landing._training`). The images save at once, as
- * on Startseite; the testimonials with *Speichern*. The copy is the page's
- * own, in Blade, so this is all there is to edit.
+ * page shows under *Kundenmeinungen*, picked and ordered ([[Page]]). The copy
+ * is the page's own, in Blade, so this is all there is to edit.
  */
 const route = useRoute();
 const key = computed(() => route.params.page);
@@ -65,9 +61,6 @@ async function save() {
 				<template #title><h2 class="text-lg font-bold sm:text-xl">Kundenmeinungen</h2></template>
 			</TestimonialPicker>
 			<Button class="mt-32 w-full" :disabled="saving" @click="save">Speichern</Button>
-
-			<h2 class="mt-48 mb-16 text-lg font-bold sm:text-xl">Bilder</h2>
-			<ImageSection :record="key" owner="pages" />
 		</template>
 	</section>
 </template>
