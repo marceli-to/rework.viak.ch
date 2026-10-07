@@ -115,6 +115,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('pages/{page}/media', [Admin\MediaController::class, 'pageIndex']);
 		Route::post('pages/{page}/media', [Admin\MediaController::class, 'pageStore']);
 		Route::patch('pages/{page}/media/order', [Admin\MediaController::class, 'pageOrder']);
+		// A fixed page's editable copy: the homepage's About teaser ([[Page]]).
+		Route::get('pages/{page}/content', [Admin\PageContentController::class, 'show']);
+		Route::put('pages/{page}/content', [Admin\PageContentController::class, 'update']);
 
 		// The Vorhaben, the homepage's tiles and a page each ([[04-content]]).
 		Route::get('projects', [Admin\ProjectController::class, 'index']);

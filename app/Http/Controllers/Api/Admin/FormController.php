@@ -9,6 +9,7 @@ use App\Forms\CustomerSchema;
 use App\Forms\DiscountCodeSchema;
 use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
+use App\Forms\HomeAboutSchema;
 use App\Forms\InvoiceSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
@@ -33,6 +34,7 @@ class FormController extends Controller
 		'testimonial' => TestimonialSchema::class,
 		'team-member' => TeamMemberSchema::class,
 		'project' => ProjectSchema::class,
+		'home-about' => HomeAboutSchema::class,
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,
 		'customer' => CustomerSchema::class,

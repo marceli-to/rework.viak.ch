@@ -246,10 +246,15 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   *Alle Angebote von A bis Z*. Marker 5's *Anzeige auf Detailseite* is read
   as where the flag is set (the course's form), not as a badge on the public
   course page.
-- **Marker 9, the About teaser** (2026-10-07): *Warum bei der VIAK* with the
-  mockup's two paragraphs, fixed in `_about`, drawn as the Firmenschulung
-  teaser's grey panel, and *Mehr über uns* to *Über uns*. **No experts**
-  (Marcel) and no image: the mockup's is a stock render.
+- **Marker 9, the About teaser** (2026-10-07): *Warum bei der VIAK*, drawn
+  as the Firmenschulung teaser's grey panel, and *Mehr über uns* to *Über
+  uns*. **No experts** (Marcel). **Editable, with an image** (Marcel, the
+  same day): *Seiteninhalte → Startseite: Über uns*, a form with *Titel*,
+  *Text* (rich text) and the image section, kept on `Page::for('home-about')`
+  (copy in the new `pages.content`, image in its media). The mockup's copy is
+  the form's default until someone saves. The image (the first, or the one
+  marked *Vorschau*) stands beside the copy at 16:9, the cropper's shape, the
+  two in six columns each; without one the copy keeps eight.
 - **Marker 10, the testimonials** (2026-10-07): *Kundenmeinungen* at the
   end with Firmenschulung's cards, picked and ordered in
   *Seiteninhalte → Startseite* (the testimonial picker under the slider

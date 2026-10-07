@@ -90,6 +90,14 @@ it('carries the About teaser with the way to Über uns', function () {
 		->assertSee('href="/de/ueber-uns"', false);
 });
 
+it('shows the About teaser’s copy as edited in the dashboard', function () {
+	Page::for('home-about')->update(['content' => ['title' => 'Wer wir sind', 'text' => '<p>Ein Studio in Zürich.</p>']]);
+
+	$this->get('/de')
+		->assertSeeInOrder(['Wer wir sind', 'Ein Studio in Zürich.', 'Mehr über uns'])
+		->assertDontSee('Warum bei der VIAK');
+});
+
 it('shows the testimonials picked for the homepage, published only, in their order', function () {
 	$a = Testimonial::factory()->create(['name' => 'Anna Muster']);
 	$b = Testimonial::factory()->create(['name' => 'Beat Beispiel']);

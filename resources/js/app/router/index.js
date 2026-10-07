@@ -205,6 +205,12 @@ const routes = [
 		meta: { title: 'Startseite' },
 	},
 	{
+		path: '/dashboard/startseite/ueber-uns',
+		name: 'content.home-about',
+		component: () => import('@/views/Page/HomeAbout.vue'),
+		meta: { title: 'Startseite: Über uns' },
+	},
+	{
 		path: '/dashboard/seite/:page',
 		name: 'content.page',
 		component: () => import('@/views/Page/Testimonials.vue'),
