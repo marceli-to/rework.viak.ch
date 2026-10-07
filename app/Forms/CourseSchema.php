@@ -58,7 +58,7 @@ final class CourseSchema extends Schema
 					->message('required', 'Bitte mindestens eine Sprache wählen.')->message('min', 'Bitte mindestens eine Sprache wählen.'),
 				Field::checkboxes('levels', Level::class)->label('Levels')->required()
 					->message('required', 'Bitte mindestens ein Level wählen.')->message('min', 'Bitte mindestens ein Level wählen.'),
-				Field::checkboxes('software', Software::class)->label('Software'),
+				Field::checkboxes('software', Software::class)->label('Software')->with(['columns' => 2]),
 				Field::checkboxes('tags', Tag::class)->label('Tags')->with(['columns' => 2]),
 			])->with(['open' => true]),
 

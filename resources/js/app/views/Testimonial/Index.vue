@@ -55,7 +55,8 @@ onMounted(async () => {
 				<span class="block font-bold">{{ item.name }}</span>
 				<span v-if="item.context" class="block">{{ item.context }}</span>
 				<span class="mt-8 flex flex-wrap gap-8">
-					<Badge>{{ item.subject_label }}</Badge>
+					<!-- Trimmed to one line, the whole label on hover (Marcel, 2026-10-07). -->
+					<Badge class="max-w-full truncate" :title="item.subject_label">{{ item.subject_label }}</Badge>
 					<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
 				</span>
 			</div>
@@ -70,7 +71,7 @@ onMounted(async () => {
 					<template v-if="item.placements.length">
 						Verwendet auf:
 						<span class="mt-4 flex flex-wrap gap-8">
-							<Badge v-for="place in item.placements" :key="`${place.type}-${place.uuid}`">{{ place.label }}</Badge>
+							<Badge v-for="place in item.placements" :key="`${place.type}-${place.uuid}`" class="max-w-full truncate" :title="place.label">{{ place.label }}</Badge>
 						</span>
 					</template>
 					<Badge v-else>Noch nicht verwendet</Badge>
