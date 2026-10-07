@@ -11,7 +11,7 @@
 	'rentals' => null,
 	'badges' => null,
 	'marked' => false,
-	// The homepage's *Nächste Kurstermine* (`site.home`) is the public site:
+	// The homepage's *Nächste Kurstermine* (`site.landing.index`) is the public site:
 	// no course number, which is the dashboard's, and no state badge.
 	'numbered' => true,
 	'showState' => true,

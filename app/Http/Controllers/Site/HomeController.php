@@ -25,7 +25,7 @@ class HomeController extends Controller
 	{
 		$page = Page::for('home');
 
-		return view('site.home', [
+		return view('site.landing.index', [
 			/*
 			 * The intro's slider: legacy's home hero images, in their order,
 			 * less the one kept for `og:image` ([[Page]], `port:media`).

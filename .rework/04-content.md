@@ -192,7 +192,7 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   ones show and in what order is the dashboard list's publish and drag. The
   rest of the homepage is still to come.
 - **Markers 2 and 3, built the same day.** The call band (*Nicht sicher, was
-  du brauchst?*) is the mockup's copy fixed in `site/home.blade.php`, drawn as
+  du brauchst?*) is the mockup's copy fixed in `site/landing/_call.blade.php`, drawn as
   the Kurse filter's teal box: the copy in span-8, the number and *Rückruf
   vereinbaren* (Kontakt's form) in span-4. *Nächste Kurstermine* is an open
   collapsible with the next six bookable Veranstaltungen (published, not
