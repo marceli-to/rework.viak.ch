@@ -163,6 +163,24 @@ const routes = [
 		meta: { title: 'Testimonial bearbeiten' },
 	},
 	{
+		path: '/dashboard/vorhaben',
+		name: 'content.projects',
+		component: () => import('@/views/Project/Index.vue'),
+		meta: { title: 'Vorhaben' },
+	},
+	{
+		path: '/dashboard/vorhaben/erfassen',
+		name: 'content.project.create',
+		component: () => import('@/views/Project/Form.vue'),
+		meta: { title: 'Vorhaben erfassen' },
+	},
+	{
+		path: '/dashboard/vorhaben/:uuid',
+		name: 'content.project.edit',
+		component: () => import('@/views/Project/Form.vue'),
+		meta: { title: 'Vorhaben bearbeiten' },
+	},
+	{
 		path: '/dashboard/team',
 		name: 'content.team',
 		component: () => import('@/views/TeamMember/Index.vue'),

@@ -112,6 +112,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('pages/{page}/testimonials', [Admin\PageTestimonialController::class, 'show']);
 		Route::put('pages/{page}/testimonials', [Admin\PageTestimonialController::class, 'update']);
 
+		// The Vorhaben, the homepage's tiles and a page each ([[04-content]]).
+		Route::get('projects', [Admin\ProjectController::class, 'index']);
+		Route::post('projects/order', [Admin\ProjectController::class, 'order']);
+		Route::post('projects', [Admin\ProjectController::class, 'store']);
+		Route::get('projects/{project}', [Admin\ProjectController::class, 'show']);
+		Route::put('projects/{project}', [Admin\ProjectController::class, 'update']);
+		Route::delete('projects/{project}', [Admin\ProjectController::class, 'destroy']);
+
 		Route::get('team-members', [Admin\TeamMemberController::class, 'index']);
 		Route::post('team-members/order', [Admin\TeamMemberController::class, 'order']);
 		Route::post('team-members', [Admin\TeamMemberController::class, 'store']);

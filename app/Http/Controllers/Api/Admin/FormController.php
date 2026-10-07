@@ -12,6 +12,7 @@ use App\Forms\ExpertSchema;
 use App\Forms\InvoiceSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
+use App\Forms\ProjectSchema;
 use App\Forms\Schema;
 use App\Forms\TeamMemberSchema;
 use App\Forms\TermSchema;
@@ -31,6 +32,7 @@ class FormController extends Controller
 		'course' => CourseSchema::class,
 		'testimonial' => TestimonialSchema::class,
 		'team-member' => TeamMemberSchema::class,
+		'project' => ProjectSchema::class,
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,
 		'customer' => CustomerSchema::class,

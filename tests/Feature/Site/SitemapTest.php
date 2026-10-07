@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Course;
 use App\Models\ExpertProfile;
+use App\Models\Project;
 use App\Models\User;
 
 /**
@@ -20,6 +21,8 @@ function sitemapUrls(): array
 beforeEach(function () {
 	$this->course = Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'slug' => ['de' => 'rhino-einstiegskurs']]);
 	Course::factory()->unpublished()->create(['title' => ['de' => 'Entwurf'], 'slug' => ['de' => 'entwurf']]);
+	Project::factory()->create(['slug' => ['de' => 'raeume-visualisieren']]);
+	Project::factory()->create(['slug' => ['de' => 'vorhaben-entwurf'], 'publish' => false]);
 
 	$this->expert = User::factory()->expert()->create(['first_name' => 'Remo', 'last_name' => 'Kast']);
 	ExpertProfile::factory()->for($this->expert)->create();
@@ -27,11 +30,12 @@ beforeEach(function () {
 	ExpertProfile::factory()->for($hidden)->create(['visible' => false]);
 });
 
-it('names the fixed pages, the published courses and the listed experts, on the canonical host', function () {
+it('names the fixed pages, the published Vorhaben and courses and the listed experts, on the canonical host', function () {
 	$host = 'https://'.config('site.canonical_host');
 
 	expect(sitemapUrls())->toEqualCanonicalizing([
 		"{$host}/de",
+		"{$host}/de/vorhaben/raeume-visualisieren",
 		"{$host}/de/kurse",
 		"{$host}/de/kurs/rhino-einstiegskurs",
 		"{$host}/de/ueber-uns",

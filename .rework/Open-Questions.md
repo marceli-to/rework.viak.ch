@@ -24,7 +24,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 1 | Is the Bildung licence tier real? — **half answered 2026-09-29**: EDU licences are real, sold today as hidden products; what is left is 36 | Client | Chunk 05, partly |
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
-| 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed | Client | Chunk 04 page count |
+| 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy | Client | Copy only |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
 | 7 | Do the historical invoice due dates matter? | Client | Cutover — `port:invoices` reports it every run |

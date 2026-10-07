@@ -23,7 +23,8 @@ use JsonSerializable;
  * checks it against every form still to come:
  *
  *   text · number · date · time · textarea · richtext · checkbox ·
- *   checkboxes · select · repeater · section · row · custom · hidden
+ *   checkboxes · select · repeater · section · row · custom · hidden ·
+ *   offers
  *
  * `section` is a collapsible, `row` lays fields side by side, `custom` hands a
  * spot to a component the kit does not know — the course's images. A course
@@ -159,6 +160,25 @@ final class Field implements JsonSerializable
 		return collect($options)->map(fn ($label, $value) => is_array($label)
 			? ['label' => $value, 'options' => self::choices($label)]
 			: ['value' => $value, 'label' => $label])->values()->all();
+	}
+
+	/**
+	 * Several of a list, picked **in an order** — a Vorhaben's offer list, the
+	 * curator `04-content.md` named as the kit's second bespoke widget. Drawn
+	 * as the testimonial picker is: rows dragged into order, a bin on each,
+	 * the rest in a lightbox behind a `+`. Sent as the uuids in order.
+	 *
+	 * The closure returns the choices as `uuid => ['label' => …, 'hint' => …,
+	 * 'publish' => bool]`; only those pass.
+	 *
+	 * @param  Closure(): array<string, array{label: string, hint?: string, publish?: bool}>  $source
+	 */
+	public static function offers(string $name, Closure $source): self
+	{
+		return (new self('offers', $name))
+			->rules(['array'])
+			->with(['each' => fn () => ['string', 'distinct', Rule::in(array_keys($source()))]], false)
+			->with(['options' => fn () => collect($source())->map(fn (array $offer, string $value) => ['value' => $value, ...$offer])->values()->all()]);
 	}
 
 	/**

@@ -6,6 +6,7 @@ import CheckboxGroup from './CheckboxGroup.vue';
 import Editor from './Editor.vue';
 import Field from './Field.vue';
 import MaskedField from './MaskedField.vue';
+import OfferPicker from './OfferPicker.vue';
 import Select from './Select.vue';
 import Textarea from './Textarea.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
@@ -44,7 +45,7 @@ const value = computed({
 // ticked box is not a choice, and would otherwise be shown nowhere.
 const error = computed(() => {
 	const own = props.errors[key.value]?.[0];
-	if (own || props.field.type !== 'checkboxes') return own ?? null;
+	if (own || !['checkboxes', 'offers'].includes(props.field.type)) return own ?? null;
 	const box = Object.keys(props.errors).find((failed) => failed.startsWith(`${key.value}.`));
 	return box ? props.errors[box][0] : null;
 });
@@ -77,6 +78,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :placeholder="field.placeholder" :required="field.required" :error="error" />
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :error="error" />
 	<Checkbox v-else-if="field.type === 'checkbox'" v-model="value">{{ field.label }}</Checkbox>
+	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :error="error" />
 
 	<!-- *min.* / *max. Teilnehmer*: two columns, as legacy's `span-6` pair. -->
 	<div v-else-if="field.type === 'row' && field.columns" class="grid grid-cols-2 gap-x-16 lg:gap-x-40">

@@ -46,6 +46,9 @@ return [
 			'contact' => 'kontakt',
 			'about' => 'ueber-uns',
 			'training' => 'firmenschulung',
+			// One Vorhaben, `/de/vorhaben/{slug}` ([[04-content]]). New, so
+			// nothing indexed to keep.
+			'project' => 'vorhaben',
 			// Legacy's indexed page, which 301s to `training` (`04-content.md`).
 			'training_legacy' => 'individualschulungen',
 			'basket' => 'warenkorb',
@@ -93,6 +96,7 @@ return [
 			'contact' => 'contact',
 			'about' => 'about-us',
 			'training' => 'corporate-training',
+			'project' => 'project',
 			'training_legacy' => 'individual-training',
 			'basket' => 'basket',
 			'checkout' => 'checkout',

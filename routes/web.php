@@ -15,7 +15,9 @@ use App\Http\Controllers\Site\CustomerAddressController;
 use App\Http\Controllers\Site\CustomerPortalController;
 use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
+use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InviteController;
+use App\Http\Controllers\Site\ProjectController;
 use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\TrainingController;
 use App\Http\Middleware\SetLocaleFromUrl;
@@ -64,7 +66,15 @@ Route::prefix('{locale}')
 		foreach (config('site.locales') as $locale) {
 			$segments = config("site.segments.{$locale}");
 
-			Route::view('/', 'site.home')->name("{$locale}.home");
+			Route::get('/', HomeController::class)->name("{$locale}.home");
+
+			/*
+			 * One Vorhaben ([[04-content]]): its copy and the courses picked
+			 * for it. The homepage's tiles are the way in; there is no list
+			 * page of its own.
+			 */
+			Route::get($segments['project'].'/{slug}', [ProjectController::class, 'show'])
+				->name("{$locale}.projects.show");
 
 			Route::get($segments['courses'], [CourseController::class, 'index'])
 				->name("{$locale}.courses.index");

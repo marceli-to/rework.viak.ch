@@ -158,6 +158,42 @@ same day:
   and the block stays off the page until someone is published. **Who is on the
   team is the client's to fill in.**
 
+## Vorhaben — built 2026-10-07
+
+The Räume mockup as the review cut it (markers 1–3), and its tiles on the
+homepage (homepage marker 1). First pass, built to be reshaped:
+
+- **`Project` in code, *Vorhaben* everywhere a person reads**, as a
+  Veranstaltung is an `Event`. Table `projects`, offer list `course_project`
+  with its own `order`.
+- **A row is its copy and its courses**: title, *Kurzbeschrieb (Startseite)*
+  (the tile's second line), *Einleitung* (the page's bold `h2`), *Text*
+  (richtext), the courses picked, publish. The tools box, the phone box,
+  *Andere Vorhaben* and the breadcrumb are not built (markers 1, 2).
+- **The page**, `/de/vorhaben/{slug}`, is drawn as Firmenschulung's top
+  ([[training._intro]]): title teal in the aside, lead and text in the column.
+  The offer list is the Kurse page's own `x-card.course`, `span-6`, `span-4`
+  from sm, which is their width in the Kurse grid. Published courses only, in
+  the dashboard's order. The mockup's *Alle / Kurse / Software* chips and the
+  licence cards wait for chunk 05. No list page; the homepage is the way in.
+- **The slug** is made from the title on create and never again, numbered if
+  taken; the site's slug rule turns ä into a, as legacy's course slugs do
+  (`/de/vorhaben/raume-visualisieren`).
+- **The homepage** (`HomeController`) shows *Was möchtest du machen?* under
+  the stub's intro: every published Vorhaben in its order, a tile each with
+  the course card's teal frame and heading sizes, filling teal on hover.
+  "Vorhaben-Picker" is read as **the tiles are the visitor's picker**; which
+  ones show and in what order is the dashboard list's publish and drag. The
+  rest of the homepage is still to come.
+- **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
+  order with the course count as a badge, and a form whose course picker is a
+  new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial
+  picker's rows, bin and `+` lightbox, with a search.
+- **Dev data**: `php artisan db:seed --class=ProjectSeeder` makes the six with
+  the mockups' filler copy and their offer lists matched to real courses by
+  number. Not for production; which of the six are real is still
+  `Open-Questions.md` #4.
+
 ## The mockups are 24 files but about nine templates
 
 Counting the mockup directory as pages badly overstates the work, and counting it

@@ -334,6 +334,14 @@ final class SiteUrl
 		]));
 	}
 
+	/** One Vorhaben — `/de/vorhaben/{slug}` ([[04-content]]). */
+	public static function project(string $slug, ?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('project', $locale).'/'.$slug;
+	}
+
 	public static function home(?string $locale = null): string
 	{
 		return '/'.($locale ?? app()->getLocale());

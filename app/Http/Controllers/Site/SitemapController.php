@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Project;
 use App\Models\User;
 use App\Support\SiteUrl;
 use Illuminate\Http\Response;
@@ -15,8 +16,8 @@ use Illuminate\Http\Response;
  * everything and names nothing.
  *
  * Every page a guest can reach, per locale, on the canonical host, and nothing
- * else: the fixed pages, each **published** course by its slug, each **listed**
- * expert. The queries are the pages' own (`published()`,
+ * else: the fixed pages, each **published** Vorhaben and course by its slug,
+ * each **listed** expert. The queries are the pages' own (`published()`,
  * `publiclyListedExperts()`), so the sitemap cannot name a page that 404s.
  * Legacy's uuid course URLs are left out: they 301 to these.
  *
@@ -30,6 +31,10 @@ class SitemapController extends Controller
 	{
 		$urls = collect(config('site.locales'))->flatMap(fn (string $locale) => [
 			SiteUrl::home($locale),
+			...Project::query()->published()->ordered()->get()
+				->map(fn (Project $project) => $project->getTranslation('slug', $locale, false))
+				->filter()
+				->map(fn (string $slug) => SiteUrl::project($slug, $locale)),
 			SiteUrl::courses($locale),
 			...Course::query()->published()->orderBy('order')->get()
 				->map(fn (Course $course) => $course->getTranslation('slug', $locale, false))
