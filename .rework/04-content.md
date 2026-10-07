@@ -250,13 +250,18 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   mockup's two paragraphs, fixed in `_about`, drawn as the Firmenschulung
   teaser's grey panel, and *Mehr über uns* to *Über uns*. **No experts**
   (Marcel) and no image: the mockup's is a stock render.
-- **Marker 10, the testimonials** (2026-10-07): *Kundenmeinungen*, an open
-  collapsible at the end with Firmenschulung's cards, picked and ordered in
+- **Marker 10, the testimonials** (2026-10-07): *Kundenmeinungen* at the
+  end with Firmenschulung's cards, picked and ordered in
   *Seiteninhalte → Startseite* (the testimonial picker under the slider
   images) on `Page::for('home')`. Hidden when none is picked.
 - **The homepage view is `site/landing/index`** (2026-10-07), each section a
   partial as Kontakt's are: `_intro`, `_projects`, `_call`, `_events`,
   `_training`, `_featured`, `_about`, `_footer`.
+- **No collapsibles on the homepage** (Marcel, 2026-10-07): *Nächste
+  Kurstermine* and *Kundenmeinungen* are plain sections under a bold `h2`, as
+  *Was möchtest du machen?* and *Beliebte Angebote* are. *Alle Kurse und
+  Termine* moved up beside the heading, as the mockup's section heads carry
+  their link.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial

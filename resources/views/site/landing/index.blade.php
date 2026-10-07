@@ -9,9 +9,7 @@
 	@include('site.landing._call')
 
 	@if ($events->isNotEmpty())
-		<x-ui.collapsible title="Nächste Kurstermine" class="mt-48 lg:mt-64" last>
-			@include('site.landing._events')
-		</x-ui.collapsible>
+		@include('site.landing._events')
 	@endif
 
 	@include('site.landing._training')
@@ -24,10 +22,11 @@
 
 	@if ($testimonials->isNotEmpty())
 		{{-- Marker 10, picked in *Seiteninhalte → Startseite*: Firmenschulung's
-		     cards in its grid. --}}
-		<x-ui.collapsible title="Kundenmeinungen" class="mt-48 lg:mt-64" last>
+		     cards in its grid, under a heading as the other sections have. --}}
+		<section class="mt-48 lg:mt-64">
+			<h2 class="mb-16 font-bold lg:mb-24">Kundenmeinungen</h2>
 			@include('site.training._testimonials')
-		</x-ui.collapsible>
+		</section>
 	@endif
 
 	<x-slot:footer>
