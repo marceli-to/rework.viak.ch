@@ -27,8 +27,13 @@
 		     one thing this page must not do — it is the screen a customer
 		     reaches by clicking *Warenkorb* in the confirmation. --}}
 		<template x-if="settled && ! items.length">
-			{{-- `.checkout-basket-empty`: 12px above, 24 from `sm`, 36 from `lg`. --}}
-			<div class="mt-12 sm:mt-24 lg:mt-36">Dein Warenkorb ist leer...</div>
+			{{-- `.checkout-basket-empty`: 12px above, 24 from `sm`, 36 from `lg`.
+			     Legacy stops at the sentence; the way on to the courses is new
+			     (Marcel, 2026-10-07), the site's teal button. --}}
+			<div class="mt-12 sm:mt-24 lg:mt-36">
+				<p>Dein Warenkorb ist leer...</p>
+				<x-ui.button href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 lg:mt-32">Kurse entdecken</x-ui.button>
+			</div>
 		</template>
 
 		<template x-if="items.length">

@@ -176,7 +176,11 @@
 		</form>
 
 		<template x-if="settled && ! items.length">
-			<div class="mt-12 sm:mt-24 lg:mt-36">Dein Warenkorb ist leer...</div>
+			{{-- As the basket's empty state ([[checkout.basket]]). --}}
+			<div class="mt-12 sm:mt-24 lg:mt-36">
+				<p>Dein Warenkorb ist leer...</p>
+				<x-ui.button href="{{ \App\Support\SiteUrl::courses() }}" class="mt-24 lg:mt-32">Kurse entdecken</x-ui.button>
+			</div>
 		</template>
 	</div>
 </x-layout.site>
