@@ -259,7 +259,7 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   end, picked and ordered in *Seiteninhalte → Startseite* on
   `Page::for('home')`. That screen is three collapsibles (Marcel, the same
   day): *Slideshow Bilder*, *Über uns*, *Rezensionen*; images save at once,
-  the copy and the testimonials together with *Speichern*. Hidden when none is picked.
+  *Über uns* and *Rezensionen* each with their own *Speichern* inside. Hidden when none is picked.
 - **The homepage view is `site/landing/index`** (2026-10-07), each section a
   partial as Kontakt's are: `_intro`, `_projects`, `_call`, `_events`,
   `_training`, `_featured`, `_about`, `_footer`.

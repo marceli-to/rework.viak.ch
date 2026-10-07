@@ -23,15 +23,16 @@ import TestimonialPicker from '@/components/testimonial/TestimonialPicker.vue';
  *   ([[HomeAboutSchema]], `Page::for('home-about')`).
  * - **Rezensionen**: the testimonials under *Kundenmeinungen* (marker 10).
  *
- * Images save at once, as everywhere; the copy and the testimonials save
- * together with the button. The rest of the homepage's copy is in Blade.
+ * Images save at once, as everywhere; *Über uns* and *Rezensionen* each have
+ * their own *Speichern* inside (Marcel, 2026-10-07). The rest of the
+ * homepage's copy is in Blade.
  */
 const about = ref({ title: '', text: '' });
 const testimonials = ref([]);
 const picked = ref([]);
 const errors = ref({});
 const loading = ref(true);
-const saving = ref(false);
+const saving = ref(null);
 const error = ref(null);
 
 onMounted(async () => {
@@ -47,17 +48,19 @@ onMounted(async () => {
 	}
 });
 
-async function save() {
-	saving.value = true;
-	errors.value = {};
+/** One part at a time: `which` is the collapsible whose button was pressed. */
+async function save(which) {
+	saving.value = which;
+	if (which === 'about') errors.value = {};
 	try {
-		await Promise.all([savePageContent('home-about', about.value), savePageTestimonials('home', picked.value)]);
+		if (which === 'about') await savePageContent('home-about', about.value);
+		else await savePageTestimonials('home', picked.value);
 		toast('Gespeichert');
 	} catch (problem) {
-		errors.value = problem.errors ?? {};
-		toast(Object.keys(errors.value).length ? 'Bitte die markierten Felder prüfen.' : problem.message, 'error');
+		if (which === 'about') errors.value = problem.errors ?? {};
+		toast(Object.keys(problem.errors ?? {}).length ? 'Bitte die markierten Felder prüfen.' : problem.message, 'error');
 	} finally {
-		saving.value = false;
+		saving.value = null;
 	}
 }
 </script>
@@ -84,15 +87,15 @@ async function save() {
 					<Editor v-model="about.text" label="Text" required :error="errors.text?.[0]" />
 					<h3 class="mb-16 text-md sm:text-lg lg:text-xl">Bild</h3>
 					<ImageSection record="home-about" owner="pages" />
+					<Button class="mt-32 w-full" :disabled="saving === 'about'" @click="save('about')">{{ saving === 'about' ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 				</div>
 			</Collapsible>
 
 			<Collapsible :count="picked.length">
 				<template #title>Rezensionen</template>
 				<TestimonialPicker v-model="picked" :testimonials="testimonials" class="mt-16" />
+				<Button class="mt-32 w-full" :disabled="saving === 'testimonials'" @click="save('testimonials')">{{ saving === 'testimonials' ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 			</Collapsible>
-
-			<Button class="w-full" :disabled="saving" @click="save">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 		</div>
 	</section>
 </template>
