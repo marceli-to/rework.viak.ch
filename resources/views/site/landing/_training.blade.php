@@ -20,8 +20,8 @@
 --}}
 <section class="mt-48 bg-gray-200 p-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mt-64 lg:gap-40 lg:p-24">
 	<div class="flex flex-col items-start sm:col-span-6">
-		<p class="font-bold text-teal">Firmenschulung</p>
-		<h2 class="mt-8 text-2xl leading-[1.2] font-bold text-balance sm:text-3xl lg:mt-12 lg:text-4xl">Ein Kurs nur für dein Team</h2>
+		<p class="text-md font-bold text-teal lg:text-lg">Firmenschulung</p>
+		<h2 class="mt-4 text-2xl leading-[1.2] font-bold text-balance sm:text-3xl lg:text-4xl">Ein Kurs nur für dein Team</h2>
 		<p class="mt-12 text-lg leading-[1.4] text-pretty lg:mt-16 lg:text-xl">Wir bauen den Kurs um euer Projekt, eure Software und euren Stand. Bei euch im Büro oder in unseren Lofts in Zürich.</p>
 		<x-ui.button href="{{ \App\Support\SiteUrl::training() }}#anfrage" class="mt-24 lg:mt-32">Firmenschulung anfragen</x-ui.button>
 	</div>
