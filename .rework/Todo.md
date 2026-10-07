@@ -328,6 +328,17 @@ tells them.
 - Tests: refused with an active booking, allowed once every booking is
   cancelled, refused for a past event.
 
+## Kontakt and Firmenschulung: a refused form lands at the top of the page
+
+Found 2026-10-07 while building the homepage's newsletter form. A failed
+validation redirects *back*, and the browser's referrer carries no fragment,
+so a refused Kontakt or Firmenschulung form reloads at the top of the page
+with its errors below the fold, not at `#nachricht` / `#anfrage`. The
+newsletter form is fixed by overriding `getRedirectUrl()` in
+`SubscribeNewsletterRequest`; the same three lines in
+`SendContactMessageRequest` and `SendTrainingEnquiryRequest` fix the other
+two. Not done yet: Marcel has not decided.
+
 ## Other open questions
 
 **Live questions now live in `Open-Questions.md`** — what is still unanswered,
