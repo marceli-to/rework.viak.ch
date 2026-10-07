@@ -249,16 +249,17 @@ homepage (homepage marker 1). First pass, built to be reshaped:
 - **Marker 9, the About teaser** (2026-10-07): *Warum bei der VIAK*, drawn
   as the Firmenschulung teaser's grey panel, and *Mehr über uns* to *Über
   uns*. **No experts** (Marcel). **Editable, with an image** (Marcel, the
-  same day): *Seiteninhalte → Startseite: Über uns*, a form with *Titel*,
-  *Text* (rich text) and the image section, kept on `Page::for('home-about')`
+  same day): *Seiteninhalte → Startseite*, collapsible *Über uns* with
+  *Titel*, *Text* (rich text) and the image section, kept on `Page::for('home-about')`
   (copy in the new `pages.content`, image in its media). The mockup's copy is
   the form's default until someone saves. The image (the first, or the one
   marked *Vorschau*) stands beside the copy at 16:9, the cropper's shape, the
   two in six columns each; without one the copy keeps eight.
 - **Marker 10, the testimonials** (2026-10-07): *Kundenmeinungen* at the
-  end with Firmenschulung's cards, picked and ordered in
-  *Seiteninhalte → Startseite* (the testimonial picker under the slider
-  images) on `Page::for('home')`. Hidden when none is picked.
+  end, picked and ordered in *Seiteninhalte → Startseite* on
+  `Page::for('home')`. That screen is three collapsibles (Marcel, the same
+  day): *Slideshow Bilder*, *Über uns*, *Rezensionen*; images save at once,
+  the copy and the testimonials together with *Speichern*. Hidden when none is picked.
 - **The homepage view is `site/landing/index`** (2026-10-07), each section a
   partial as Kontakt's are: `_intro`, `_projects`, `_call`, `_events`,
   `_training`, `_featured`, `_about`, `_footer`.

@@ -29,7 +29,7 @@ class Page extends Model
 	public const LABELS = [
 		'firmenschulung' => 'Firmenschulung',
 		'home' => 'Startseite',
-		'home-about' => 'Startseite: Über uns',
+		'home-about' => 'Startseite, Über uns',
 	];
 
 	/**

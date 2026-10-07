@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 
 /**
  * A fixed page's editable copy ([[Page]], `content`), one form per page that
- * has any: the homepage's About teaser so far. The dashboard edits it as a
- * single record (`ResourceForm`, `singleton`); its `uuid` is the page's key,
- * which is what the image section addresses a page's images by.
+ * has any: the homepage's About teaser so far, edited in *Seiteninhalte →
+ * Startseite* beside the page's images ([[HomeAboutSchema]] says what is
+ * valid). `uuid` is the page's key, as the image section addresses a page.
  */
 class PageContentController extends Controller
 {

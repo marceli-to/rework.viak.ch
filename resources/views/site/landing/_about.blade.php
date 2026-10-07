@@ -1,6 +1,6 @@
 {{--
 	*Warum bei der VIAK* (the review's homepage marker 9): a heading and text
-	edited in *Seiteninhalte → Startseite: Über uns* (Marcel, 2026-10-07), the
+	edited in *Seiteninhalte → Startseite*, *Über uns* (Marcel, 2026-10-07), the
 	mockup's copy (`history/mockup/Homepage.html`, `.why`) until then
 	([[HomeAboutSchema]]), and a button to *Über uns*. Drawn as the
 	Firmenschulung teaser above it ([[landing._training]]): the grey panel,

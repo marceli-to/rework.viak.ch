@@ -67,7 +67,7 @@ class HomeController extends Controller
 				->get(),
 			/*
 			 * The About teaser (marker 9): its copy and image, edited in
-			 * *Seiteninhalte → Startseite: Über uns*, the mockup's copy until
+			 * *Seiteninhalte → Startseite*, *Über uns*, the mockup's copy until
 			 * then ([[HomeAboutSchema]]).
 			 */
 			'about' => ($about = Page::for('home-about'))->copy(),
