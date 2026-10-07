@@ -191,6 +191,16 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   "Vorhaben-Picker" is read as **the tiles are the visitor's picker**; which
   ones show and in what order is the dashboard list's publish and drag. The
   rest of the homepage is still to come.
+- **Markers 2 and 3, built the same day.** The call band (*Nicht sicher, was
+  du brauchst?*) is the mockup's copy fixed in `site/home.blade.php`, drawn as
+  the Kurse filter's teal box: the copy in span-8, the number and *Rückruf
+  vereinbaren* (Kontakt's form) in span-4. *Nächste Kurstermine* is an open
+  collapsible with the next six bookable Veranstaltungen (published, not
+  cancelled, of a published course) as the portal's `x-row.event`, without the
+  course number and the state badge (new props `numbered`, `showState`).
+  *Anmelden* links to the course page, which already handles full courses,
+  existing seats and the laptop question, rather than copying the basket
+  button onto the homepage.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial

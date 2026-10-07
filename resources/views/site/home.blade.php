@@ -1,10 +1,9 @@
 {{-- "Home • Visualisierungs-Akademie", as the live site titles it. --}}
 <x-layout.site title="Home">
 	{{--
-		**Not built yet, beyond the Vorhaben.** The live homepage is a stack of
-		sections, and `04-content.md` says to assemble it **last**, from the
-		partials the other pages need, so each is designed against more than a
-		single caller. The intro is still the stub's.
+		**Built in part** ([[04-content]], the review's homepage markers): the
+		Vorhaben tiles (1), the call band (2) and the next course dates (3). The
+		rest of the mockup's stack follows; the intro is still the stub's.
 	--}}
 	<section>
 		<h1 class="font-bold text-teal">Visualisierungs-Akademie</h1>
@@ -49,5 +48,55 @@
 				@endforeach
 			</div>
 		</section>
+	@endif
+
+	{{--
+		The call band (the review's homepage marker 2, "Text statisch
+		hinterlegen"): the mockup's copy, **fixed here and not an editable
+		field**. Drawn as the Kurse filter's teal box (`.card-teaser-training`,
+		[[course.filter]]): teal, white bold type, 12px in. The copy in the
+		span-8 column, the number and the way to a call back in the span-4.
+		*Rückruf vereinbaren* is Kontakt's form; the phone link is legacy's
+		`tel:` without the spaces, as everywhere else.
+	--}}
+	<aside class="mt-48 bg-teal p-12 text-white sm:grid sm:grid-cols-12 sm:gap-16 lg:mt-64 lg:gap-40 lg:p-16">
+		<p class="text-lg leading-[1.4] font-bold sm:col-span-8 lg:text-xl">
+			Nicht sicher, was du brauchst? Ruf an und sprich mit jemandem, der die Tools täglich nutzt. Etwa zwanzig Minuten, kostenlos, unverbindlich.
+		</p>
+
+		<div class="mt-16 text-lg leading-[1.4] font-bold sm:col-span-4 sm:mt-0 lg:text-xl">
+			<a href="tel:+41435014040" class="block hover:underline hover:underline-offset-2">+41 43 501 40 40</a>
+			<a href="{{ \App\Support\SiteUrl::contact() }}#nachricht" class="mt-8 inline-flex items-center gap-8 hover:underline hover:underline-offset-2">
+				Rückruf vereinbaren
+				<x-icon.arrow-right class="shrink-0" />
+			</a>
+		</div>
+	</aside>
+
+	{{--
+		*Nächste Kurstermine* (marker 3, "Autom. Widget"): the next six
+		Veranstaltungen, nobody picks them ([[HomeController]]). An open
+		collapsible, as the course page lists its dates, and each one the
+		portal's row (`x-row.event`), which leads with the course: the title
+		links to the course, the dates, where and with whom, the fee. No course
+		number and no state badge, which are the dashboard's. *Anmelden* goes to
+		the course page, where booking already knows about full courses, an
+		existing seat and the laptop question.
+	--}}
+	@if ($events->isNotEmpty())
+		<x-ui.collapsible title="Nächste Kurstermine" class="mt-48 lg:mt-64" last>
+			@foreach ($events as $event)
+				<x-row.event :event="$event" :numbered="false" :show-state="false">
+					<x-slot:action>
+						<x-ui.button href="{{ \App\Support\SiteUrl::course($event->course->getTranslation('slug', app()->getLocale())) }}">Anmelden</x-ui.button>
+					</x-slot:action>
+				</x-row.event>
+			@endforeach
+
+			<a href="{{ \App\Support\SiteUrl::courses() }}" class="mt-32 inline-flex items-center gap-8 text-teal hover:underline">
+				Alle Kurse und Termine
+				<x-icon.arrow-right />
+			</a>
+		</x-ui.collapsible>
 	@endif
 </x-layout.site>

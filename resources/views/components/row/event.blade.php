@@ -11,6 +11,10 @@
 	'rentals' => null,
 	'badges' => null,
 	'marked' => false,
+	// The homepage's *Nächste Kurstermine* (`site.home`) is the public site:
+	// no course number, which is the dashboard's, and no state badge.
+	'numbered' => true,
+	'showState' => true,
 ])
 
 @php
@@ -92,7 +96,7 @@
 					<h2 class="font-bold">
 						<a href="{{ \App\Support\SiteUrl::course($event->course->getTranslation('slug', $locale)) }}"
 							title="{{ $event->course->getTranslation('title', $locale) }}"
-							class="hover:text-teal">{{ $event->course->displayNumber() }} {{ $event->course->getTranslation('title', $locale) }}</a>
+							class="hover:text-teal">@if ($numbered){{ $event->course->displayNumber() }} @endif{{ $event->course->getTranslation('title', $locale) }}</a>
 					</h2>
 
 					{{-- Each day on one line with its hours, not bold — the dashboard's
@@ -137,10 +141,14 @@
 			{{-- The state and the row's own badges on one line, 8px apart across
 			     and down — the dashboard's `BookingRow.vue`, whose `badges`
 			     slot this is (Marcel, 2026-09-29). --}}
-			<div class="mt-4 flex flex-wrap items-start gap-8">
-				<x-course.event-state :event="$event" />
-				{{ $badges }}
-			</div>
+			@if ($showState || $badges)
+				<div class="mt-4 flex flex-wrap items-start gap-8">
+					@if ($showState)
+						<x-course.event-state :event="$event" />
+					@endif
+					{{ $badges }}
+				</div>
+			@endif
 		</div>
 
 		{{-- What it costs, and what can be done about it --}}
