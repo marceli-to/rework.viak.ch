@@ -38,6 +38,7 @@ class CourseFormResource extends JsonResource
 			'fee' => (string) $this->fee,
 			'online' => $this->online,
 			'publish' => $this->publish,
+			'featured' => $this->featured,
 		];
 
 		foreach (SaveCourseRequest::RICH as $field) {

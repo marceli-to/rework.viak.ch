@@ -93,6 +93,7 @@ class SaveCourseRequest extends FormRequest
 			'fee' => $data['fee'],
 			'online' => (bool) ($data['online'] ?? false),
 			'publish' => (bool) ($data['publish'] ?? false),
+			'featured' => (bool) ($data['featured'] ?? false),
 		];
 
 		foreach (self::RICH as $field) {

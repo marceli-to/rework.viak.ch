@@ -200,3 +200,15 @@ it('offers every term of the five taxonomies, by title', function () {
 
 	expect(array_column($fields->firstWhere('name', 'software')['options'], 'label'))->toBe(['Blender', 'Twinmotion']);
 });
+
+it('flags a course for the homepage’s Beliebte Angebote, and unflags it', function () {
+	$course = Course::factory()->create();
+
+	$this->actingAs($this->admin)->putJson("/api/admin/courses/{$course->uuid}", coursePayload(['featured' => true]))
+		->assertOk()
+		->assertJsonPath('data.featured', true);
+	expect($course->fresh()->featured)->toBeTrue();
+
+	$this->putJson("/api/admin/courses/{$course->uuid}", coursePayload(['featured' => false]))->assertOk();
+	expect($course->fresh()->featured)->toBeFalse();
+});

@@ -235,9 +235,28 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   dividers between, centred against the pitch. No image. The mockup's
   *Zuletzt geschult* line is left out and the price is the mockup's, both
   `Open-Questions.md` #40.
+- **Markers 5 and 6, *Beliebte Angebote*** (2026-10-07), after the
+  Firmenschulung teaser: a **`featured` flag on the course**, the checkbox
+  *Beliebt* in the course form's *Einstellungen*, and the homepage lists the
+  published flagged courses in the catalogue's order as the Kurse page's
+  `x-card.course`, three across from sm. Hidden when none is flagged. The
+  mockup's tiles pair a course with its licence (marker 7); software is only
+  a filter term until chunk 05, so the flag on software and the licence half
+  wait for it, and the link beside the heading is *Alle Kurse* in place of
+  *Alle Angebote von A bis Z*. Marker 5's *Anzeige auf Detailseite* is read
+  as where the flag is set (the course's form), not as a badge on the public
+  course page.
+- **Marker 9, the About teaser** (2026-10-07): *Warum bei der VIAK* with the
+  mockup's two paragraphs, fixed in `_about`, drawn as the Firmenschulung
+  teaser's grey panel, and *Mehr über uns* to *Über uns*. **No experts**
+  (Marcel) and no image: the mockup's is a stock render.
+- **Marker 10, the testimonials** (2026-10-07): *Kundenmeinungen*, an open
+  collapsible at the end with Firmenschulung's cards, picked and ordered in
+  *Seiteninhalte → Startseite* (the testimonial picker under the slider
+  images) on `Page::for('home')`. Hidden when none is picked.
 - **The homepage view is `site/landing/index`** (2026-10-07), each section a
   partial as Kontakt's are: `_intro`, `_projects`, `_call`, `_events`,
-  `_training`, `_footer`.
+  `_training`, `_featured`, `_about`, `_footer`.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial

@@ -16,6 +16,20 @@
 
 	@include('site.landing._training')
 
+	@if ($featured->isNotEmpty())
+		@include('site.landing._featured')
+	@endif
+
+	@include('site.landing._about')
+
+	@if ($testimonials->isNotEmpty())
+		{{-- Marker 10, picked in *Seiteninhalte → Startseite*: Firmenschulung's
+		     cards in its grid. --}}
+		<x-ui.collapsible title="Kundenmeinungen" class="mt-48 lg:mt-64" last>
+			@include('site.training._testimonials')
+		</x-ui.collapsible>
+	@endif
+
 	<x-slot:footer>
 		@include('site.landing._footer')
 	</x-slot:footer>

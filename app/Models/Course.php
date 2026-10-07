@@ -38,7 +38,7 @@ class Course extends Model
 		'short_description', 'full_description',
 		'information_booking', 'information_content',
 		'facts', 'fee', 'reviews', 'seo_description', 'seo_tags',
-		'online', 'publish', 'order',
+		'online', 'publish', 'featured', 'order',
 	];
 
 	public $translatable = [
@@ -56,6 +56,7 @@ class Course extends Model
 			'fee' => 'decimal:2',
 			'online' => 'boolean',
 			'publish' => 'boolean',
+			'featured' => 'boolean',
 		];
 	}
 
@@ -127,6 +128,12 @@ class Course extends Model
 	public function scopePublished(Builder $query): Builder
 	{
 		return $query->where('publish', true);
+	}
+
+	/** *Beliebte Angebote* on the homepage ([[04-content]]). */
+	public function scopeFeatured(Builder $query): Builder
+	{
+		return $query->where('featured', true);
 	}
 
 	public function scopeOrdered(Builder $query): Builder

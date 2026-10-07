@@ -5,10 +5,13 @@ declare(strict_types=1);
 use App\Enums\EventState;
 use App\Models\Course;
 use App\Models\Event;
+use App\Models\Page;
+use App\Models\Testimonial;
 
 /**
  * The homepage, as far as it is built ([[HomeController]]): the call band
- * (the review's marker 2) and *Nächste Kurstermine* (3). The Vorhaben tiles
+ * (the review's marker 2), *Nächste Kurstermine* (3), *Beliebte Angebote*
+ * (5, 6), the About teaser (9) and the testimonials (10). The Vorhaben tiles
  * are `ProjectPageTest`'s.
  */
 it('carries the call band with the number and the way to a call back', function () {
@@ -61,4 +64,45 @@ it('shows no number and no state badge on a row, which are the dashboard’s', f
 
 it('leaves the dates out when there are none', function () {
 	$this->get('/de')->assertOk()->assertDontSee('Nächste Kurstermine');
+});
+
+it('lists the courses flagged Beliebt, published only, in the catalogue’s order', function () {
+	Course::factory()->create(['title' => ['de' => 'Zweiter'], 'featured' => true, 'order' => 2]);
+	Course::factory()->create(['title' => ['de' => 'Erster'], 'featured' => true, 'order' => 1]);
+	Course::factory()->create(['title' => ['de' => 'Nicht beliebt']]);
+	Course::factory()->unpublished()->create(['title' => ['de' => 'Entwurf'], 'featured' => true]);
+
+	$this->get('/de')
+		->assertSeeInOrder(['Beliebte Angebote', 'Erster', 'Zweiter'])
+		->assertDontSee('Nicht beliebt')
+		->assertDontSee('Entwurf');
+});
+
+it('leaves Beliebte Angebote out when no course is flagged', function () {
+	Course::factory()->create();
+
+	$this->get('/de')->assertDontSee('Beliebte Angebote');
+});
+
+it('carries the About teaser with the way to Über uns', function () {
+	$this->get('/de')
+		->assertSee('Warum bei der VIAK')
+		->assertSee('href="/de/ueber-uns"', false);
+});
+
+it('shows the testimonials picked for the homepage, published only, in their order', function () {
+	$a = Testimonial::factory()->create(['name' => 'Anna Muster']);
+	$b = Testimonial::factory()->create(['name' => 'Beat Beispiel']);
+	$hidden = Testimonial::factory()->create(['name' => 'Verborgen', 'publish' => false]);
+	Page::for('home')->testimonials()->attach([$b->id => ['order' => 1], $a->id => ['order' => 2], $hidden->id => ['order' => 3]]);
+
+	$this->get('/de')
+		->assertSeeInOrder(['Kundenmeinungen', 'Beat Beispiel', 'Anna Muster'])
+		->assertDontSee('Verborgen');
+});
+
+it('leaves Kundenmeinungen out when none is picked', function () {
+	Testimonial::factory()->create();
+
+	$this->get('/de')->assertDontSee('Kundenmeinungen');
 });

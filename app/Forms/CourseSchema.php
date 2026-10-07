@@ -49,6 +49,8 @@ final class CourseSchema extends Schema
 				Field::row([
 					Field::checkbox('online')->label('Onlinekurs'),
 					Field::checkbox('publish')->label('Publizieren'),
+					// *Beliebte Angebote* on the homepage ([[04-content]]).
+					Field::checkbox('featured')->label('Beliebt'),
 				]),
 				Field::checkboxes('categories', Category::class)->label('Kategorien')->required()
 					->message('required', 'Bitte mindestens eine Kategorie wählen.')->message('min', 'Bitte mindestens eine Kategorie wählen.'),
@@ -84,7 +86,7 @@ final class CourseSchema extends Schema
 	{
 		return [
 			'number' => app(CourseNumber::class)->next(),
-			'title' => '', 'subtitle' => '', 'fee' => '', 'online' => false, 'publish' => false,
+			'title' => '', 'subtitle' => '', 'fee' => '', 'online' => false, 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'information_booking' => '', 'information_content' => '', 'summary' => '',
 			'facts' => ['', '', ''],
 			'categories' => [], 'languages' => [], 'levels' => [], 'software' => [], 'tags' => [],

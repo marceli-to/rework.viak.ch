@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\Event;
 use App\Models\Media;
 use App\Models\Page;
@@ -15,8 +16,9 @@ use Illuminate\View\View;
  * The homepage, as far as it is built ([[04-content]]). It is meant to be
  * assembled last from the partials the other pages need. Built so far:
  * legacy's intro and footer, the Vorhaben tiles (the review's marker 1), the
- * call band (2, static copy in the view), the next course dates (3) and the
- * Firmenschulung teaser (4).
+ * call band (2, static copy in the view), the next course dates (3), the
+ * Firmenschulung teaser (4), the flagged courses (5, 6), the About teaser (9)
+ * and the testimonials (10).
  */
 class HomeController extends Controller
 {
@@ -48,6 +50,23 @@ class HomeController extends Controller
 				->with(['course', 'dates', 'location', 'experts'])
 				->limit(self::EVENTS)
 				->get(),
+			/*
+			 * *Beliebte Angebote* (markers 5, 6): the courses flagged in their
+			 * form, in the catalogue's order, loaded as the Kurse page loads
+			 * its cards. Courses only until licences exist (chunk 05).
+			 */
+			'featured' => Course::query()
+				->published()
+				->featured()
+				->with([
+					'categories',
+					'media',
+					'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
+				])
+				->ordered()
+				->get(),
+			// Picked and ordered in *Seiteninhalte → Startseite* (marker 10).
+			'testimonials' => $page->testimonials()->published()->get(),
 		]);
 	}
 }
