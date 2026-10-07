@@ -89,7 +89,9 @@ it('lets the phone number be empty, and leaves its row out of the mail', functio
 });
 
 it('asks for all four fields, in German, and sends nothing', function () {
-	$this->post('/de/firmenschulung', trainingPayload(['company' => '', 'name' => '', 'email' => 'x', 'message' => '']))
+	// To the form, not the page top: a referrer carries no fragment.
+	$this->from('/de/firmenschulung')->post('/de/firmenschulung', trainingPayload(['company' => '', 'name' => '', 'email' => 'x', 'message' => '']))
+		->assertRedirect('/de/firmenschulung#anfrage')
 		->assertSessionHasErrors([
 			'company' => 'Firma muss ausgefüllt sein.',
 			'name' => 'Ansprechperson muss ausgefüllt sein.',

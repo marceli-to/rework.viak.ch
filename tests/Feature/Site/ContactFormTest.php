@@ -64,7 +64,9 @@ it('says it was sent, on the page it lands on', function () {
 });
 
 it('asks for all three fields, in German, and sends nothing', function () {
-	$this->post('/de/kontakt', contactPayload(['name' => '', 'email' => 'keine-adresse', 'message' => '']))
+	// To the form, not the page top: a referrer carries no fragment.
+	$this->from('/de/kontakt')->post('/de/kontakt', contactPayload(['name' => '', 'email' => 'keine-adresse', 'message' => '']))
+		->assertRedirect('/de/kontakt#nachricht')
 		->assertSessionHasErrors([
 			'name' => 'Name muss ausgefüllt sein.',
 			'email' => 'E-Mail muss eine gültige E-Mail-Adresse sein.',

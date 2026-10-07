@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Site;
 
 use App\Rules\Turnstile;
+use App\Support\SiteUrl;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -15,6 +16,16 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class SendContactMessageRequest extends FormRequest
 {
+	/**
+	 * Back to the form, not "back": the browser drops the fragment from the
+	 * referrer, and a refused message would land at the top of the page with its errors
+	 * out of sight (as the newsletter's, [[SubscribeNewsletterRequest]]).
+	 */
+	protected function getRedirectUrl(): string
+	{
+		return SiteUrl::contact().'#nachricht';
+	}
+
 	public function rules(): array
 	{
 		return [
