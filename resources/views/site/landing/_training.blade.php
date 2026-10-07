@@ -35,7 +35,7 @@
 			'Ort' => 'Bei euch oder in Zürich',
 			'Preis' => "Ab CHF 2'400 pro Tag, pauschal",
 		] as $term => $fact)
-			<div class="flex gap-16 py-12 first:pt-0 last:pb-0">
+			<div class="flex gap-16 py-8 first:pt-0 last:pb-0">
 				<dt class="w-80 shrink-0 text-gray-600">{{ $term }}</dt>
 				<dd class="leading-[1.3] font-bold text-pretty">{{ $fact }}</dd>
 			</div>
