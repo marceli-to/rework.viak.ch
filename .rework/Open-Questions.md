@@ -59,6 +59,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 37 | Updates and upgrades: an edition in the dropdown, or their own product? | Client | Nothing structural — the shape takes either. Asked 2026-09-29 |
 | 38 | "Nur zusammen mit Neulizenz": enforced by the basket, or a note? | Client | Nothing if a note. Asked 2026-09-29 |
 | 39 | Minimum and maximum quantities beyond the Teams licences' 3? | Client | Nothing — `min_quantity` is planned either way. Asked 2026-09-29 |
+| 40 | The homepage's Firmenschulung teaser: is *Ab CHF 2'400 pro Tag, pauschal* the real price, and which clients may it name under *Zuletzt geschult*? | Client | Nothing: the price shows as the mockup has it, the client line is left out until named. Raised 2026-10-07 |
 | ~~40~~ | ~~Time zone: switch to `Europe/Zurich`?~~ — **answered 2026-09-30: yes, and built.** The app runs in Zurich, both connections read and write at `+00:00`, and the port shifts legacy's UTC moments (`LegacyTime`). See `07-dashboard.md`, *Zurich time* | — | — |
 | ~~41~~ | ~~A confirmation missed at closing: a per-seat send, or never?~~ — **answered 2026-09-30: per seat, and built.** *Bestätigen* under a *Nicht teilgenommen* badge on a closed date. See `07-dashboard.md`, *Attendance is asked when closing* | — | — |
 | ~~42~~ | ~~Kunden instead of Studenten?~~ — **answered 2026-09-30: yes, *Kunde / Kunden*.** See `12-customers.md` | — | — |

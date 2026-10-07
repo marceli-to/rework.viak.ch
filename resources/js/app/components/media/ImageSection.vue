@@ -365,7 +365,10 @@ async function saveCrop() {
 		     handles, and *Schliessen* / *Speichern* as two halves 8px below.
 		     The colours are `!`: the cropper's own stylesheet is not in a
 		     cascade layer, and unlayered CSS beats Tailwind's utilities
-		     whatever their specificity. -->
+		     whatever their specificity. Each handle grabs in a 30px square
+		     centred on the image's edge, and the cropper does not clip it, so
+		     its frame does, with 5px of room for the 10px handle; else the
+		     box scrolls sideways. -->
 		<Lightbox v-if="cropping" wide :close-on-backdrop="false" @close="cropping = null">
 			<div class="flex gap-10">
 				<button
@@ -380,7 +383,7 @@ async function saveCrop() {
 			</div>
 			<div class="absolute top-16 right-24 text-md text-black">{{ size }}</div>
 
-			<div class="mt-15 h-473">
+			<div class="mt-15 h-473 overflow-hidden p-5">
 				<Cropper
 					ref="cropper"
 					:src="cropping.src"

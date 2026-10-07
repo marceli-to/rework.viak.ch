@@ -14,6 +14,8 @@
 		</x-ui.collapsible>
 	@endif
 
+	@include('site.landing._training')
+
 	<x-slot:footer>
 		@include('site.landing._footer')
 	</x-slot:footer>

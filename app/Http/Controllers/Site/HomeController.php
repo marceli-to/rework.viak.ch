@@ -15,7 +15,8 @@ use Illuminate\View\View;
  * The homepage, as far as it is built ([[04-content]]). It is meant to be
  * assembled last from the partials the other pages need. Built so far:
  * legacy's intro and footer, the Vorhaben tiles (the review's marker 1), the
- * call band (2, static copy in the view) and the next course dates (3).
+ * call band (2, static copy in the view), the next course dates (3) and the
+ * Firmenschulung teaser (4).
  */
 class HomeController extends Controller
 {
@@ -47,6 +48,11 @@ class HomeController extends Controller
 				->with(['course', 'dates', 'location', 'experts'])
 				->limit(self::EVENTS)
 				->get(),
+			/*
+			 * The Firmenschulung teaser's image (marker 4): the one the
+			 * dashboard gave that page, its *Vorschau* if it has one.
+			 */
+			'trainingImage' => Page::for('firmenschulung')->teaser(),
 		]);
 	}
 }
