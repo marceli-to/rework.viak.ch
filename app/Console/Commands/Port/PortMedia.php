@@ -7,6 +7,7 @@ namespace App\Console\Commands\Port;
 use App\Actions\Media\NormalizeImage;
 use App\Models\Course;
 use App\Models\Media;
+use App\Models\Page;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -48,8 +49,13 @@ use Illuminate\Support\Facades\Storage;
  *
  * Soft-deleted rows. All 159 of them have **no file on disk** — deleting an
  * image in legacy deleted the file — so there is nothing to port. And images on
- * `Hero` and `News`, which are chunk 04's models and do not exist yet; those are
- * reported rather than dropped silently, so the count is accounted for.
+ * `News`, which is chunk 04's and does not exist yet; those are reported rather
+ * than dropped silently, so the count is accounted for.
+ *
+ * **`Hero` lands on a `Page`** (2026-10-07): legacy's one hero row, `home`, is
+ * the homepage's intro slider, and the rework keeps those images on
+ * `Page::for('home')` ([[Page]]). Legacy's `publish` flag is honoured: a hidden
+ * hero image is not ported, since the rework's image section has no eye.
  */
 class PortMedia extends Command
 {
@@ -76,25 +82,46 @@ class PortMedia extends Command
 
 		$dryRun = (bool) $this->option('dry-run');
 
+		// Legacy's home hero becomes the homepage `Page`; its uuid stands in
+		// for the page's so the lookup below stays one shape. A dry run must
+		// not create the page, so it gets a placeholder id.
+		$homeHero = $legacy->table('heroes')->where('slug', 'home')->value('uuid');
+		$homePage = $dryRun ? 0 : Page::for('home')->id;
+
 		$owners = [
 			'App\Models\Course' => Course::pluck('id', 'uuid'),
 			'App\Models\User' => User::pluck('id', 'uuid'),
+			'App\Models\Hero' => collect($homeHero ? [$homeHero => $homePage] : []),
 		];
 		$legacyUuids = [
 			'App\Models\Course' => $legacy->table('courses')->pluck('uuid', 'id'),
 			'App\Models\User' => $legacy->table('users')->pluck('uuid', 'id'),
+			'App\Models\Hero' => $legacy->table('heroes')->pluck('uuid', 'id'),
 		];
+		$classes = ['App\Models\Course' => Course::class, 'App\Models\User' => User::class, 'App\Models\Hero' => Page::class];
 
 		$ported = 0;
 		$cropped = 0;
 		$rescaled = 0;
 		$skipped = 0;
+		$existing = 0;
+
+		// Rerunnable (2026-10-07, when the hero images joined): a row whose
+		// uuid is already here was ported by an earlier run and is left alone.
+		$done = Media::query()->pluck('uuid')->flip();
 
 		foreach ($legacy->table('images')->whereNull('deleted_at')->orderBy('id')->get() as $row) {
 			$type = $row->imageable_type;
 
 			if (! isset($owners[$type])) {
 				$this->observations[] = "image {$row->id}: {$type} has no rework model yet (chunk 04); skipped";
+				$skipped++;
+
+				continue;
+			}
+
+			if ($type === 'App\Models\Hero' && ! $row->publish) {
+				$this->observations[] = "image {$row->id}: a hidden hero image; skipped";
 				$skipped++;
 
 				continue;
@@ -124,6 +151,12 @@ class PortMedia extends Command
 				}
 
 				$skipped++;
+
+				continue;
+			}
+
+			if ($done->has($row->uuid)) {
+				$existing++;
 
 				continue;
 			}
@@ -178,7 +211,7 @@ class PortMedia extends Command
 
 			Media::create([
 				'uuid' => $row->uuid,
-				'mediable_type' => $type === 'App\Models\Course' ? Course::class : User::class,
+				'mediable_type' => $classes[$type],
 				'mediable_id' => $ownerId,
 				'file' => $row->name,
 				'original_name' => $row->original_name,
@@ -208,7 +241,7 @@ class PortMedia extends Command
 			$ported++;
 		}
 
-		$this->report($ported, $cropped, $rescaled, $skipped, $dryRun);
+		$this->report($ported, $cropped, $rescaled, $skipped, $existing, $dryRun);
 
 		return self::SUCCESS;
 	}
@@ -241,7 +274,7 @@ class PortMedia extends Command
 		return @mime_content_type($path) ?: null;
 	}
 
-	private function report(int $ported, int $cropped, int $rescaled, int $skipped, bool $dryRun): void
+	private function report(int $ported, int $cropped, int $rescaled, int $skipped, int $existing, bool $dryRun): void
 	{
 		$this->newLine();
 		$this->table(['', ''], [
@@ -249,6 +282,7 @@ class PortMedia extends Command
 			['— carrying a crop', $cropped],
 			['— crop rescaled with the source', $rescaled],
 			['Skipped', $skipped],
+			['Already ported', $existing],
 		]);
 
 		foreach (['findings' => 'error', 'observations' => 'line'] as $bucket => $style) {

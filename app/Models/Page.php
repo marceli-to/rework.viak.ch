@@ -4,23 +4,28 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasTestimonials;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A fixed page that picks testimonials ([[HasTestimonials]]) without being a
- * course or a software: Firmenschulung, later the homepage. Found by its
- * `key` and made on first use, so there is nothing to seed.
+ * A fixed page that picks testimonials ([[HasTestimonials]]) or carries
+ * images ([[HasMedia]]) without being a course or a software: Firmenschulung,
+ * and the homepage, whose images are the intro's slider (legacy's `heroes`
+ * row `home`). Found by its `key` and made on first use, so there is nothing
+ * to seed.
  */
 class Page extends Model
 {
+	use HasMedia;
 	use HasTestimonials;
 	use HasUuid;
 
 	/** The pages there are, and what the dashboard calls them. */
 	public const LABELS = [
 		'firmenschulung' => 'Firmenschulung',
+		'home' => 'Startseite',
 	];
 
 	protected $fillable = ['key'];

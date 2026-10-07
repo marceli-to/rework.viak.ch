@@ -111,6 +111,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		// A fixed page's testimonials, picked in the dashboard ([[Page]]).
 		Route::get('pages/{page}/testimonials', [Admin\PageTestimonialController::class, 'show']);
 		Route::put('pages/{page}/testimonials', [Admin\PageTestimonialController::class, 'update']);
+		// A fixed page's images, by its key: the homepage's slider ([[Page]]).
+		Route::get('pages/{page}/media', [Admin\MediaController::class, 'pageIndex']);
+		Route::post('pages/{page}/media', [Admin\MediaController::class, 'pageStore']);
+		Route::patch('pages/{page}/media/order', [Admin\MediaController::class, 'pageOrder']);
 
 		// The Vorhaben, the homepage's tiles and a page each ([[04-content]]).
 		Route::get('projects', [Admin\ProjectController::class, 'index']);

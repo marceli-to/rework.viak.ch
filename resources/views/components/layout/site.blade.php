@@ -145,6 +145,10 @@
 		{{ $slot }}
 	</main>
 
+	{{-- Only the homepage has one (`web/partials/footer.blade.php` renders on
+	     `*.page.home` alone), so it is the page's to pass, not chrome. --}}
+	{{ $footer ?? '' }}
+
 	{{-- The live toast, for anything the browser decides rather than the
 	     server — a course removed from the basket, today. One per document,
 	     hidden until the store has something to say. --}}

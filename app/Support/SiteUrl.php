@@ -342,6 +342,14 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('project', $locale).'/'.$slug;
 	}
 
+	/** Where the homepage footer's newsletter form posts — `/de/newsletter`. */
+	public static function newsletter(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('newsletter', $locale);
+	}
+
 	public static function home(?string $locale = null): string
 	{
 		return '/'.($locale ?? app()->getLocale());

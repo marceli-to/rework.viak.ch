@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\MediaResource;
 use App\Models\Course;
 use App\Models\Media;
+use App\Models\Page;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -57,6 +58,12 @@ class MediaController extends Controller
 		return $this->images($teamMember);
 	}
 
+	/** A fixed page's, by its key: the homepage's slider ([[Page]]). */
+	public function pageIndex(string $page): AnonymousResourceCollection
+	{
+		return $this->images(Page::for($page));
+	}
+
 	public function store(Request $request, Course $course, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
 		return $this->upload($request, $course, $upload, $attach, $role);
@@ -70,6 +77,11 @@ class MediaController extends Controller
 	public function teamMemberStore(Request $request, TeamMember $teamMember, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
 		return $this->upload($request, $teamMember, $upload, $attach, $role);
+	}
+
+	public function pageStore(Request $request, string $page, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
+	{
+		return $this->upload($request, Page::for($page), $upload, $attach, $role);
 	}
 
 	/** Alt text and caption — legacy's *Bildbeschreibung* and *Bildlegende*. */
@@ -116,6 +128,11 @@ class MediaController extends Controller
 	public function teamMemberOrder(Request $request, TeamMember $teamMember, ReorderMedia $reorder): JsonResponse
 	{
 		return $this->reorder($request, $teamMember, $reorder);
+	}
+
+	public function pageOrder(Request $request, string $page, ReorderMedia $reorder): JsonResponse
+	{
+		return $this->reorder($request, Page::for($page), $reorder);
 	}
 
 	public function destroy(Media $media, DeleteMedia $delete): JsonResponse

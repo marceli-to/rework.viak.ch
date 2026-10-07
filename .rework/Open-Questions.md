@@ -33,7 +33,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 10 | `due_at` in the port: the 541 lost, and the open/overdue | Marcel | Cutover |
 | 11 | What PHP does production run? | Marcel | Deploy |
 | ~~12~~ | ~~What is actually in `courses.reviews`?~~ — **answered 2026-09-21: an Elfsight widget embed**, on all 32 non-empty rows, 23 distinct widget ids. Not testimonial data at all. Replaced by 18 | — | — |
-| 13 | Is the Mailchimp newsletter sync still in scope? | Client | Nothing yet — decides whether an integration exists at all |
+| 13 | Is the Mailchimp newsletter sync still in scope? | Client | The homepage footer's signup, built 2026-10-07, only logs until this is answered |
 | ~~14~~ | ~~Should an admin cancelling for a student charge the penalty?~~ — **answered 2026-09-24: the admin decides, per cancellation.** See `07-dashboard.md` | — | — |
 | ~~15~~ | ~~Medialibrary, or `marceli-to/image-cache`?~~ — **answered 2026-09-18: neither.** Port the media subsystem from `forrerzimmermann.ch` — Glide, one `media` table, crop JSON, `<picture>` with AVIF/WebP. Answers 5 too. See `08-accounts.md` | — | — |
 | ~~16~~ | ~~Is a user with financial history ever deleted, or only deactivated?~~ — **answered 2026-09-24: deactivated.** See `07-dashboard.md` | — | — |

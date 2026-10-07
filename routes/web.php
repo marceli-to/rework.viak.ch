@@ -17,6 +17,7 @@ use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InviteController;
+use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\ProjectController;
 use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\TrainingController;
@@ -67,6 +68,10 @@ Route::prefix('{locale}')
 			$segments = config("site.segments.{$locale}");
 
 			Route::get('/', HomeController::class)->name("{$locale}.home");
+
+			// The homepage footer's signup; a stand-in until #13 ([[NewsletterController]]).
+			Route::post($segments['newsletter'], [NewsletterController::class, 'store'])
+				->name("{$locale}.newsletter");
 
 			/*
 			 * One Vorhaben ([[04-content]]): its copy and the courses picked

@@ -206,6 +206,22 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   number bold at the headline's size, *Rückruf vereinbaren* as the site's
   white `outline` button, the Vorhaben tiles' padding (8, 16 from lg), both
   halves centred.
+- **Legacy's intro and footer back** (Marcel, 2026-10-07), rebuilt 1:1 and
+  above and below the new sections:
+  - *Ihre Zukunft ist visuell* and legacy's copy, then the home hero as a
+    slider: legacy's Swiper setup (loop, 5s autoplay, teal chevrons, 300ms)
+    rebuilt in Alpine (`components/slider.js`, `x-media.slider`), so the
+    site still ships no slider library. The images live on
+    `Page::for('home')` (`HasMedia` now), edited in *Seiteninhalte →
+    Startseite* with the course form's image section; the *OpenGraph* one is
+    the page's `og:image` and stays out of the slider. `port:media` brings
+    legacy's 20 published hero images across and is now rerunnable (rows
+    already ported are skipped).
+  - The footer (homepage only, as in legacy): *Newsletter* with the reveal
+    form, *Kontakt* with address, phone, mail, Instagram, Facebook. **The
+    signup reaches no Mailchimp list**: `NewsletterController` validates,
+    guards (Turnstile, honeypot, 5/h) and logs, until `Open-Questions.md` #13
+    says whether the integration stays.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial

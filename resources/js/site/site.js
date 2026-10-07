@@ -18,6 +18,7 @@ import editor from './components/editor';
 import fileDrop from './components/file-drop';
 import menu from './components/menu';
 import portal from './stores/portal';
+import slider from './components/slider';
 import toast from './stores/toast';
 
 Alpine.store('basket', basket);
@@ -50,6 +51,7 @@ Alpine.data('bookmark', bookmark);
 Alpine.data('basketList', basketList);
 Alpine.data('fileDrop', fileDrop);
 Alpine.data('editor', editor);
+Alpine.data('slider', slider);
 
 window.Alpine = Alpine;
 Alpine.start();

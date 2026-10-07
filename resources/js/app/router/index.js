@@ -199,6 +199,12 @@ const routes = [
 		meta: { title: 'Teammitglied bearbeiten' },
 	},
 	{
+		path: '/dashboard/startseite',
+		name: 'content.home',
+		component: () => import('@/views/Page/Home.vue'),
+		meta: { title: 'Startseite' },
+	},
+	{
 		path: '/dashboard/seite/:page',
 		name: 'content.page',
 		component: () => import('@/views/Page/Testimonials.vue'),

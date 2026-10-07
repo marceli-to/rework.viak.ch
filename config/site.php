@@ -49,6 +49,8 @@ return [
 			// One Vorhaben, `/de/vorhaben/{slug}` ([[04-content]]). New, so
 			// nothing indexed to keep.
 			'project' => 'vorhaben',
+			// The homepage footer's newsletter form posts here; no page of its own.
+			'newsletter' => 'newsletter',
 			// Legacy's indexed page, which 301s to `training` (`04-content.md`).
 			'training_legacy' => 'individualschulungen',
 			'basket' => 'warenkorb',
@@ -97,6 +99,7 @@ return [
 			'about' => 'about-us',
 			'training' => 'corporate-training',
 			'project' => 'project',
+			'newsletter' => 'newsletter',
 			'training_legacy' => 'individual-training',
 			'basket' => 'basket',
 			'checkout' => 'checkout',
