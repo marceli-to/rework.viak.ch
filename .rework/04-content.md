@@ -201,10 +201,11 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   *Anmelden* links to the course page, which already handles full courses,
   existing seats and the laptop question, rather than copying the basket
   button onto the homepage.
-- **The call band reworked** (Marcel: it read flat): the question as a
-  regular-weight headline (20/24/28px), the sentence below in regular weight,
-  the phone number bold at the headline's size, *Rückruf vereinbaren* as the
-  site's white `outline` button, 16/24/40px of padding, both halves centred.
+- **The call band reworked** (Marcel: it read flat): the question as a bold
+  headline (20/24/28px), the sentence below in regular weight, the phone
+  number bold at the headline's size, *Rückruf vereinbaren* as the site's
+  white `outline` button, the Vorhaben tiles' padding (8, 16 from lg), both
+  halves centred.
 - **Dashboard**: *Seiteninhalte → Vorhaben*, a list dragged into the tiles'
   order with the course count as a badge, and a form whose course picker is a
   new field-kit type, `Field::offers` ([[OfferPicker]]): the testimonial
