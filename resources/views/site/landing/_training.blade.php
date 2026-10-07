@@ -8,8 +8,10 @@
 	mockup's button does.
 
 	A grey panel (Marcel picked it from four on 2026-10-07, after a framed card
-	and an image beside the copy): the site's `gray-200` fill, so it reads as a
-	block of its own without a second teal one under the band. The pitch and
+	and an image beside the copy): the site's `gray-200` at half strength,
+	about #f7f7f7 (Marcel wanted it lighter, and the palette has no lighter
+	grey), so it reads as a block of its own without a second teal one under
+	the band. The pitch and
 	the button in six columns, the facts as label and value rows between
 	grey hairlines in the other six, each fact on one line where the width
 	allows (the label a fixed 80px), 16px in and 24 from lg. No image.
@@ -18,7 +20,7 @@
 	until VIAK names clients it may show (`Open-Questions.md` #40, which also
 	asks for the price to be confirmed).
 --}}
-<section class="mt-48 bg-gray-200 p-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mt-64 lg:gap-40 lg:p-24">
+<section class="mt-48 bg-gray-200/50 p-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mt-64 lg:gap-40 lg:p-24">
 	<div class="flex flex-col items-start sm:col-span-6">
 		<p class="text-md font-bold text-teal lg:text-lg">Firmenschulung</p>
 		<h2 class="mt-4 text-2xl leading-[1.2] font-bold text-balance sm:text-3xl lg:text-4xl">Ein Kurs nur für dein Team</h2>
