@@ -71,7 +71,13 @@ talked about*, not *disputed*.
   follows the copy in its column under an `h2` *Anfragen* (the copy's opening
   line is an `h2` too), and the testimonials are cards below it in *Über
   uns*'s grid, the team card's teal frame, the author bold and black. Still
-  not in the nav (see *Über uns* below). The dashboard picker adds through a
+  not in the nav (see *Über uns* below).
+
+  **Collapsibles back, 2026-10-07** (Marcel, "a tad more structure"): the
+  enquiry is an open collapsible *Anfrage* under the copy, drawn as Kontakt's
+  *Kontaktformular* (a card, *Firmenschulung anfragen* in the aside, the form
+  in the column, `#anfrage`), and the testimonials an open *Kundenmeinungen*
+  collapsible as on a course page. The dashboard picker adds through a
   `+` at the top right that opens a lightbox, as *Teilnehmer hinzufügen*
   does, instead of a select.
 

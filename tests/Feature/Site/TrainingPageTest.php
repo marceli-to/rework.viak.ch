@@ -39,7 +39,7 @@ it('renders at /de/firmenschulung with legacy’s copy, then the enquiry', funct
 			'Individualschulungen für Firmen und Einzelpersonen',
 			'Was ist Ihr Thema?<br>Bestimmt finden wir',
 			'href="tel:+41435014040"',
-			'Anfragen',
+			'Anfrage', 'Firmenschulung anfragen',
 			'name="company"', 'name="name"', 'name="email"', 'name="message"',
 			'Anfrage senden',
 		], false);
@@ -110,7 +110,7 @@ it('shows the testimonials picked for it, in their order, published only', funct
 	$page->testimonials()->attach([$second->id => ['order' => 2], $first->id => ['order' => 1], $hidden->id => ['order' => 3]]);
 
 	$this->get('/de/firmenschulung')
-		->assertSeeInOrder(['Anfragen', '„Erstes Zitat“', 'Erste Person', '„Zweites Zitat“', 'Zweite Person'], false)
+		->assertSeeInOrder(['Firmenschulung anfragen', 'Kundenmeinungen', '„Erstes Zitat“', 'Erste Person', '„Zweites Zitat“', 'Zweite Person'], false)
 		->assertDontSee('Verstecktes Zitat')
 		->assertDontSee('Nicht gewählt');
 });

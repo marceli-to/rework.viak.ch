@@ -1,13 +1,11 @@
 {{--
 	The top of Firmenschulung, drawn as *Über uns* opens ([[about._intro]]): the
 	title teal in the aside, the copy black in the column, its heading the bold
-	first line, an `h2` as *Anfragen* is. The copy is legacy's `web/pages/courses/individual-training`,
+	first line, as an `h2`. The copy is legacy's `web/pages/courses/individual-training`,
 	carried across as it is (Marcel, 2026-10-06); its six-image slider is not.
 	The phone link is legacy's `tel:+41 43 501 40 40` without the spaces.
 
-	The enquiry follows the copy in the same column, under *Anfragen*, with no
-	collapsible (Marcel, 2026-10-06). `#anfrage` is where a sent or refused
-	enquiry lands.
+	The enquiry is not here but in its own collapsible below (`training.index`).
 --}}
 <article class="mb-48 sm:grid sm:grid-cols-12 sm:gap-16 lg:mb-64 lg:gap-40">
 	{{-- `xs:hide`, as on Kontakt: on a phone the header row already says it. --}}
@@ -26,7 +24,5 @@
 			<p>Wir freuen uns auf Ihre <a href="mailto:hallo@visualisierungs-akademie.ch" title="E-Mail">Nachricht</a> oder Ihren <a href="tel:+41435014040" title="Anruf">Anruf</a>.</p>
 		</div>
 
-		<h2 id="anfrage" class="mt-48 mb-16 scroll-mt-16 font-bold lg:mt-64">Anfragen</h2>
-		@include('site.training._form')
 	</div>
 </article>

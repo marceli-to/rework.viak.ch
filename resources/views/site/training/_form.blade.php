@@ -1,8 +1,8 @@
 {{--
 	Firmenschulung's enquiry ([[TrainingController]]), the fields as Kontakt's
 	form has them (`contact/_form`): the mockup's four, Firma and
-	Ansprechperson side by side from sm. No card of its own: it stands in the
-	intro's column, under *Anfragen* ([[training._intro]]).
+	Ansprechperson side by side from sm. Inside the *Anfrage* collapsible's
+	card (`training.index`).
 --}}
 @if (session('training') === 'sent')
 	<x-ui.toast variant="success">Danke, deine Anfrage ist bei uns angekommen.</x-ui.toast>
