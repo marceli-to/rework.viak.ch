@@ -209,9 +209,10 @@ homepage (homepage marker 1). First pass, built to be reshaped:
 - **Legacy's intro and footer back** (Marcel, 2026-10-07), rebuilt 1:1 and
   above and below the new sections:
   - *Ihre Zukunft ist visuell* and legacy's copy, then the home hero as a
-    slider: legacy's Swiper setup (loop, 5s autoplay, teal chevrons, 300ms)
-    rebuilt in Alpine (`components/slider.js`, `x-media.slider`), so the
-    site still ships no slider library. The images live on
+    slider: **Swiper, as legacy** (Marcel's call, after a first pass in plain
+    Alpine), with legacy's setup (loop, 5s autoplay, teal chevrons, 300ms),
+    started from Alpine (`components/slider.js`, `x-media.slider`). Only its
+    core CSS; the arrows are the component's own SVG buttons. The images live on
     `Page::for('home')` (`HasMedia` now), edited in *Seiteninhalte →
     Startseite* with the course form's image section; the *OpenGraph* one is
     the page's `og:image` and stays out of the slider. `port:media` brings

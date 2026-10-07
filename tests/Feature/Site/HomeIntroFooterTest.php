@@ -33,22 +33,22 @@ it('slides the homepage’s images in their order, and keeps the Open Graph one 
 	Media::factory()->for($page, 'mediable')->create(['file' => 'teilen.jpg', 'is_og' => true]);
 
 	$html = $this->get('/de')
-		->assertSee('aria-roledescription="carousel"', false)
+		->assertSee('class="swiper-wrapper"', false)
 		->assertSee('<meta property="og:image" content="https://'.config('site.canonical_host').'/storage/uploads/teilen.jpg">', false)
 		->getContent();
 
-	$carousel = Str::between($html, 'aria-roledescription="carousel"', 'Vorheriges Bild');
+	$carousel = Str::between($html, 'class="swiper-wrapper"', 'Vorheriges Bild');
 
 	expect($carousel)->toMatch('/erstes\.jpg.*zweites\.jpg/s')
 		->not->toContain('teilen.jpg');
 });
 
 it('draws one image without the slider, and none at all without images', function () {
-	$this->get('/de')->assertDontSee('aria-roledescription="carousel"', false);
+	$this->get('/de')->assertDontSee('class="swiper-wrapper"', false);
 
 	Media::factory()->for(Page::for('home'), 'mediable')->create(['file' => 'einzig.jpg']);
 
-	$this->get('/de')->assertSee('einzig.jpg')->assertDontSee('aria-roledescription="carousel"', false);
+	$this->get('/de')->assertSee('einzig.jpg')->assertDontSee('class="swiper-wrapper"', false);
 });
 
 it('has legacy’s footer, on the homepage only', function () {
