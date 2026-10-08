@@ -94,7 +94,7 @@ right below, which supersedes parts of *The real catalogue*.
   offen*) and *1 von 2 versendet*. The `+` picks the customer in a lightbox.
 - **The order's page** (`/dashboard/bestellung/{uuid}`): customer, *Lizenzen
   an*, the invoice (PDF link) and per line *Versendet*, which turns into a
-  badge with date and who; *Zurücksetzen* undoes a mistaken tick.
+  badge with date and who; *Noch nicht versendet* undoes a mistaken tick.
 - **Bestellung erfassen** (`/dashboard/kunde/{uuid}/bestellung/erfassen`,
   from the list's `+` only; the customer page lists the orders but enters
   none, Marcel 2026-10-08):
