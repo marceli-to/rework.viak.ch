@@ -1,7 +1,9 @@
 /**
  * The settings lists, in legacy's order, with what one of each is called
- * ([[07-dashboard]], step 6). Software and Hersteller follow since chunk 05
- * ([[05-licences]]): the groups licence products sit in, and their makers.
+ * ([[07-dashboard]], step 6). Software-Gruppen and Hersteller follow since
+ * chunk 05 ([[05-licences]]): the groups licence products (and courses) sit
+ * in, and their makers. `home` puts a list on that page instead of here
+ * (Marcel, 2026-10-08).
  */
 export const KINDS = {
 	categories: { title: 'Kategorien', noun: 'Kategorie', schema: 'term' },
@@ -9,8 +11,8 @@ export const KINDS = {
 	levels: { title: 'Levels', noun: 'Level', schema: 'term' },
 	tags: { title: 'Tags', noun: 'Tag', schema: 'term' },
 	locations: { title: 'Orte', noun: 'Ort', schema: 'location' },
-	software: { title: 'Software', noun: 'Software', schema: 'term' },
-	manufacturers: { title: 'Hersteller', noun: 'Hersteller', schema: 'term' },
+	software: { title: 'Software-Gruppen', noun: 'Software-Gruppe', schema: 'term', home: 'licences' },
+	manufacturers: { title: 'Hersteller', noun: 'Hersteller', schema: 'term', home: 'licences' },
 };
 
 const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;

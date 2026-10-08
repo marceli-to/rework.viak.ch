@@ -47,8 +47,11 @@ right below, which supersedes parts of *The real catalogue*.
   orders VIAK enters (it is not *Publizieren*, which is the product's);
   *Mindestmenge* is the smallest quantity in the basket. No *Abbrechen*
   button: no dashboard form has one, *Zurück* does that job.
-- **Einstellungen** gains *Software* and *Hersteller* lists; their badges
-  count courses and licences, and a used one is not deleted.
+- **Software-Gruppen** and **Hersteller** are lists on the *Software* page,
+  below the groups (Marcel, 2026-10-08: first built into *Einstellungen* as
+  *Software*, renamed and moved the same day). Their forms are the settings
+  form under `/dashboard/software/liste/{kind}/{uuid}`; badges count courses
+  and licences, and a used one is not deleted.
 
 **Next, in order:** licence orders (the admin's manual order with the free
 line, the dispatch worklist), then the public software pages and the checkout

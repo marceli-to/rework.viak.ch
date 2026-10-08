@@ -686,7 +686,8 @@ map link, *Publizieren*) for places, and one controller
 - A new term goes to the end of its list, published. Order and *publish* on
   terms are not on the form, as they were not in legacy; the order is the one
   the port brought across.
-- Software is not here: chunk 05 gives it its own screen.
+- Software is not here: chunk 05 gives it its own screen, which also lists
+  *Software-Gruppen* and *Hersteller* (`05-licences.md`).
 
 ## Step 6 — profile, built 2026-09-29
 

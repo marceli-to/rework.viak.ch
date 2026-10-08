@@ -150,6 +150,19 @@ const routes = [
 		component: () => import('@/views/Licence/Index.vue'),
 		meta: { title: 'Software' },
 	},
+	// Software-Gruppen and Hersteller, listed on *Software*: the settings form, under this menu item.
+	{
+		path: '/dashboard/software/liste/:kind/erfassen',
+		name: 'licence.term.create',
+		component: () => import('@/views/Setting/Form.vue'),
+		meta: { title: 'Software' },
+	},
+	{
+		path: '/dashboard/software/liste/:kind/:uuid',
+		name: 'licence.term.edit',
+		component: () => import('@/views/Setting/Form.vue'),
+		meta: { title: 'Software' },
+	},
 	{
 		path: '/dashboard/software/erfassen',
 		name: 'licence.create',

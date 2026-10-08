@@ -2,12 +2,14 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { fetchLicences } from '@/api/licences';
+import { fetchSettings } from '@/api/settings';
 import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
+import SettingList from '@/views/Setting/List.vue';
 
 /**
  * *Software* ([[05-licences]], `/dashboard/software`): the licence catalogue, one collapsible per software
@@ -15,13 +17,19 @@ import NoResults from '@/components/ui/NoResults.vue';
  * open (`?gruppe=`). Per product its name, its maker, how many variants the
  * dropdown has and the cheapest price, all net. *Nur manuell* marks a product
  * none of whose variants is on the site: VIAK picks it when entering an order.
+ *
+ * Below the groups, the two lists the catalogue hangs off, *Software-Gruppen*
+ * and *Hersteller*, moved here from *Einstellungen* (Marcel, 2026-10-08); the
+ * one a form came back from is open (`?liste=`).
  */
 const route = useRoute();
 
 const items = ref([]);
+const lists = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const open = computed(() => String(route.query.gruppe ?? ''));
+const openList = computed(() => String(route.query.liste ?? ''));
 
 const groups = computed(() => {
 	const byGroup = new Map();
@@ -38,7 +46,7 @@ const price = (value) => Number(value).toFixed(2);
 
 onMounted(async () => {
 	try {
-		items.value = await fetchLicences();
+		[items.value, lists.value] = await Promise.all([fetchLicences(), fetchSettings()]);
 	} catch (problem) {
 		error.value = problem.message;
 	} finally {
@@ -53,9 +61,8 @@ onMounted(async () => {
 
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
-		<NoResults v-else-if="!items.length">Noch keine Lizenzen erfasst.</NoResults>
-
 		<div v-else class="mt-24 lg:mt-32">
+			<NoResults v-if="!items.length">Noch keine Lizenzen erfasst.</NoResults>
 			<Collapsible v-for="group in groups" :key="group.title" :expanded="open === group.title" :count="group.products.length">
 				<template #title>{{ group.title }}</template>
 
@@ -78,6 +85,8 @@ onMounted(async () => {
 					</div>
 				</EditableListItem>
 			</Collapsible>
+
+			<SettingList v-for="key in ['software', 'manufacturers']" :key="key" :kind-key="key" :items="lists[key]" :expanded="openList === key" />
 		</div>
 	</section>
 </template>
