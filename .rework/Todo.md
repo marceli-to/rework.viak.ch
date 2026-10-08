@@ -357,6 +357,13 @@ items that are ours rather than the client's.
   order state that the customer has to be able to see, and the admin needs a
   worklist of outstanding licence orders — an email to `info@` is not a work
   queue. See `05-licences.md`.
+- ~~The licence catalogue, #1 and #33–39~~ — **answered 2026-10-08** with an
+  updated list: prices (net) and article numbers on all 107 rows; no 3-year
+  product, a note instead; a demo is a free order; hidden products are never
+  ordered on the site, VIAK enters them, and wants the blank line back; updates
+  are variants in the dropdown; "nur zusammen mit Neulizenz" is a note; no
+  further quantity limits. So no Bildung tier either. Left: #47–49. See
+  `05-licences.md`, *The client's answers*.
 - ~~May a non-student buy a licence?~~ — **answered 2026-09-17: yes, anyone.**
   A licence-only order has no booking, so `invoices.booking_id` goes. A
   polymorphic `invoiceable` is enough for that on its own.

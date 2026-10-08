@@ -7,8 +7,9 @@ basket, no payment. With licences for sale (chunk 05) that no longer fits.
 
 **Scoped 2026-09-30** (Marcel), with three answers the same day, below.
 Designed before anything is built, because it replaces the flow in
-`06-bookings.md` rather than adding to it. Waits on the licence answers
-(#33–39) for the licence lines themselves; the flow can be designed now.
+`06-bookings.md` rather than adding to it. ~~Waits on the licence answers
+(#33–39)~~ **answered 2026-10-08** (`05-licences.md`): one select per product,
+a quantity with a minimum on four variants, and demos at CHF 0.
 
 ## What there is today
 
@@ -78,3 +79,6 @@ Already settled in `05-licences.md`, and the reason for this chunk:
   it is designed here and built with it.
 - **Paying a waiting licence order later**: from where on the account, and
   whether VIAK is told about orders left unpaid.
+- **A zero total** (a basket of demos, 2026-10-08): Stripe Checkout cannot
+  charge 0. Proposed in `05-licences.md`, *A free order*: skip payment, the
+  order is paid, no invoice, onto the dispatch worklist.

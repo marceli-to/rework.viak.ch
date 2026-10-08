@@ -7,7 +7,8 @@ settled.
 
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-24, with the 2026-09-23 mockup
-review (22–24 are from it), and 2026-09-29 with the licence catalogue (33–39).
+review (22–24 are from it), and 2026-09-29 with the licence catalogue (33–39), all answered 2026-10-08
+(47–49 are what those answers left).
 
 **The live site is not fixed** (Marcel, 2026-09-29). What the rework finds in
 legacy, including the `/expert/finish` account-takeover path found 2026-09-18
@@ -21,7 +22,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 
 | # | Question | Owner | Blocks |
 |---|---|---|---|
-| 1 | Is the Bildung licence tier real? — **half answered 2026-09-29**: EDU licences are real, sold today as hidden products; what is left is 36 | Client | Chunk 05, partly |
+| ~~1~~ | ~~Is the Bildung licence tier real?~~ — **answered 2026-10-08 with 36: no tier.** EDU licences are hidden variants VIAK enters by hand. See `05-licences.md` | — | — |
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy | Client | Copy only |
@@ -52,14 +53,17 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 30 | Which ad networks, exactly? Google Ads and Meta today; LinkedIn, ChatGPT, others planned? | Client | Nothing in code; which tags go into GTM |
 | 31 | The answer options for *Wie wurdest du auf uns aufmerksam?*, and is it optional? | Client | `11-tracking.md` step 4 |
 | 32 | That question as a popup (as asked) or a field on the summary step (recommended)? | Client | `11-tracking.md` step 4 |
-| 33 | **Prices and article numbers** for the 107 licence products, gross or net | Client | **The catalogue import.** Asked 2026-09-29 |
-| 34 | A 3-year licence: fixed price, or 3× annual? | Client | Chunk 05, the term select. Asked 2026-09-29 |
-| 35 | What does "buying" a demo mean? | Client | Chunk 05, 10 products. Asked 2026-09-29 |
-| 36 | Can a customer order a hidden (EDU) product on the site, or does VIAK only invoice them? | Client | Chunk 05, the *not listed* state. Asked 2026-09-29 |
-| 37 | Updates and upgrades: an edition in the dropdown, or their own product? | Client | Nothing structural — the shape takes either. Asked 2026-09-29 |
-| 38 | "Nur zusammen mit Neulizenz": enforced by the basket, or a note? | Client | Nothing if a note. Asked 2026-09-29 |
-| 39 | Minimum and maximum quantities beyond the Teams licences' 3? | Client | Nothing — `min_quantity` is planned either way. Asked 2026-09-29 |
+| ~~33~~ | ~~Prices and article numbers~~ — **answered 2026-10-08: delivered, net** (*Preis ex. MWST*), all 107 unique. The import is unblocked | — | — |
+| ~~34~~ | ~~A 3-year licence: fixed price, or 3× annual?~~ — **answered 2026-10-08: neither.** "3-Jahreslizenz auf Anfrage erhältlich" is a note on the product; one select | — | — |
+| ~~35~~ | ~~What does "buying" a demo mean?~~ — **answered 2026-10-08: a free order.** No payment, no invoice is the proposal, see `05-licences.md`, *A free order* | — | — |
+| ~~36~~ | ~~Can a customer order a hidden product on the site?~~ — **answered 2026-10-08: no.** VIAK enters the order taken by mail or phone, and wants the blank line (free title and price) back | — | — |
+| ~~37~~ | ~~Updates and upgrades: edition or own product?~~ — **answered 2026-10-08: variants in the dropdown, consistently** | — | — |
+| ~~38~~ | ~~"Nur zusammen mit Neulizenz": enforced or a note?~~ — **answered 2026-10-08: a note** | — | — |
+| ~~39~~ | ~~Minimum and maximum quantities beyond the Teams licences' 3?~~ — **answered 2026-10-08: none** | — | — |
 | 40 | The homepage's Firmenschulung teaser: is *Ab CHF 2'400 pro Tag, pauschal* the real price, and which clients may it name under *Zuletzt geschult*? | Client | Nothing: the price shows as the mockup has it, the client line is left out until named. Raised 2026-10-07 |
+| 47 | "Update Maxwell V5, node-locked / floating" (MXS-1501/1502): an update of the plugin or of Studio? | Client | Where two variants sit in the import. Raised 2026-10-08 |
+| 48 | Lumion Pro Floating: article number LUM-1005, but the shop URL ends LUM-10260. Which? | Client | One SKU in the import. Raised 2026-10-08 |
+| 49 | The grouping of the 107 rows into 38 products (`05-licences.md`, *Grouping proposal*): OK? | Client | The import's shape; VIAK can regroup in the admin either way. Raised 2026-10-08 |
 | ~~40~~ | ~~Time zone: switch to `Europe/Zurich`?~~ — **answered 2026-09-30: yes, and built.** The app runs in Zurich, both connections read and write at `+00:00`, and the port shifts legacy's UTC moments (`LegacyTime`). See `07-dashboard.md`, *Zurich time* | — | — |
 | ~~41~~ | ~~A confirmation missed at closing: a per-seat send, or never?~~ — **answered 2026-09-30: per seat, and built.** *Bestätigen* under a *Nicht teilgenommen* badge on a closed date. See `07-dashboard.md`, *Attendance is asked when closing* | — | — |
 | ~~42~~ | ~~Kunden instead of Studenten?~~ — **answered 2026-09-30: yes, *Kunde / Kunden*.** See `12-customers.md` | — | — |
@@ -139,22 +143,6 @@ answered the same day** — the media pipeline is a port of Marcel's
 
 ## For the client
 
-### 1. Is the Bildung licence tier real?
-
-`Twinmotion-Lizenzen.html` shows a second tier beside Einzelplatz (CHF 590/Jahr):
-**Bildung, CHF 145/Jahr, "pro Jahr, Nachweis nötig"**, and its button is
-"Nachweis einreichen" rather than a buy button.
-
-**Marcel, 2026-09-17: this may be mockup filler rather than a requirement.** The
-mockups are wireframes and their content is not authoritative, so the first
-question is whether VIAK sells an education licence at all.
-
-**Decides:** if it is real, it is an upload, a human review and an approval
-standing between the customer and the basket — a third flow beside "buy" and
-"enquire", and the only place where *who* is buying matters. If it is not real,
-the tier comes off the page. A cheap middle option: treat Bildung as an enquiry
-variant, exactly like "Preis auf Anfrage", and handle the proof by email.
-
 ### 2. Does VIAK order from the reseller before or after the money arrives?
 
 Fulfilment is manual — the customer orders, VIAK gets an email, a human orders
@@ -176,25 +164,18 @@ Worth asking in the same conversation as 1 and 2. Chunk 03 settled where the
 answer would land: `invoice_items.discount` is per line, so a licence discount
 needs no schema change whichever way this goes.
 
-### 33–39. The licence catalogue — asked 2026-09-29
+### 47–49. What the licence answers left — raised 2026-10-08
 
-The client sent their existing shop's 107 products as a spreadsheet, and the
-rework replaces that shop (3d-software.ch). The list raised seven questions; Marcel
-forwarded them the same day (`Fragen-Software.txt`). The reasoning behind each is
-in `05-licences.md`, *The real catalogue*.
+The client answered 33–39 with an updated list (`05-licences.md`, *The client's
+answers*). Three small things are left, none of them blocking a start on the build:
 
-- **33. Prices and article numbers.** The list has neither; article numbers
-  survive only inside the old shop's URLs. **Decides:** whether there is a
-  catalogue to import at all. The only one of the seven that blocks.
-- **34. The 3-year term.** 16 products advertise it, none has a product for it.
-  **Decides:** whether a 3-year variant carries its own price.
-- **35. Demos.** 10 products. **Decides:** free order, enquiry or link.
-- **36. Hidden products.** **Decides:** whether a *not listed* product can be
-  reached on the site, or is only a preset for an admin-made order. Also closes 1.
-- **37. Updates and upgrades.** **Decides:** the grouping only.
-- **38. "Nur zusammen mit Neulizenz"** (Maxwell V5 Rendernodes Bundle).
-  **Decides:** whether the basket has dependency rules. A note is the proposal.
-- **39. Quantity limits.** **Decides:** whether `min_quantity` needs a partner.
+- **47. Maxwell's two updates.** "Update Maxwell V5, node-locked / floating"
+  could update the plugin (MXS-1011/1012) or Studio (MXS-1101/1102), both 470 /
+  660. **Decides:** which product's dropdown they appear in.
+- **48. Lumion Pro Floating's article number.** LUM-1005 in the column,
+  LUM-10260 in the old shop's URL. **Decides:** one SKU.
+- **49. The grouping.** 107 rows into 38 products, drawn by us from "variants
+  as a dropdown, consistently". **Decides:** the import; VIAK can regroup later.
 
 ### 4. Which of the six Vorhaben are real, and are there more coming?
 

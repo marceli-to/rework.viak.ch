@@ -11,6 +11,119 @@ two, and an order line has a quantity. See *The real catalogue* below. The
 questions that list raised went to the client on 2026-09-29 and are under *Open
 questions*; prices and article numbers are the one that blocks an import.
 
+**2026-10-08: all seven answered**, with an updated list carrying prices and
+article numbers. Nothing blocks the import any more; see *The client's answers*
+right below, which supersedes parts of *The real catalogue*.
+
+## The client's answers — 2026-10-08
+
+The client sent the list back (`Software_Lizenztypen_claude.xlsx`, same name, now
+with *Preis ex. MWST* and *Artikelnr.*) and answered 33–39 in one mail.
+
+| # | Answer | What it does to the shape |
+|---|---|---|
+| 33 | **Every row has a price and an article number.** The column says *ex. MWST*: prices are **net**. | The import is unblocked. VAT is added on top at 8.1 %, as already decided for licences. All 107 article numbers are unique. |
+| 34 | **No 3-year product.** "3-Jahreslizenz auf Anfrage erhältlich" is information shown on the product. | `term_years` and the second select go. One select per product. A product flag prints the sentence; it is not a variant and not priced. |
+| 35 | **A demo is a free order.** All 10 demos are CHF 0. | A demo is a variant at price 0, ordered like any other. See *A free order* below. |
+| 36 | **Hidden products are never ordered on the site.** VIAK records the products that are ordered regularly (Rhino EDU…) and enters the order by hand when one comes in by mail or phone. | *Not listed* means: in the admin's order form, never on the site, not reachable by link. Closes question 1, Bildung: the site never sells an EDU licence. |
+| 36 | **The blank line is wanted back.** Today VIAK creates a manual order, adds an "empty product" and types title and price; there are too many one-off variations a year to keep them all as products. | The admin order gets a free line: title and price typed in, no variant. Already proposed under *The blank product*; now a requirement. |
+| 37 | **Variants as a dropdown, consistently, updates included.** | Updates and upgrades are variants of the product they update, not products. |
+| 38 | **A note is enough** for "nur zusammen mit Neulizenz". | No dependency rules in the basket. A free note on the variant. |
+| 39 | **No other minimum or maximum quantities.** | `min_quantity` stays for the four Teams variants (3). No maximum. |
+| — | Twinmotion corrected; MyArchitectAI's demo now has no licence type; MyArchitectAI and V-Ray Render Node 20 Stück are **new products**, and the client wants the render node as one product with the count in the dropdown. | The three data fixes are done. Render nodes were already planned as variants (1 / 5 / 20 Stück). |
+
+### What changes in the shape
+
+- **One select, not two.** Without terms, a product page shows one dropdown of
+  its variants. Nothing else selects.
+- **Licence type, access and platform move to the variant.** Consistent grouping
+  puts perpetual and subscription rows in one product (formZ 10: Core, Pro,
+  Pro Jahresmiete, three updates, demo), and platform differs inside a product
+  (Enscape Collection is Windows only, Solo is not). Still display only.
+- **A free `note` on the variant** carries what the spreadsheet's remark column
+  says per row: "nur zusammen mit Neulizenz", "5 Rendernodes", "Inkl. 5 Simnodes",
+  "Aktivierung auf max. 2 Computern", "Studio + alle Plugins".
+- **`listed` is on the variant, not the product.** Grouping updates into
+  products puts hidden rows beside listed ones: Rhinoceros 8 EDU, EDU Upgrade and
+  the Lab licences are variants of Rhinoceros 8. The site shows the listed
+  variants; a product with none is not on the site at all (MatrixGold, the
+  Education Collections).
+- **No "Preis auf Anfrage" in the catalogue.** Every row has a price, the
+  cheapest is a demo at 0. Proposal: the price is not nullable; on-request goes,
+  and an enquiry is the Kontakt form. A one-off price is the blank line.
+- **Host software stays a choice frozen on the order line** (Maxwell V5 plugin,
+  RealFlow Plugin), unchanged.
+
+### A free order — proposal
+
+A demo costs 0, so a basket of only demos has nothing for Stripe to charge
+(Stripe Checkout refuses a zero amount) and nothing to invoice. Proposal: a
+zero total skips payment, the licence order is created **paid**, no invoice is
+raised (a CHF 0 invoice would only post noise to Run My Accounts), and it lands
+on the dispatch worklist like any other, because VIAK still has to get the demo
+from the vendor. A demo beside a priced licence is a 0 line on that invoice.
+Touches `13-checkout.md`.
+
+### Grouping proposal
+
+The client asked for it, the import needs it, and nobody has drawn it yet. 107
+rows become **38 products**; *(hidden)* marks variants not listed. Product names
+lose "(Jahresmietlizenz)", which moves to the variant's licence type.
+
+| Group | Product | Variants |
+|---|---|---|
+| Rhino | Rhinoceros 8 | Vollversion, Update; *(hidden)* EDU, EDU Upgrade, Lab 30 seats, Lab 30 seats Upgrade |
+| | Bongo 2 | Vollversion, Update |
+| | VisualARQ 3 | Vollversion, Update; *(hidden)* Educational |
+| | Lands Design 6 | Vollversion, Update |
+| | Karamba3D PRO | Jahresmietlizenz, Demoversion |
+| | MatrixGold *(hidden)* | one |
+| | Drakon | one |
+| V-Ray | V-Ray | Solo named, Premium floating, Collection named, Collection floating |
+| | V-Ray Render Node | 1, 5, 20 Stück |
+| | V-Ray Education Collection *(hidden)* | 0–14, 15–29, 30–49, 50–74, 100+ seats |
+| | Chaos Vantage, Chaos Phoenix, Chaos Scans | one each |
+| Twinmotion | Twinmotion | Jahresmietlizenz, Demoversion |
+| Unreal Engine | Unreal Engine | Jahresmietlizenz, Demoversion |
+| Veras | Veras | Pro named, Pro floating, Ultra floating, Demoversion |
+| formZ | formZ 10 | Core, Pro, Pro Jahresmietlizenz, Update 9/8/7 auf 10, Demoversion |
+| Cinema 4D | Cinema 4D | Einzelperson, Teams named (min. 3), Teams floating (min. 3) |
+| | Maxon One | Einzelperson, Teams named (min. 3), Teams floating (min. 3) |
+| | Rhino.io | one |
+| Enscape | Enscape | Solo named, Premium named, Premium floating, Collection named, Collection floating, Demoversion |
+| | Enscape Education Collection *(hidden)* | 0–14, 100+ seats |
+| Corona | Corona | Solo named, Premium floating, Collection named, Collection floating |
+| | Corona Render Node | 1, 5 Stück |
+| KeyShot | KeyShot Studio | Professional, Business, Web, VR |
+| Lumion | Lumion View | Jahresmietlizenz, Demoversion |
+| | Lumion Pro | named, floating, Demoversion |
+| Maxwell Render | Maxwell V5 Bundle | node-locked, floating, Update node-locked, Update floating |
+| | Maxwell V5 (plugin, host choice) | node-locked, floating |
+| | Maxwell V5 Studio | node-locked, floating |
+| | Maxwell V5 Rendernodes | mit Neulizenz (note), separat, Update |
+| Anima | Chaos Anima | floating, Demoversion |
+| ZBrush | ZBrush | one |
+| RealFlow | RealFlow 10.5 | node-locked, floating, Plus node-locked, Plus floating |
+| | RealFlow Plugin (host choice), RealFlow Simnodes | one each |
+| HDR Light Studio | HDR Light Studio | PRO, PRO floating, AUTOMOTIVE, AUTOMOTIVE floating |
+| MyArchitectAI | MyArchitectAI | Starter, Studio, Team, Demoversion |
+
+Two calls in it are ours and could go the other way: the Education Collections
+are their own hidden products (seat bands of a university licence, not an
+edition of V-Ray), while Rhino's EDU rows are hidden variants of Rhinoceros 8.
+The catalogue admin lets VIAK regroup either way.
+
+### Still open after the answers
+
+- **"Update Maxwell V5, node-locked / floating"** (MXS-1501, MXS-1502): an update
+  of the plugin or of Studio? Decides which product they sit under; left out of
+  the table above.
+- **Lumion Pro Floating**: article number LUM-1005, but its shop URL ends in
+  LUM-10260. Which is right? The only mismatch among the 101 rows with a URL.
+- **The grouping above**, for the client's nod before the import.
+
+These are #47–49 in `Open-Questions.md`.
+
 The short version: **there is no integration, and a licence is not an entity.**
 Fulfilment is a human forwarding an email, and *Meine Lizenzen* is purchase
 history. What is left is a catalogue with variants, an order line, and an admin
@@ -140,6 +253,7 @@ The spreadsheet has **no prices**, and the article numbers (RHN-1002, VRY-1001�
 survive only inside the shop URLs. Both were asked for on 2026-09-29, open
 question 2 below. We do not scrape them from the old shop: the client owns the
 numbers and should hand them over.
+**2026-10-08: handed over**, net, in the updated list.
 
 ### What is in it
 
@@ -148,7 +262,7 @@ numbers and should hand them over.
 | Products | **107**, in 17 groups (Rhino, V-Ray, Twinmotion, Cinema 4D, Maxwell…) |
 | Manufacturers | 15 — Chaos alone has 35 products, Next Limit 19 |
 | Listed in the shop | 94; the **13 hidden** ones are all EDU, lab and university seat-band licences |
-| Licence type | 58 subscription, 40 perpetual, 9 none (demos) |
+| Licence type | 57 subscription, 40 perpetual, 10 none (the demos; MyArchitectAI's corrected 2026-10-08) |
 | Demos | 10 |
 | Updates and upgrades | 14 |
 
@@ -166,6 +280,9 @@ licence_products    V-Ray, V-Ray Render Node, Bongo 2…  manufacturer_id, slug,
 licence_variants    Solo named / Premium floating / 5 Stück / Update…  price, term
 ```
 
+**2026-10-08:** the variant loses `term` and gains `sku`, licence type, access,
+platform, `note` and `listed`; see *What changes in the shape* above.
+
 - **`software` stays the group**, so courses and licences still meet on one row,
   which was the point for the Vorhaben pages. Eight of the 17 groups already
   exist as course software (Rhinoceros, V-Ray, CINEMA 4D, Twinmotion, Corona
@@ -178,7 +295,10 @@ licence_variants    Solo named / Premium floating / 5 Stück / Update…  price,
   cannot live there.
 - **The Hersteller filter** on the hub then filters products, not software.
 
-### Variants carry a term
+### ~~Variants carry a term~~
+
+**Superseded 2026-10-08:** there is no 3-year product, only a note on the
+product (#34). One select, no `term_years`. Kept for the reasoning.
 
 The client wants the edition in one dropdown and the term (1 / 3 years) in a
 second. The cheapest shape that gives that: a variant is a flat, priced row, and
@@ -205,7 +325,8 @@ its own SKU at its own price.
   it gains `quantity`, and the variant gains `min_quantity` (nullable).
 - **Platform, named/floating on products that allow both, "max. 2 Computer",
   "Studio + alle Plugins".** Display information on the product. Nothing
-  computes with them.
+  computes with them. **2026-10-08:** on the variant, since one product now
+  mixes them.
 
 ### Hidden products
 
@@ -219,7 +340,11 @@ This answers half of the Bildung question: education licences are real. They
 are hidden and sold on request, which is the cheap middle option that question
 already proposed.
 
-### The blank product — asked 2026-09-29
+**Answered 2026-10-08 (#36): the latter.** A hidden variant is only ever picked
+by an admin entering an order taken by mail or phone; the site never shows or
+sells it. `listed` sits on the variant (see above).
+
+### The blank product — wanted, 2026-10-08
 
 The client's example: someone wants an annual licence for only a few months, VIAK
 works out the price by hand and still sends a normal invoice. That is **a licence
@@ -244,7 +369,9 @@ screen, not a seeder.
 - MyArchitectAI (4 products) and V-Ray Render Node 20 Stück are marked visible
   but have no shop URL — new, presumably.
 
-All three are in the 2026-09-29 questions.
+All three are in the 2026-09-29 questions. **Fixed by the client 2026-10-08**:
+MyArchitectAI and the 20-node pack are new products. One new mismatch is open,
+Lumion Pro Floating's article number (#48).
 
 ## The shape that falls out — proposed 2026-09-17
 
@@ -325,33 +452,20 @@ stay, so the pivot decision in `02-courses-events.md` holds.
 
 ## Open questions
 
-Blocking the scoping of this chunk:
+**All answered 2026-10-08**; the answers and what they changed are in *The
+client's answers* at the top. What is left from them is #47–49 there.
 
-1. **Is the Bildung tier in scope, with its Nachweis?** `Twinmotion-Lizenzen.html`
-   prices it at CHF 145/Jahr behind "Nachweis nötig", and the CTA is "Nachweis
-   einreichen" rather than a buy button. That is an upload, a human review and an
-   approval standing between the customer and the basket — a different flow from
-   both "buy" and "enquire", and the only place where *who* is buying matters.
-   Three ways out, and it needs the client: build the proof flow, treat Bildung as
-   an enquiry variant like Preis auf Anfrage (cheap, and probably right for v1),
-   or drop the tier.
-   **2026-09-29:** half answered by the product list: EDU licences are real, and
-   today they are hidden products sold on request. What stays open is whether
-   the site ever sells one itself — that is question 5.
-
-Asked 2026-09-29, with the product list (`Fragen-Software.txt`, sent by Marcel):
-
-2. (OQ 33) **Prices and article numbers** for all 107 products, hidden ones included,
-   and whether prices are gross or net. **Blocks the import.**
-3. (OQ 34) **The 3-year term:** a fixed price per product, or 3× annual?
-4. (OQ 35) **Demos:** what "buying" one means — a free order, an enquiry, or a link.
-5. (OQ 36) **Hidden products:** can a customer order one on the site (a direct link), or
-   does VIAK only invoice them?
-6. (OQ 37) **Updates and upgrades:** an edition in the product's dropdown, or their own
-   product as today? The three-level shape takes either.
-7. (OQ 38) **"Nur zusammen mit Neulizenz"** (Maxwell V5 Rendernodes Bundle): enforced by
-   the basket, or a note on the product? A note is the proposal.
-8. (OQ 39) **Minimum and maximum quantities** beyond the Teams licences' 3.
+- ~~1. Is the Bildung tier in scope, with its Nachweis?~~ **No**: EDU licences
+  are hidden variants, ordered by mail or phone and entered by VIAK. No proof
+  flow, no enquiry variant.
+- ~~2. (OQ 33) Prices and article numbers~~: delivered, net.
+- ~~3. (OQ 34) The 3-year term~~: not a product, a note on the product.
+- ~~4. (OQ 35) Demos~~: a free order.
+- ~~5. (OQ 36) Hidden products~~: never on the site; VIAK enters the order. The
+  blank line is wanted back.
+- ~~6. (OQ 37) Updates and upgrades~~: variants in the dropdown, consistently.
+- ~~7. (OQ 38) "Nur zusammen mit Neulizenz"~~: a note.
+- ~~8. (OQ 39) Minimum and maximum quantities~~: none beyond the Teams' 3.
 
 Not blocking:
 
