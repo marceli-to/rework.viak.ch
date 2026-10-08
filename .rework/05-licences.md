@@ -53,6 +53,14 @@ right below, which supersedes parts of *The real catalogue*.
   *Einstellungen* as *Software*, renamed and moved the same day). The page
   has the dashboard's search (`?suche=`): products by name, maker, group,
   variant name or article number; groups and makers by name.
+- **The shop's label for a variant is built, not typed** (Marcel,
+  2026-10-08): about twenty names in the client's list are only the vendor's
+  word (*floating*, *node-locked*, *named*). `LicenceVariant::shopLabel()`
+  drops those words (and *Jahresmietlizenz*) from the name and adds Lizenztyp
+  and Nutzung in German: *floating* → *Jahresmietlizenz, Netzwerk
+  (floating)*; *Teams, named user* → *Teams, Jahresmietlizenz, Einzelplatz
+  (named)*. A demo (no Lizenztyp) keeps its name. For the public software
+  pages and the checkout; the dashboard's variant row already shows both.
 - **Adding a group or a maker from the licence form:** a `+` at the right of
   the *Software* and *Hersteller* labels opens a lightbox with *Bezeichnung*
   ([[TermDialog]]); saved, it joins the dropdown and is picked (Marcel,

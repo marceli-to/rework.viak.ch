@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -47,6 +48,37 @@ class LicenceVariant extends Model
 			'listed' => 'boolean',
 			'order' => 'integer',
 		];
+	}
+
+	/**
+	 * The words a client's variant name uses for what `licence_type` and
+	 * `access` already say: dropped from the shop's label, which says it in
+	 * German instead. Longest first, so *named user* goes before *named*.
+	 */
+	private const SAID_ELSEWHERE = ['named user', 'node-locked', 'floating', 'named', 'Jahresmietlizenz'];
+
+	/**
+	 * What the shop's dropdown shows (Marcel, 2026-10-08): about twenty names
+	 * in the client's list are only the vendor's word (*floating*), so the
+	 * label is built from Lizenztyp and Nutzung, with what is left of the
+	 * name in front. *Teams, named user* becomes *Teams, Jahresmietlizenz,
+	 * Einzelplatz (named)*; *floating* becomes *Jahresmietlizenz, Netzwerk
+	 * (floating)*. A demo has no Lizenztyp and keeps its name.
+	 */
+	public function shopLabel(): string
+	{
+		$title = (string) $this->getTranslation('title', 'de', false);
+
+		if (! $this->licence_type) {
+			return $title;
+		}
+
+		$rest = collect(explode(',', $title))
+			->map(fn (string $part) => trim(Str::replace(self::SAID_ELSEWHERE, '', $part, caseSensitive: false)))
+			->filter()
+			->implode(', ');
+
+		return collect([$rest, $this->licence_type->label(), $this->access?->label()])->filter()->implode(', ');
 	}
 
 	public function product(): BelongsTo
