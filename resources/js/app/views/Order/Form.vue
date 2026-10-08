@@ -6,9 +6,8 @@ import { toast } from '@/composables/useToast';
 import ArticleText from '@/components/layout/ArticleText.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Button from '@/components/ui/Button.vue';
+import Collapsible from '@/components/ui/Collapsible.vue';
 import Field from '@/components/form/Field.vue';
-import IconCross from '@/components/icons/Cross.vue';
-import IconPlus from '@/components/icons/Plus.vue';
 import Loading from '@/components/ui/Loading.vue';
 import Select from '@/components/form/Select.vue';
 
@@ -21,6 +20,9 @@ import Select from '@/components/form/Select.vue';
  * price typed in: the one-off licence for a few months that VIAK prices by
  * hand. A plugin asks for its host software. A variant with a minimum starts
  * at it; it is not enforced, as an order by phone is entered as it was sold.
+ *
+ * Each position is a collapsible, as the course form's sections are, added
+ * with the dashed button its videos have (Marcel, 2026-10-08).
  *
  * Saving invoices a priced order at once ([[PlaceLicenceOrder]]); a free one
  * (demos) has no invoice. Either lands on the worklist.
@@ -39,7 +41,9 @@ const invoiceAddress = ref('');
 const deliveryEmail = ref('');
 const lines = reactive([]);
 
-const blank = () => ({ choice: '', title: '', price: '', quantity: 1, host: '' });
+// `key`: a removed position must not hand its collapsible's state to the next.
+let made = 0;
+const blank = () => ({ key: ++made, choice: '', title: '', price: '', quantity: 1, host: '' });
 
 onMounted(async () => {
 	try {
@@ -61,7 +65,8 @@ const options = computed(() => [
 		label: product.title,
 		options: product.variants.map((variant) => ({
 			value: variant.uuid,
-			label: `${variant.label}, ${chf(variant.price)}${variant.listed ? '' : ' (nicht im Shop)'}`,
+			// The product in front: a chosen option shows without its group's heading.
+			label: `${product.title}, ${variant.label}, ${chf(variant.price)}${variant.listed ? '' : ' (nicht im Shop)'}`,
 		})),
 	})),
 ]);
@@ -74,6 +79,9 @@ function choose(line, choice) {
 	const variant = variants.value.get(choice);
 	line.quantity = Math.max(variant?.min_quantity ?? 1, 1);
 }
+
+// The collapsible's title: the product, or the free line's typed title.
+const heading = (line) => (line.choice === FREE ? line.title || 'Freie Position' : variants.value.get(line.choice)?.product.title ?? '');
 
 const unit = (line) => (line.choice === FREE ? Number(line.price) || 0 : Number(variants.value.get(line.choice)?.price ?? 0));
 const cents = (value) => Math.round(value * 100);
@@ -130,56 +138,62 @@ async function save() {
 			<Select v-if="addressOptions.length" v-model="invoiceAddress" label="Rechnungsadresse" :options="addressOptions" placeholder="Adresse aus dem Profil" :error="errors.invoice_address?.[0]" />
 			<Field v-model="deliveryEmail" type="email" label="Lizenzen an" :hint="`Leer lassen für ${page.customer.email}.`" :error="errors.delivery_email?.[0]" />
 
-			<!-- Each position over a black rule, the cross to remove it at the right. -->
-			<div v-for="(line, index) in lines" :key="index" class="relative mt-24 border-t border-black pt-16 sm:mt-32">
-				<div class="mb-8 flex items-center justify-between">
-					<span class="font-bold">Position {{ index + 1 }}</span>
-					<button v-if="lines.length > 1" type="button" class="transition-colors hover:text-teal" :aria-label="`Position ${index + 1} entfernen`" @click="lines.splice(index, 1)"><IconCross size="sm" /></button>
-				</div>
+			<!-- A collapsible per position, titled with what it is once chosen, *Entfernen* at its foot,
+			     then the course form's dashed *… hinzufügen* across the column ([[FormNode]]). -->
+			<div class="mt-48">
+				<Collapsible v-for="(line, index) in lines" :key="line.key" expanded :invalid="Object.keys(errors).some((key) => key.startsWith(`lines.${index}.`))">
+					<template #title>Position {{ index + 1 }}<span v-if="heading(line)" class="ml-12 font-normal">{{ heading(line) }}</span></template>
 
-				<Select :model-value="line.choice" label="Software" :options="options" placeholder="Bitte wählen" required :error="lineError(index, 'variant')" @update:model-value="(value) => choose(line, value)" />
+					<div class="mt-24">
+						<Select :model-value="line.choice" label="Software" :options="options" placeholder="Bitte wählen" required :error="lineError(index, 'variant')" @update:model-value="(value) => choose(line, value)" />
 
-				<template v-if="line.choice === FREE">
-					<Field v-model="line.title" label="Bezeichnung" required :error="lineError(index, 'title')" />
-					<Field v-model="line.price" label="Preis (CHF, netto)" required :error="lineError(index, 'price')" />
-				</template>
+						<template v-if="line.choice === FREE">
+							<Field v-model="line.title" label="Bezeichnung" required :error="lineError(index, 'title')" />
+							<Field v-model="line.price" label="Preis (CHF, netto)" required :error="lineError(index, 'price')" />
+						</template>
 
-				<Select
-					v-if="variants.get(line.choice)?.product.hosts.length"
-					v-model="line.host"
-					label="Host-Software"
-					:options="variants.get(line.choice).product.hosts.map((host) => ({ value: host, label: host }))"
-					placeholder="Bitte wählen"
-					required
-					:error="lineError(index, 'host')"
-				/>
+						<Select
+							v-if="variants.get(line.choice)?.product.hosts.length"
+							v-model="line.host"
+							label="Host-Software"
+							:options="variants.get(line.choice).product.hosts.map((host) => ({ value: host, label: host }))"
+							placeholder="Bitte wählen"
+							required
+							:error="lineError(index, 'host')"
+						/>
 
-				<Field
-					v-model="line.quantity"
-					type="number"
-					label="Anzahl"
-					required
-					:hint="variants.get(line.choice)?.min_quantity ? `Im Shop mindestens ${variants.get(line.choice).min_quantity}.` : null"
-					:error="lineError(index, 'quantity')"
-				/>
+						<Field
+							v-model="line.quantity"
+							type="number"
+							label="Anzahl"
+							required
+							:hint="variants.get(line.choice)?.min_quantity ? `Im Shop mindestens ${variants.get(line.choice).min_quantity}.` : null"
+							:error="lineError(index, 'quantity')"
+						/>
+
+						<div v-if="lines.length > 1" class="flex justify-end">
+							<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="lines.splice(index, 1)">Entfernen</button>
+						</div>
+					</div>
+				</Collapsible>
 			</div>
 
-			<p v-if="errors.lines" class="pt-8 text-md text-danger lg:text-lg">{{ errors.lines[0] }}</p>
+			<p v-if="errors.lines" class="mb-16 text-md text-danger lg:text-lg">{{ errors.lines[0] }}</p>
 
-			<button type="button" class="mt-8 mb-32 flex items-center gap-12 hover:text-teal" @click="lines.push(blank())">
-				<span>Position hinzufügen</span>
-				<IconPlus size="md" />
+			<button type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="lines.push(blank())">
+				Position hinzufügen
 			</button>
 
-			<!-- What the invoice will say. A free order raises none. -->
-			<dl class="mb-16 border-t border-black pt-16 lg:mb-32">
-				<div class="flex justify-between"><dt>Netto</dt><dd>{{ chf(totals.net) }}</dd></div>
-				<div class="flex justify-between"><dt>MWST {{ totals.rate }} %</dt><dd>{{ chf(totals.vat) }}</dd></div>
-				<div class="flex justify-between font-bold"><dt>Total</dt><dd>{{ chf(totals.total) }}</dd></div>
-				<p class="mt-16 text-md text-gray-600 lg:text-lg">
-					{{ totals.net > 0 ? 'Die Rechnung wird beim Erfassen erstellt.' : 'Eine kostenlose Bestellung hat keine Rechnung.' }}
-				</p>
+			<!-- What the invoice will say, as rows with grey rules between them, the total over a black one.
+			     A free order raises none. -->
+			<dl class="mt-48 mb-16 divide-y divide-gray-400 border-y border-black text-lg tabular-nums lg:mb-32 lg:text-xl">
+				<div class="flex justify-between gap-16 py-10"><dt>Netto</dt><dd>{{ chf(totals.net) }}</dd></div>
+				<div class="flex justify-between gap-16 py-10"><dt>MWST {{ totals.rate }} %</dt><dd>{{ chf(totals.vat) }}</dd></div>
+				<div class="flex justify-between gap-16 py-10 font-bold"><dt>Total</dt><dd>{{ chf(totals.total) }}</dd></div>
 			</dl>
+			<p class="mb-16 text-md text-gray-600 lg:mb-32 lg:text-lg">
+				{{ totals.net > 0 ? 'Die Rechnung wird beim Erfassen erstellt.' : 'Eine kostenlose Bestellung hat keine Rechnung.' }}
+			</p>
 
 			<div class="mb-16 lg:mb-32">
 				<Button type="submit" class="w-full" :class="{ 'pointer-events-none opacity-60': saving }">{{ saving ? 'Wird erfasst …' : 'Bestellung erfassen' }}</Button>
