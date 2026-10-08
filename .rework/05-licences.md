@@ -39,6 +39,14 @@ right below, which supersedes parts of *The real catalogue*.
   the variant's own form (`/dashboard/software/{product}/variante/{uuid}`,
   [[LicenceVariantSchema]]), a `+` to add. Marcel replaced the first build's
   repeater the same day: nine fields per variant on one page was too much.
+- **Labels settled with Marcel, 2026-10-08:** the product form opens with
+  *Titel*, then *Software* and *Hersteller* each full width. On the variant,
+  `access` is *Nutzung*: *Einzelplatz (named)*, *Netzwerk (floating)*,
+  *Einzelplatz oder Netzwerk* (the vendors' terms alone meant nothing to him);
+  `listed` is *Im Shop bestellbar*, with a hint that unticked means only for
+  orders VIAK enters (it is not *Publizieren*, which is the product's);
+  *Mindestmenge* is the smallest quantity in the basket. No *Abbrechen*
+  button: no dashboard form has one, *Zurück* does that job.
 - **Einstellungen** gains *Software* and *Hersteller* lists; their badges
   count courses and licences, and a used one is not deleted.
 
