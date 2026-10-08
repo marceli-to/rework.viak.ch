@@ -2,8 +2,9 @@
  * The settings lists, in legacy's order, with what one of each is called
  * ([[07-dashboard]], step 6). *Software* and *Hersteller* follow since
  * chunk 05 ([[05-licences]]): what licence products (and courses) belong
- * to, and their makers. `home` puts a list on that page instead of here
- * (Marcel, 2026-10-08).
+ * to, and their makers. `hidden` keeps a list out of here: a software
+ * has a page and its own form on the *Software* screen; the makers are
+ * back here since 2026-10-08 (Marcel).
  */
 export const KINDS = {
 	categories: { title: 'Kategorien', noun: 'Kategorie', schema: 'term' },
@@ -11,8 +12,8 @@ export const KINDS = {
 	levels: { title: 'Levels', noun: 'Level', schema: 'term' },
 	tags: { title: 'Tags', noun: 'Tag', schema: 'term' },
 	locations: { title: 'Orte', noun: 'Ort', schema: 'location' },
-	software: { title: 'Software', noun: 'Software', schema: 'term', home: 'licences' },
-	manufacturers: { title: 'Hersteller', noun: 'Hersteller', schema: 'term', home: 'licences' },
+	software: { title: 'Software', noun: 'Software', schema: 'term', hidden: true },
+	manufacturers: { title: 'Hersteller', noun: 'Hersteller', schema: 'term' },
 };
 
 const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;

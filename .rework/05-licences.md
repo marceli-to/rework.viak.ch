@@ -143,12 +143,14 @@ to the course page as possible", the list with its filter too).
   dimmed unpublished, products counted), the **pencil** on it to the
   software's form, its products inside, a **`+`** under them adding a
   product already filed under it (`?software=`, the form's new `prefill`).
-  The title's `+` adds a software. *Hersteller* stays a list below.
+  The title's `+` adds a software. **Hersteller went back to
+  *Einstellungen*** the same day (Marcel); the `+` beside the product form's
+  select still adds one.
 - **The software form**: the pencil and the title's `+` open
   *Software erfassen / bearbeiten* ([[SoftwareSchema]], `views/Licence/Software.vue`,
   `/dashboard/software/liste/software/{uuid}`), the course form minus number,
   fee, facts, PDF text, levels, languages and videos. Delete refused while a
-  course or product uses it. *Hersteller* keeps the settings form.
+  course or product uses it.
 - **`/de/software`**: the course list's page with a card per software
   (`card/software`: category, title, square teaser; overlay maker(s),
   number of products, *ab CHF … exkl. MWST*) and **the course list's filter

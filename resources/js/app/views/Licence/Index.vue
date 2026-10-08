@@ -13,7 +13,6 @@ import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
 import SearchField from '@/components/list/SearchField.vue';
-import { KINDS, usage } from '@/views/Setting/kinds';
 
 /**
  * *Software* ([[05-licences]], `/dashboard/software`): the catalogue as the
@@ -28,8 +27,8 @@ import { KINDS, usage } from '@/views/Setting/kinds';
  *   price net, *Nur manuell* when none is on the site. The **`+`** under them
  *   adds a product already filed under this software. A software only
  *   courses use (SketchUp) has none, and says so.
- * - The title's `+` adds a software. *Hersteller* stays a list below, its
- *   own form the settings one.
+ * - The title's `+` adds a software. The makers are a list in
+ *   *Einstellungen* (Marcel, 2026-10-08).
  *
  * The search (`?suche=`) finds a product by its name, maker or a licence's
  * name or article number, and a software by its name, which shows all of its
@@ -66,8 +65,6 @@ const software = computed(() =>
 		.sort((a, b) => a.title.localeCompare(b.title, 'de', { sensitivity: 'base' })),
 );
 
-const makers = computed(() => (search.value ? lists.value.manufacturers.filter((term) => matches(term.title)) : lists.value.manufacturers));
-
 const price = (value) => Number(value).toFixed(2);
 
 onMounted(async () => {
@@ -78,7 +75,6 @@ onMounted(async () => {
 	} finally {
 		loading.value = false;
 	}
-	if (route.query.liste) requestAnimationFrame(() => document.getElementById(`liste-${route.query.liste}`)?.scrollIntoView());
 });
 </script>
 
@@ -139,18 +135,6 @@ onMounted(async () => {
 						</RouterLink>
 					</div>
 				</Collapsible>
-			</div>
-
-			<div id="liste-manufacturers" class="mt-64 mb-64 scroll-mt-24">
-				<ListHeader :title="KINDS.manufacturers.title" :create="{ name: 'licence.term.create', params: { kind: 'manufacturers' } }" tag="h2" />
-
-				<EditableListItem v-for="term in makers" :key="term.uuid" :edit="{ name: 'licence.term.edit', params: { kind: 'manufacturers', uuid: term.uuid } }" wide>
-					<div class="col-span-12 sm:col-span-4">{{ term.title }}</div>
-					<div class="col-span-12 flex flex-wrap gap-8 pr-40 max-sm:mt-8 sm:col-span-8">
-						<Badge v-for="text in usage('manufacturers', term)" :key="text">{{ text }}</Badge>
-					</div>
-				</EditableListItem>
-				<NoResults v-if="!makers.length">{{ search ? 'Keine gefunden.' : 'Noch keine erfasst.' }}</NoResults>
 			</div>
 		</template>
 	</section>

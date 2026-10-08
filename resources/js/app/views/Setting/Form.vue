@@ -9,15 +9,12 @@ import { KINDS, usage } from './kinds';
  * A term or a place — legacy's five settings forms as two schemas
  * ([[TermSchema]], [[LocationSchema]]), picked by the kind in the path.
  * Deleting is refused while something uses it ([[SettingController]]).
- * A list shown on *Software* has its form there too ([[kinds]]).
  */
 const route = useRoute();
 const key = computed(() => route.params.kind);
 const kind = computed(() => KINDS[key.value]);
 const calls = computed(() => settingsOf(key.value));
 const name = (form) => form.title ?? form.description;
-const home = computed(() => kind.value?.home);
-const editRoute = computed(() => (home.value ? 'licence.term.edit' : 'setting.edit'));
 </script>
 
 <template>
@@ -28,8 +25,8 @@ const editRoute = computed(() => (home.value ? 'licence.term.edit' : 'setting.ed
 		:load="calls.load"
 		:save="calls.save"
 		:remove="calls.remove"
-		:list="{ name: home ?? 'settings', query: { liste: key } }"
-		:edit="(uuid) => ({ name: editRoute, params: { kind: key, uuid } })"
+		:list="{ name: 'settings', query: { liste: key } }"
+		:edit="(uuid) => ({ name: 'setting.edit', params: { kind: key, uuid } })"
 		:noun="kind.noun"
 		:titles="{ create: `${kind.noun} hinzufügen`, edit: `${kind.noun} bearbeiten` }"
 		:deletion="{

@@ -182,19 +182,6 @@ const routes = [
 		component: () => import('@/views/Licence/Software.vue'),
 		meta: { title: 'Software bearbeiten' },
 	},
-	// *Hersteller*, listed on the *Software* page: the settings form, under this menu item.
-	{
-		path: '/dashboard/software/liste/:kind/erfassen',
-		name: 'licence.term.create',
-		component: () => import('@/views/Setting/Form.vue'),
-		meta: { title: 'Software' },
-	},
-	{
-		path: '/dashboard/software/liste/:kind/:uuid',
-		name: 'licence.term.edit',
-		component: () => import('@/views/Setting/Form.vue'),
-		meta: { title: 'Software' },
-	},
 	{
 		path: '/dashboard/software/erfassen',
 		name: 'licence.create',
