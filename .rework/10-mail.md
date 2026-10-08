@@ -1,22 +1,30 @@
-# 10 — Mail, and seeing the flows work (not yet built)
+# 10 — Mail, and seeing the flows work
 
 What the application tells people, when, and how to watch it happen before a
 real student ever receives one.
 
 ## Status
 
-**Not built. Scoped 2026-09-24.** No Mailable exists in the rework. The domain
-events fire — `BookingMade`, `BookingCancelled`, `EventConfirmed`,
-`ParticipantThresholdCrossed` — but the only listeners are
-`RaiseInvoicesOnConfirmation` and `NotifyParticipantThreshold`, and neither
-sends anything. `PostMessage` records its recipients and sends nothing
-([[09-public-site]]). The only mail that leaves the app today is Fortify's:
-the stock Laravel verification and password-reset notifications, in Laravel's
-layout, not VIAK's.
+**Built 2026-09-29**, except the two *Invoice paid* rows. Every row of the
+flow table below is a queued [[VIAKMail]] with its listener, its tests and its
+scenario step; the Kontakt and Firmenschulung mails followed on 2026-10-06.
+What is in place is listed under *Built so far*.
 
-So a student can register, book, have their course confirmed and invoiced, and
-hear about none of it. **This is the crucial missing piece of every flow.**
-Everything upstream of the mail — state, invoices, PDFs — is built and tested.
+Still open:
+
+- **Invoice paid** (`InvoicePaidConfirmation`, `InvoicePaidNotification`):
+  legacy sends them only from its Stripe payment page, so they come with the
+  card-payment page (#28), designed with the checkout ([[13-checkout]]).
+- **Licence orders send nothing**, neither to the customer nor to VIAK
+  ([[05-licences]]). Legacy's shop is not in this table; those mails are
+  designed with the checkout too.
+
+*As scoped, 2026-09-24:* no Mailable existed. The domain events fired —
+`BookingMade`, `BookingCancelled`, `EventConfirmed`,
+`ParticipantThresholdCrossed` — but no listener sent anything, and the only
+mail leaving the app was Fortify's stock verification and password reset. So
+a student could register, book, have their course confirmed and invoiced, and
+hear about none of it.
 
 Nothing blocks it. Everything legacy attaches — invoices and the participation
 confirmation — is already generated ([[03-invoices]]).
@@ -120,10 +128,9 @@ in a scenario (below).
   **The gap is on the server, in both.** Legacy's `destroy()` detaches the
   experts and deletes, with no check — the rule lives only in the Vue template.
   The rework's `EventController::destroy` checks `EventPolicy::delete`, which
-  is `isAdmin()` and nothing else. No rework screen calls it yet, but the route
-  is live. **Tracked in `Todo.md`**, *With the admin dashboard's event screens*:
-  refuse the delete on the server while the event has active bookings, and on
-  past events.
+  is `isAdmin()` and nothing else. **Closed in the rework 2026-09-24**
+  (b60c515): `Admin\EventController::destroy` refuses with a 422 while the
+  event has any booking, cancelled ones included.
 - **A late booker receives every earlier message**, one mail each
   (`Facades/Message::past`, called from the checkout). A student booking into a
   course with eight notes gets eight mails at once. **Settled 2026-09-24
@@ -285,7 +292,7 @@ published, so production gets no `telescope_entries` table.
 5. Telescope, once there is enough happening that reading the inbox is not
    enough.
 
-**Waiting on this chunk: the course-date form's three state boxes**
+**Done 2026-09-29: the course-date form's three state boxes**, which waited on this chunk
 ([[07-dashboard]], *Step 6*). Legacy's green *Veranstaltung bestätigen*, green
 *Veranstaltung abschliessen* (once the date is past) and orange *Veranstaltung
 absagen* sit between *Speichern* and the delete box, each behind a confirm,
@@ -297,5 +304,5 @@ step 4. The server half exists: `SetEventState` and `PATCH
 there for the screen. Also then: the delete box's *N Buchung(en)* links to the
 date's page, once the event page (dashboard step 7) exists.
 
-Registration and password reset come in step 4 too: they send Laravel's stock
-mail today, and legacy's `StudentRegistered` is VIAK's own.
+Registration and password reset came in step 4 too, as `EmailVerification`
+and `PasswordReset`, VIAK's own German mails in place of Laravel's stock ones.
