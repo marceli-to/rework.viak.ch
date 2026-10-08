@@ -15,6 +15,33 @@ questions*; prices and article numbers are the one that blocks an import.
 article numbers. Nothing blocks the import any more; see *The client's answers*
 right below, which supersedes parts of *The real catalogue*.
 
+**Built 2026-10-08, first slice: the catalogue.** What is there:
+
+- **Schema** (`2026_10_08_000001_create_licence_catalogue`): `manufacturers`
+  (taxonomy-shaped), `licence_products` (software group, maker, title, slug,
+  description, `hosts`, `three_years_on_request`, publish, order),
+  `licence_variants` (title, `sku`, net `price`, `licence_type`, `access`,
+  `platforms`, `note`, `min_quantity`, `listed`, order). Products and variants
+  soft-delete, since orders will point at them.
+- **Import**: `php artisan licences:import` reads `database/data/licences.json`,
+  which *is* the grouping below (generated once from the client's xlsx, which
+  stays outside the repo). Rerunnable: what exists is left alone; `--refresh`
+  writes the file over it and moves variants to the product the file names,
+  for #47–49. 107 variants in 39 products (38 plus *Update Maxwell V5* on its
+  own until #47), 9 new software groups, 15 makers.
+- **Dashboard → Lizenzen** (`/dashboard/lizenzen`, in the burger menu): one
+  collapsible per software group, per product its maker, variant count,
+  *ab CHF* (cheapest listed non-demo, net) and *Nur manuell* when no variant
+  is on the site. The form ([[LicenceProductSchema]]) edits the product and
+  its variants as a repeater; variants are matched by uuid, one left out is
+  soft-deleted.
+- **Einstellungen** gains *Software* and *Hersteller* lists; their badges
+  count courses and licences, and a used one is not deleted.
+
+**Next, in order:** licence orders (the admin's manual order with the free
+line, the dispatch worklist), then the public software pages and the checkout
+(`13-checkout.md`), which need the design review the mockups still lack.
+
 ## The client's answers — 2026-10-08
 
 The client sent the list back (`Software_Lizenztypen_claude.xlsx`, same name, now

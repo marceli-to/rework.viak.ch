@@ -27,6 +27,7 @@ import IconProfile from '@/components/icons/Profile.vue';
  * `sections` keep legacy's labels and order, with the chunk's decisions applied
  * ([[07-dashboard]]): *Startseite* and *Heroes* are gone from *Seiteninhalte*,
  * *Testimonials* is new, and *Team* is back for the *Über uns* page (2026-10-06).
+ * *Lizenzen* is new with chunk 05: the catalogue VIAK keeps itself.
  */
 const route = useRoute();
 
@@ -46,6 +47,7 @@ const overflow = [
 		],
 	},
 	{ label: 'Rabatt-Codes', to: { name: 'discount-codes' } },
+	{ label: 'Lizenzen', to: { name: 'licences' } },
 	{
 		label: 'Seiteninhalte',
 		key: 'content',

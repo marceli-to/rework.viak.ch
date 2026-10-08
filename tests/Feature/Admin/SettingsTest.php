@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Event;
+use App\Models\LicenceProduct;
 use App\Models\Location;
 use App\Models\Tag;
 use App\Models\User;
@@ -27,7 +28,7 @@ it('lists every kind, with what uses each term', function () {
 
 	$data = $this->actingAs($this->admin)->getJson('/api/admin/settings')->json('data');
 
-	expect(array_keys($data))->toBe(['categories', 'languages', 'levels', 'tags', 'locations'])
+	expect(array_keys($data))->toBe(['categories', 'languages', 'levels', 'tags', 'locations', 'software', 'manufacturers'])
 		->and($data['categories'][0])->toMatchArray(['title' => 'Architektur', 'usage' => 1]);
 });
 
@@ -64,7 +65,19 @@ it('asks for a name, and a real link for the map', function () {
 });
 
 it('knows no other kind', function () {
-	$this->actingAs($this->admin)->postJson('/api/admin/settings/software', ['title' => 'Rhino'])->assertNotFound();
+	$this->actingAs($this->admin)->postJson('/api/admin/settings/projects', ['title' => 'Rhino'])->assertNotFound();
+});
+
+it('counts the licences on a software group and a maker, and keeps both while used', function () {
+	$product = LicenceProduct::factory()->create();
+
+	$data = $this->actingAs($this->admin)->getJson('/api/admin/settings')->json('data');
+
+	expect($data['software'][0])->toMatchArray(['usage' => 1, 'courses' => 0, 'licences' => 1])
+		->and($data['manufacturers'][0])->toMatchArray(['usage' => 1, 'licences' => 1]);
+
+	$this->deleteJson("/api/admin/settings/manufacturers/{$product->manufacturer->uuid}")->assertStatus(422);
+	$this->deleteJson("/api/admin/settings/software/{$product->software->uuid}")->assertStatus(422);
 });
 
 it('refuses to delete a term a course is filed under, or a place a date is at', function () {

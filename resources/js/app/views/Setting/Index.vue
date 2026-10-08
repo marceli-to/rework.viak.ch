@@ -58,7 +58,9 @@ onMounted(async () => {
 					wide
 				>
 					<div class="col-span-12 sm:col-span-4">{{ label(key, item) }}</div>
-					<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8"><Badge>{{ usage(key, item.usage) }}</Badge></div>
+					<div class="col-span-12 flex flex-wrap gap-8 pr-40 max-sm:mt-8 sm:col-span-8">
+						<Badge v-for="text in usage(key, item)" :key="text">{{ text }}</Badge>
+					</div>
 				</EditableListItem>
 				<NoResults v-if="!lists[key].length">Noch keine erfasst.</NoResults>
 

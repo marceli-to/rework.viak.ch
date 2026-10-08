@@ -4,28 +4,24 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Concerns\HasTestimonials;
 use App\Models\Concerns\HasUuid;
-use App\Models\Concerns\IsTaxonomy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 
 /**
- * A software group: what a course teaches, and since chunk 05 what licence
- * products are sold under, Rhino, V-Ray, Maxwell… ([[05-licences]]). Still
- * taxonomy-shaped; the software pages will give it copy.
+ * *Hersteller* — McNeel, Chaos, Maxon… ([[05-licences]]). On the product, not on
+ * the software group: the Rhino group alone sells plugins by five makers. The
+ * taxonomies' shape, so *Einstellungen* edits it, but not one of them: no
+ * course is filed under a manufacturer.
  */
-class Software extends Model
+class Manufacturer extends Model
 {
-	use HasTestimonials;
 	use HasTranslations;
 	use HasUuid;
-	use IsTaxonomy;
 	use SoftDeletes;
-
-	protected $table = 'software';
 
 	protected $fillable = ['title', 'order', 'publish'];
 
@@ -36,9 +32,13 @@ class Software extends Model
 		return ['publish' => 'boolean'];
 	}
 
-	/** The licence products sold under this group. */
 	public function products(): HasMany
 	{
 		return $this->hasMany(LicenceProduct::class);
+	}
+
+	public function scopeOrdered(Builder $query): Builder
+	{
+		return $query->orderBy('order');
 	}
 }

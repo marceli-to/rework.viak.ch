@@ -145,6 +145,24 @@ const routes = [
 		meta: { title: 'Rabatt-Code bearbeiten' },
 	},
 	{
+		path: '/dashboard/lizenzen',
+		name: 'licences',
+		component: () => import('@/views/Licence/Index.vue'),
+		meta: { title: 'Lizenzen' },
+	},
+	{
+		path: '/dashboard/lizenz/erfassen',
+		name: 'licence.create',
+		component: () => import('@/views/Licence/Form.vue'),
+		meta: { title: 'Lizenz erfassen' },
+	},
+	{
+		path: '/dashboard/lizenz/:uuid',
+		name: 'licence.edit',
+		component: () => import('@/views/Licence/Form.vue'),
+		meta: { title: 'Lizenz bearbeiten' },
+	},
+	{
 		path: '/dashboard/testimonials',
 		name: 'content.testimonials',
 		component: () => import('@/views/Testimonial/Index.vue'),

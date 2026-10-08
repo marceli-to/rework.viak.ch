@@ -130,7 +130,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	     legacy's dashed *Video hinzufügen* across the column. -->
 	<div v-else-if="field.type === 'repeater'">
 		<div v-for="(row, index) in rows" :key="row.uuid ?? `neu-${index}`" class="mb-32 border-b border-black pb-24">
-			<template v-for="child in field.fields" :key="child.name">
+			<template v-for="(child, position) in field.fields" :key="child.name ?? position">
 				<div v-if="child.type === 'checkbox'" class="flex items-center justify-between">
 					<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
 					<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>

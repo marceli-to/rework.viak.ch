@@ -1,0 +1,1889 @@
+[
+	{
+		"software": "Rhinoceros",
+		"products": [
+			{
+				"title": "Rhinoceros 8",
+				"manufacturer": "McNeel",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RHN-1002",
+						"price": "940.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update",
+						"sku": "RHN-1012",
+						"price": "550.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "EDU",
+						"sku": "RHN-1091",
+						"price": "190.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "EDU Upgrade",
+						"sku": "RHN-1092",
+						"price": "90.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "Lab license 30 seats",
+						"sku": "RHN-1093",
+						"price": "910.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "Lab license 30 seats Upgrade",
+						"sku": "RHN-1094",
+						"price": "460.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					}
+				]
+			},
+			{
+				"title": "Bongo 2",
+				"manufacturer": "McNeel",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RHN-1121",
+						"price": "470.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update",
+						"sku": "RHN-1122",
+						"price": "280.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "VisualARQ 3",
+				"manufacturer": "Asuni",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RHN-2001",
+						"price": "760.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update",
+						"sku": "RHN-2005",
+						"price": "460.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Educational",
+						"sku": "RHN-2008",
+						"price": "100.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					}
+				]
+			},
+			{
+				"title": "Lands Design 6",
+				"manufacturer": "Asuni",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RHN-2011",
+						"price": "760.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update",
+						"sku": "RHN-2012",
+						"price": "460.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Karamba3D PRO",
+				"manufacturer": "Clemens Preisinger",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "RHN-2031",
+						"price": "860.00",
+						"licence_type": "subscription",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "RHN-2032",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "MatrixGold",
+				"manufacturer": "Gemvision",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RHN-2042",
+						"price": "5220.00",
+						"licence_type": "perpetual",
+						"access": "either",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					}
+				]
+			},
+			{
+				"title": "Drakon",
+				"manufacturer": "Drakon3D",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RHN-2041",
+						"price": "1900.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "V-Ray",
+		"products": [
+			{
+				"title": "V-Ray",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": true,
+				"variants": [
+					{
+						"title": "Solo, named",
+						"sku": "VRY-1001",
+						"price": "450.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Premium, floating",
+						"sku": "VRY-1002",
+						"price": "680.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Collection, named",
+						"sku": "VRY-1004",
+						"price": "800.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Collection, floating",
+						"sku": "VRY-1006",
+						"price": "1090.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Chaos Vantage",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "floating",
+						"sku": "VRY-1007",
+						"price": "600.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Chaos Phoenix",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "VRY-1201",
+						"price": "340.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "V-Ray Render Node",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "1 Stück",
+						"sku": "VRY-2201",
+						"price": "190.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "5 Stück",
+						"sku": "VRY-2202",
+						"price": "800.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "20 Stück",
+						"sku": "VRY-2203",
+						"price": "2520.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Chaos Scans Materialbibliothek",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "VRY-2301",
+						"price": "370.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "V-Ray Education Collection",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "University 0-14 seats",
+						"sku": "VRY-2401",
+						"price": "130.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "University 15-29 seats",
+						"sku": "VRY-2402",
+						"price": "120.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "University 30-49 seats",
+						"sku": "VRY-2403",
+						"price": "110.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "University 50-74 seats",
+						"sku": "VRY-2404",
+						"price": "90.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "University 100+ seats",
+						"sku": "VRY-2405",
+						"price": "70.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Twinmotion",
+		"products": [
+			{
+				"title": "Twinmotion",
+				"manufacturer": "Epic Games",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "TWN-1061",
+						"price": "370.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "TWN-1101",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Unreal Engine",
+		"products": [
+			{
+				"title": "Unreal Engine",
+				"manufacturer": "Epic Games",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "EUE-1001",
+						"price": "1600.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "EUE-1101",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Veras",
+		"products": [
+			{
+				"title": "Veras",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Pro, named",
+						"sku": "VRS-1001",
+						"price": "320.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro, floating",
+						"sku": "VRS-1002",
+						"price": "480.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Ultra, floating",
+						"sku": "VRS-1003",
+						"price": "1370.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "VRS-1004",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "formZ",
+		"products": [
+			{
+				"title": "formZ 10",
+				"manufacturer": "AutoDesSys",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Core",
+						"sku": "FMZ-1001",
+						"price": "410.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro",
+						"sku": "FMZ-1002",
+						"price": "820.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro, Jahresmietlizenz",
+						"sku": "FMZ-1006",
+						"price": "360.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro Update 9 auf 10",
+						"sku": "FMZ-1021",
+						"price": "330.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro Update 8 auf 10",
+						"sku": "FMZ-1022",
+						"price": "370.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro Update 7 auf 10",
+						"sku": "FMZ-1023",
+						"price": "410.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Pro Demoversion",
+						"sku": "FMZ-1101",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "CINEMA 4D",
+		"products": [
+			{
+				"title": "Cinema 4D",
+				"manufacturer": "Maxon",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Einzelpersonen",
+						"sku": "C4D-1101",
+						"price": "760.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Teams, named user",
+						"sku": "C4D-1111",
+						"price": "1060.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": 3,
+						"listed": true
+					},
+					{
+						"title": "Teams, floating",
+						"sku": "SW10267",
+						"price": "1470.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": 3,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Maxon One",
+				"manufacturer": "Maxon",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Einzelpersonen",
+						"sku": "C4D-1201",
+						"price": "1100.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Teams, named user",
+						"sku": "C4D-1211",
+						"price": "1360.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": 3,
+						"listed": true
+					},
+					{
+						"title": "Teams, floating",
+						"sku": "SW10269",
+						"price": "1890.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": 3,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Rhino.io",
+				"manufacturer": "LAUBlab",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "C4D-2501",
+						"price": "130.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Enscape",
+		"products": [
+			{
+				"title": "Enscape",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": true,
+				"variants": [
+					{
+						"title": "Solo, named",
+						"sku": "ENC-1001",
+						"price": "520.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Premium, named",
+						"sku": "ENC-1002",
+						"price": "600.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Premium, floating",
+						"sku": "ENC-1003",
+						"price": "960.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Collection, named",
+						"sku": "ENC-1012",
+						"price": "660.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Collection, floating",
+						"sku": "ENC-1015",
+						"price": "1090.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "ENC-1101",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Enscape Education Collection",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "University 0-14 seats",
+						"sku": "ENC-1201",
+						"price": "130.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					},
+					{
+						"title": "University 100+ seats",
+						"sku": "ENC-1202",
+						"price": "65.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": false
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Corona Renderer",
+		"products": [
+			{
+				"title": "Corona",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": true,
+				"variants": [
+					{
+						"title": "Solo, named",
+						"sku": "COR-1021",
+						"price": "360.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Premium, floating",
+						"sku": "COR-1031",
+						"price": "470.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Collection, named",
+						"sku": "COR-1130",
+						"price": "710.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Collection, floating",
+						"sku": "COR-1131",
+						"price": "890.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Corona Render Node",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "1 Stück",
+						"sku": "COR-1101",
+						"price": "140.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "5 Stück",
+						"sku": "COR-1105",
+						"price": "600.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "KeyShot",
+		"products": [
+			{
+				"title": "KeyShot Studio",
+				"manufacturer": "Luxion",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Professional",
+						"sku": "KEY-1201",
+						"price": "1060.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "Aktivierung auf max. 2 Computern",
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Business",
+						"sku": "KEY-1202",
+						"price": "1310.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Web",
+						"sku": "KEY-1251",
+						"price": "390.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "VR",
+						"sku": "KEY-1261",
+						"price": "970.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Lumion",
+		"products": [
+			{
+				"title": "Lumion View",
+				"manufacturer": "Act-3D",
+				"hosts": null,
+				"three_years_on_request": true,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "LUM-1000",
+						"price": "190.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "LUM-1002",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Lumion Pro",
+				"manufacturer": "Act-3D",
+				"hosts": null,
+				"three_years_on_request": true,
+				"variants": [
+					{
+						"title": "named",
+						"sku": "LUM-1003",
+						"price": "950.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "floating",
+						"sku": "LUM-1005",
+						"price": "1240.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "LUM-1101",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "named",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Maxwell Render",
+		"products": [
+			{
+				"title": "Maxwell V5 Bundle",
+				"manufacturer": "Next Limit",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "node-locked",
+						"sku": "MXS-1001",
+						"price": "710.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "Studio + alle Plugins",
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "floating",
+						"sku": "MXS-1002",
+						"price": "900.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "Studio + alle Plugins",
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update, node-locked",
+						"sku": "MXS-1503",
+						"price": "470.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update, floating",
+						"sku": "MXS-1504",
+						"price": "570.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Maxwell V5",
+				"manufacturer": "Next Limit",
+				"hosts": [
+					"Rhino",
+					"Archicad",
+					"Cinema 4D",
+					"SketchUp",
+					"formZ",
+					"3ds Max",
+					"Maya"
+				],
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "node-locked",
+						"sku": "MXS-1011",
+						"price": "470.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "floating",
+						"sku": "MXS-1012",
+						"price": "660.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Maxwell V5 Studio",
+				"manufacturer": "Next Limit",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "node-locked",
+						"sku": "MXS-1101",
+						"price": "470.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "floating",
+						"sku": "MXS-1102",
+						"price": "660.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Maxwell V5 Rendernodes",
+				"manufacturer": "Next Limit",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Bundle mit Neulizenz",
+						"sku": "MXS-1201",
+						"price": "100.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "5 Rendernodes, nur zusammen mit einer Neulizenz",
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "separat",
+						"sku": "MXS-1202",
+						"price": "190.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "5 Rendernodes",
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Update",
+						"sku": "MXS-1601",
+						"price": "100.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "Update Maxwell V5",
+				"manufacturer": "Next Limit",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "node-locked",
+						"sku": "MXS-1501",
+						"price": "310.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "floating",
+						"sku": "MXS-1502",
+						"price": "360.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "Anima",
+		"products": [
+			{
+				"title": "Chaos Anima",
+				"manufacturer": "Chaos",
+				"hosts": null,
+				"three_years_on_request": true,
+				"variants": [
+					{
+						"title": "floating",
+						"sku": "ALL-1001",
+						"price": "640.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "ALL-1051",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "floating",
+						"platforms": [
+							"windows"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "ZBrush",
+		"products": [
+			{
+				"title": "Maxon ZBrush",
+				"manufacturer": "Maxon",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Jahresmietlizenz",
+						"sku": "ZBR-1011",
+						"price": "350.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "RealFlow",
+		"products": [
+			{
+				"title": "RealFlow 10.5",
+				"manufacturer": "Next Limit",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "node-locked",
+						"sku": "RFL-1001",
+						"price": "950.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "floating",
+						"sku": "RFL-1002",
+						"price": "1140.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Plus, node-locked",
+						"sku": "RFL-1011",
+						"price": "1230.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "Inkl. 5 Simnodes",
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Plus, floating",
+						"sku": "RFL-1012",
+						"price": "1420.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": "Inkl. 5 Simnodes",
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "RealFlow Plugin",
+				"manufacturer": "Next Limit",
+				"hosts": [
+					"Cinema 4D",
+					"3ds Max",
+					"Maya"
+				],
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Vollversion",
+						"sku": "RFL-1101",
+						"price": "660.00",
+						"licence_type": "perpetual",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			},
+			{
+				"title": "RealFlow Simnodes",
+				"manufacturer": "Next Limit",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "5 Simnodes",
+						"sku": "RFL-1901",
+						"price": "470.00",
+						"licence_type": "perpetual",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "HDR Light Studio",
+		"products": [
+			{
+				"title": "HDR Light Studio",
+				"manufacturer": "Lightmap",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "PRO",
+						"sku": "HDR-1101",
+						"price": "410.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "PRO, floating",
+						"sku": "HDR-1121",
+						"price": "870.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "AUTOMOTIVE",
+						"sku": "HDR-1211",
+						"price": "1210.00",
+						"licence_type": "subscription",
+						"access": "named",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "AUTOMOTIVE, floating",
+						"sku": "HDR-1221",
+						"price": "1810.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	},
+	{
+		"software": "MyArchitectAI",
+		"products": [
+			{
+				"title": "MyArchitectAI",
+				"manufacturer": "Luminary Ventures OÜ",
+				"hosts": null,
+				"three_years_on_request": false,
+				"variants": [
+					{
+						"title": "Starter",
+						"sku": "MYA1001",
+						"price": "240.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Studio",
+						"sku": "MYA1002",
+						"price": "430.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Team",
+						"sku": "MYA1003",
+						"price": "810.00",
+						"licence_type": "subscription",
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					},
+					{
+						"title": "Demoversion",
+						"sku": "MYA0001",
+						"price": "0.00",
+						"licence_type": null,
+						"access": "floating",
+						"platforms": [
+							"windows",
+							"macos"
+						],
+						"note": null,
+						"min_quantity": null,
+						"listed": true
+					}
+				]
+			}
+		]
+	}
+]

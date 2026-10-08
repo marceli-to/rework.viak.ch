@@ -127,6 +127,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('projects/{project}', [Admin\ProjectController::class, 'update']);
 		Route::delete('projects/{project}', [Admin\ProjectController::class, 'destroy']);
 
+		// The licence catalogue, which VIAK keeps itself ([[05-licences]]).
+		Route::get('licences', [Admin\LicenceProductController::class, 'index']);
+		Route::post('licences', [Admin\LicenceProductController::class, 'store']);
+		Route::get('licences/{product}', [Admin\LicenceProductController::class, 'show']);
+		Route::put('licences/{product}', [Admin\LicenceProductController::class, 'update']);
+		Route::delete('licences/{product}', [Admin\LicenceProductController::class, 'destroy']);
+
 		Route::get('team-members', [Admin\TeamMemberController::class, 'index']);
 		Route::post('team-members/order', [Admin\TeamMemberController::class, 'order']);
 		Route::post('team-members', [Admin\TeamMemberController::class, 'store']);
