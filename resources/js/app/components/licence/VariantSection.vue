@@ -17,9 +17,10 @@ import NoResults from '@/components/ui/NoResults.vue';
  * its lists (Marcel, 2026-10-08). Rows drag into the order the product's
  * dropdown shows; that saves at once and is not part of the form's save.
  *
- * Each row names the variant, then its Lizenztyp (*Demo* for none) and
- * Nutzung, since the client's names are often the vendor's word alone
- * (*floating*), then article number and price as on the product list.
+ * Each row names the variant as the shop's dropdown will
+ * ([[LicenceVariant::shopLabel]]): the client's names are often the vendor's
+ * word alone (*floating*), so it is built from Lizenztyp and Nutzung. Then
+ * article number and price as badges (Marcel, 2026-10-08).
  *
  * On a product not yet saved there is nothing to hang a variant on, so the
  * section says so.
@@ -78,10 +79,9 @@ onMounted(async () => {
 				v-bind="handlers(index)"
 				wide
 			>
-				<div class="col-span-12 sm:col-span-6">{{ item.title }}</div>
+				<div class="col-span-12 sm:col-span-6">{{ item.label }}</div>
 				<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-6">
-					{{ item.labels.join(', ') }}
-					<span class="mt-8 flex flex-wrap gap-8">
+					<span class="flex flex-wrap gap-8">
 						<Badge>{{ item.sku }}</Badge>
 						<Badge>CHF {{ price(item.price) }}</Badge>
 						<Badge v-if="item.min_quantity">mind. {{ item.min_quantity }}</Badge>

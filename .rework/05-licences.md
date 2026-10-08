@@ -60,7 +60,8 @@ right below, which supersedes parts of *The real catalogue*.
   and Nutzung in German: *floating* → *Jahresmietlizenz, Netzwerk
   (floating)*; *Teams, named user* → *Teams, Jahresmietlizenz, Einzelplatz
   (named)*. A demo (no Lizenztyp) keeps its name. For the public software
-  pages and the checkout; the dashboard's variant row already shows both.
+  pages and the checkout, and already the dashboard's variant row, left of the
+  article number and price badges (Marcel: name plus type and use read twice).
 - **Adding a group or a maker from the licence form:** a `+` at the right of
   the *Software* and *Hersteller* labels opens a lightbox with *Bezeichnung*
   ([[TermDialog]]); saved, it joins the dropdown and is picked (Marcel,

@@ -31,10 +31,8 @@ class LicenceVariantFormResource extends JsonResource
 			'min_quantity' => $this->min_quantity ?? '',
 			'note' => $this->getTranslation('note', 'de', false) ?: '',
 			'listed' => $this->listed,
-			// For the list's row, not sent back: a variant's name alone is often the
-			// vendor's word (*floating*), so the row also says type and use. No type
-			// is a demo, as the form's *Keiner (Demo)* says.
-			'labels' => array_values(array_filter([$this->licence_type?->label() ?? 'Demo', $this->access?->label()])),
+			// For the list's row, not sent back: what the shop's dropdown will say.
+			'label' => $this->shopLabel(),
 			// For the title and the way back, not sent back.
 			'product' => ['uuid' => $this->product->uuid, 'title' => $this->product->getTranslation('title', 'de')],
 		];
