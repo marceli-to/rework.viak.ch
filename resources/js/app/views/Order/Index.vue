@@ -3,7 +3,6 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchOrders } from '@/api/licenceOrders';
 import { shortDate } from '@/support/format';
-import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import CustomerPicker from '@/components/order/CustomerPicker.vue';
@@ -12,7 +11,6 @@ import IconPlus from '@/components/icons/Plus.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
-import PaymentBadge from '@/components/order/PaymentBadge.vue';
 import SearchField from '@/components/list/SearchField.vue';
 
 /**
@@ -22,8 +20,8 @@ import SearchField from '@/components/list/SearchField.vue';
  * *offen* until each line is marked sent, on the order's own page.
  *
  * *Offene Bestellungen* comes oldest first, as a queue is worked; the sent
- * ones newest first, paged as *Rechnungen*. Each row says whether it is paid,
- * since an order may be sent before its invoice is (open question #2). The
+ * ones newest first, paged as *Rechnungen*. A row says what was ordered as
+ * one comma-separated line; payment and dispatch are on the order's page. The
  * `+` asks for the customer first: an order taken by mail or phone belongs to
  * an account.
  */
@@ -85,8 +83,6 @@ async function loadMore(status) {
 const picking = ref(false);
 const pick = (customer) => router.push({ name: 'backoffice.order.create', params: { customer: customer.uuid } });
 
-const amount = (order) => Number(order.total).toFixed(2);
-
 watch(search, load, { immediate: true });
 </script>
 
@@ -126,14 +122,8 @@ watch(search, load, { immediate: true });
 					</div>
 					<div class="col-span-12 sm:col-span-2">{{ shortDate(order.date) }}</div>
 					<div class="col-span-12 sm:col-span-3">{{ order.customer.name }}<template v-if="order.customer.city">, {{ order.customer.city }}</template></div>
-					<div class="col-span-12 pr-40 sm:col-span-5">
-						<div v-for="(line, index) in order.lines" :key="index">{{ line }}</div>
-						<div class="mt-8 flex flex-wrap gap-8">
-							<PaymentBadge :payment="order.payment" />
-							<Badge v-if="order.payment !== 'free'" variant="solid">CHF {{ amount(order) }}</Badge>
-							<Badge v-if="group.status === 'offen' && order.open < order.lines.length">{{ order.lines.length - order.open }} von {{ order.lines.length }} versendet</Badge>
-						</div>
-					</div>
+					<!-- What was ordered as one line of text, no badges (Marcel, 2026-10-08). -->
+					<div class="col-span-12 pr-40 sm:col-span-5">{{ order.lines.join(', ') }}</div>
 				</EditableListItem>
 				<NoResults v-if="!lists[group.status].rows.length">{{ search ? 'Keine Bestellungen gefunden.' : group.empty }}</NoResults>
 
