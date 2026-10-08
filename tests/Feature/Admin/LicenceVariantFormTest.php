@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\LicenceAccess;
+use App\Enums\LicenceType;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\User;
@@ -95,6 +97,15 @@ it('sends back exactly what it loads', function () {
 	$form = $this->actingAs($this->admin)->getJson("/api/admin/licence-variants/{$variant->uuid}")->json('data');
 
 	expect($this->putJson("/api/admin/licence-variants/{$variant->uuid}", $form)->assertOk()->json('data'))->toBe($form);
+});
+
+it('lists a variant with its type and use, which its name alone often leaves out', function () {
+	LicenceVariant::factory()->for($this->product, 'product')->create(['title' => ['de' => 'floating'], 'licence_type' => LicenceType::Perpetual, 'access' => LicenceAccess::Floating]);
+	LicenceVariant::factory()->for($this->product, 'product')->demo()->create(['access' => LicenceAccess::Named]);
+
+	$labels = $this->actingAs($this->admin)->getJson("/api/admin/licences/{$this->product->uuid}/variants")->json('data.*.labels');
+
+	expect($labels)->toBe([['Dauerlizenz', 'Netzwerk (floating)'], ['Demo', 'Einzelplatz (named)']]);
 });
 
 it('deletes a variant softly', function () {
