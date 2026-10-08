@@ -40,7 +40,9 @@ watch(search, async (value) => {
 	<Lightbox :title="title" @close="emit('close')">
 		<SearchField v-model="search" />
 		<NoResults v-if="search && !searching && !found.length">Keine Kunden gefunden.</NoResults>
-		<ul v-if="found.length" class="mt-16 text-lg">
+		<!-- Only the hits scroll, not the box: the title and the search stay put, and 16px keep
+		     the buttons off the scrollbar (Marcel, 2026-10-08). -->
+		<ul v-if="found.length" class="mt-16 max-h-[60vh] overflow-y-auto pr-16 text-lg">
 			<li v-for="customer in found" :key="customer.uuid" class="flex items-center justify-between gap-16 border-b border-gray-400 py-8">
 				<span class="min-w-0">{{ customer.name }}<template v-if="customer.city">, {{ customer.city }}</template><br /><span class="text-md text-gray-600">{{ customer.email }}</span></span>
 				<Button class="shrink-0" @click="emit('pick', customer)">{{ action }}</Button>
