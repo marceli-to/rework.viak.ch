@@ -12,7 +12,7 @@ import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
 
 /**
- * *Varianten* on the licence form ([[05-licences]]): a collapsible list, each
+ * *Lizenzen* (the variants) on the product form ([[05-licences]]): a collapsible list, each
  * row a pencil to its own form and a `+` under it, as *Einstellungen* draws
  * its lists (Marcel, 2026-10-08). Rows drag into the order the product's
  * dropdown shows; that saves at once and is not part of the form's save.
@@ -60,13 +60,13 @@ onMounted(async () => {
 
 <template>
 	<Collapsible expanded :count="items.length">
-		<template #title>Varianten</template>
+		<template #title>Lizenzen</template>
 
-		<p v-if="!record" class="mt-16 sm:text-lg lg:text-xl">Varianten können nach dem ersten Speichern erfasst werden.</p>
+		<p v-if="!record" class="mt-16 sm:text-lg lg:text-xl">Lizenzen können nach dem ersten Speichern erfasst werden.</p>
 		<template v-else>
 			<p v-if="error" class="mt-16 text-danger">{{ error }}</p>
 			<Loading v-else-if="loading" class="mt-16" />
-			<NoResults v-else-if="!items.length">Noch keine Varianten erfasst.</NoResults>
+			<NoResults v-else-if="!items.length">Noch keine Lizenzen erfasst.</NoResults>
 
 			<EditableListItem
 				v-for="(item, index) in items"
@@ -91,7 +91,7 @@ onMounted(async () => {
 			</EditableListItem>
 
 			<div class="mt-24 flex">
-				<RouterLink :to="{ name: 'licence.variant.create', params: { product: record } }" title="Variante hinzufügen" class="block hover:text-teal">
+				<RouterLink :to="{ name: 'licence.variant.create', params: { product: record } }" title="Lizenz hinzufügen" class="block hover:text-teal">
 					<IconPlus size="lg" class="block" />
 				</RouterLink>
 			</div>

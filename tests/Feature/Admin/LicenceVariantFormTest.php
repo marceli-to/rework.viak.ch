@@ -65,7 +65,7 @@ it('refuses an article number another variant has, but not its own', function ()
 	LicenceVariant::factory()->create(['sku' => 'VRY-1001']);
 
 	$this->actingAs($this->admin)->postJson("/api/admin/licences/{$this->product->uuid}/variants", variantPayload())
-		->assertJsonPath('errors.sku.0', 'Diese Artikelnummer hat bereits eine andere Variante.');
+		->assertJsonPath('errors.sku.0', 'Diese Artikelnummer hat bereits eine andere Lizenz.');
 
 	$own = LicenceVariant::factory()->for($this->product, 'product')->create(['sku' => 'VRY-2001']);
 	$this->putJson("/api/admin/licence-variants/{$own->uuid}", variantPayload(['sku' => 'VRY-2001']))->assertOk();

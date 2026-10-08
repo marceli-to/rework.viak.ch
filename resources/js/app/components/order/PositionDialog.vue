@@ -56,7 +56,7 @@ function save() {
 <template>
 	<Lightbox :title="line.choice ? 'Position bearbeiten' : 'Position hinzufügen'" @close="emit('close')">
 		<form @submit.prevent="save">
-			<Select :model-value="draft.choice" label="Software" :options="options" placeholder="Bitte wählen" required :error="error('variant')" @update:model-value="choose" />
+			<Select :model-value="draft.choice" label="Lizenz" :options="options" placeholder="Bitte wählen" required :error="error('variant')" @update:model-value="choose" />
 
 			<template v-if="draft.choice === free">
 				<Field v-model="draft.title" label="Bezeichnung" required :error="error('title')" />

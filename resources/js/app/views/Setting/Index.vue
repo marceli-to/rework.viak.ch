@@ -15,7 +15,7 @@ import { KINDS, usage } from './kinds';
  * *Einstellungen* — legacy's `views/setting/Index.vue` ([[07-dashboard]],
  * step 6): one collapsible per list, each row a name, a `+` under the list
  * to add one. The list a form came back from is open (`?liste=`), as
- * legacy's `:type` param opened it. Software-Gruppen and Hersteller are on
+ * legacy's `:type` param opened it. *Software* and *Hersteller* are on
  * *Software* instead ([[kinds]], `home`).
  *
  * Each row says where it is used, which is also why its form may refuse to

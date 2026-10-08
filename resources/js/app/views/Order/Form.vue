@@ -26,7 +26,7 @@ import Select from '@/components/form/Select.vue';
  * hand. A plugin asks for its host software. A variant with a minimum starts
  * at it; it is not enforced, as an order by phone is entered as it was sold.
  *
- * The positions are a list as the licence form's *Varianten* are, each edited
+ * The positions are a list as the product form's *Lizenzen* are, each edited
  * in a lightbox ([[PositionDialog]]), since none has a page before the order
  * is saved (Marcel, 2026-10-08).
  *
@@ -164,7 +164,7 @@ async function save() {
 			<Select v-if="addressOptions.length" v-model="invoiceAddress" label="Rechnungsadresse" :options="addressOptions" placeholder="Adresse aus dem Profil" :error="errors.invoice_address?.[0]" />
 			<Field v-model="deliveryEmail" type="email" label="Lizenzen an" :hint="`Leer lassen für ${page.customer.email}.`" :error="errors.delivery_email?.[0]" />
 
-			<!-- The licence form's *Varianten* ([[VariantSection]]): a row per position, the label left and
+			<!-- The product form's *Lizenzen* ([[VariantSection]]): a row per position, the label left and
 			     its badges right, a pencil each and the `+` under the list, both opening the position
 			     in a lightbox (Marcel, 2026-10-08). -->
 			<Collapsible class="mt-48" expanded :count="lines.length" :invalid="Boolean(errors.lines) || lines.some((line, index) => failed(index))">

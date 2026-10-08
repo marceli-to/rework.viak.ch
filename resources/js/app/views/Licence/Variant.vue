@@ -5,7 +5,7 @@ import { deleteVariant, fetchVariant, saveVariant } from '@/api/licences';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
- * *Variante erfassen* / *bearbeiten* ([[05-licences]]): the fields are
+ * *Lizenz erfassen* / *bearbeiten* ([[05-licences]]), a variant in the code: the fields are
  * [[LicenceVariantSchema]]. Both paths carry the product, so the way back and
  * a new variant's home are known before anything loads.
  */
@@ -22,11 +22,11 @@ const save = (uuid, form) => saveVariant(uuid, form, product.value);
 		:remove="deleteVariant"
 		:list="{ name: 'licence.edit', params: { uuid: product } }"
 		:edit="(uuid) => ({ name: 'licence.variant.edit', params: { product, uuid } })"
-		noun="Variante"
-		:titles="{ create: 'Variante erfassen', edit: (meta) => `Variante für\n${meta.product?.title ?? ''}` }"
+		noun="Lizenz"
+		:titles="{ create: 'Lizenz erfassen', edit: (meta) => `Lizenz für\n${meta.product?.title ?? ''}` }"
 		:deletion="{
-			title: 'Variante löschen',
-			text: 'Mit dieser Aktion wird die Variante gelöscht.',
+			title: 'Lizenz löschen',
+			text: 'Mit dieser Aktion wird die Lizenz gelöscht.',
 			question: (form) => form.title,
 		}"
 		:stay="false"

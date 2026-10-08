@@ -169,7 +169,7 @@ const routes = [
 		component: () => import('@/views/Licence/Index.vue'),
 		meta: { title: 'Software' },
 	},
-	// Software-Gruppen and Hersteller, listed on *Software*: the settings form, under this menu item.
+	// *Software* and *Hersteller*, listed on the *Software* page: the settings form, under this menu item.
 	{
 		path: '/dashboard/software/liste/:kind/erfassen',
 		name: 'licence.term.create',
@@ -186,25 +186,25 @@ const routes = [
 		path: '/dashboard/software/erfassen',
 		name: 'licence.create',
 		component: () => import('@/views/Licence/Form.vue'),
-		meta: { title: 'Software erfassen' },
+		meta: { title: 'Produkt erfassen' },
 	},
 	{
 		path: '/dashboard/software/:uuid',
 		name: 'licence.edit',
 		component: () => import('@/views/Licence/Form.vue'),
-		meta: { title: 'Software bearbeiten' },
+		meta: { title: 'Produkt bearbeiten' },
 	},
 	{
 		path: '/dashboard/software/:product/variante/erfassen',
 		name: 'licence.variant.create',
 		component: () => import('@/views/Licence/Variant.vue'),
-		meta: { title: 'Variante erfassen' },
+		meta: { title: 'Lizenz erfassen' },
 	},
 	{
 		path: '/dashboard/software/:product/variante/:uuid',
 		name: 'licence.variant.edit',
 		component: () => import('@/views/Licence/Variant.vue'),
-		meta: { title: 'Variante bearbeiten' },
+		meta: { title: 'Lizenz bearbeiten' },
 	},
 	{
 		path: '/dashboard/testimonials',

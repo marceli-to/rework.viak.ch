@@ -8,10 +8,10 @@ use App\Models\Manufacturer;
 use App\Models\Software;
 
 /**
- * *Lizenz erfassen* / *bearbeiten* ([[05-licences]]): the product. The client
+ * *Produkt erfassen* / *bearbeiten* ([[05-licences]]). The client
  * creates, edits and deletes these themselves.
  *
- * Its variants are a list under the fields, each with a form of its own
+ * Its licences (variants) are a list under the fields, each with a form of its own
  * ([[LicenceVariantSchema]]), as Marcel asked on 2026-10-08: a repeater put
  * every variant's nine fields on one page.
  */
@@ -21,7 +21,7 @@ final class LicenceProductSchema extends Schema
 	{
 		return [
 			// Title first, then where it sits, each on its own line (Marcel, 2026-10-08).
-			// `create`: a `+` beside the label adds a group or a maker in a lightbox.
+			// `create`: a `+` beside the label adds a software or a maker in a lightbox.
 			Field::text('title')->label('Titel')->required(),
 			Field::select('software', fn () => Software::query()->get()
 				->sortBy(fn (Software $software) => $software->getTranslation('title', 'de'), SORT_NATURAL | SORT_FLAG_CASE)

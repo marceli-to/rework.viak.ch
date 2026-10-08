@@ -14,20 +14,22 @@ import SearchField from '@/components/list/SearchField.vue';
 import { KINDS, usage } from '@/views/Setting/kinds';
 
 /**
- * *Software* ([[05-licences]], `/dashboard/software`): the licence catalogue, one collapsible per software
- * group as *Einstellungen* draws its lists, the group a form came back from
- * open (`?gruppe=`). Per product its name, its maker, how many variants the
+ * *Software* ([[05-licences]], `/dashboard/software`): the licence catalogue, three levels named
+ * *Software* → *Produkt* → *Lizenz* (Marcel, 2026-10-08; the database keeps
+ * `software`, `licence_products`, `licence_variants`). *Produkte* first, one
+ * collapsible per software as *Einstellungen* draws its lists, the group a form came back from
+ * open (`?gruppe=`). Per product its name, its maker, how many licences the
  * dropdown has and the cheapest price, all net. *Nur manuell* marks a product
  * none of whose variants is on the site: VIAK picks it when entering an order.
  *
- * Below, the two lists the catalogue hangs off, *Software-Gruppen* and
+ * Below, the two lists the catalogue hangs off, *Software* and
  * *Hersteller*, each under its own teal title with a `+` (Marcel,
  * 2026-10-08; they were in *Einstellungen*). The one a form came back from is
  * scrolled to (`?liste=`).
  *
  * The search, in the URL as everywhere (`?suche=`), finds a product by its
- * name, maker, group or a variant's name or article number, and a group or
- * maker by its name. A software group with hits opens.
+ * name, maker, software or a licence's name or article number, and a software
+ * or maker by its name. A software with hits opens.
  */
 const route = useRoute();
 const router = useRouter();
@@ -78,7 +80,7 @@ onMounted(async () => {
 
 <template>
 	<section>
-		<ListHeader title="Software" :create="{ name: 'licence.create' }">
+		<ListHeader title="Produkte" :create="{ name: 'licence.create' }">
 			<template #search>
 				<SearchField :model-value="search" @update:model-value="setSearch" />
 			</template>
@@ -89,7 +91,7 @@ onMounted(async () => {
 
 		<template v-else>
 			<div class="mt-24 lg:mt-32">
-				<NoResults v-if="!shown.length">{{ search ? 'Keine Software gefunden.' : 'Noch keine Software erfasst.' }}</NoResults>
+				<NoResults v-if="!shown.length">{{ search ? 'Keine Produkte gefunden.' : 'Noch keine Produkte erfasst.' }}</NoResults>
 
 				<!-- Keyed on the search, so a group with hits opens. -->
 				<Collapsible
@@ -111,7 +113,7 @@ onMounted(async () => {
 						<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8">
 							{{ item.maker }}
 							<span class="mt-8 flex flex-wrap gap-8">
-								<Badge>{{ item.variants.length }} {{ item.variants.length === 1 ? 'Variante' : 'Varianten' }}</Badge>
+								<Badge>{{ item.variants.length }} {{ item.variants.length === 1 ? 'Lizenz' : 'Lizenzen' }}</Badge>
 								<Badge v-if="item.from">ab CHF {{ price(item.from) }}</Badge>
 								<Badge v-if="!item.listed && item.publish">Nur manuell</Badge>
 								<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>

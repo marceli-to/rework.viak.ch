@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
 /**
- * *Variante erfassen* / *bearbeiten* ([[05-licences]]): one entry of a
+ * *Lizenz erfassen* / *bearbeiten* ([[05-licences]]), a variant in the code: one entry of a
  * product's dropdown, and one row of the client's list. Article number,
  * **net** price, licence type, *Nutzung* (Einzelplatz or Netzwerk), platforms, a minimum
  * quantity, a remark, and whether it is on the site at all. A demo is a
@@ -22,12 +22,12 @@ final class LicenceVariantSchema extends Schema
 	public function fields(): array
 	{
 		return [
-			Field::text('title')->label('Variante')->required(),
+			Field::text('title')->label('Titel')->required(),
 			Field::row([
 				Field::text('sku')->label('Artikelnummer')->required()->rules(fn (?Model $variant) => [
 					'max:32',
 					Rule::unique('licence_variants', 'sku')->whereNull('deleted_at')->ignore($variant?->getKey()),
-				])->message('unique', 'Diese Artikelnummer hat bereits eine andere Variante.'),
+				])->message('unique', 'Diese Artikelnummer hat bereits eine andere Lizenz.'),
 				Field::number('price')->label('Preis CHF exkl. MWST')->required()->rules(['min:0', 'max:99999.99', 'decimal:0,2'])
 					->with(['hint' => '0 für eine Demoversion.']),
 			])->with(['columns' => 2]),

@@ -3,9 +3,10 @@ import { deleteLicence, fetchLicence, saveLicence } from '@/api/licences';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
- * *Software erfassen* / *bearbeiten* ([[05-licences]]), named as the menu
- * item is (Marcel, 2026-10-08; first *Lizenz*): the fields are
- * [[LicenceProductSchema]]; the variants a list under them, each with its
+ * *Produkt erfassen* / *bearbeiten* ([[05-licences]]); first *Lizenz*, then
+ * *Software*, then *Produkt* once the levels were named Software → Produkt →
+ * Lizenz (Marcel, 2026-10-08): the fields are [[LicenceProductSchema]]; the
+ * licences (variants) a list under them, each with its
  * own form ([[VariantSection]]).
  */
 </script>
@@ -18,11 +19,11 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
 		:remove="deleteLicence"
 		:list="{ name: 'licences' }"
 		:edit="(uuid) => ({ name: 'licence.edit', params: { uuid } })"
-		noun="Software"
-		:titles="{ create: 'Software erfassen', edit: 'Software bearbeiten' }"
+		noun="Produkt"
+		:titles="{ create: 'Produkt erfassen', edit: 'Produkt bearbeiten' }"
 		:deletion="{
-			title: 'Software löschen',
-			text: 'Mit dieser Aktion wird die Software mit allen Varianten gelöscht.',
+			title: 'Produkt löschen',
+			text: 'Mit dieser Aktion wird das Produkt mit allen Lizenzen gelöscht.',
 			question: (form) => form.title,
 		}"
 	/>

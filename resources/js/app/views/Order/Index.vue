@@ -114,7 +114,7 @@ watch(search, load, { immediate: true });
 					<div class="col-span-12 sm:col-span-2">Nummer</div>
 					<div class="col-span-12 sm:col-span-2">Datum</div>
 					<div class="col-span-12 sm:col-span-3">Kunde</div>
-					<div class="col-span-12 sm:col-span-5">Software</div>
+					<div class="col-span-12 sm:col-span-5">Lizenzen</div>
 				</div>
 				<EditableListItem v-for="order in lists[group.status].rows" :key="order.uuid" :show="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" wide>
 					<div class="col-span-12 sm:col-span-2">

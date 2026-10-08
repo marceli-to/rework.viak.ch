@@ -28,7 +28,7 @@ use Illuminate\Validation\ValidationException;
  * so built cheaply: one screen, one form for the four terms ([[TermSchema]]),
  * one for places ([[LocationSchema]]), and this one controller.
  *
- * Since chunk 05 two more, after legacy's five: **Software-Gruppen**, the
+ * Since chunk 05 two more, after legacy's five: **Software**, the
  * groups courses and licence products hang off, and **Hersteller**. Both are
  * a name and nothing else until the software pages give a group copy; their
  * badge says how many licence products use them. The dashboard lists them on

@@ -8,7 +8,7 @@ import { KINDS } from '@/views/Setting/kinds';
 
 /**
  * A settings term created from a form that picks one, without leaving it
- * (Marcel, 2026-10-08): *Software-Gruppe* and *Hersteller* on the licence
+ * (Marcel, 2026-10-08): *Software* and *Hersteller* on the licence
  * form. The same call and the same rules as the term's own form
  * ([[SettingController]], [[TermSchema]]); what is created comes back in
  * `created`, for the select to add and pick.

@@ -39,6 +39,16 @@ right below, which supersedes parts of *The real catalogue*.
   the variant's own form (`/dashboard/software/{product}/variante/{uuid}`,
   [[LicenceVariantSchema]]), a `+` to add. Marcel replaced the first build's
   repeater the same day: nine fields per variant on one page was too much.
+- **The three levels are named Software → Produkt → Lizenz** in the UI
+  (Marcel, 2026-10-08, later): *Software* is the group (`software`, what
+  courses hang off: Rhinoceros), *Produkt* what has a maker and a page
+  (`licence_products`: Rhinoceros 8, Bongo 2), *Lizenz* what is bought
+  (`licence_variants`: commercial, update, demo). Before, *Software* meant
+  both the group and the product, and the group was *Software-Gruppe*. The
+  tables keep their names; in the code a Lizenz is still a variant. So the
+  page lists *Produkte*, then *Software* and *Hersteller*; the product form
+  is *Produkt erfassen* with a *Lizenzen* list; the variant form is *Lizenz
+  erfassen*, its name field *Titel*; an order position picks a *Lizenz*.
 - **Labels settled with Marcel, 2026-10-08:** the product form opens with
   *Titel*, then *Software* and *Hersteller* each full width. On the variant,
   `access` is *Nutzung*: *Einzelplatz (named)*, *Netzwerk (floating)*,
@@ -47,7 +57,7 @@ right below, which supersedes parts of *The real catalogue*.
   orders VIAK enters (it is not *Publizieren*, which is the product's);
   *Mindestmenge* is the smallest quantity in the basket. No *Abbrechen*
   button: no dashboard form has one, *Zurück* does that job.
-- **Software-Gruppen** and **Hersteller** are lists on the *Software* page,
+- **Software** (then *Software-Gruppen*) and **Hersteller** are lists on the *Software* page,
   below the groups, each under its own teal title with a `+` like the page's
   own header, not as collapsibles (Marcel, 2026-10-08: first built into
   *Einstellungen* as *Software*, renamed and moved the same day). The page
