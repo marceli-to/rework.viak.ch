@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 /**
  * *Variante erfassen* / *bearbeiten* ([[05-licences]]): one entry of a
  * product's dropdown, and one row of the client's list. Article number,
- * **net** price, licence type, named or floating, platforms, a minimum
+ * **net** price, licence type, *Nutzung* (Einzelplatz or Netzwerk), platforms, a minimum
  * quantity, a remark, and whether it is on the site at all. A demo is a
  * variant at 0 (#35); an EDU licence one with *Im Shop bestellbar* unticked (#36).
  */
@@ -35,7 +35,7 @@ final class LicenceVariantSchema extends Schema
 				Field::select('licence_type', collect(LicenceType::cases())->mapWithKeys(fn (LicenceType $type) => [$type->value => $type->label()])->all())
 					->label('Lizenztyp')->with(['placeholder' => 'Keiner (Demo)']),
 				Field::select('access', collect(LicenceAccess::cases())->mapWithKeys(fn (LicenceAccess $access) => [$access->value => $access->label()])->all())
-					->label('Lizenzzugriff')->with(['placeholder' => 'Bitte wählen']),
+					->label('Nutzung')->with(['placeholder' => 'Bitte wählen']),
 			])->with(['columns' => 2]),
 			Field::checkboxes('platforms', fn () => collect(Platform::cases())->mapWithKeys(fn (Platform $platform) => [$platform->value => $platform->label()])->all())
 				->label('Plattform')->with(['columns' => 4]),
