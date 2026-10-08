@@ -24,8 +24,9 @@ class LicenceVariantFormResource extends JsonResource
 			'title' => $this->getTranslation('title', 'de', false) ?: '',
 			'sku' => $this->sku,
 			'price' => $this->price,
-			'licence_type' => $this->licence_type?->value,
-			'access' => $this->access?->value,
+			// '' is the select's empty choice (*Keiner (Demo)*); null matched no option.
+			'licence_type' => $this->licence_type?->value ?? '',
+			'access' => $this->access?->value ?? '',
 			'platforms' => $this->platforms?->map->value->values()->all() ?? [],
 			'min_quantity' => $this->min_quantity ?? '',
 			'note' => $this->getTranslation('note', 'de', false) ?: '',

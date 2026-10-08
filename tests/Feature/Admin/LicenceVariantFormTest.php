@@ -48,12 +48,15 @@ it('adds a variant at the end of the dropdown, the price net to the centime', fu
 	expect(LicenceVariant::where('sku', 'VRY-1001')->first()->order)->toBe(4);
 });
 
-it('takes a demo: free and without a licence type', function () {
-	$this->actingAs($this->admin)
+it('takes a demo: free and without a licence type, shown as the empty choice', function () {
+	$uuid = $this->actingAs($this->admin)
 		->postJson("/api/admin/licences/{$this->product->uuid}/variants", variantPayload(['title' => 'Demoversion', 'price' => '0', 'licence_type' => '']))
 		->assertCreated()
-		->assertJsonPath('data.licence_type', null)
-		->assertJsonPath('data.price', '0.00');
+		->assertJsonPath('data.licence_type', '')
+		->assertJsonPath('data.price', '0.00')
+		->json('data.uuid');
+
+	expect(LicenceVariant::where('uuid', $uuid)->first()->licence_type)->toBeNull();
 });
 
 it('refuses an article number another variant has, but not its own', function () {
