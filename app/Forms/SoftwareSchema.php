@@ -14,7 +14,8 @@ use Illuminate\Support\Str;
  * *Software erfassen* / *bearbeiten* ([[05-licences]]): its page, drawn as a
  * course page is, so the fields are the course form's, in its order and with
  * its labels (Marcel, 2026-10-08). What a course has and a software does not:
- * number, fee, facts, the PDF text, levels, languages, videos.
+ * number, fee, facts, the PDF text, levels, languages, videos, and the
+ * second, unlabelled column of *Weitere Informationen* (Marcel, 2026-10-08).
  */
 final class SoftwareSchema extends Schema
 {
@@ -38,7 +39,6 @@ final class SoftwareSchema extends Schema
 			Field::richtext('short_description')->label('Kurzbeschrieb'),
 			Field::richtext('full_description')->label('Detailbeschrieb'),
 			Field::richtext('information')->label('Weitere Informationen'),
-			Field::richtext('information_more'),
 
 			Field::section('Einstellungen', [
 				Field::row([
@@ -61,7 +61,7 @@ final class SoftwareSchema extends Schema
 	{
 		return [
 			'title' => '', 'subtitle' => '', 'publish' => false,
-			'short_description' => '', 'full_description' => '', 'information' => '', 'information_more' => '',
+			'short_description' => '', 'full_description' => '', 'information' => '',
 			'categories' => [],
 			'seo_description' => '', 'seo_tags' => '',
 		];

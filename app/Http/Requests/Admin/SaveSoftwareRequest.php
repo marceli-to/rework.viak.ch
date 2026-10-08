@@ -18,7 +18,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class SaveSoftwareRequest extends FormRequest
 {
 	/** The editor's fields, cleaned before they are stored ([[EditorHtml]]). */
-	public const RICH = ['short_description', 'full_description', 'information', 'information_more'];
+	public const RICH = ['short_description', 'full_description', 'information'];
 
 	public function authorize(): bool
 	{

@@ -39,13 +39,13 @@ class Software extends Model
 
 	protected $fillable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
-		'information', 'information_more', 'seo_description', 'seo_tags',
+		'information', 'seo_description', 'seo_tags',
 		'order', 'publish',
 	];
 
 	public $translatable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
-		'information', 'information_more', 'seo_description', 'seo_tags',
+		'information', 'seo_description', 'seo_tags',
 	];
 
 	protected function casts(): array

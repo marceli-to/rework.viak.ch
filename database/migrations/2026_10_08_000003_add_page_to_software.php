@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Schema;
 /**
  * A software gets a page of its own, drawn as a course page is (Marcel,
  * 2026-10-08, [[05-licences]]): so the columns are the course's, by the same
- * names, translatable as theirs are. `information` and `information_more`
- * are the two columns of *Weitere Informationen*, as a course's
- * `information_booking` and `information_content` are.
+ * names, translatable as theirs are. *Weitere Informationen* is one column,
+ * `information`, where a course has two (Marcel, 2026-10-08: the second
+ * editor had no label and no use).
  *
  * Its categories are the courses' categories, so the software list filters
  * by the same links the course list does: `software_category`.
@@ -31,8 +31,7 @@ return new class extends Migration
 			$table->json('short_description')->nullable()->after('subtitle');
 			$table->json('full_description')->nullable()->after('short_description');
 			$table->json('information')->nullable()->after('full_description');
-			$table->json('information_more')->nullable()->after('information');
-			$table->json('seo_description')->nullable()->after('information_more');
+			$table->json('seo_description')->nullable()->after('information');
 			$table->json('seo_tags')->nullable()->after('seo_description');
 		});
 
@@ -60,7 +59,7 @@ return new class extends Migration
 		Schema::dropIfExists('software_category');
 
 		Schema::table('software', function (Blueprint $table) {
-			$table->dropColumn(['slug', 'subtitle', 'short_description', 'full_description', 'information', 'information_more', 'seo_description', 'seo_tags']);
+			$table->dropColumn(['slug', 'subtitle', 'short_description', 'full_description', 'information', 'seo_description', 'seo_tags']);
 		});
 	}
 };

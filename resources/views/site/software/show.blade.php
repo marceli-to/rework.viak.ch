@@ -4,7 +4,6 @@
 	$subtitle = $software->getTranslation('subtitle', $locale, false);
 	$visuals = $software->visuals();
 	$information = $software->getTranslation('information', $locale, false);
-	$more = $software->getTranslation('information_more', $locale, false);
 	$og = $software->openGraph();
 @endphp
 
@@ -13,8 +12,8 @@
 	(`site/courses/show.blade.php`, Marcel 2026-10-08): the teal hero, then the
 	collapsibles. *Aktuelle Kurse* becomes *Lizenzen*, every product with its
 	licences (`card/product.blade.php`); *Kurse* lists the courses that teach
-	it as the course list's cards; *Detailbeschrieb*, *Weitere Informationen*,
-	*Kundenmeinungen* and the browse pair are the course page's.
+	it as the course list's cards; *Detailbeschrieb*, *Weitere Informationen* (one
+	column), *Kundenmeinungen* and the browse pair are the course page's.
 
 	As on a course page, the phone's header row says the list's name.
 --}}
@@ -86,16 +85,11 @@
 			</x-ui.collapsible>
 		@endif
 
-		@if ($information || $more)
+		{{-- One column where a course has two, at *Detailbeschrieb*'s width. --}}
+		@if ($information)
 			<x-ui.collapsible title="Weitere Informationen">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					@if ($information)
-						<x-ui.rich-text :html="$information" class="mb-16 sm:col-span-4 sm:mb-0" />
-					@endif
-
-					@if ($more)
-						<x-ui.rich-text :html="$more" class="mb-16 sm:col-span-4 sm:mb-0" />
-					@endif
+					<x-ui.rich-text :html="$information" class="sm:col-span-8" />
 				</div>
 			</x-ui.collapsible>
 		@endif

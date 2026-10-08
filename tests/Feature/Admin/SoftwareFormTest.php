@@ -24,7 +24,6 @@ function softwarePayload(array $overrides = []): array
 		'short_description' => '<p>Rhino ist das Werkzeug.</p>',
 		'full_description' => '<p>Präzision statt Polygone.</p>',
 		'information' => '',
-		'information_more' => '',
 		'categories' => [],
 		'publish' => true,
 		'seo_description' => 'Rhino-Lizenzen und Kurse',

@@ -129,8 +129,9 @@ to the course page as possible", the list with its filter too).
   (Rhinoceros), not the product. Migration
   `2026_10_08_000003_add_page_to_software` gives `software` the course's own
   columns by the course's names, all translatable: `slug`, `subtitle`,
-  `short_description`, `full_description`, `information` +
-  `information_more` (the two columns of *Weitere Informationen*),
+  `short_description`, `full_description`, `information` (*Weitere
+  Informationen*, one column where a course has two: Marcel asked what the
+  unlabelled second editor was for, and it went),
   `seo_description`, `seo_tags`; images through the media table (the course
   form's *Bilder*, owner `software`); categories in `software_category`, the
   courses' own categories. Every existing row got its slug. The slug is made
@@ -162,7 +163,7 @@ to the course page as possible", the list with its filter too).
   the price (a demo *kostenlos*), *In den Warenkorb*. Two columns, not the
   event's three: the labels run long. Under the list *Preise exkl. MWST.*
   Then **Kurse** (the courses that teach it, as course cards),
-  *Detailbeschrieb*, *Weitere Informationen*, *Kundenmeinungen* (testimonials
+  *Detailbeschrieb*, *Weitere Informationen* (`span-8`), *Kundenmeinungen* (testimonials
   whose subject is the software, as a course's), and *Weitere Software*.
 - **The button does nothing yet**: the basket is courses only and behind a
   login; adding licences is the checkout (`13-checkout.md`), next.
