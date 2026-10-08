@@ -14,7 +14,6 @@ import BookingRow from '@/components/course/BookingRow.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
-import IconPlus from '@/components/icons/Plus.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
 import PaymentBadge from '@/components/order/PaymentBadge.vue';
@@ -159,11 +158,9 @@ async function cancel(booking) {
 				</EditableListItem>
 				<NoResults v-if="!page.orders.length">Kunde hat noch keine Software bestellt.</NoResults>
 
-				<div v-if="!page.customer.deactivated_at" class="mt-24 flex">
-					<RouterLink :to="{ name: 'backoffice.order.create', params: { customer: page.customer.uuid } }" class="flex items-center gap-12 hover:text-teal">
-						<span>Bestellung erfassen</span>
-						<IconPlus size="md" />
-					</RouterLink>
+				<!-- The primary button on the right, as the rows' own buttons stand (Marcel, 2026-10-08). -->
+				<div v-if="!page.customer.deactivated_at" class="mt-24 flex justify-end">
+					<Button :to="{ name: 'backoffice.order.create', params: { customer: page.customer.uuid } }">Bestellung erfassen</Button>
 				</div>
 			</Collapsible>
 
