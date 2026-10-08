@@ -89,7 +89,7 @@ onMounted(async () => {
 
 		<template v-else>
 			<div class="mt-24 lg:mt-32">
-				<NoResults v-if="!shown.length">{{ search ? 'Keine Lizenzen gefunden.' : 'Noch keine Lizenzen erfasst.' }}</NoResults>
+				<NoResults v-if="!shown.length">{{ search ? 'Keine Software gefunden.' : 'Noch keine Software erfasst.' }}</NoResults>
 
 				<!-- Keyed on the search, so a group with hits opens. -->
 				<Collapsible

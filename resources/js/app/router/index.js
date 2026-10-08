@@ -167,13 +167,13 @@ const routes = [
 		path: '/dashboard/software/erfassen',
 		name: 'licence.create',
 		component: () => import('@/views/Licence/Form.vue'),
-		meta: { title: 'Lizenz erfassen' },
+		meta: { title: 'Software erfassen' },
 	},
 	{
 		path: '/dashboard/software/:uuid',
 		name: 'licence.edit',
 		component: () => import('@/views/Licence/Form.vue'),
-		meta: { title: 'Lizenz bearbeiten' },
+		meta: { title: 'Software bearbeiten' },
 	},
 	{
 		path: '/dashboard/software/:product/variante/erfassen',

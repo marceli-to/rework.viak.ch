@@ -56,7 +56,8 @@ right below, which supersedes parts of *The real catalogue*.
 - **Adding a group or a maker from the licence form:** a `+` at the right of
   the *Software* and *Hersteller* labels opens a lightbox with *Bezeichnung*
   ([[TermDialog]]); saved, it joins the dropdown and is picked (Marcel,
-  2026-10-08). The settings endpoint now refuses a name its list already
+  2026-10-08). The product's form is *Software erfassen* / *bearbeiten*,
+  as the menu item, not *Lizenz* (Marcel, same day). The settings endpoint now refuses a name its list already
   has, whatever the case, in *Einstellungen* too. Their forms are the settings
   form under `/dashboard/software/liste/{kind}/{uuid}`; badges count courses
   and licences, and a used one is not deleted.
