@@ -16,7 +16,6 @@ import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
-import PaymentBadge from '@/components/order/PaymentBadge.vue';
 
 /**
  * A student's own page — legacy's `student/Show.vue` ([[07-dashboard]], step 7):
@@ -149,7 +148,6 @@ async function cancel(booking) {
 					<div class="col-span-12 pr-40 sm:col-span-8">
 						<div v-for="(line, index) in order.lines" :key="index">{{ line }}</div>
 						<div class="mt-8 flex flex-wrap gap-8">
-							<PaymentBadge :payment="order.payment" />
 							<Badge v-if="order.open" variant="warning">{{ order.open === order.lines.length ? 'Nicht versendet' : `${order.open} nicht versendet` }}</Badge>
 							<Badge v-else variant="success">Versendet</Badge>
 						</div>
