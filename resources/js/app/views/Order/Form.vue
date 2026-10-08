@@ -18,7 +18,7 @@ import Select from '@/components/form/Select.vue';
 
 /**
  * *Bestellung erfassen* ([[05-licences]], #36): an order VIAK took by mail or
- * phone, for one customer, reached from *Bestellungen* or the customer's page.
+ * phone, for one customer, reached from *Bestellungen*' `+` only.
  *
  * Each position is a variant from the whole catalogue, **the ones not in the
  * shop included** (EDU, labs), or ***Freie Position***, a title and a net

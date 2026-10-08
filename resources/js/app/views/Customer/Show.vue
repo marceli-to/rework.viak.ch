@@ -29,8 +29,7 @@ import PaymentBadge from '@/components/order/PaymentBadge.vue';
  * - **The admin decides whether a late cancellation costs** (#14): the dialog
  *   names the amount and offers both. Outside the window it only asks.
  * - Every document on the page, where legacy showed five and linked the rest.
- * - ***Bestellungen***, the licence orders, with *Bestellung erfassen* for an
- *   order taken by mail or phone ([[05-licences]]).
+ * - ***Bestellungen***, the licence orders ([[05-licences]]).
  */
 const route = useRoute();
 const page = ref(null);
@@ -139,12 +138,12 @@ async function cancel(booking) {
 				</BookingRow>
 			</Collapsible>
 
-			<!-- Licence orders ([[05-licences]]): *Bestellungen*' row, and the plus to enter one for this customer. -->
+			<!-- Licence orders ([[05-licences]]): *Bestellungen*' row. Entered from *Bestellungen*, not here (Marcel, 2026-10-08). -->
 			<Collapsible :count="page.orders.length">
 				<template #title>Bestellungen</template>
 				<EditableListItem v-for="order in page.orders" :key="order.uuid" :show="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" wide>
 					<div class="col-span-12 sm:col-span-4">
-						<RouterLink :to="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" class="hover:text-teal">Bestellung {{ order.number }}</RouterLink><br />
+						<RouterLink :to="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" class="hover:text-teal">{{ order.number }}</RouterLink><br />
 						{{ shortDate(order.date) }}
 					</div>
 					<div class="col-span-12 pr-40 sm:col-span-8">
@@ -158,10 +157,6 @@ async function cancel(booking) {
 				</EditableListItem>
 				<NoResults v-if="!page.orders.length">Kunde hat noch keine Software bestellt.</NoResults>
 
-				<!-- The primary button on the right, as the rows' own buttons stand (Marcel, 2026-10-08). -->
-				<div v-if="!page.customer.deactivated_at" class="mt-24 flex justify-end">
-					<Button :to="{ name: 'backoffice.order.create', params: { customer: page.customer.uuid } }">Bestellung erfassen</Button>
-				</div>
 			</Collapsible>
 
 			<Collapsible :count="page.documents.length">

@@ -96,7 +96,8 @@ right below, which supersedes parts of *The real catalogue*.
   an*, the invoice (PDF link) and per line *Versendet*, which turns into a
   badge with date and who; *Zurücksetzen* undoes a mistaken tick.
 - **Bestellung erfassen** (`/dashboard/kunde/{uuid}/bestellung/erfassen`,
-  from the list's `+` or the customer page's new *Bestellungen* collapsible):
+  from the list's `+` only; the customer page lists the orders but enters
+  none, Marcel 2026-10-08):
   invoice address from the customer's own, *Lizenzen an* (empty: the
   account's), positions of one select over the whole catalogue (**unlisted
   variants marked *nicht im Shop***) or ***Freie Position*** (Bezeichnung,
