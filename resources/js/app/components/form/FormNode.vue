@@ -78,6 +78,10 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<Editor v-else-if="field.type === 'richtext'" v-model="value" :label="field.label" :required="field.required" :error="error" />
 	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :placeholder="field.placeholder" :required="field.required" :error="error" />
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :error="error" />
+	<div v-else-if="field.type === 'checkbox' && field.hint">
+		<Checkbox v-model="value">{{ field.label }}</Checkbox>
+		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
+	</div>
 	<Checkbox v-else-if="field.type === 'checkbox'" v-model="value">{{ field.label }}</Checkbox>
 	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :error="error" />
 

@@ -298,8 +298,12 @@ router.onError(arrived);
  */
 const lastQuery = {};
 
-/** Where a form goes back to: `list`, with the query that list last had. */
-export const returnTo = (list) => (lastQuery[list.name] ? { name: list.name, query: lastQuery[list.name] } : list);
+/**
+ * Where a form goes back to: `list`, with the query that list last had. Its
+ * params stay: a variant goes back to *its* product, and a route without its
+ * `uuid` cannot be resolved (the *Zurück* link vanished, 2026-10-08).
+ */
+export const returnTo = (list) => (lastQuery[list.name] ? { ...list, query: lastQuery[list.name] } : list);
 
 /**
  * **Back is where the admin came from** (Marcel, 2026-09-29): an event

@@ -15,7 +15,7 @@ use Illuminate\Validation\Rule;
  * product's dropdown, and one row of the client's list. Article number,
  * **net** price, licence type, named or floating, platforms, a minimum
  * quantity, a remark, and whether it is on the site at all. A demo is a
- * variant at 0 (#35); an EDU licence one with *Auf der Website* unticked (#36).
+ * variant at 0 (#35); an EDU licence one with *Im Shop bestellbar* unticked (#36).
  */
 final class LicenceVariantSchema extends Schema
 {
@@ -46,7 +46,10 @@ final class LicenceVariantSchema extends Schema
 					->with(['hint' => 'z.B. «nur zusammen mit einer Neulizenz».']),
 			])->with(['columns' => 2]),
 			Field::row([
-				Field::checkbox('listed')->label('Auf der Website'),
+				// Not *Publizieren*: that is the product's. Unticked is an EDU or
+				// lab licence, picked only when VIAK enters an order (#36).
+				Field::checkbox('listed')->label('Im Shop bestellbar')
+					->with(['hint' => 'Ohne Haken nicht im Shop, nur für Bestellungen, die ihr selbst erfasst (z.B. EDU-Lizenzen).']),
 			]),
 		];
 	}
