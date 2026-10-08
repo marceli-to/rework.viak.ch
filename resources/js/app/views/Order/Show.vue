@@ -18,7 +18,7 @@ import PaymentBadge from '@/components/order/PaymentBadge.vue';
  * ordered, where the licences go, the invoice, and **each line with
  * *Versendet***. A line is marked once VIAK has forwarded the licence; the
  * badge then says who and when, which is the answer when one never arrived.
- * *Noch nicht versendet* takes a mistaken tick off again (Marcel, 2026-10-08).
+ * *Versand offen* takes a mistaken tick off again (Marcel, 2026-10-08).
  *
  * The head is not the forms' aside and column: the order is a record, so it
  * reads as *Rechnungen*' row, labelled columns over a rule (Marcel picked it
@@ -41,7 +41,7 @@ const chf = (value) => `CHF ${Number(value).toFixed(2)}`;
 const open = computed(() => order.value?.items.filter((item) => !item.dispatched_at).length ?? 0);
 
 async function dispatch(item, dispatched) {
-	if (!dispatched && !(await confirm('Noch nicht versendet?', `${item.title} wird wieder als offen geführt.`))) return;
+	if (!dispatched && !(await confirm('Versand wieder offen?', `${item.title} wird wieder als offen geführt.`))) return;
 
 	busy.value = item.uuid;
 	try {
@@ -99,7 +99,7 @@ async function dispatch(item, dispatched) {
 						</div>
 						<div class="mt-16 flex items-start sm:col-span-5 sm:mt-0 sm:justify-end">
 							<Button v-if="!item.dispatched_at" variant="success" :disabled="busy === item.uuid" @click="dispatch(item, true)">Versendet</Button>
-							<Button v-else variant="secondary" :disabled="busy === item.uuid" @click="dispatch(item, false)">Noch nicht versendet</Button>
+							<Button v-else variant="secondary" :disabled="busy === item.uuid" @click="dispatch(item, false)">Versand offen</Button>
 						</div>
 					</div>
 				</article>
