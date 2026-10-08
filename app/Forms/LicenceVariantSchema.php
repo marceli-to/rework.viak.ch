@@ -41,7 +41,7 @@ final class LicenceVariantSchema extends Schema
 				->label('Plattform')->with(['columns' => 4]),
 			Field::row([
 				Field::number('min_quantity')->label('Mindestmenge')->rules(['integer', 'min:1', 'max:999'])
-					->with(['hint' => 'Leer lassen für keine.']),
+					->with(['hint' => 'Kleinste Stückzahl im Warenkorb, z.B. 3 bei Teams-Lizenzen. Leer: ab 1 Stück.']),
 				Field::text('note')->label('Hinweis')->rules(['max:255'])
 					->with(['hint' => 'z.B. «nur zusammen mit einer Neulizenz».']),
 			])->with(['columns' => 2]),
