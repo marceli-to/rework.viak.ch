@@ -1,15 +1,17 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { fetchLicences } from '@/api/licences';
 import { fetchSettings } from '@/api/settings';
+import { fold } from '@/support/format';
 import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
-import SettingList from '@/views/Setting/List.vue';
+import SearchField from '@/components/list/SearchField.vue';
+import { KINDS, usage } from '@/views/Setting/kinds';
 
 /**
  * *Software* ([[05-licences]], `/dashboard/software`): the licence catalogue, one collapsible per software
@@ -18,22 +20,38 @@ import SettingList from '@/views/Setting/List.vue';
  * dropdown has and the cheapest price, all net. *Nur manuell* marks a product
  * none of whose variants is on the site: VIAK picks it when entering an order.
  *
- * Below the groups, the two lists the catalogue hangs off, *Software-Gruppen*
- * and *Hersteller*, moved here from *Einstellungen* (Marcel, 2026-10-08); the
- * one a form came back from is open (`?liste=`).
+ * Below, the two lists the catalogue hangs off, *Software-Gruppen* and
+ * *Hersteller*, each under its own teal title with a `+` (Marcel,
+ * 2026-10-08; they were in *Einstellungen*). The one a form came back from is
+ * scrolled to (`?liste=`).
+ *
+ * The search, in the URL as everywhere (`?suche=`), finds a product by its
+ * name, maker, group or a variant's name or article number, and a group or
+ * maker by its name. A software group with hits opens.
  */
 const route = useRoute();
+const router = useRouter();
 
 const items = ref([]);
 const lists = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const open = computed(() => String(route.query.gruppe ?? ''));
-const openList = computed(() => String(route.query.liste ?? ''));
+const search = computed(() => String(route.query.suche ?? ''));
+const setSearch = (value) => router.replace({ query: value ? { suche: value } : {} });
+
+const matches = (...haystack) => {
+	const text = fold(haystack.flat().join(' '));
+	return fold(search.value).split(/\s+/).filter(Boolean).every((word) => text.includes(word));
+};
+
+const shown = computed(() =>
+	search.value ? items.value.filter((item) => matches(item.title, item.maker, item.group, item.variants.map((variant) => [variant.title, variant.sku]))) : items.value,
+);
 
 const groups = computed(() => {
 	const byGroup = new Map();
-	for (const item of items.value) {
+	for (const item of shown.value) {
 		if (!byGroup.has(item.group)) byGroup.set(item.group, []);
 		byGroup.get(item.group).push(item);
 	}
@@ -41,6 +59,8 @@ const groups = computed(() => {
 		.map(([title, products]) => ({ title, products }))
 		.sort((a, b) => a.title.localeCompare(b.title, 'de', { sensitivity: 'base' }));
 });
+
+const terms = (key) => (search.value ? lists.value[key].filter((term) => matches(term.title)) : lists.value[key]);
 
 const price = (value) => Number(value).toFixed(2);
 
@@ -52,41 +72,66 @@ onMounted(async () => {
 	} finally {
 		loading.value = false;
 	}
+	if (route.query.liste) requestAnimationFrame(() => document.getElementById(`liste-${route.query.liste}`)?.scrollIntoView());
 });
 </script>
 
 <template>
 	<section>
-		<ListHeader title="Software" :create="{ name: 'licence.create' }" />
+		<ListHeader title="Software" :create="{ name: 'licence.create' }">
+			<template #search>
+				<SearchField :model-value="search" @update:model-value="setSearch" />
+			</template>
+		</ListHeader>
 
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />
-		<div v-else class="mt-24 lg:mt-32">
-			<NoResults v-if="!items.length">Noch keine Lizenzen erfasst.</NoResults>
-			<Collapsible v-for="group in groups" :key="group.title" :expanded="open === group.title" :count="group.products.length">
-				<template #title>{{ group.title }}</template>
 
-				<EditableListItem
-					v-for="item in group.products"
-					:key="item.uuid"
-					:edit="{ name: 'licence.edit', params: { uuid: item.uuid } }"
-					:dimmed="!item.publish"
-					wide
+		<template v-else>
+			<div class="mt-24 lg:mt-32">
+				<NoResults v-if="!shown.length">{{ search ? 'Keine Lizenzen gefunden.' : 'Noch keine Lizenzen erfasst.' }}</NoResults>
+
+				<!-- Keyed on the search, so a group with hits opens. -->
+				<Collapsible
+					v-for="group in groups"
+					:key="`${group.title}-${search}`"
+					:expanded="open === group.title || Boolean(search)"
+					:count="group.products.length"
 				>
-					<div class="col-span-12 sm:col-span-4">{{ item.title }}</div>
-					<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8">
-						{{ item.maker }}
-						<span class="mt-8 flex flex-wrap gap-8">
-							<Badge>{{ item.variants.length }} {{ item.variants.length === 1 ? 'Variante' : 'Varianten' }}</Badge>
-							<Badge v-if="item.from">ab CHF {{ price(item.from) }}</Badge>
-							<Badge v-if="!item.listed && item.publish">Nur manuell</Badge>
-							<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
-						</span>
+					<template #title>{{ group.title }}</template>
+
+					<EditableListItem
+						v-for="item in group.products"
+						:key="item.uuid"
+						:edit="{ name: 'licence.edit', params: { uuid: item.uuid } }"
+						:dimmed="!item.publish"
+						wide
+					>
+						<div class="col-span-12 sm:col-span-4">{{ item.title }}</div>
+						<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8">
+							{{ item.maker }}
+							<span class="mt-8 flex flex-wrap gap-8">
+								<Badge>{{ item.variants.length }} {{ item.variants.length === 1 ? 'Variante' : 'Varianten' }}</Badge>
+								<Badge v-if="item.from">ab CHF {{ price(item.from) }}</Badge>
+								<Badge v-if="!item.listed && item.publish">Nur manuell</Badge>
+								<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
+							</span>
+						</div>
+					</EditableListItem>
+				</Collapsible>
+			</div>
+
+			<div v-for="key in ['software', 'manufacturers']" :id="`liste-${key}`" :key="key" class="mt-64 mb-64 scroll-mt-24">
+				<ListHeader :title="KINDS[key].title" :create="{ name: 'licence.term.create', params: { kind: key } }" tag="h2" />
+
+				<EditableListItem v-for="term in terms(key)" :key="term.uuid" :edit="{ name: 'licence.term.edit', params: { kind: key, uuid: term.uuid } }" wide>
+					<div class="col-span-12 sm:col-span-4">{{ term.title }}</div>
+					<div class="col-span-12 flex flex-wrap gap-8 pr-40 max-sm:mt-8 sm:col-span-8">
+						<Badge v-for="text in usage(key, term)" :key="text">{{ text }}</Badge>
 					</div>
 				</EditableListItem>
-			</Collapsible>
-
-			<SettingList v-for="key in ['software', 'manufacturers']" :key="key" :kind-key="key" :items="lists[key]" :expanded="openList === key" />
-		</div>
+				<NoResults v-if="!terms(key).length">{{ search ? 'Keine gefunden.' : 'Noch keine erfasst.' }}</NoResults>
+			</div>
+		</template>
 	</section>
 </template>

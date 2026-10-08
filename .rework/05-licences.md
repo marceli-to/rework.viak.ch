@@ -48,8 +48,11 @@ right below, which supersedes parts of *The real catalogue*.
   *Mindestmenge* is the smallest quantity in the basket. No *Abbrechen*
   button: no dashboard form has one, *Zurück* does that job.
 - **Software-Gruppen** and **Hersteller** are lists on the *Software* page,
-  below the groups (Marcel, 2026-10-08: first built into *Einstellungen* as
-  *Software*, renamed and moved the same day). Their forms are the settings
+  below the groups, each under its own teal title with a `+` like the page's
+  own header, not as collapsibles (Marcel, 2026-10-08: first built into
+  *Einstellungen* as *Software*, renamed and moved the same day). The page
+  has the dashboard's search (`?suche=`): products by name, maker, group,
+  variant name or article number; groups and makers by name. Their forms are the settings
   form under `/dashboard/software/liste/{kind}/{uuid}`; badges count courses
   and licences, and a used one is not deleted.
 
