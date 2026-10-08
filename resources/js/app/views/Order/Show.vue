@@ -60,11 +60,10 @@ async function dispatch(item, dispatched) {
 	<Loading v-else-if="!order" />
 
 	<section v-else>
-		<!-- *Rechnungen*' row: the title and *Zurück* on one line, then the order as labelled columns over a rule (Marcel, 2026-10-08). -->
-		<div class="grid grid-cols-12 items-start gap-x-16 lg:gap-x-40">
-			<h1 class="col-span-12 font-bold text-teal sm:col-span-8">Bestellung {{ order.number }}</h1>
-			<div class="col-span-12 flex sm:col-span-4 sm:justify-end"><BackLink :to="returnTo({ name: 'backoffice.orders' })" class="sm:mt-0!" /></div>
-		</div>
+		<!-- *Rechnungen*' row: the order as labelled columns over a rule (Marcel, 2026-10-08). -->
+		<!-- *Zurück* under the title on the left, as every other screen's aside has it. -->
+		<h1 class="font-bold text-teal">Bestellung {{ order.number }}</h1>
+		<BackLink :to="returnTo({ name: 'backoffice.orders' })" />
 		<div class="mt-24 grid grid-cols-12 gap-x-16 gap-y-16 border-t border-black pt-16 text-lg leading-[1.4] lg:mt-32 lg:gap-x-40 lg:text-xl">
 			<div class="col-span-6 sm:col-span-2"><div class="text-md text-gray-600 lg:text-lg">Datum</div>{{ shortDate(order.date) }}</div>
 			<div class="col-span-6 sm:col-span-3">
