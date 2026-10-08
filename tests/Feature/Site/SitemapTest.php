@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 use App\Models\Course;
 use App\Models\ExpertProfile;
+use App\Models\LicenceProduct;
+use App\Models\LicenceVariant;
 use App\Models\Project;
+use App\Models\Software;
 use App\Models\User;
 
 /**
@@ -24,13 +27,18 @@ beforeEach(function () {
 	Project::factory()->create(['slug' => ['de' => 'raeume-visualisieren']]);
 	Project::factory()->create(['slug' => ['de' => 'vorhaben-entwurf'], 'publish' => false]);
 
+	// A software with a licence to order has a page; one only courses use has none.
+	$rhino = Software::create(['title' => ['de' => 'Rhinoceros'], 'publish' => true]);
+	LicenceVariant::factory()->create(['licence_product_id' => LicenceProduct::factory()->create(['software_id' => $rhino->id])->id]);
+	Software::create(['title' => ['de' => 'SketchUp'], 'publish' => true]);
+
 	$this->expert = User::factory()->expert()->create(['first_name' => 'Remo', 'last_name' => 'Kast']);
 	ExpertProfile::factory()->for($this->expert)->create();
 	$hidden = User::factory()->expert()->create(['first_name' => 'Nicht', 'last_name' => 'Sichtbar']);
 	ExpertProfile::factory()->for($hidden)->create(['visible' => false]);
 });
 
-it('names the fixed pages, the published Vorhaben and courses and the listed experts, on the canonical host', function () {
+it('names the fixed pages, the published Vorhaben, courses and software and the listed experts, on the canonical host', function () {
 	$host = 'https://'.config('site.canonical_host');
 
 	expect(sitemapUrls())->toEqualCanonicalizing([
@@ -38,6 +46,8 @@ it('names the fixed pages, the published Vorhaben and courses and the listed exp
 		"{$host}/de/vorhaben/raeume-visualisieren",
 		"{$host}/de/kurse",
 		"{$host}/de/kurs/rhino-einstiegskurs",
+		"{$host}/de/software",
+		"{$host}/de/software/rhinoceros",
 		"{$host}/de/ueber-uns",
 		"{$host}/de/experte/remo-kast/{$this->expert->uuid}",
 		"{$host}/de/kontakt",
