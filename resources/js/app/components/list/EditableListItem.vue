@@ -18,7 +18,8 @@ import IconEdit from '@/components/icons/Edit.vue';
  *
  * `show` adds legacy's second link, to the record's own page: the 20px arrow
  * under the pencil, 40px below the rule (`icon-arrow-right.is-absolute`,
- * `_arrow.scss`), as each student row has it.
+ * `_arrow.scss`), as each student row has it. A row with only the arrow
+ * has it on the first line, where the pencil would be.
  *
  * `download` is a file instead of a form: legacy's download icon where the
  * pencil would be, on a paid or cancelled invoice. A row can have neither.
@@ -50,7 +51,8 @@ const emit = defineEmits(['edit']);
 		<a v-else-if="download" :href="download" title="Herunterladen" class="absolute top-12 right-0 z-10 block text-black hover:text-teal">
 			<IconDownload class="block" />
 		</a>
-		<RouterLink v-if="show" :to="show" title="Anzeigen" class="absolute top-40 right-0 z-10 block text-black hover:text-teal">
+		<!-- Under the pencil where there is one; alone, it takes the pencil's place on the first line (Marcel, 2026-10-08). -->
+		<RouterLink v-if="show" :to="show" title="Anzeigen" class="absolute right-0 z-10 block text-black hover:text-teal" :class="edit || editable || download ? 'top-40' : 'top-14 sm:top-22'">
 			<IconArrowRight size="sm" class="[&_svg]:w-20" />
 		</RouterLink>
 		<div class="grid grid-cols-12 gap-x-16 lg:gap-x-40">
