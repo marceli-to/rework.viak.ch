@@ -357,6 +357,10 @@ dashboard; the fields are the site's own (`x-form.field` sizes throughout).
   list, link — everything the ported copy uses. **[[EditorHtml]] cleans it on
   the way in**, keeping `target` and `rel` (63 of 87 links open a new tab) and
   relative links.
+  **The link is edited in a lightbox** since 2026-10-08 (Marcel,
+  [[LinkDialog]]): *Adresse*, *Text* when nothing is selected (empty: the
+  address), *Übernehmen*, *Entfernen* on an existing link. The site's
+  composer (`x-form.editor`) keeps its bar over the text for now.
 - **Videos save with the form**, as a list: kept by uuid, added, removed,
   ordered ([[SaveCourseRelations]]).
 - **Delete is refused while any date has a booking**, cancelled ones
