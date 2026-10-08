@@ -1,8 +1,9 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue';
 import IconEditorBold from '@/components/icons/EditorBold.vue';
 import IconEditorBulletList from '@/components/icons/EditorBulletList.vue';
 import IconEditorLink from '@/components/icons/EditorLink.vue';
+import LinkDialog from './LinkDialog.vue';
 
 /**
  * `resources/views/components/form/editor.blade.php` with
@@ -16,7 +17,8 @@ import IconEditorLink from '@/components/icons/EditorLink.vue';
  * here is what [[EditorHtml]] keeps.
  *
  * A 1px black box, 320px high, the toolbar a 39px strip over the text. The
- * link bar opens over the text rather than pushing it down. `v-model` is the
+ * link is edited in a lightbox ([[LinkDialog]], Marcel 2026-10-08), not the
+ * composer's bar over the text. `v-model` is the
  * HTML, and an empty editor is `''`, not `<p></p>`.
  *
  * **The Editor is held in a `shallowRef`**, never made reactive: ProseMirror
@@ -34,11 +36,10 @@ defineProps({
 const id = useId();
 const editor = shallowRef(null);
 const content = ref(null);
-const urlField = ref(null);
 
 const active = ref({ bold: false, bulletList: false, link: false });
-const linking = ref(false);
-const url = ref('');
+// The open link dialog: the link's address, and whether it needs words of its own.
+const linking = ref(null);
 
 onMounted(async () => {
 	const [{ Editor }, { default: extensions }] = await Promise.all([import('@tiptap/core'), import('../../../shared/editor')]);
@@ -81,11 +82,11 @@ onBeforeUnmount(() => editor.value?.destroy());
 
 const run = (command) => editor.value?.chain().focus()[command]().run();
 
-async function openLink() {
-	url.value = editor.value?.getAttributes('link').href ?? '';
-	linking.value = true;
-	await nextTick();
-	urlField.value?.focus();
+function openLink() {
+	const instance = editor.value;
+	if (!instance) return;
+	const inLink = instance.isActive('link');
+	linking.value = { href: inLink ? (instance.getAttributes('link').href ?? '') : '', needsText: !inLink && instance.state.selection.empty };
 }
 
 /** Legacy's rule, as the composer applies it: an address becomes `mailto:`, a bare host gets `https://`. */
@@ -95,28 +96,27 @@ function normalise(value) {
 	return `https://${value.replace(/^\/+/, '')}`;
 }
 
-function applyLink() {
-	const href = normalise(url.value.trim());
+/** Nothing selected and no link here: the text typed in the dialog, else the address, goes in linked. */
+function applyLink({ url, text }) {
+	const href = normalise(url);
 	const instance = editor.value;
 
-	if (href === '') return removeLink();
-
-	instance.chain().focus().extendMarkRange('link').setLink({ href }).run();
-
-	if (instance.state.selection.empty && !instance.isActive('link')) {
-		instance.chain().focus().insertContent({ type: 'text', text: href, marks: [{ type: 'link', attrs: { href } }] }).run();
+	if (linking.value?.needsText) {
+		instance.chain().focus().insertContent({ type: 'text', text: text || url, marks: [{ type: 'link', attrs: { href } }] }).run();
+	} else {
+		instance.chain().focus().extendMarkRange('link').setLink({ href }).run();
 	}
 
-	linking.value = false;
+	linking.value = null;
 }
 
 function removeLink() {
 	editor.value?.chain().focus().extendMarkRange('link').unsetLink().run();
-	linking.value = false;
+	linking.value = null;
 }
 
 function cancelLink() {
-	linking.value = false;
+	linking.value = null;
 	editor.value?.commands.focus();
 }
 
@@ -154,25 +154,6 @@ const buttons = [
 			</div>
 
 			<div
-				v-show="linking"
-				class="absolute inset-x-0 top-39 z-10 flex flex-wrap items-center gap-x-16 gap-y-8 border-b border-black bg-white px-16 py-8 text-md sm:text-lg"
-				@keydown.esc.prevent.stop="cancelLink"
-			>
-				<input
-					ref="urlField"
-					v-model="url"
-					type="text"
-					aria-label="Adresse"
-					placeholder="www.beispiel.ch oder name@beispiel.ch"
-					class="min-w-0 flex-1 border-b border-black bg-transparent py-4 text-teal outline-hidden placeholder:text-gray-400"
-					@keydown.enter.prevent="applyLink"
-				/>
-				<button type="button" class="transition-colors hover:text-teal" @click="applyLink">Übernehmen</button>
-				<button v-show="active.link" type="button" class="transition-colors hover:text-teal" @click="removeLink">Entfernen</button>
-				<button type="button" class="transition-colors hover:text-teal" @click="cancelLink">Abbrechen</button>
-			</div>
-
-			<div
 				ref="content"
 				class="min-h-0 flex-1 cursor-text overflow-y-auto p-16 text-md text-black sm:text-lg lg:text-xl [&_.ProseMirror]:min-h-full [&_p]:mb-12 lg:[&_p]:mb-16 [&_p:last-child]:mb-0 [&_li>p]:mb-0 [&_strong]:font-bold [&_ul]:mb-12 [&_ul]:list-disc lg:[&_ul]:mb-16 [&_ul:last-child]:mb-0 [&_li]:ml-20 [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-[3px]"
 				@click.self="content?.querySelector('[contenteditable]')?.focus()"
@@ -180,5 +161,7 @@ const buttons = [
 		</div>
 
 		<div v-if="error" class="pt-8 text-md text-danger lg:text-lg">{{ error }}</div>
+
+		<LinkDialog v-if="linking" :href="linking.href" :needs-text="linking.needsText" @apply="applyLink" @remove="removeLink" @close="cancelLink" />
 	</div>
 </template>
