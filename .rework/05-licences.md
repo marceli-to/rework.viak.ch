@@ -122,6 +122,54 @@ right below, which supersedes parts of *The real catalogue*.
 **Next, in order:** the public software pages and the checkout
 (`13-checkout.md`), which need the design review the mockups still lack.
 
+**Built 2026-10-08, third slice: the software pages** (Marcel: "as similar
+to the course page as possible", the list with its filter too).
+
+- **Where the copy lives: on the Software**, the level the page is about
+  (Rhinoceros), not the product. Migration
+  `2026_10_08_000003_add_page_to_software` gives `software` the course's own
+  columns by the course's names, all translatable: `slug`, `subtitle`,
+  `short_description`, `full_description`, `information` +
+  `information_more` (the two columns of *Weitere Informationen*),
+  `seo_description`, `seo_tags`; images through the media table (the course
+  form's *Bilder*, owner `software`); categories in `software_category`, the
+  courses' own categories. Every existing row got its slug. The slug is made
+  once in `Software::booted()`, whichever door creates the row (form,
+  settings list, the product form's `+`, the import); renaming keeps it.
+- **Dashboard → Software → *Software* list**: the pencil and the `+` open
+  *Software erfassen / bearbeiten* ([[SoftwareSchema]], `views/Licence/Software.vue`,
+  `/dashboard/software/liste/software/{uuid}`), the course form minus number,
+  fee, facts, PDF text, levels, languages and videos. Delete refused while a
+  course or product uses it. *Hersteller* keeps the settings form.
+- **`/de/software`**: the course list's page with a card per software
+  (`card/software`: category, title, square teaser; overlay maker(s),
+  number of products, *ab CHF … exkl. MWST*) and **the course list's filter
+  panel**, now taking its selects as a prop ([[SoftwareFilter]]): the
+  categories as links, then *Hersteller*, *Lizenztyp*, *Plattform*,
+  *Nutzung*. A software matches when one of its listed licences does; a
+  licence for *Einzelplatz oder Netzwerk* counts as both. Options only where
+  something carries them. The header's *Software* links here now.
+- **Only software with something to order is on the site**
+  (`Software::onSite()`): published, with a published product that has a
+  listed licence. Software only courses use (SketchUp, Godot) has no page,
+  and a maker whose products are all hidden (Gemvision) is not offered.
+- **`/de/software/{slug}`**: the course page's hero and collapsibles.
+  *Aktuelle Kurse* becomes **Lizenzen: every product** (Marcel's pick over a
+  page per product), each a row like an event's (`card/product`): name and
+  maker (+ description, *3-Jahreslizenz auf Anfrage*) in `span-4`, then in
+  `span-8` the licence select (`shopLabel()`, listed only), *Hostsoftware*
+  where the product has hosts, platforms, *Stück* (starts at the minimum),
+  the price (a demo *kostenlos*), *In den Warenkorb*. Two columns, not the
+  event's three: the labels run long. Under the list *Preise exkl. MWST.*
+  Then **Kurse** (the courses that teach it, as course cards),
+  *Detailbeschrieb*, *Weitere Informationen*, *Kundenmeinungen* (testimonials
+  whose subject is the software, as a course's), and *Weitere Software*.
+- **The button does nothing yet**: the basket is courses only and behind a
+  login; adding licences is the checkout (`13-checkout.md`), next.
+- Left out against the wireframe, because the course page has neither: the
+  Vorhaben tags and the image gallery. **3d-software.ch's URLs** and where
+  they redirect: a cutover question.
+
 ## The client's answers — 2026-10-08
 
 The client sent the list back (`Software_Lizenztypen_claude.xlsx`, same name, now

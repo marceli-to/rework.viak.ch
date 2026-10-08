@@ -49,6 +49,9 @@ return [
 			// One Vorhaben, `/de/vorhaben/{slug}` ([[04-content]]). New, so
 			// nothing indexed to keep.
 			'project' => 'vorhaben',
+			// The software list and one software's page, `/de/software/{slug}`
+			// ([[05-licences]]). New; 3d-software.ch's URLs are a cutover question.
+			'software' => 'software',
 			// The homepage footer's newsletter form posts here; no page of its own.
 			'newsletter' => 'newsletter',
 			// Legacy's indexed page, which 301s to `training` (`04-content.md`).

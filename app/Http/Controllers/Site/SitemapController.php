@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Project;
+use App\Models\Software;
 use App\Models\User;
 use App\Support\SiteUrl;
 use Illuminate\Http\Response;
@@ -40,6 +41,11 @@ class SitemapController extends Controller
 				->map(fn (Course $course) => $course->getTranslation('slug', $locale, false))
 				->filter()
 				->map(fn (string $slug) => SiteUrl::course($slug, $locale)),
+			SiteUrl::softwareIndex($locale),
+			...Software::query()->onSite()->get()
+				->map(fn (Software $software) => $software->getTranslation('slug', $locale, false))
+				->filter()
+				->map(fn (string $slug) => SiteUrl::software($slug, $locale)),
 			SiteUrl::about($locale),
 			...User::query()->publiclyListedExperts()->get()
 				->map(fn (User $expert) => SiteUrl::expert($expert, $locale)),

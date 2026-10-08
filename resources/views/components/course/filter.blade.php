@@ -1,4 +1,11 @@
-@props(['filter', 'matching' => 0])
+@props([
+	'filter',
+	'matching' => 0,
+	// The selects under the category links, attribute => what it says unchosen.
+	// The course list's six by default; the software list passes its four
+	// ([[SoftwareFilter]]), the same panel otherwise.
+	'selects' => ['location' => 'Ort', 'software' => 'Software', 'level' => 'Level', 'language' => 'Sprache', 'expert' => 'Experte', 'tag' => 'Tags'],
+])
 
 @php
 	$selected = $filter->selected();
@@ -104,7 +111,7 @@
 
 			{{-- The other six, as selects. `Ort` carries the 40px that separates
 			     the halves; the rest follow it with none. --}}
-			@foreach (['location' => 'Ort', 'software' => 'Software', 'level' => 'Level', 'language' => 'Sprache', 'expert' => 'Experte', 'tag' => 'Tags'] as $attribute => $placeholder)
+			@foreach ($selects as $attribute => $placeholder)
 				<li @class(['flex min-h-40 items-center border-b border-gray-400', 'mt-40' => $loop->first])>
 					{{-- `min-height: inherit` on legacy's `.select-wrapper`: it takes
 					     the item's 40px, so a select row is 40 **plus** its rule
@@ -160,7 +167,7 @@
 			<x-ui.button
 				variant="outline"
 				class="w-full"
-				:href="$urlFor(array_fill_keys(\App\Support\CourseFilter::ATTRIBUTES, null))"
+				:href="$urlFor(array_fill_keys(array_keys($selected), null))"
 				@click.prevent="reset()"
 			>
 				Zurücksetzen

@@ -169,7 +169,20 @@ const routes = [
 		component: () => import('@/views/Licence/Index.vue'),
 		meta: { title: 'Software' },
 	},
-	// *Software* and *Hersteller*, listed on the *Software* page: the settings form, under this menu item.
+	// A software's page ([[SoftwareSchema]]): its own form, on the path the settings form had, which it outranks.
+	{
+		path: '/dashboard/software/liste/software/erfassen',
+		name: 'licence.software.create',
+		component: () => import('@/views/Licence/Software.vue'),
+		meta: { title: 'Software erfassen' },
+	},
+	{
+		path: '/dashboard/software/liste/software/:uuid',
+		name: 'licence.software.edit',
+		component: () => import('@/views/Licence/Software.vue'),
+		meta: { title: 'Software bearbeiten' },
+	},
+	// *Hersteller*, listed on the *Software* page: the settings form, under this menu item.
 	{
 		path: '/dashboard/software/liste/:kind/erfassen',
 		name: 'licence.term.create',

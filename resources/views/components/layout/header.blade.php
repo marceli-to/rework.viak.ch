@@ -25,9 +25,8 @@
 	 */
 	$nav = [
 		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
-		// *Software* holds its place until its page is built (2026-10-06): no
-		// route yet, so `#` and nothing to light it.
-		['label' => 'Software', 'href' => '#', 'match' => []],
+		// The software list, the shop, and each software's page ([[05-licences]]).
+		['label' => 'Software', 'href' => \App\Support\SiteUrl::softwareIndex(), 'match' => "{$locale}.software.*"],
 		// *Über uns* took Experten's place (2026-10-06), and an expert's own page
 		// still lights it: the experts are on *Über uns* now.
 		['label' => 'Über uns', 'href' => \App\Support\SiteUrl::about(), 'match' => ["{$locale}.about", "{$locale}.experts.*"]],

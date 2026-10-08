@@ -37,9 +37,10 @@ class Testimonial extends Model
 
 	/**
 	 * What it is about: a course, a software, or null for VIAK as a whole.
-	 * Set on the testimonial, once. A course subject also *shows* it, on that
-	 * course's page ([[Course::testimonialsAbout]]); everywhere else it is
-	 * shown is `placements()`.
+	 * Set on the testimonial, once. A course or software subject also *shows*
+	 * it, on that page ([[Course::testimonialsAbout]],
+	 * [[Software::testimonialsAbout]]); everywhere else it is shown is
+	 * `placements()`.
 	 */
 	public function subject(): MorphTo
 	{
@@ -102,13 +103,19 @@ class Testimonial extends Model
 			$courses = $courses->concat([$this->subject]);
 		}
 
+		// The same for a software page ([[Software::testimonialsAbout]]).
+		$software = $this->software;
+		if ($this->subject instanceof Software && $this->subject->publish && ! $software->contains($this->subject)) {
+			$software = $software->concat([$this->subject]);
+		}
+
 		return [
 			...$courses->sortBy('number')->map(fn (Course $course) => [
 				'type' => 'course',
 				'uuid' => $course->uuid,
 				'label' => $course->number.' '.$course->getTranslation('title', 'de'),
 			])->values()->all(),
-			...$this->software->map(fn (Software $software) => [
+			...$software->map(fn (Software $software) => [
 				'type' => 'software',
 				'uuid' => $software->uuid,
 				'label' => $software->getTranslation('title', 'de'),

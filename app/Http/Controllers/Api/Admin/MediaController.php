@@ -15,6 +15,7 @@ use App\Http\Resources\Admin\MediaResource;
 use App\Models\Course;
 use App\Models\Media;
 use App\Models\Page;
+use App\Models\Software;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -37,7 +38,7 @@ use Illuminate\Validation\Rule;
  * show is deleted; and the **art-directed mobile variant** forrerzimmermann
  * offers, which nothing on this site asks for.
  *
- * **A course's images, an expert's portraits and a team member's** — the same
+ * **A course's images, a software's, an expert's portraits and a team member's** — the same
  * section, the same Actions; only the owner differs, so each route has a
  * one-line door.
  */
@@ -56,6 +57,11 @@ class MediaController extends Controller
 	public function teamMemberIndex(TeamMember $teamMember): AnonymousResourceCollection
 	{
 		return $this->images($teamMember);
+	}
+
+	public function softwareIndex(Software $software): AnonymousResourceCollection
+	{
+		return $this->images($software);
 	}
 
 	/** A fixed page's, by its key: the homepage's slider ([[Page]]). */
@@ -77,6 +83,11 @@ class MediaController extends Controller
 	public function teamMemberStore(Request $request, TeamMember $teamMember, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
 		return $this->upload($request, $teamMember, $upload, $attach, $role);
+	}
+
+	public function softwareStore(Request $request, Software $software, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
+	{
+		return $this->upload($request, $software, $upload, $attach, $role);
 	}
 
 	public function pageStore(Request $request, string $page, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
@@ -128,6 +139,11 @@ class MediaController extends Controller
 	public function teamMemberOrder(Request $request, TeamMember $teamMember, ReorderMedia $reorder): JsonResponse
 	{
 		return $this->reorder($request, $teamMember, $reorder);
+	}
+
+	public function softwareOrder(Request $request, Software $software, ReorderMedia $reorder): JsonResponse
+	{
+		return $this->reorder($request, $software, $reorder);
 	}
 
 	public function pageOrder(Request $request, string $page, ReorderMedia $reorder): JsonResponse

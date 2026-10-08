@@ -133,6 +133,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('licences/{product}', [Admin\LicenceProductController::class, 'show']);
 		Route::put('licences/{product}', [Admin\LicenceProductController::class, 'update']);
 		Route::delete('licences/{product}', [Admin\LicenceProductController::class, 'destroy']);
+		// A software's page, the level above the products ([[SoftwareController]]).
+		Route::post('software', [Admin\SoftwareController::class, 'store']);
+		Route::get('software/{software}', [Admin\SoftwareController::class, 'show']);
+		Route::put('software/{software}', [Admin\SoftwareController::class, 'update']);
+		Route::delete('software/{software}', [Admin\SoftwareController::class, 'destroy']);
+		Route::get('software/{software}/media', [Admin\MediaController::class, 'softwareIndex']);
+		Route::post('software/{software}/media', [Admin\MediaController::class, 'softwareStore']);
+		Route::patch('software/{software}/media/order', [Admin\MediaController::class, 'softwareOrder']);
 		Route::get('licences/{product}/variants', [Admin\LicenceVariantController::class, 'index']);
 		Route::post('licences/{product}/variants/order', [Admin\LicenceVariantController::class, 'order']);
 		Route::post('licences/{product}/variants', [Admin\LicenceVariantController::class, 'store']);

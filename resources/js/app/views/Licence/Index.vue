@@ -42,6 +42,10 @@ const open = computed(() => String(route.query.gruppe ?? ''));
 const search = computed(() => String(route.query.suche ?? ''));
 const setSearch = (value) => router.replace({ query: value ? { suche: value } : {} });
 
+// A software has a page, so its own form ([[SoftwareSchema]]); a maker is a name, the settings form.
+const createRoute = (key) => (key === 'software' ? { name: 'licence.software.create' } : { name: 'licence.term.create', params: { kind: key } });
+const editRoute = (key, uuid) => (key === 'software' ? { name: 'licence.software.edit', params: { uuid } } : { name: 'licence.term.edit', params: { kind: key, uuid } });
+
 const matches = (...haystack) => {
 	const text = fold(haystack.flat().join(' '));
 	return fold(search.value).split(/\s+/).filter(Boolean).every((word) => text.includes(word));
@@ -124,9 +128,9 @@ onMounted(async () => {
 			</div>
 
 			<div v-for="key in ['software', 'manufacturers']" :id="`liste-${key}`" :key="key" class="mt-64 mb-64 scroll-mt-24">
-				<ListHeader :title="KINDS[key].title" :create="{ name: 'licence.term.create', params: { kind: key } }" tag="h2" />
+				<ListHeader :title="KINDS[key].title" :create="createRoute(key)" tag="h2" />
 
-				<EditableListItem v-for="term in terms(key)" :key="term.uuid" :edit="{ name: 'licence.term.edit', params: { kind: key, uuid: term.uuid } }" wide>
+				<EditableListItem v-for="term in terms(key)" :key="term.uuid" :edit="editRoute(key, term.uuid)" wide>
 					<div class="col-span-12 sm:col-span-4">{{ term.title }}</div>
 					<div class="col-span-12 flex flex-wrap gap-8 pr-40 max-sm:mt-8 sm:col-span-8">
 						<Badge v-for="text in usage(key, term)" :key="text">{{ text }}</Badge>

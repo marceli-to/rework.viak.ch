@@ -20,6 +20,7 @@ use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\ProjectController;
 use App\Http\Controllers\Site\SitemapController;
+use App\Http\Controllers\Site\SoftwareController;
 use App\Http\Controllers\Site\TrainingController;
 use App\Http\Middleware\SetLocaleFromUrl;
 use App\Support\SiteUrl;
@@ -80,6 +81,16 @@ Route::prefix('{locale}')
 			 */
 			Route::get($segments['project'].'/{slug}', [ProjectController::class, 'show'])
 				->name("{$locale}.projects.show");
+
+			/*
+			 * The software list, the shop, and one software's page, drawn as
+			 * the course pages are ([[05-licences]]).
+			 */
+			Route::get($segments['software'], [SoftwareController::class, 'index'])
+				->name("{$locale}.software.index");
+
+			Route::get($segments['software'].'/{slug}', [SoftwareController::class, 'show'])
+				->name("{$locale}.software.show");
 
 			Route::get($segments['courses'], [CourseController::class, 'index'])
 				->name("{$locale}.courses.index");

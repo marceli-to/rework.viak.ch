@@ -342,6 +342,20 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('project', $locale).'/'.$slug;
 	}
 
+	/** The software list, the shop — `/de/software` ([[05-licences]]). */
+	public static function softwareIndex(?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('software', $locale);
+	}
+
+	/** One software, its products and courses — `/de/software/{slug}`. */
+	public static function software(string $slug, ?string $locale = null): string
+	{
+		return self::softwareIndex($locale).'/'.$slug;
+	}
+
 	/** Where the homepage footer's newsletter form posts — `/de/newsletter`. */
 	public static function newsletter(?string $locale = null): string
 	{

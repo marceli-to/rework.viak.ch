@@ -16,6 +16,7 @@ use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\ProjectSchema;
 use App\Forms\Schema;
+use App\Forms\SoftwareSchema;
 use App\Forms\TeamMemberSchema;
 use App\Forms\TermSchema;
 use App\Forms\TestimonialSchema;
@@ -45,6 +46,7 @@ class FormController extends Controller
 		'invoice' => InvoiceSchema::class,
 		'licence' => LicenceProductSchema::class,
 		'licence-variant' => LicenceVariantSchema::class,
+		'software' => SoftwareSchema::class,
 	];
 
 	public function show(string $form): JsonResponse
