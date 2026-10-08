@@ -67,15 +67,18 @@ async function dispatch(item, dispatched) {
 		</div>
 		<div class="mt-24 grid grid-cols-12 gap-x-16 gap-y-16 border-t border-black pt-16 text-lg leading-[1.4] lg:mt-32 lg:gap-x-40 lg:text-xl">
 			<div class="col-span-6 sm:col-span-2"><div class="text-md text-gray-600 lg:text-lg">Datum</div>{{ shortDate(order.date) }}</div>
-			<div class="col-span-6 sm:col-span-4">
+			<div class="col-span-6 sm:col-span-3">
 				<div class="text-md text-gray-600 lg:text-lg">Kunde</div>
 				<RouterLink :to="{ name: 'customer.show', params: { uuid: order.customer.uuid } }" class="font-bold hover:text-teal">{{ order.customer.name }}</RouterLink><template v-if="order.customer.city">, {{ order.customer.city }}</template>
 			</div>
 			<div class="col-span-12 min-w-0 sm:col-span-3"><div class="text-md text-gray-600 lg:text-lg">Lizenzen an</div><a :href="`mailto:${order.delivery_email}`" class="break-words hover:text-teal">{{ order.delivery_email }}</a></div>
-			<div class="col-span-12 sm:col-span-3">
+			<!-- Four columns, so the payment badge sits on the amount's line (Marcel, 2026-10-08). -->
+			<div class="col-span-12 sm:col-span-4">
 				<div class="text-md text-gray-600 lg:text-lg">Rechnung</div>
-				<template v-if="order.invoice"><a v-if="order.invoice.document" :href="order.invoice.document" class="hover:text-teal">{{ order.invoice.number }}</a><template v-else>{{ order.invoice.number }}</template>, <span class="tabular-nums">{{ chf(order.invoice.grand_total) }}</span></template>
-				<div class="mt-4"><PaymentBadge :payment="order.payment" /></div>
+				<div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+					<span v-if="order.invoice"><a v-if="order.invoice.document" :href="order.invoice.document" class="hover:text-teal">{{ order.invoice.number }}</a><template v-else>{{ order.invoice.number }}</template>, <span class="tabular-nums">{{ chf(order.invoice.grand_total) }}</span></span>
+					<PaymentBadge :payment="order.payment" />
+				</div>
 			</div>
 		</div>
 
