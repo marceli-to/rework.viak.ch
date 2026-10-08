@@ -137,7 +137,14 @@ to the course page as possible", the list with its filter too).
   courses' own categories. Every existing row got its slug. The slug is made
   once in `Software::booted()`, whichever door creates the row (form,
   settings list, the product form's `+`, the import); renaming keeps it.
-- **Dashboard → Software → *Software* list**: the pencil and the `+` open
+- **Dashboard → Software is one list since, drawn as *Kurse*** (Marcel,
+  2026-10-08: products and a separate *Software* list made no sense once a
+  software had a page): a collapsible per software (all of them, by name,
+  dimmed unpublished, products counted), the **pencil** on it to the
+  software's form, its products inside, a **`+`** under them adding a
+  product already filed under it (`?software=`, the form's new `prefill`).
+  The title's `+` adds a software. *Hersteller* stays a list below.
+- **The software form**: the pencil and the title's `+` open
   *Software erfassen / bearbeiten* ([[SoftwareSchema]], `views/Licence/Software.vue`,
   `/dashboard/software/liste/software/{uuid}`), the course form minus number,
   fee, facts, PDF text, levels, languages and videos. Delete refused while a

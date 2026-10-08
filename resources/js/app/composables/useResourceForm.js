@@ -18,11 +18,13 @@ import { goBack, returnTo } from '@/router';
  * - **Saves**: *Speichern* goes back to the list, *Speichern und
  *   Weiterbearbeiten* stays — on a new record, by opening it for editing.
  *   Back to the list means back to it as it was left, search and all.
+ * - **Prefills** a new record where the way in already says something: a
+ *   product added under a software is filed under it.
  * - **Guards unsaved changes** on the way out and on a reload.
  * - **Hooks** let a custom part of the form take part: the image section
  *   reports what it is holding and uploads it once a new course exists.
  */
-export function useResourceForm({ schema: name, load, save, remove, list, edit, noun, singleton = false }) {
+export function useResourceForm({ schema: name, load, save, remove, list, edit, noun, singleton = false, prefill = {} }) {
 	const route = useRoute();
 	const router = useRouter();
 
@@ -63,7 +65,7 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	onMounted(async () => {
 		try {
 			schema.value = await fetchForm(name);
-			take(creating.value ? { ...schema.value.defaults } : await load(singleton ? null : route.params.uuid));
+			take(creating.value ? { ...schema.value.defaults, ...prefill } : await load(singleton ? null : route.params.uuid));
 		} catch (problem) {
 			failed.value = problem.message;
 		}

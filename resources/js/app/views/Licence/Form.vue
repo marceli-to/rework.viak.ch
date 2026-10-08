@@ -1,4 +1,5 @@
 <script setup>
+import { useRoute } from 'vue-router';
 import { deleteLicence, fetchLicence, saveLicence } from '@/api/licences';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
@@ -9,6 +10,9 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * licences (variants) a list under them, each with its
  * own form ([[VariantSection]]).
  */
+// The `+` under a software files the new product under it (`?software=`).
+const route = useRoute();
+const prefill = route.query.software ? { software: String(route.query.software) } : {};
 </script>
 
 <template>
@@ -19,6 +23,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
 		:remove="deleteLicence"
 		:list="{ name: 'licences' }"
 		:edit="(uuid) => ({ name: 'licence.edit', params: { uuid } })"
+		:prefill="prefill"
 		noun="Produkt"
 		:titles="{ create: 'Produkt erfassen', edit: 'Produkt bearbeiten' }"
 		:deletion="{

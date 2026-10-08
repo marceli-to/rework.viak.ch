@@ -5,7 +5,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
 /**
  * *Software erfassen* / *bearbeiten* ([[05-licences]]): its page, drawn as a
  * course page is, so the form is the course form's ([[SoftwareSchema]]). The
- * pencil in the *Software* list opens it; the way back is that list.
+ * pencil on a software's collapsible on the *Software* screen opens it.
  */
 const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;
 const blocked = (meta) => {
@@ -23,7 +23,7 @@ const blocked = (meta) => {
 		:load="fetchSoftware"
 		:save="saveSoftware"
 		:remove="deleteSoftware"
-		:list="{ name: 'licences', query: { liste: 'software' } }"
+		:list="{ name: 'licences' }"
 		:edit="(uuid) => ({ name: 'licence.software.edit', params: { uuid } })"
 		noun="Software"
 		:titles="{ create: 'Software erfassen', edit: 'Software bearbeiten' }"

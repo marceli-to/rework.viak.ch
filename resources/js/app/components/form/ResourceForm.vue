@@ -37,6 +37,8 @@ const props = defineProps({
 	locked: { type: Function, default: () => false },
 	// One record with no id and no list: the admin's own profile.
 	singleton: { type: Boolean, default: false },
+	// Fields a new record starts with beyond the schema's defaults.
+	prefill: { type: Object, default: () => ({}) },
 });
 
 const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);

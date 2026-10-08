@@ -162,6 +162,8 @@ class SettingController extends Controller
 		return [
 			'uuid' => $term->uuid,
 			'title' => $term->getTranslation('title', 'de', false) ?: '',
+			// A software's page is on the site only when published ([[Software::scopeOnSite]]).
+			'publish' => (bool) $term->publish,
 			'usage' => $this->usage($term),
 			'courses' => $term instanceof Manufacturer ? 0 : $this->courses($term),
 			'licences' => $this->licences($term),
