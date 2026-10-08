@@ -78,7 +78,6 @@ async function dispatch(item, dispatched) {
 				<div class="mt-4"><PaymentBadge :payment="order.payment" /></div>
 			</div>
 		</div>
-		<p v-if="order.entered_by" class="mt-8 text-md text-gray-600 lg:text-lg">Erfasst von {{ order.entered_by }}</p>
 
 		<div class="mt-32 sm:mt-48">
 			<Collapsible expanded :count="order.items.length">
