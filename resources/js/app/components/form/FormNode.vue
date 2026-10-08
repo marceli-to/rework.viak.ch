@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { get, set } from '@/support/path';
 import Checkbox from './Checkbox.vue';
 import CheckboxGroup from './CheckboxGroup.vue';
@@ -9,6 +9,7 @@ import MaskedField from './MaskedField.vue';
 import OfferPicker from './OfferPicker.vue';
 import Select from './Select.vue';
 import Textarea from './Textarea.vue';
+import TermDialog from './TermDialog.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import ImageSection from '@/components/media/ImageSection.vue';
 import VariantSection from '@/components/licence/VariantSection.vue';
@@ -24,6 +25,9 @@ import IconTrash from '@/components/icons/Trash.vue';
  *
  * Custom parts are named in the schema and resolved here: the course's image
  * section and a licence's variants, each given the record it belongs to.
+ *
+ * A select with `create` (a settings kind) has a `+` beside its label that
+ * adds a choice in a lightbox and picks it ([[TermDialog]]).
  */
 defineOptions({ name: 'FormNode' });
 
@@ -64,6 +68,14 @@ const invalid = computed(() => {
 	return Object.keys(props.errors).some((failed) => inside.some((name) => failed === name || failed.startsWith(`${name}.`)));
 });
 
+const creating = ref(false);
+function created(term) {
+	props.field.options.push({ value: term.uuid, label: term.title });
+	props.field.options.sort((a, b) => a.label.localeCompare(b.label, 'de', { sensitivity: 'base', numeric: true }));
+	value.value = term.uuid;
+	creating.value = false;
+}
+
 const rows = computed(() => get(props.model, props.field.name) ?? []);
 // A plain copy: the schema arrives reactive, and `structuredClone` cannot copy
 // a proxy — it threw, silently, and *Video hinzufügen* added nothing.
@@ -76,7 +88,14 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<MaskedField v-else-if="field.type === 'date' || field.type === 'time'" v-model="value" :kind="field.type" :label="field.label" :required="field.required" :error="error" />
 	<Textarea v-else-if="field.type === 'textarea'" v-model="value" :label="field.label" :required="field.required" :rows="field.rows ?? 2" :mono="field.mono" :error="error" />
 	<Editor v-else-if="field.type === 'richtext'" v-model="value" :label="field.label" :required="field.required" :error="error" />
-	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :placeholder="field.placeholder" :required="field.required" :error="error" />
+	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :placeholder="field.placeholder" :required="field.required" :error="error">
+		<template v-if="field.create" #action>
+			<button type="button" :title="`${field.label} hinzufügen`" class="block transition-colors hover:text-teal" @click="creating = true">
+				<IconPlus size="md" class="block" />
+			</button>
+			<TermDialog v-if="creating" :kind="field.create" @close="creating = false" @created="created" />
+		</template>
+	</Select>
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :error="error" />
 	<div v-else-if="field.type === 'checkbox' && field.hint">
 		<Checkbox v-model="value">{{ field.label }}</Checkbox>

@@ -21,15 +21,16 @@ final class LicenceProductSchema extends Schema
 	{
 		return [
 			// Title first, then where it sits, each on its own line (Marcel, 2026-10-08).
+			// `create`: a `+` beside the label adds a group or a maker in a lightbox.
 			Field::text('title')->label('Titel')->required(),
 			Field::select('software', fn () => Software::query()->get()
 				->sortBy(fn (Software $software) => $software->getTranslation('title', 'de'), SORT_NATURAL | SORT_FLAG_CASE)
 				->mapWithKeys(fn (Software $software) => [$software->uuid => $software->getTranslation('title', 'de')])->all())
-				->label('Software')->required()->with(['placeholder' => 'Bitte wählen']),
+				->label('Software')->required()->with(['placeholder' => 'Bitte wählen', 'create' => 'software']),
 			Field::select('manufacturer', fn () => Manufacturer::query()->get()
 				->sortBy(fn (Manufacturer $maker) => $maker->getTranslation('title', 'de'), SORT_NATURAL | SORT_FLAG_CASE)
 				->mapWithKeys(fn (Manufacturer $maker) => [$maker->uuid => $maker->getTranslation('title', 'de')])->all())
-				->label('Hersteller')->required()->with(['placeholder' => 'Bitte wählen']),
+				->label('Hersteller')->required()->with(['placeholder' => 'Bitte wählen', 'create' => 'manufacturers']),
 			Field::richtext('description')->label('Beschreibung'),
 			// Maxwell V5 and the RealFlow Plugin: one price, the host chosen on the order.
 			Field::text('hosts')->label('Hostsoftware')->rules(['max:500'])

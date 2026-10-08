@@ -64,6 +64,16 @@ it('asks for a name, and a real link for the map', function () {
 		->assertJsonPath('errors.map.0', 'Bitte einen vollständigen Link erfassen, mit https://.');
 });
 
+it('refuses a name its list already has, whatever the case, but not a term its own', function () {
+	$tag = Tag::create(['title' => ['de' => 'Rendering'], 'order' => 1]);
+	Category::create(['title' => ['de' => 'Animation'], 'order' => 1]);
+
+	$this->actingAs($this->admin)->postJson('/api/admin/settings/tags', ['title' => ' rendering '])
+		->assertJsonPath('errors.title.0', 'Diese Bezeichnung gibt es schon.');
+	$this->postJson('/api/admin/settings/tags', ['title' => 'Animation'])->assertCreated();
+	$this->putJson("/api/admin/settings/tags/{$tag->uuid}", ['title' => 'Rendering'])->assertOk();
+});
+
 it('knows no other kind', function () {
 	$this->actingAs($this->admin)->postJson('/api/admin/settings/projects', ['title' => 'Rhino'])->assertNotFound();
 });

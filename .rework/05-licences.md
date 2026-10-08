@@ -52,7 +52,12 @@ right below, which supersedes parts of *The real catalogue*.
   own header, not as collapsibles (Marcel, 2026-10-08: first built into
   *Einstellungen* as *Software*, renamed and moved the same day). The page
   has the dashboard's search (`?suche=`): products by name, maker, group,
-  variant name or article number; groups and makers by name. Their forms are the settings
+  variant name or article number; groups and makers by name.
+- **Adding a group or a maker from the licence form:** a `+` at the right of
+  the *Software* and *Hersteller* labels opens a lightbox with *Bezeichnung*
+  ([[TermDialog]]); saved, it joins the dropdown and is picked (Marcel,
+  2026-10-08). The settings endpoint now refuses a name its list already
+  has, whatever the case, in *Einstellungen* too. Their forms are the settings
   form under `/dashboard/software/liste/{kind}/{uuid}`; badges count courses
   and licences, and a used one is not deleted.
 

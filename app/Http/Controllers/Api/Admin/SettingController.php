@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 /**
  * *Einstellungen* ([[07-dashboard]], step 6) — legacy's five settings lists,
@@ -35,6 +37,10 @@ use Illuminate\Support\Facades\DB;
  * **Nothing in use is deleted.** Legacy deleted a category a course was filed
  * under; here the delete is refused while a course or a course date uses the
  * term, and says how many.
+ *
+ * **Nor is a name taken twice** in one list, whatever its case: since the
+ * licence form adds a group or a maker in a lightbox, a second *Chaos* was
+ * one click away (2026-10-08).
  */
 class SettingController extends Controller
 {
@@ -110,9 +116,24 @@ class SettingController extends Controller
 		$data = $request->validate($schema->rules($record), $schema->messages(), $schema->attributes());
 		$de = fn (string $field) => [...($record?->getTranslations($field) ?? []), 'de' => $data[$field]];
 
+		if ($kind !== 'locations') {
+			$this->refuseTaken($kind, $data['title'], $record);
+		}
+
 		return $kind === 'locations'
 			? ['description' => $de('description'), 'address' => $de('address'), 'map' => ($data['map'] ?? '') ?: null, 'publish' => (bool) ($data['publish'] ?? false)]
 			: ['title' => $de('title')];
+	}
+
+	private function refuseTaken(string $kind, string $title, ?Model $record): void
+	{
+		$taken = $this->model($kind)::query()->get()
+			->reject(fn (Model $term) => $record?->is($term))
+			->contains(fn (Model $term) => Str::lower(trim((string) $term->getTranslation('title', 'de', false))) === Str::lower(trim($title)));
+
+		if ($taken) {
+			throw ValidationException::withMessages(['title' => 'Diese Bezeichnung gibt es schon.']);
+		}
 	}
 
 	/** Course dates at a place; courses filed under a term; and licence products under a group or a maker. */
