@@ -54,29 +54,6 @@ class SaveLicenceProductRequest extends FormRequest
 		];
 	}
 
-	/**
-	 * The variants in the order they stand, each with its uuid if it is saved
-	 * already.
-	 *
-	 * @return array<int, array<string, mixed>>
-	 */
-	public function variants(): array
-	{
-		return collect($this->validated()['variants'])->values()->map(fn (array $row, int $position) => [
-			'uuid' => $row['uuid'] ?? null,
-			'title' => ['de' => $row['title']],
-			'sku' => trim($row['sku']),
-			'price' => number_format((float) $row['price'], 2, '.', ''),
-			'licence_type' => $row['licence_type'] ?? null,
-			'access' => $row['access'] ?? null,
-			'platforms' => array_values($row['platforms'] ?? []),
-			'note' => blank($row['note'] ?? null) ? null : ['de' => $row['note']],
-			'min_quantity' => blank($row['min_quantity'] ?? null) ? null : (int) $row['min_quantity'],
-			'listed' => (bool) ($row['listed'] ?? false),
-			'order' => $position + 1,
-		])->all();
-	}
-
 	private function product(): ?LicenceProduct
 	{
 		$product = $this->route('product');

@@ -29,12 +29,16 @@ right below, which supersedes parts of *The real catalogue*.
   writes the file over it and moves variants to the product the file names,
   for #47–49. 107 variants in 39 products (38 plus *Update Maxwell V5* on its
   own until #47), 9 new software groups, 15 makers.
-- **Dashboard → Lizenzen** (`/dashboard/lizenzen`, in the burger menu): one
-  collapsible per software group, per product its maker, variant count,
-  *ab CHF* (cheapest listed non-demo, net) and *Nur manuell* when no variant
-  is on the site. The form ([[LicenceProductSchema]]) edits the product and
-  its variants as a repeater; variants are matched by uuid, one left out is
-  soft-deleted.
+- **Dashboard → Software** (`/dashboard/software`, in the main menu after
+  *Experten*, Marcel 2026-10-08; the phone menu went to 16px, 16 apart, to
+  fit a fourth item at 390px): one collapsible per software group, per
+  product its maker, variant count, *ab CHF* (cheapest listed non-demo, net)
+  and *Nur manuell* when no variant is on the site. The product form
+  ([[LicenceProductSchema]]) ends in a collapsible *Varianten* list
+  ([[VariantSection]]): rows drag into the dropdown's order, a pencil each to
+  the variant's own form (`/dashboard/software/{product}/variante/{uuid}`,
+  [[LicenceVariantSchema]]), a `+` to add. Marcel replaced the first build's
+  repeater the same day: nine fields per variant on one page was too much.
 - **Einstellungen** gains *Software* and *Hersteller* lists; their badges
   count courses and licences, and a used one is not deleted.
 

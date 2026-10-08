@@ -145,22 +145,34 @@ const routes = [
 		meta: { title: 'Rabatt-Code bearbeiten' },
 	},
 	{
-		path: '/dashboard/lizenzen',
+		path: '/dashboard/software',
 		name: 'licences',
 		component: () => import('@/views/Licence/Index.vue'),
-		meta: { title: 'Lizenzen' },
+		meta: { title: 'Software' },
 	},
 	{
-		path: '/dashboard/lizenz/erfassen',
+		path: '/dashboard/software/erfassen',
 		name: 'licence.create',
 		component: () => import('@/views/Licence/Form.vue'),
 		meta: { title: 'Lizenz erfassen' },
 	},
 	{
-		path: '/dashboard/lizenz/:uuid',
+		path: '/dashboard/software/:uuid',
 		name: 'licence.edit',
 		component: () => import('@/views/Licence/Form.vue'),
 		meta: { title: 'Lizenz bearbeiten' },
+	},
+	{
+		path: '/dashboard/software/:product/variante/erfassen',
+		name: 'licence.variant.create',
+		component: () => import('@/views/Licence/Variant.vue'),
+		meta: { title: 'Variante erfassen' },
+	},
+	{
+		path: '/dashboard/software/:product/variante/:uuid',
+		name: 'licence.variant.edit',
+		component: () => import('@/views/Licence/Variant.vue'),
+		meta: { title: 'Variante bearbeiten' },
 	},
 	{
 		path: '/dashboard/testimonials',

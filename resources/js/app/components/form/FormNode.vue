@@ -11,6 +11,7 @@ import Select from './Select.vue';
 import Textarea from './Textarea.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import ImageSection from '@/components/media/ImageSection.vue';
+import VariantSection from '@/components/licence/VariantSection.vue';
 import IconPlus from '@/components/icons/Plus.vue';
 import IconTrash from '@/components/icons/Trash.vue';
 
@@ -21,8 +22,8 @@ import IconTrash from '@/components/icons/Trash.vue';
  * repeater's row — and `path` is where that object sits in the form, so an
  * error comes back to the field that caused it: `videos.1.code`.
  *
- * Custom parts are named in the schema and resolved here; the only one is the
- * course's image section, which is given the record it belongs to.
+ * Custom parts are named in the schema and resolved here: the course's image
+ * section and a licence's variants, each given the record it belongs to.
  */
 defineOptions({ name: 'FormNode' });
 
@@ -34,7 +35,7 @@ const props = defineProps({
 	record: { type: String, default: null },
 });
 
-const CUSTOM = { images: ImageSection };
+const CUSTOM = { images: ImageSection, variants: VariantSection };
 
 const key = computed(() => props.path + props.field.name);
 const value = computed({

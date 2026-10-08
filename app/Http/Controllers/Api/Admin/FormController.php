@@ -11,6 +11,7 @@ use App\Forms\EventSchema;
 use App\Forms\ExpertSchema;
 use App\Forms\InvoiceSchema;
 use App\Forms\LicenceProductSchema;
+use App\Forms\LicenceVariantSchema;
 use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\ProjectSchema;
@@ -43,6 +44,7 @@ class FormController extends Controller
 		'profile' => ProfileSchema::class,
 		'invoice' => InvoiceSchema::class,
 		'licence' => LicenceProductSchema::class,
+		'licence-variant' => LicenceVariantSchema::class,
 	];
 
 	public function show(string $form): JsonResponse

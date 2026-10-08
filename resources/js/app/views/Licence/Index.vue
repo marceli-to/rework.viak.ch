@@ -10,7 +10,7 @@ import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
 
 /**
- * *Lizenzen* ([[05-licences]]): the catalogue, one collapsible per software
+ * *Software* ([[05-licences]], `/dashboard/software`): the licence catalogue, one collapsible per software
  * group as *Einstellungen* draws its lists, the group a form came back from
  * open (`?gruppe=`). Per product its name, its maker, how many variants the
  * dropdown has and the cheapest price, all net. *Nur manuell* marks a product
@@ -49,7 +49,7 @@ onMounted(async () => {
 
 <template>
 	<section>
-		<ListHeader title="Lizenzen" :create="{ name: 'licence.create' }" />
+		<ListHeader title="Software" :create="{ name: 'licence.create' }" />
 
 		<p v-if="error" class="mt-32 text-danger">{{ error }}</p>
 		<Loading v-else-if="loading" class="mt-32" />

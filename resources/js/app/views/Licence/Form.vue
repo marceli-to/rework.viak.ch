@@ -4,7 +4,8 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
  * *Lizenz erfassen* / *bearbeiten* ([[05-licences]]): the fields are
- * [[LicenceProductSchema]], the variants a repeater, one block each.
+ * [[LicenceProductSchema]]; the variants a list under them, each with its
+ * own form ([[VariantSection]]).
  */
 </script>
 

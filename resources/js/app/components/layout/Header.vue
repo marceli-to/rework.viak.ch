@@ -27,13 +27,15 @@ import IconProfile from '@/components/icons/Profile.vue';
  * `sections` keep legacy's labels and order, with the chunk's decisions applied
  * ([[07-dashboard]]): *Startseite* and *Heroes* are gone from *Seiteninhalte*,
  * *Testimonials* is new, and *Team* is back for the *Über uns* page (2026-10-06).
- * *Lizenzen* is new with chunk 05: the catalogue VIAK keeps itself.
+ * *Software* is new in the main menu with chunk 05, after *Experten*
+ * (Marcel, 2026-10-08): the licence catalogue VIAK keeps itself.
  */
 const route = useRoute();
 
 const main = [
 	{ label: 'Kurse', to: { name: 'courses' }, match: ['courses', 'course', 'event'] },
 	{ label: 'Experten', to: { name: 'experts' }, match: ['experts', 'expert'] },
+	{ label: 'Software', to: { name: 'licences' }, match: ['licences', 'licence'] },
 	{ label: 'Kunden', to: { name: 'customers' }, match: ['customers', 'customer'] },
 ];
 
@@ -47,7 +49,6 @@ const overflow = [
 		],
 	},
 	{ label: 'Rabatt-Codes', to: { name: 'discount-codes' } },
-	{ label: 'Lizenzen', to: { name: 'licences' } },
 	{
 		label: 'Seiteninhalte',
 		key: 'content',
@@ -100,9 +101,10 @@ try {
 			<div class="col-span-12 sm:col-span-8">
 				<nav class="flex justify-between" aria-label="Dashboard">
 					<!-- Legacy's 3xl and 48px on a phone put *Studenten* and both icons past the edge at 390px
-					     (its own page scrolls sideways to 768). 18px and 24px apart fit, measured 2026-09-30. -->
-					<ul class="flex text-xl font-bold sm:text-lg lg:text-2xl">
-						<li v-for="item in main" :key="item.label" class="mr-24 flex last:mr-0 sm:mr-48">
+					     (its own page scrolls sideways to 768). 18px and 24px apart fit three, measured 2026-09-30;
+					     with *Software* the fourth (2026-10-08) it takes 16px and 16 apart. -->
+					<ul class="flex text-lg font-bold lg:text-2xl">
+						<li v-for="item in main" :key="item.label" class="mr-16 flex last:mr-0 sm:mr-48">
 							<RouterLink :to="item.to" class="transition-colors duration-100 ease-in hover:text-teal" :class="{ 'text-teal': isActive(item) }">
 								{{ item.label }}
 							</RouterLink>
@@ -110,7 +112,7 @@ try {
 					</ul>
 
 					<ul class="flex">
-						<li class="mr-24 flex">
+						<li class="mr-16 flex sm:mr-24">
 							<RouterLink :to="{ name: 'profile' }" title="Mein Profil" class="block text-teal hover:text-black">
 								<IconProfile class="h-20 w-auto!" />
 							</RouterLink>
