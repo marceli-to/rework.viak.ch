@@ -177,6 +177,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('invoices', [Admin\InvoiceController::class, 'index']);
 		Route::get('invoices/{invoice}', [Admin\InvoiceController::class, 'show']);
 		Route::put('invoices/{invoice}', [Admin\InvoiceController::class, 'update']);
+
+		// Licence orders and the dispatch worklist ([[05-licences]]).
+		Route::get('licence-orders', [Admin\LicenceOrderController::class, 'index']);
+		Route::get('licence-orders/{order}', [Admin\LicenceOrderController::class, 'show']);
+		Route::patch('licence-order-items/{item}/dispatch', [Admin\LicenceOrderController::class, 'dispatch']);
+		Route::get('customers/{customer}/licence-orders/create', [Admin\LicenceOrderController::class, 'create']);
+		Route::post('customers/{customer}/licence-orders', [Admin\LicenceOrderController::class, 'store']);
 		Route::get('exports/courses', [Admin\ExportController::class, 'courses']);
 
 		Route::get('profile', [Admin\ProfileController::class, 'show']);

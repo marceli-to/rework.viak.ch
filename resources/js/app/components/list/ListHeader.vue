@@ -8,6 +8,7 @@ import IconPlus from '@/components/icons/Plus.vue';
  * with no rule of its own (`components/lists/_global.scss`).
  *
  * `tag`: a page with more than one list (*Software*) heads the others `h2`.
+ * The `create` slot stands in for the link where the `+` opens something.
  */
 defineProps({
 	title: { type: String, required: true },
@@ -23,6 +24,8 @@ defineProps({
 			<RouterLink v-if="create" :to="create" class="mt-4 block size-16 hover:text-teal" title="Neu erfassen">
 				<IconPlus size="lg" class="block" />
 			</RouterLink>
+			<!-- A `+` that asks something first: *Bestellungen* picks the customer in a lightbox. -->
+			<slot v-else name="create" />
 		</div>
 		<div class="col-span-4 flex justify-end">
 			<!-- `.search-container` carries the header's height: 12px under the

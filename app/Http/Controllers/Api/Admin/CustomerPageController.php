@@ -9,6 +9,7 @@ use App\Enums\BookingCancellationReason;
 use App\Enums\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\EventRowResource;
+use App\Http\Resources\Admin\LicenceOrderRowResource;
 use App\Models\Booking;
 use App\Models\User;
 use App\Models\UserDocument;
@@ -85,6 +86,10 @@ class CustomerPageController extends Controller
 					'cancelled_at' => $booking->cancelled_at->toIso8601String(),
 					'reason' => $booking->cancellation_reason?->label(),
 				]),
+			// Licence orders, newest first, as *Bestellungen* lists them ([[05-licences]]).
+			'orders' => LicenceOrderRowResource::collection(
+				$customer->licenceOrders()->with(['user', 'invoice', 'items'])->latest()->latest('id')->get()
+			)->resolve(),
 			'documents' => $customer->documents()->with('documentable')->latest('date')->get()
 				->map(fn (UserDocument $document) => $this->document($document)),
 		]]);

@@ -1,4 +1,4 @@
-# 05 — Software licences (not yet built)
+# 05 — Software licences (being built)
 
 The second thing VIAK sells.
 
@@ -71,8 +71,44 @@ right below, which supersedes parts of *The real catalogue*.
   form under `/dashboard/software/liste/{kind}/{uuid}`; badges count courses
   and licences, and a used one is not deleted.
 
-**Next, in order:** licence orders (the admin's manual order with the free
-line, the dispatch worklist), then the public software pages and the checkout
+**Built 2026-10-08, second slice: licence orders and the dispatch worklist.**
+
+- **Schema** (`2026_10_08_000002_create_licence_orders`): `licence_orders`
+  (number, six digits as bookings and invoices; user, `invoice_id`, frozen
+  `invoice_address`, `delivery_email`, `entered_by`, `paid_at`) and
+  `licence_order_items` (variant nullable, frozen `title`, `sku`, unit
+  `price`; `quantity`, `host`, `position`, **`dispatched_at`/`dispatched_by`
+  per line**: one order can go to two resellers on two days). The proposal's
+  `state` column became the lines' dispatch; *paid* is `paid_at` or the
+  invoice's status, not a copy of it.
+- **[[PlaceLicenceOrder]]**, for the admin now and the checkout later:
+  freezes each line (a variant as *Product, shop label*, e.g. *V-Ray, Solo,
+  Jahresmietlizenz, Einzelplatz (named)*), then **a priced order is invoiced
+  at once**, one `LICENCE` line per order line at 8.1 %, `itemable` the line,
+  the description *2 × …, für SketchUp*, and its PDF made. **A free order has
+  no invoice and is paid when placed**: the *A free order* proposal, built.
+- **Backoffice → Bestellungen** (`/dashboard/bestellungen`): *Offene
+  Bestellungen* (a line still to send, oldest first) and *Versendete* (newest
+  first, paged), searched by number, customer, line title or article number.
+  Each row has the payment as a badge (*Kostenlos*, *Bezahlt*, *Rechnung
+  offen*) and *1 von 2 versendet*. The `+` picks the customer in a lightbox.
+- **The order's page** (`/dashboard/bestellung/{uuid}`): customer, *Lizenzen
+  an*, the invoice (PDF link) and per line *Versendet*, which turns into a
+  badge with date and who; *Zurücksetzen* undoes a mistaken tick.
+- **Bestellung erfassen** (`/dashboard/kunde/{uuid}/bestellung/erfassen`,
+  from the list's `+` or the customer page's new *Bestellungen* collapsible):
+  invoice address from the customer's own, *Lizenzen an* (empty: the
+  account's), positions of one select over the whole catalogue (**unlisted
+  variants marked *nicht im Shop***) or ***Freie Position*** (Bezeichnung,
+  Preis netto), *Host-Software* where the product has hosts, *Anzahl*
+  starting at the minimum but not held to it, and the running total.
+- Not decided, so not built: **no mail** goes out yet, neither to the
+  customer (the invoice is in *Rechnungen* to send) nor to VIAK; that is the
+  checkout's design ([[10-mail]]). Dispatch does not wait for payment, since
+  #2 is still open: the worklist shows both and leaves it to VIAK. An order
+  cannot be cancelled yet.
+
+**Next, in order:** the public software pages and the checkout
 (`13-checkout.md`), which need the design review the mockups still lack.
 
 ## The client's answers — 2026-10-08

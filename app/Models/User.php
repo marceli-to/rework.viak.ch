@@ -151,6 +151,12 @@ class User extends Authenticatable implements MustVerifyEmail
 		return $this->hasMany(UserAddress::class);
 	}
 
+	/** Licences bought, or entered for them by VIAK ([[05-licences]]). */
+	public function licenceOrders(): HasMany
+	{
+		return $this->hasMany(LicenceOrder::class);
+	}
+
 	public function bookings(): HasMany
 	{
 		return $this->hasMany(Booking::class);

@@ -28,7 +28,8 @@ import IconProfile from '@/components/icons/Profile.vue';
  * ([[07-dashboard]]): *Startseite* and *Heroes* are gone from *Seiteninhalte*,
  * *Testimonials* is new, and *Team* is back for the *Über uns* page (2026-10-06).
  * *Software* is new in the main menu with chunk 05, after *Experten*
- * (Marcel, 2026-10-08): the licence catalogue VIAK keeps itself.
+ * (Marcel, 2026-10-08): the licence catalogue VIAK keeps itself. Its orders,
+ * and the worklist of licences still to send, are *Backoffice → Bestellungen*.
  */
 const route = useRoute();
 
@@ -45,6 +46,7 @@ const overflow = [
 		key: 'backoffice',
 		children: [
 			{ label: 'Rechnungen', to: { name: 'backoffice.invoices' } },
+			{ label: 'Bestellungen', to: { name: 'backoffice.orders' } },
 			{ label: 'Exporte', to: { name: 'backoffice.exports' } },
 		],
 	},

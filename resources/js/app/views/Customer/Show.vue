@@ -13,8 +13,11 @@ import Badge from '@/components/ui/Badge.vue';
 import BookingRow from '@/components/course/BookingRow.vue';
 import Button from '@/components/ui/Button.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
+import EditableListItem from '@/components/list/EditableListItem.vue';
+import IconPlus from '@/components/icons/Plus.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
+import PaymentBadge from '@/components/order/PaymentBadge.vue';
 
 /**
  * A student's own page — legacy's `student/Show.vue` ([[07-dashboard]], step 7):
@@ -27,6 +30,8 @@ import NoResults from '@/components/ui/NoResults.vue';
  * - **The admin decides whether a late cancellation costs** (#14): the dialog
  *   names the amount and offers both. Outside the window it only asks.
  * - Every document on the page, where legacy showed five and linked the rest.
+ * - ***Bestellungen***, the licence orders, with *Bestellung erfassen* for an
+ *   order taken by mail or phone ([[05-licences]]).
  */
 const route = useRoute();
 const page = ref(null);
@@ -133,6 +138,33 @@ async function cancel(booking) {
 						<Badge v-if="booking.reason">{{ booking.reason }}</Badge>
 					</template>
 				</BookingRow>
+			</Collapsible>
+
+			<!-- Licence orders ([[05-licences]]): *Bestellungen*' row, and the plus to enter one for this customer. -->
+			<Collapsible :count="page.orders.length">
+				<template #title>Bestellungen</template>
+				<EditableListItem v-for="order in page.orders" :key="order.uuid" :show="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" wide>
+					<div class="col-span-12 sm:col-span-4">
+						<RouterLink :to="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" class="hover:text-teal">Bestellung {{ order.number }}</RouterLink><br />
+						{{ shortDate(order.date) }}
+					</div>
+					<div class="col-span-12 pr-40 sm:col-span-8">
+						<div v-for="(line, index) in order.lines" :key="index">{{ line }}</div>
+						<div class="mt-8 flex flex-wrap gap-8">
+							<PaymentBadge :payment="order.payment" />
+							<Badge v-if="order.open" variant="warning">{{ order.open === order.lines.length ? 'Nicht versendet' : `${order.open} nicht versendet` }}</Badge>
+							<Badge v-else variant="success">Versendet</Badge>
+						</div>
+					</div>
+				</EditableListItem>
+				<NoResults v-if="!page.orders.length">Kunde hat noch keine Software bestellt.</NoResults>
+
+				<div v-if="!page.customer.deactivated_at" class="mt-24 flex">
+					<RouterLink :to="{ name: 'backoffice.order.create', params: { customer: page.customer.uuid } }" class="flex items-center gap-12 hover:text-teal">
+						<span>Bestellung erfassen</span>
+						<IconPlus size="md" />
+					</RouterLink>
+				</div>
 			</Collapsible>
 
 			<Collapsible :count="page.documents.length">

@@ -121,6 +121,25 @@ const routes = [
 		meta: { title: 'Rechnung bearbeiten' },
 	},
 	{
+		path: '/dashboard/bestellungen',
+		name: 'backoffice.orders',
+		component: () => import('@/views/Order/Index.vue'),
+		meta: { title: 'Bestellungen' },
+	},
+	{
+		// From the customer: an order taken by mail or phone is entered for one account.
+		path: '/dashboard/kunde/:customer/bestellung/erfassen',
+		name: 'backoffice.order.create',
+		component: () => import('@/views/Order/Form.vue'),
+		meta: { title: 'Bestellung erfassen' },
+	},
+	{
+		path: '/dashboard/bestellung/:uuid',
+		name: 'backoffice.order.show',
+		component: () => import('@/views/Order/Show.vue'),
+		meta: { title: 'Bestellung' },
+	},
+	{
 		path: '/dashboard/exporte',
 		name: 'backoffice.exports',
 		component: () => import('@/views/Export/Index.vue'),
