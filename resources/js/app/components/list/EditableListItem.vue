@@ -22,14 +22,21 @@ import IconEdit from '@/components/icons/Edit.vue';
  *
  * `download` is a file instead of a form: legacy's download icon where the
  * pencil would be, on a paid or cancelled invoice. A row can have neither.
+ *
+ * `editable` is the pencil as a button, emitting `edit`, for a row that is
+ * edited in a lightbox rather than on a page of its own (an order's
+ * positions before the order is saved).
  */
 defineProps({
 	edit: { type: [String, Object], default: null },
+	editable: { type: Boolean, default: false },
 	download: { type: String, default: null },
 	show: { type: [String, Object], default: null },
 	dimmed: { type: Boolean, default: false },
 	wide: { type: Boolean, default: false },
 });
+
+const emit = defineEmits(['edit']);
 </script>
 
 <template>
@@ -37,6 +44,9 @@ defineProps({
 		<RouterLink v-if="edit" :to="edit" title="Bearbeiten" class="absolute top-12 right-0 z-10 block size-18 text-black hover:text-teal">
 			<IconEdit class="block" />
 		</RouterLink>
+		<button v-else-if="editable" type="button" title="Bearbeiten" class="absolute top-12 right-0 z-10 block size-18 text-black hover:text-teal" @click="emit('edit')">
+			<IconEdit class="block" />
+		</button>
 		<a v-else-if="download" :href="download" title="Herunterladen" class="absolute top-12 right-0 z-10 block text-black hover:text-teal">
 			<IconDownload class="block" />
 		</a>

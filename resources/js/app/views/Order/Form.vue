@@ -6,9 +6,14 @@ import { toast } from '@/composables/useToast';
 import ArticleText from '@/components/layout/ArticleText.vue';
 import BackLink from '@/components/ui/BackLink.vue';
 import Button from '@/components/ui/Button.vue';
+import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
+import EditableListItem from '@/components/list/EditableListItem.vue';
+import IconPlus from '@/components/icons/Plus.vue';
 import Field from '@/components/form/Field.vue';
 import Loading from '@/components/ui/Loading.vue';
+import NoResults from '@/components/ui/NoResults.vue';
+import PositionDialog from '@/components/order/PositionDialog.vue';
 import Select from '@/components/form/Select.vue';
 
 /**
@@ -21,8 +26,9 @@ import Select from '@/components/form/Select.vue';
  * hand. A plugin asks for its host software. A variant with a minimum starts
  * at it; it is not enforced, as an order by phone is entered as it was sold.
  *
- * Each position is a collapsible, as the course form's sections are, added
- * with the dashed button its videos have (Marcel, 2026-10-08).
+ * The positions are a list as the licence form's *Varianten* are, each edited
+ * in a lightbox ([[PositionDialog]]), since none has a page before the order
+ * is saved (Marcel, 2026-10-08).
  *
  * Saving invoices a priced order at once ([[PlaceLicenceOrder]]); a free one
  * (demos) has no invoice. Either lands on the worklist.
@@ -41,14 +47,13 @@ const invoiceAddress = ref('');
 const deliveryEmail = ref('');
 const lines = reactive([]);
 
-// `key`: a removed position must not hand its collapsible's state to the next.
+// `key`: a removed position must not hand its row to the next.
 let made = 0;
 const blank = () => ({ key: ++made, choice: '', title: '', price: '', quantity: 1, host: '' });
 
 onMounted(async () => {
 	try {
 		page.value = await fetchOrderForm(route.params.customer);
-		lines.push(blank());
 	} catch (problem) {
 		error.value = problem.message;
 	}
@@ -73,15 +78,28 @@ const options = computed(() => [
 
 const addressOptions = computed(() => (page.value?.addresses ?? []).map((address) => ({ value: address.uuid, label: address.label })));
 
-function choose(line, choice) {
-	line.choice = choice;
-	line.host = '';
-	const variant = variants.value.get(choice);
-	line.quantity = Math.max(variant?.min_quantity ?? 1, 1);
+// Which position the lightbox has open: an index, `neu`, or none.
+const editing = ref(null);
+
+function keep(line) {
+	if (editing.value === 'neu') lines.push(line);
+	else lines[editing.value] = line;
+	clearErrors(editing.value);
+	editing.value = null;
 }
 
-// The collapsible's title: the product, or the free line's typed title.
-const heading = (line) => (line.choice === FREE ? line.title || 'Freie Position' : variants.value.get(line.choice)?.product.title ?? '');
+function drop() {
+	lines.splice(editing.value, 1);
+	errors.value = {};
+	editing.value = null;
+}
+
+// The row's label: the product and the variant's, or the free line's typed title.
+function label(line) {
+	if (line.choice === FREE) return line.title;
+	const variant = variants.value.get(line.choice);
+	return variant ? `${variant.product.title}, ${variant.label}` : '';
+}
 
 const unit = (line) => (line.choice === FREE ? Number(line.price) || 0 : Number(variants.value.get(line.choice)?.price ?? 0));
 const cents = (value) => Math.round(value * 100);
@@ -96,7 +114,15 @@ const totals = computed(() => {
 	return { net: sum(net), vat: sum(vat), total: sum(net) + sum(vat), rate };
 });
 
-const lineError = (index, key) => errors.value[`lines.${index}.${key}`]?.[0];
+// The server's errors for one position, by field, and whether it has any.
+const lineErrors = (index) =>
+	Object.fromEntries(Object.entries(errors.value).filter(([key]) => key.startsWith(`lines.${index}.`)).map(([key, messages]) => [key.split('.').pop(), messages[0]]));
+const failed = (index) => Object.keys(lineErrors(index)).length > 0;
+
+function clearErrors(index) {
+	if (index === 'neu') return;
+	errors.value = Object.fromEntries(Object.entries(errors.value).filter(([key]) => !key.startsWith(`lines.${index}.`)));
+}
 
 async function save() {
 	saving.value = true;
@@ -138,51 +164,35 @@ async function save() {
 			<Select v-if="addressOptions.length" v-model="invoiceAddress" label="Rechnungsadresse" :options="addressOptions" placeholder="Adresse aus dem Profil" :error="errors.invoice_address?.[0]" />
 			<Field v-model="deliveryEmail" type="email" label="Lizenzen an" :hint="`Leer lassen für ${page.customer.email}.`" :error="errors.delivery_email?.[0]" />
 
-			<!-- A collapsible per position, titled with what it is once chosen, *Entfernen* at its foot,
-			     then the course form's dashed *… hinzufügen* across the column ([[FormNode]]). -->
-			<div class="mt-48">
-				<Collapsible v-for="(line, index) in lines" :key="line.key" expanded :invalid="Object.keys(errors).some((key) => key.startsWith(`lines.${index}.`))">
-					<template #title>Position {{ index + 1 }}<span v-if="heading(line)" class="ml-12 font-normal">{{ heading(line) }}</span></template>
+			<!-- The licence form's *Varianten* ([[VariantSection]]): a row per position, the label left and
+			     its badges right, a pencil each and the `+` under the list, both opening the position
+			     in a lightbox (Marcel, 2026-10-08). -->
+			<Collapsible class="mt-48" expanded :count="lines.length" :invalid="Boolean(errors.lines) || lines.some((line, index) => failed(index))">
+				<template #title>Positionen</template>
 
-					<div class="mt-24">
-						<Select :model-value="line.choice" label="Software" :options="options" placeholder="Bitte wählen" required :error="lineError(index, 'variant')" @update:model-value="(value) => choose(line, value)" />
-
-						<template v-if="line.choice === FREE">
-							<Field v-model="line.title" label="Bezeichnung" required :error="lineError(index, 'title')" />
-							<Field v-model="line.price" label="Preis (CHF, netto)" required :error="lineError(index, 'price')" />
-						</template>
-
-						<Select
-							v-if="variants.get(line.choice)?.product.hosts.length"
-							v-model="line.host"
-							label="Host-Software"
-							:options="variants.get(line.choice).product.hosts.map((host) => ({ value: host, label: host }))"
-							placeholder="Bitte wählen"
-							required
-							:error="lineError(index, 'host')"
-						/>
-
-						<Field
-							v-model="line.quantity"
-							type="number"
-							label="Anzahl"
-							required
-							:hint="variants.get(line.choice)?.min_quantity ? `Im Shop mindestens ${variants.get(line.choice).min_quantity}.` : null"
-							:error="lineError(index, 'quantity')"
-						/>
-
-						<div v-if="lines.length > 1" class="flex justify-end">
-							<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="lines.splice(index, 1)">Entfernen</button>
-						</div>
+				<NoResults v-if="!lines.length">Noch keine Positionen erfasst.</NoResults>
+				<EditableListItem v-for="(line, index) in lines" :key="line.key" editable wide @edit="editing = index">
+					<div class="col-span-12 sm:col-span-6">
+						{{ label(line) }}<template v-if="line.host"><br />für {{ line.host }}</template>
 					</div>
-				</Collapsible>
-			</div>
+					<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-6">
+						<span class="flex flex-wrap gap-8">
+							<Badge v-if="line.choice === FREE">Freie Position</Badge>
+							<Badge v-else>{{ variants.get(line.choice)?.sku }}</Badge>
+							<Badge v-if="Number(line.quantity) > 1">{{ line.quantity }} Stück</Badge>
+							<Badge>{{ chf(unit(line) * (Number(line.quantity) || 0)) }}</Badge>
+							<Badge v-if="failed(index)" variant="danger">Unvollständig</Badge>
+						</span>
+					</div>
+				</EditableListItem>
+				<p v-if="errors.lines" class="mt-16 text-md text-danger lg:text-lg">{{ errors.lines[0] }}</p>
 
-			<p v-if="errors.lines" class="mb-16 text-md text-danger lg:text-lg">{{ errors.lines[0] }}</p>
-
-			<button type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="lines.push(blank())">
-				Position hinzufügen
-			</button>
+				<div class="mt-24 flex">
+					<button type="button" title="Position hinzufügen" class="block hover:text-teal" @click="editing = 'neu'">
+						<IconPlus size="lg" class="block" />
+					</button>
+				</div>
+			</Collapsible>
 
 			<!-- What the invoice will say, as rows with grey rules between them, the total over a black one.
 			     A free order raises none. -->
@@ -199,5 +209,18 @@ async function save() {
 				<Button type="submit" class="w-full" :class="{ 'pointer-events-none opacity-60': saving }">{{ saving ? 'Wird erfasst …' : 'Bestellung erfassen' }}</Button>
 			</div>
 		</form>
+
+		<PositionDialog
+			v-if="editing !== null"
+			:line="editing === 'neu' ? blank() : lines[editing]"
+			:options="options"
+			:variants="variants"
+			:free="FREE"
+			:errors="editing === 'neu' ? {} : lineErrors(editing)"
+			:removable="editing !== 'neu'"
+			@save="keep"
+			@remove="drop"
+			@close="editing = null"
+		/>
 	</ArticleText>
 </template>
