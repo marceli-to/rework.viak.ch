@@ -28,6 +28,7 @@ class SoftwareFormResource extends JsonResource
 			'title' => $de('title'),
 			'subtitle' => $de('subtitle'),
 			'publish' => $this->publish,
+			'featured' => $this->featured,
 			// What keeps it from being deleted ([[SoftwareController::destroy]]).
 			'courses_count' => $this->courses()->count(),
 			'products_count' => $this->products()->count(),

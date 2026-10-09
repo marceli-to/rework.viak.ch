@@ -43,6 +43,8 @@ final class SoftwareSchema extends Schema
 			Field::section('Einstellungen', [
 				Field::row([
 					Field::checkbox('publish')->label('Publizieren'),
+					// *Beliebte Angebote* on the homepage, as a course's ([[04-content]]).
+					Field::checkbox('featured')->label('Beliebt'),
 				]),
 				Field::checkboxes('categories', Category::class)->label('Kategorien'),
 			])->with(['open' => true]),
@@ -60,7 +62,7 @@ final class SoftwareSchema extends Schema
 	public function defaults(): array
 	{
 		return [
-			'title' => '', 'subtitle' => '', 'publish' => false,
+			'title' => '', 'subtitle' => '', 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'information' => '',
 			'categories' => [],
 			'seo_description' => '', 'seo_tags' => '',

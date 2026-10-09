@@ -40,7 +40,7 @@ class Software extends Model
 	protected $fillable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
 		'information', 'seo_description', 'seo_tags',
-		'order', 'publish',
+		'order', 'publish', 'featured',
 	];
 
 	public $translatable = [
@@ -50,7 +50,7 @@ class Software extends Model
 
 	protected function casts(): array
 	{
-		return ['publish' => 'boolean'];
+		return ['publish' => 'boolean', 'featured' => 'boolean'];
 	}
 
 	/**
@@ -86,6 +86,12 @@ class Software extends Model
 	public function testimonialsAbout(): MorphMany
 	{
 		return $this->morphMany(Testimonial::class, 'subject');
+	}
+
+	/** *Beliebte Angebote* on the homepage, beside the flagged courses ([[04-content]]). */
+	public function scopeFeatured(Builder $query): Builder
+	{
+		return $query->where('featured', true);
 	}
 
 	/**

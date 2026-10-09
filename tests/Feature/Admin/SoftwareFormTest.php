@@ -26,6 +26,7 @@ function softwarePayload(array $overrides = []): array
 		'information' => '',
 		'categories' => [],
 		'publish' => true,
+		'featured' => true,
 		'seo_description' => 'Rhino-Lizenzen und Kurse',
 		'seo_tags' => '',
 		...$overrides,
@@ -65,7 +66,8 @@ it('saves the copy, the categories and the SEO, German only', function () {
 		->assertJsonPath('data.seo_description', 'Rhino-Lizenzen und Kurse');
 
 	$software->refresh();
-	expect($software->getTranslation('subtitle', 'en'))->toBe('Freeform')
+	expect($software->featured)->toBeTrue()
+		->and($software->getTranslation('subtitle', 'en'))->toBe('Freeform')
 		->and($software->getTranslation('full_description', 'de'))->toBe('<p>Präzision statt Polygone.</p>');
 });
 

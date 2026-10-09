@@ -53,6 +53,7 @@ class SaveSoftwareRequest extends FormRequest
 			'seo_description' => $de($data['seo_description'] ?? null),
 			'seo_tags' => $de($data['seo_tags'] ?? null),
 			'publish' => (bool) ($data['publish'] ?? false),
+			'featured' => (bool) ($data['featured'] ?? false),
 		];
 
 		foreach (self::RICH as $field) {

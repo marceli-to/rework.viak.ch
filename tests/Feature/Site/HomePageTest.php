@@ -5,7 +5,10 @@ declare(strict_types=1);
 use App\Enums\EventState;
 use App\Models\Course;
 use App\Models\Event;
+use App\Models\LicenceProduct;
+use App\Models\LicenceVariant;
 use App\Models\Page;
+use App\Models\Software;
 use App\Models\Testimonial;
 
 /**
@@ -76,6 +79,34 @@ it('lists the courses flagged Beliebt, published only, in the catalogue’s orde
 		->assertSeeInOrder(['Beliebte Angebote', 'Erster', 'Zweiter'])
 		->assertDontSee('Nicht beliebt')
 		->assertDontSee('Entwurf');
+});
+
+it('lists the software flagged Beliebt after the courses, only what the shop sells', function () {
+	$sold = function (string $title, bool $featured = true, bool $listed = true): Software {
+		$software = Software::create(['title' => ['de' => $title], 'publish' => true, 'featured' => $featured]);
+		$product = LicenceProduct::factory()->create(['software_id' => $software->id]);
+		LicenceVariant::factory()->create(['licence_product_id' => $product->id, 'listed' => $listed]);
+
+		return $software;
+	};
+
+	Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'featured' => true]);
+	$sold('Twinmotion');
+	$sold('Lumion', featured: false);
+	$sold('Veras', listed: false);
+
+	$this->get('/de')
+		->assertSeeInOrder(['Beliebte Angebote', 'Alle Software', 'Rhino Einstiegskurs', 'Twinmotion'])
+		->assertDontSee('Lumion')
+		->assertDontSee('Veras');
+});
+
+it('shows Beliebte Angebote for flagged software alone', function () {
+	$software = Software::create(['title' => ['de' => 'Twinmotion'], 'publish' => true, 'featured' => true]);
+	$product = LicenceProduct::factory()->create(['software_id' => $software->id]);
+	LicenceVariant::factory()->create(['licence_product_id' => $product->id]);
+
+	$this->get('/de')->assertSeeInOrder(['Beliebte Angebote', 'Twinmotion']);
 });
 
 it('leaves Beliebte Angebote out when no course is flagged', function () {

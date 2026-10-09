@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\Project;
+use App\Models\Software;
 use Illuminate\View\View;
 
 /**
@@ -51,9 +52,10 @@ class HomeController extends Controller
 				->limit(self::EVENTS)
 				->get(),
 			/*
-			 * *Beliebte Angebote* (markers 5, 6): the courses flagged in their
-			 * form, in the catalogue's order, loaded as the Kurse page loads
-			 * its cards. Courses only until licences exist (chunk 05).
+			 * *Beliebte Angebote* (markers 5 to 7): the courses flagged in
+			 * their form, in the catalogue's order, loaded as the Kurse page
+			 * loads its cards; then the software flagged in its own, as the
+			 * Software page loads them ([[Site\SoftwareController]]).
 			 */
 			'featured' => Course::query()
 				->published()
@@ -62,6 +64,16 @@ class HomeController extends Controller
 					'categories',
 					'media',
 					'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
+				])
+				->ordered()
+				->get(),
+			'featuredSoftware' => Software::query()
+				->onSite()
+				->featured()
+				->with([
+					'categories',
+					'media',
+					'products' => fn ($query) => $query->published()->ordered()->with(['manufacturer', 'variants']),
 				])
 				->ordered()
 				->get(),
