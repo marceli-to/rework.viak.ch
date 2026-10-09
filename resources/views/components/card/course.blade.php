@@ -1,4 +1,4 @@
-@props(['course', 'eager' => false])
+@props(['course', 'eager' => false, 'kind' => null])
 
 @php
 	$locale = app()->getLocale();
@@ -19,9 +19,15 @@
 <article {{ $attributes->class(['border border-teal p-8 lg:p-16']) }}>
 	<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}" class="group block text-black">
 		<header class="min-h-70 sm:min-h-90 lg:min-h-130">
-			@if ($category)
-				<div class="mb-4 text-xxs leading-none font-medium text-gray-600 sm:text-sm lg:text-lg">
-					{{ $category->getTranslation('title', $locale) }}
+			{{-- *Kurs* or *Software* in the top right, where the two share a
+			     grid (*Beliebte Angebote*, Marcel 2026-10-09); a list of one
+			     kind passes nothing and keeps the category alone. --}}
+			@if ($category || $kind)
+				<div class="mb-4 flex items-start justify-between gap-8 text-xxs leading-none font-medium sm:text-sm lg:text-lg">
+					<span class="text-gray-600">{{ $category?->getTranslation('title', $locale) }}</span>
+					@if ($kind)
+						<span class="shrink-0 bg-teal px-4 py-2 font-bold text-white">{{ $kind }}</span>
+					@endif
 				</div>
 			@endif
 

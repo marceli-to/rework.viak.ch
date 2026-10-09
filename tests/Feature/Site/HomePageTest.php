@@ -96,7 +96,7 @@ it('lists the software flagged Beliebt after the courses, only what the shop sel
 	$sold('Veras', listed: false);
 
 	$this->get('/de')
-		->assertSeeInOrder(['Beliebte Angebote', 'Alle Software', 'Rhino Einstiegskurs', 'Twinmotion'])
+		->assertSeeInOrder(['Beliebte Angebote', 'Alle Software', 'Kurs', 'Rhino Einstiegskurs', 'Software', 'Twinmotion'])
 		->assertDontSee('Lumion')
 		->assertDontSee('Veras');
 });

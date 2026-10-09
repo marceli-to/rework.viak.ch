@@ -4,7 +4,9 @@
 	tiles and a hand-picked list). Each is flagged *Beliebt* in its own form;
 	the courses come first, in the catalogue's order, as the Kurse page draws
 	them (`x-card.course`), then the software as the Software page does
-	(`x-card.software`), three across from sm as the Vorhaben tiles are.
+	(`x-card.software`), three across from sm as the Vorhaben tiles are. Each
+	card says *Kurs* or *Software* in its top right corner, since a software's
+	card and its course's can carry the same picture.
 
 	The mockup's link is *Alle Angebote von A bis Z*, a page there is not, so
 	the two lists it would have joined stand beside the heading instead.
@@ -26,11 +28,11 @@
 
 	<div class="grid grid-cols-12 gap-16 lg:gap-40">
 		@foreach ($featured as $course)
-			<x-card.course :course="$course" class="col-span-6 sm:col-span-4" />
+			<x-card.course :course="$course" kind="Kurs" class="col-span-6 sm:col-span-4" />
 		@endforeach
 
 		@foreach ($featuredSoftware as $software)
-			<x-card.software :software="$software" class="col-span-6 sm:col-span-4" />
+			<x-card.software :software="$software" kind="Software" class="col-span-6 sm:col-span-4" />
 		@endforeach
 	</div>
 </section>
