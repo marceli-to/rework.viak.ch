@@ -26,7 +26,10 @@
 	column instead of hiding in a select. From `lg` the row is `5 / 3 / 4`:
 	the licence with its platforms, note and *Hostsoftware*; the price with
 	*exkl. MWST* on its line; *Anzahl* beside the button. The last needs
-	`span-4` for the two side by side.
+	`span-4` for the two side by side. Between the licences the event's own
+	spacing, 32px over the hairline and 16 under it from `sm`.
+
+	*Anzahl* has no spinner arrows (Marcel, 2026-10-09): typed, not stepped.
 
 	**The button waits for the checkout** (chunk 13, [[13-checkout]]): the
 	basket holds courses only and needs a login, so it is drawn and does
@@ -47,7 +50,7 @@
 	@endif
 
 	@foreach ($licences as $licence)
-		<div class="mt-16 border-t border-gray-400 pt-8 sm:grid sm:grid-cols-12 sm:items-start sm:gap-x-16 sm:gap-y-16 lg:gap-x-40">
+		<div class="mt-16 border-t border-gray-400 pt-8 sm:mt-32 sm:grid sm:pt-16 sm:grid-cols-12 sm:items-start sm:gap-x-16 sm:gap-y-16 lg:gap-x-40">
 			{{-- Which licence, for what --}}
 			<div class="sm:col-span-6 lg:col-span-5">
 				<div>{{ $licence['label'] }}</div>
@@ -85,7 +88,7 @@
 				<label class="flex shrink-0 items-center gap-8">
 					<span>Anzahl</span>
 					<input type="number" min="{{ $licence['min'] }}" value="{{ $licence['min'] }}"
-						class="w-56 border-b border-black bg-transparent text-center outline-hidden focus:border-teal">
+						class="w-56 [appearance:textfield] border-b border-black bg-transparent text-center outline-hidden focus:border-teal [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
 				</label>
 
 				<x-ui.button disabled title="Folgt mit dem Checkout" class="cursor-not-allowed opacity-40 max-sm:grow">In den Warenkorb</x-ui.button>
