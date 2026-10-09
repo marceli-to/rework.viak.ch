@@ -167,13 +167,14 @@ to the course page as possible", the list with its filter too).
   *Aktuelle Kurse* becomes **Lizenzen: every product** (Marcel's pick over a
   page per product), each a row like an event's (`card/product`): name and
   maker (+ description, *3-Jahreslizenz auf Anfrage*), then the licences
-  (`shopLabel()`, listed only), *Hostsoftware* where the product has hosts,
-  platforms, *Anzahl* (starts at the minimum) and the licence's note, then
-  the price (a demo *kostenlos*) over an italic *exkl. MWST* and *In den
-  Warenkorb*. **The event's three `span-4` columns** (Marcel, 2026-10-09):
-  the licences are a radio list in the checkbox's teal square rather than a
-  select, so the long labels wrap instead of needing `span-8`, and all of
-  them show. One licence is just its name.
+  (`shopLabel()`, listed only), *Hostsoftware* where the product has hosts
+  and the licence's note, then the platforms, then the price (a demo
+  *kostenlos*) over an italic *exkl. MWST*, beside *Anzahl* (starts at the
+  minimum) over *In den Warenkorb*. **Four columns from `lg`, `2 / 4 / 2 /
+  4`** (Marcel, 2026-10-09); below it the event's three `span-4`, the
+  platforms under the licences. The licences are a radio list in the
+  checkbox's teal square rather than a select, so the long labels wrap and
+  all of them show. One licence is just its name.
   Then **Kurse** (the courses that teach it, as course cards),
   *Detailbeschrieb*, *Weitere Informationen* (`span-8`), *Kundenmeinungen* (testimonials
   whose subject is the software, as a course's), and *Weitere Software*.
