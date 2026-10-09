@@ -34,8 +34,11 @@ final class LicenceProductSchema extends Schema
 			Field::richtext('description')->label('Beschreibung'),
 			// Maxwell V5 and the RealFlow Plugin: one price, the host chosen on the order.
 			// Picked from the Software list, so a program has one spelling (Marcel, 2026-10-09).
-			Field::checkboxes('hosts', Software::class)->label('Hostsoftware')
-				->with(['columns' => 2, 'hint' => 'Nur für Plugins: die Programme, in denen das Plugin läuft. Bei der Bestellung muss eines davon gewählt werden. Sonst keines ankreuzen.']),
+			// In a collapsible, shut: two products of 39 have any (Marcel, 2026-10-09).
+			Field::section('Hostsoftware', [
+				Field::checkboxes('hosts', Software::class)->label('Hostsoftware')
+					->with(['columns' => 2, 'legend' => false, 'hint' => 'Nur für Plugins: die Programme, in denen das Plugin läuft. Bei der Bestellung muss eines davon gewählt werden. Sonst keines ankreuzen.']),
+			])->with(['count' => 'hosts']),
 			Field::row([
 				Field::checkbox('three_years_on_request')->label('3-Jahreslizenz auf Anfrage'),
 				Field::checkbox('publish')->label('Publizieren'),

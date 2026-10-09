@@ -19,6 +19,9 @@ defineProps({
 	// As a field's, in its grey, but **above** the boxes: a long list is read
 	// after the sentence that says when to tick any (the product's *Hostsoftware*).
 	hint: { type: String, default: null },
+	// Inside a collapsible of the same name the legend would say it twice:
+	// kept for a screen reader, hidden from the eye.
+	hideLabel: { type: Boolean, default: false },
 	columns: { type: [Boolean, Number], default: false },
 	// The event form's *Experten*: legacy's `<h3><strong>`, bold where the
 	// course form's headings are not.
@@ -28,7 +31,7 @@ defineProps({
 
 <template>
 	<fieldset class="mb-32 border-b border-black pb-24">
-		<legend class="mb-16 float-left w-full sm:text-lg lg:text-xl" :class="{ 'text-danger': error, 'font-bold': strong }">
+		<legend class="mb-16 float-left w-full sm:text-lg lg:text-xl" :class="{ 'text-danger': error, 'font-bold': strong, 'sr-only': hideLabel }">
 			{{ label }}<template v-if="required"> *</template>
 		</legend>
 		<p v-if="hint" class="clear-both mb-16 text-md text-gray-600 lg:text-lg">{{ hint }}</p>

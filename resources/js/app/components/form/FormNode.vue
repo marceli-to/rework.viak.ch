@@ -96,7 +96,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 			<TermDialog v-if="creating" :kind="field.create" @close="creating = false" @created="created" />
 		</template>
 	</Select>
-	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :hint="field.hint" :error="error" />
+	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :hint="field.hint" :hide-label="field.legend === false" :error="error" />
 	<div v-else-if="field.type === 'checkbox' && field.hint">
 		<Checkbox v-model="value">{{ field.label }}</Checkbox>
 		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
@@ -114,7 +114,9 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		<FormNode v-for="child in field.fields" :key="child.name" :field="child" :model="model" :errors="errors" :path="path" :record="record" />
 	</div>
 
-	<Collapsible v-else-if="field.type === 'section'" :expanded="field.open" :invalid="invalid">
+	<!-- `count`: a section that holds one list says how many are ticked, shut or open
+	     (the product's *Hostsoftware*), as the Vorhaben's pickers do. -->
+	<Collapsible v-else-if="field.type === 'section'" :expanded="field.open" :invalid="invalid" :count="field.count ? (get(model, field.count) ?? []).length : 0">
 		<template #title>{{ field.label }}</template>
 		<div class="mt-16">
 			<FormNode v-for="(child, index) in field.fields" :key="child.name ?? index" :field="child" :model="model" :errors="errors" :path="path" :record="record" />
