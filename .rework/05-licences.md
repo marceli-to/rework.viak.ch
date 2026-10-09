@@ -165,16 +165,14 @@ to the course page as possible", the list with its filter too).
   and a maker whose products are all hidden (Gemvision) is not offered.
 - **`/de/software/{slug}`**: the course page's hero and collapsibles.
   *Aktuelle Kurse* becomes **Lizenzen: every product** (Marcel's pick over a
-  page per product), each a row like an event's (`card/product`): name and
-  maker (+ description, *3-Jahreslizenz auf Anfrage*), then the licences
-  (`shopLabel()`, listed only), *Hostsoftware* where the product has hosts
-  and the licence's note, then the platforms, then the price (a demo
-  *kostenlos*) over an italic *exkl. MWST*, beside *Anzahl* (starts at the
-  minimum) over *In den Warenkorb*. **Four columns from `lg`, `2 / 4 / 2 /
-  4`** (Marcel, 2026-10-09); below it the event's three `span-4`, the
-  platforms under the licences. The licences are a radio list in the
-  checkbox's teal square rather than a select, so the long labels wrap and
-  all of them show. One licence is just its name.
+  page per product), drawn as *Aktuelle Kurse* (`card/product`; Marcel
+  picked it from four drafts, 2026-10-09): **the product a heading** (name,
+  maker, description, *3-Jahreslizenz auf Anfrage*), **every licence a row
+  of its own** under a grey hairline (`shopLabel()`, listed only). From
+  `lg` the row is `5 / 3 / 4`: the licence with its platforms, note and
+  *Hostsoftware* where the product has hosts; the price and *exkl. MWST*
+  on one line (a demo *kostenlos*); *Anzahl* (starts at the minimum) beside
+  *In den Warenkorb*. Nothing to pick, so no select: a long name wraps.
   Then **Kurse** (the courses that teach it, as course cards),
   *Detailbeschrieb*, *Weitere Informationen* (`span-8`), *Kundenmeinungen* (testimonials
   whose subject is the software, as a course's), and *Weitere Software*.
