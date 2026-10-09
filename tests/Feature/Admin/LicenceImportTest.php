@@ -33,7 +33,8 @@ it('carries the notes, minimums and host lists onto their places', function () {
 	expect($teams->min_quantity)->toBe(3)
 		->and($teams->product->title)->toBe('Cinema 4D')
 		->and($bundle->note)->toBe('5 Rendernodes, nur zusammen mit einer Neulizenz')
-		->and(LicenceProduct::where('title->de', 'Maxwell V5')->first()->hosts)->toContain('Archicad')
+		->and(LicenceProduct::where('title->de', 'Maxwell V5')->first()->hostNames())->toContain('Archicad', 'Rhinoceros')
+		->and(Software::where('title->de', 'Archicad')->first()->publish)->toBeFalse()
 		->and(LicenceProduct::where('title->de', 'V-Ray')->first()->three_years_on_request)->toBeTrue()
 		->and(LicenceVariant::where('sku', 'VRY-2203')->first()->product->title)->toBe('V-Ray Render Node');
 });

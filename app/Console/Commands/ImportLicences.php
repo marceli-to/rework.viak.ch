@@ -101,7 +101,6 @@ class ImportLicences extends Command
 	{
 		$attributes = [
 			'manufacturer_id' => $this->manufacturer($row['manufacturer'])->id,
-			'hosts' => $row['hosts'],
 			'three_years_on_request' => $row['three_years_on_request'],
 			'order' => $order,
 		];
@@ -111,19 +110,40 @@ class ImportLicences extends Command
 		if ($product === null) {
 			$this->counts['products']++;
 
-			return $software->products()->create([
+			$product = $software->products()->create([
 				...$attributes,
 				'title' => ['de' => $row['title']],
 				'slug' => LicenceProduct::freeSlug($row['title']),
 				'publish' => true,
 			]);
+			$product->hosts()->sync($this->hosts($row['hosts'] ?? []));
+
+			return $product;
 		}
 
 		if ($this->option('refresh')) {
 			$product->update($attributes);
+			$product->hosts()->sync($this->hosts($row['hosts'] ?? []));
 		}
 
 		return $product;
+	}
+
+	/**
+	 * A plugin's hosts, by their names in the Software list (the file spells
+	 * them as the list does: *Rhinoceros*, *CINEMA 4D*). One the list lacks is
+	 * added unpublished, a program and not a shop group.
+	 *
+	 * @param  array<int, string>|null  $names
+	 * @return array<int, int>
+	 */
+	private function hosts(?array $names): array
+	{
+		return collect($names ?? [])->map(function (string $name): int {
+			$existing = Software::query()->get()->first(fn (Software $software) => mb_strtolower((string) $software->getTranslation('title', 'de', false)) === mb_strtolower($name));
+
+			return ($existing ?? Software::create(['title' => ['de' => $name], 'order' => (int) Software::max('order') + 1, 'publish' => false]))->id;
+		})->all();
 	}
 
 	/** @param  array<string, mixed>  $row */

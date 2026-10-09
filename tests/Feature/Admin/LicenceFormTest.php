@@ -25,7 +25,7 @@ function licencePayload(array $overrides = []): array
 		'manufacturer' => test()->maker->uuid,
 		'title' => 'V-Ray',
 		'description' => '',
-		'hosts' => '',
+		'hosts' => [],
 		'three_years_on_request' => true,
 		'publish' => true,
 		...$overrides,
@@ -52,11 +52,23 @@ it('creates a product at the end of its group, its slug from the title', functio
 		->and($product->three_years_on_request)->toBeTrue();
 });
 
-it('splits the host software into a list', function () {
-	$this->actingAs($this->admin)->postJson('/api/admin/licences', licencePayload(['hosts' => 'Rhino, Archicad,, Cinema 4D ']))
-		->assertJsonPath('data.hosts', 'Rhino, Archicad, Cinema 4D');
+it('picks the host software from the Software list', function () {
+	$rhino = Software::create(['title' => ['de' => 'Rhinoceros']]);
+	$archicad = Software::create(['title' => ['de' => 'Archicad']]);
 
-	expect(LicenceProduct::first()->hosts)->toBe(['Rhino', 'Archicad', 'Cinema 4D']);
+	$this->actingAs($this->admin)->postJson('/api/admin/licences', licencePayload(['hosts' => [$rhino->uuid, $archicad->uuid]]))
+		->assertJsonPath('data.hosts', [$rhino->uuid, $archicad->uuid]);
+
+	expect(LicenceProduct::first()->hostNames())->toBe(['Archicad', 'Rhinoceros']);
+
+	$this->postJson('/api/admin/licences', licencePayload(['hosts' => ['Rhino']]))->assertJsonValidationErrors('hosts.0');
+});
+
+it('keeps a software that a plugin runs in', function () {
+	$maya = Software::create(['title' => ['de' => 'Maya']]);
+	LicenceProduct::factory()->create()->hosts()->attach($maya);
+
+	$this->actingAs($this->admin)->deleteJson("/api/admin/software/{$maya->uuid}")->assertStatus(422);
 });
 
 it('keeps the URL and the variants when the product is saved', function () {
@@ -84,7 +96,8 @@ it('lists the cheapest listed price, and marks a product with nothing on the sit
 });
 
 it('sends back exactly what it loads', function () {
-	$product = LicenceProduct::factory()->create(['hosts' => ['Rhino', 'Maya']]);
+	$product = LicenceProduct::factory()->create();
+	$product->hosts()->attach([Software::create(['title' => ['de' => 'Rhinoceros']])->id, Software::create(['title' => ['de' => 'Maya']])->id]);
 	LicenceVariant::factory()->for($product, 'product')->create();
 
 	$form = $this->actingAs($this->admin)->getJson("/api/admin/licences/{$product->uuid}")->json('data');

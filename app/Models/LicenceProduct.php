@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
@@ -29,7 +30,7 @@ class LicenceProduct extends Model
 	use HasUuid;
 	use SoftDeletes;
 
-	protected $fillable = ['software_id', 'manufacturer_id', 'title', 'slug', 'description', 'hosts', 'three_years_on_request', 'publish', 'order'];
+	protected $fillable = ['software_id', 'manufacturer_id', 'title', 'slug', 'description', 'three_years_on_request', 'publish', 'order'];
 
 	/** @var array<int, string> */
 	public $translatable = ['title', 'slug', 'description'];
@@ -37,7 +38,6 @@ class LicenceProduct extends Model
 	protected function casts(): array
 	{
 		return [
-			'hosts' => 'array',
 			'three_years_on_request' => 'boolean',
 			'publish' => 'boolean',
 			'order' => 'integer',
@@ -47,6 +47,29 @@ class LicenceProduct extends Model
 	public function software(): BelongsTo
 	{
 		return $this->belongsTo(Software::class);
+	}
+
+	/**
+	 * The programs a plugin runs in, picked from the Software list (Maxwell V5,
+	 * the RealFlow Plugin): an order for it names one. None for anything else.
+	 */
+	public function hosts(): BelongsToMany
+	{
+		return $this->belongsToMany(Software::class, 'licence_product_host');
+	}
+
+	/**
+	 * The hosts' names, A to Z: what an order line offers and freezes.
+	 *
+	 * @return array<int, string>
+	 */
+	public function hostNames(): array
+	{
+		return $this->hosts
+			->map(fn (Software $host) => (string) $host->getTranslation('title', 'de'))
+			->sort(SORT_NATURAL | SORT_FLAG_CASE)
+			->values()
+			->all();
 	}
 
 	public function manufacturer(): BelongsTo

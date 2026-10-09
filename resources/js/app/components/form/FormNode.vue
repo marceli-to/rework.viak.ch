@@ -96,7 +96,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 			<TermDialog v-if="creating" :kind="field.create" @close="creating = false" @created="created" />
 		</template>
 	</Select>
-	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :error="error" />
+	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :hint="field.hint" :error="error" />
 	<div v-else-if="field.type === 'checkbox' && field.hint">
 		<Checkbox v-model="value">{{ field.label }}</Checkbox>
 		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>

@@ -75,7 +75,7 @@ class SoftwareController extends Controller
 	/** The published products, with what their row and the filter read. */
 	private function products(): \Closure
 	{
-		return fn ($query) => $query->published()->ordered()->with(['manufacturer', 'variants']);
+		return fn ($query) => $query->published()->ordered()->with(['manufacturer', 'variants', 'hosts']);
 	}
 
 	/**

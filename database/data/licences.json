@@ -1401,10 +1401,10 @@
 				"title": "Maxwell V5",
 				"manufacturer": "Next Limit",
 				"hosts": [
-					"Rhino",
+					"Rhinoceros",
 					"Archicad",
-					"Cinema 4D",
-					"SketchUp",
+					"CINEMA 4D",
+					"SketchUp Pro",
 					"formZ",
 					"3ds Max",
 					"Maya"
@@ -1702,7 +1702,7 @@
 				"title": "RealFlow Plugin",
 				"manufacturer": "Next Limit",
 				"hosts": [
-					"Cinema 4D",
+					"CINEMA 4D",
 					"3ds Max",
 					"Maya"
 				],

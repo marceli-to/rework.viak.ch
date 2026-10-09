@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\LicenceOrder;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
+use App\Models\Software;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Storage;
@@ -126,7 +127,8 @@ it('asks for a line, and for a free line\'s title and price', function () {
 });
 
 it('asks a plugin for its host software and freezes the choice', function () {
-	$plugin = LicenceProduct::factory()->create(['title' => ['de' => 'Maxwell V5'], 'hosts' => ['Rhino', 'SketchUp']]);
+	$plugin = LicenceProduct::factory()->create(['title' => ['de' => 'Maxwell V5']]);
+	$plugin->hosts()->attach([Software::create(['title' => ['de' => 'Rhinoceros']])->id, Software::create(['title' => ['de' => 'SketchUp']])->id]);
 	$variant = LicenceVariant::factory()->for($plugin, 'product')->create();
 
 	$this->actingAs($this->admin);

@@ -44,6 +44,7 @@ class LicenceProductController extends Controller
 			'slug' => LicenceProduct::freeSlug($attributes['title']['de']),
 			'order' => (int) LicenceProduct::query()->where('software_id', $attributes['software_id'])->max('order') + 1,
 		]);
+		$product->hosts()->sync($request->hostIds());
 
 		return (new LicenceProductFormResource($this->loaded($product)))->response()->setStatusCode(201);
 	}
@@ -51,6 +52,7 @@ class LicenceProductController extends Controller
 	public function update(SaveLicenceProductRequest $request, LicenceProduct $product): LicenceProductFormResource
 	{
 		$product->update($request->productAttributes());
+		$product->hosts()->sync($request->hostIds());
 
 		return new LicenceProductFormResource($this->loaded($product));
 	}
@@ -67,6 +69,6 @@ class LicenceProductController extends Controller
 
 	private function loaded(LicenceProduct $product): LicenceProduct
 	{
-		return $product->refresh()->load(['software', 'manufacturer', 'variants']);
+		return $product->refresh()->load(['software', 'manufacturer', 'variants', 'hosts']);
 	}
 }

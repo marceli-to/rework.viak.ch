@@ -53,7 +53,7 @@ class SoftwareController extends Controller
 	/** Soft-deleted, and only while no course and no product uses it, as the settings list has it. */
 	public function destroy(Software $software): JsonResponse
 	{
-		abort_if($software->courses()->exists() || $software->products()->exists(), 422, 'Wird noch verwendet und kann nicht gelöscht werden.');
+		abort_if($software->courses()->exists() || $software->products()->exists() || $software->hostOf()->exists(), 422, 'Wird noch verwendet und kann nicht gelöscht werden.');
 
 		$software->delete();
 

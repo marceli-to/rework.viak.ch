@@ -67,9 +67,9 @@ class StoreLicenceOrderRequest extends FormRequest
 		return [function (Validator $validator): void {
 			foreach ((array) $this->input('lines', []) as $index => $line) {
 				$variant = empty($line['free']) && filled($line['variant'] ?? null)
-					? LicenceVariant::query()->with('product')->where('uuid', $line['variant'])->first()
+					? LicenceVariant::query()->with('product.hosts')->where('uuid', $line['variant'])->first()
 					: null;
-				$hosts = $variant?->product?->hosts ?? [];
+				$hosts = $variant?->product?->hostNames() ?? [];
 
 				if ($hosts !== [] && ! in_array($line['host'] ?? null, $hosts, true)) {
 					$validator->errors()->add("lines.{$index}.host", 'Bitte die Hostsoftware wählen.');
@@ -81,7 +81,7 @@ class StoreLicenceOrderRequest extends FormRequest
 	/** @return array<int, array{variant: ?LicenceVariant, title: ?string, price: ?string, quantity: int, host: ?string}> */
 	public function lines(): array
 	{
-		$variants = LicenceVariant::query()->with('product')
+		$variants = LicenceVariant::query()->with('product.hosts')
 			->whereIn('uuid', collect($this->validated('lines'))->pluck('variant')->filter())
 			->get()->keyBy('uuid');
 
@@ -92,7 +92,7 @@ class StoreLicenceOrderRequest extends FormRequest
 			'title' => $line['title'] ?? null,
 			'price' => isset($line['price']) ? (string) $line['price'] : null,
 			'quantity' => (int) $line['quantity'],
-			'host' => filled($line['variant'] ?? null) && ($variants[$line['variant']]->product->hosts ?? []) !== [] ? ($line['host'] ?? null) : null,
+			'host' => filled($line['variant'] ?? null) && $variants[$line['variant']]->product->hostNames() !== [] ? ($line['host'] ?? null) : null,
 		])->all();
 	}
 

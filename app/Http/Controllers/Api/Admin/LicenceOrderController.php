@@ -61,7 +61,7 @@ class LicenceOrderController extends Controller
 	public function create(User $customer): JsonResponse
 	{
 		$products = LicenceProduct::query()
-			->with(['software', 'variants'])
+			->with(['software', 'variants', 'hosts'])
 			->orderBy('order')->orderBy('id')
 			->get()
 			->filter(fn (LicenceProduct $product) => $product->variants->isNotEmpty())
@@ -84,7 +84,7 @@ class LicenceOrderController extends Controller
 			'vat_label' => config('invoice.vat_label'),
 			'products' => $products->map(fn (LicenceProduct $product) => [
 				'title' => $product->getTranslation('title', 'de'),
-				'hosts' => $product->hosts ?? [],
+				'hosts' => $product->hostNames(),
 				'variants' => $product->variants->map(fn (LicenceVariant $variant) => [
 					'uuid' => $variant->uuid,
 					'label' => $variant->shopLabel(),

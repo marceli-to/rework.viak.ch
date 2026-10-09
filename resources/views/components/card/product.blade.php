@@ -2,7 +2,7 @@
 
 @php
 	$locale = app()->getLocale();
-	$hosts = collect($product->hosts ?? [])->filter()->values();
+	$hosts = collect($product->hostNames());
 
 	$licences = $product->variants->filter(fn ($variant) => $variant->listed)->values()->map(fn ($variant) => [
 		'uuid' => $variant->uuid,

@@ -222,6 +222,14 @@ with *Preis ex. MWST* and *Artikelnr.*) and answered 33–39 in one mail.
   and an enquiry is the Kontakt form. A one-off price is the blank line.
 - **Host software stays a choice frozen on the order line** (Maxwell V5 plugin,
   RealFlow Plugin), unchanged.
+  **Since 2026-10-09 the hosts are picked from the Software list** (Marcel):
+  *Hostsoftware* in the product form is checkboxes, two columns, kept in
+  `licence_product_host`; it was a comma list, where *Rhino* and the list's
+  *Rhinoceros* were two spellings of one program. The migration matched the
+  names (Rhino, SketchUp and Cinema 4D under the list's spelling) and added
+  Archicad and Maya to the list, unpublished; `licences.json` now spells
+  them as the list does. A software a plugin runs in cannot be deleted. The
+  order line still freezes the host's name as text.
 
 ### A free order — proposal
 

@@ -41,17 +41,21 @@ class SaveLicenceProductRequest extends FormRequest
 	public function productAttributes(): array
 	{
 		$data = $this->validated();
-		$hosts = collect(explode(',', (string) ($data['hosts'] ?? '')))->map(fn (string $host) => trim($host))->filter()->values()->all();
 
 		return [
 			'software_id' => Software::query()->where('uuid', $data['software'])->value('id'),
 			'manufacturer_id' => Manufacturer::query()->where('uuid', $data['manufacturer'])->value('id'),
 			'title' => ['de' => $data['title']],
 			'description' => ['de' => blank($data['description'] ?? null) ? null : $data['description']],
-			'hosts' => $hosts ?: null,
 			'three_years_on_request' => (bool) ($data['three_years_on_request'] ?? false),
 			'publish' => (bool) ($data['publish'] ?? false),
 		];
+	}
+
+	/** @return array<int, int> the ticked hosts' ids */
+	public function hostIds(): array
+	{
+		return Software::query()->whereIn('uuid', $this->validated('hosts', []))->pluck('id')->all();
 	}
 
 	private function product(): ?LicenceProduct

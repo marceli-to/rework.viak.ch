@@ -67,6 +67,12 @@ class Software extends Model
 		});
 	}
 
+	/** The plugins that run in it ([[LicenceProduct::hosts]]). */
+	public function hostOf(): BelongsToMany
+	{
+		return $this->belongsToMany(LicenceProduct::class, 'licence_product_host');
+	}
+
 	/** The licence products sold under it. */
 	public function products(): HasMany
 	{
