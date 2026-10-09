@@ -34,7 +34,7 @@ final class LicenceProductSchema extends Schema
 			Field::richtext('description')->label('Beschreibung'),
 			// Maxwell V5 and the RealFlow Plugin: one price, the host chosen on the order.
 			Field::text('hosts')->label('Hostsoftware')->rules(['max:500'])
-				->with(['hint' => 'Kommagetrennt, z.B. Rhino, Archicad, Cinema 4D. Leer lassen, wenn es keine Auswahl gibt.']),
+				->with(['hint' => 'Nur für Plugins: die Programme, in denen das Plugin läuft, mit Komma getrennt, z.B. Rhino, Archicad, Cinema 4D. Bei der Bestellung muss eines davon gewählt werden. Sonst leer lassen.']),
 			Field::row([
 				Field::checkbox('three_years_on_request')->label('3-Jahreslizenz auf Anfrage'),
 				Field::checkbox('publish')->label('Publizieren'),
