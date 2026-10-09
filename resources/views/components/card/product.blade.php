@@ -33,8 +33,9 @@
 	2026-10-09): with a licence's hairline 32px under its row too, the
 	products ran together. The first keeps the event's.
 
-	The product's name is an `<h3>` in teal, under the collapsible's `<h2>`
-	(Marcel, 2026-10-09).
+	The product's name is an `<h3>` in teal, under the collapsible's `<h2>`,
+	and its maker on the same line at the right (Marcel, 2026-10-09). A phone
+	too narrow for both wraps the maker under the name.
 
 	*Anzahl* has no spinner arrows (Marcel, 2026-10-09): typed, not stepped.
 
@@ -43,10 +44,12 @@
 	nothing yet (Marcel, 2026-10-08).
 --}}
 <article {{ $attributes->class(['relative mt-48 border-t border-black pt-8 leading-[1.5] first:mt-16 sm:mt-64 sm:pt-16 sm:first:mt-32 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
-	<h3 class="font-bold text-teal">{{ $product->getTranslation('title', $locale) }}</h3>
-	@if ($product->manufacturer)
-		<div>von {{ $product->manufacturer->getTranslation('title', $locale) }}</div>
-	@endif
+	<div class="flex flex-wrap items-baseline justify-between gap-x-16">
+		<h3 class="font-bold text-teal">{{ $product->getTranslation('title', $locale) }}</h3>
+		@if ($product->manufacturer)
+			<div>von {{ $product->manufacturer->getTranslation('title', $locale) }}</div>
+		@endif
+	</div>
 
 	@if ($html = $product->getTranslation('description', $locale, false))
 		<x-ui.rich-text :html="$html" class="mt-16" />
