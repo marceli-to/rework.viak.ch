@@ -24,9 +24,10 @@
 	grey hairline, the way a course lists its events. Nothing to pick: each
 	licence has its own *Anzahl* and button, so a long name wraps in its
 	column instead of hiding in a select. From `lg` the row is `5 / 3 / 4`:
-	the licence with its platforms, note and *Hostsoftware*; the price with
-	*exkl. MWST* on its line; *Anzahl* beside the button. The last needs
-	`span-4` for the two side by side. Between the licences the event's own
+	the licence with its platforms, note and *Hostsoftware*; the price;
+	*Anzahl* beside the button. The last needs `span-4` for the two side by
+	side. *Alle Preise exkl. MwSt.* is said once, under the list, by the
+	page. Between the licences the event's own
 	spacing, 32px over the hairline and 16 under it from `sm`.
 
 	**Between products twice the event's 32px** above the black rule (Marcel,
@@ -86,11 +87,7 @@
 
 			{{-- What it costs --}}
 			<div class="max-sm:mt-16 sm:col-span-6 lg:col-span-3">
-				@if ($licence['price'])
-					<span class="whitespace-nowrap">{{ $licence['price'] }}</span> <em class="whitespace-nowrap italic">exkl. MWST</em>
-				@else
-					kostenlos
-				@endif
+				{{ $licence['price'] ?? 'kostenlos' }}
 			</div>
 
 			{{-- How many, and the way in --}}

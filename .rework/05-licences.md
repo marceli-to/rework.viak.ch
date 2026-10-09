@@ -170,9 +170,11 @@ to the course page as possible", the list with its filter too).
   maker, description, *3-Jahreslizenz auf Anfrage*), **every licence a row
   of its own** under a grey hairline (`shopLabel()`, listed only). From
   `lg` the row is `5 / 3 / 4`: the licence with its platforms, note and
-  *Hostsoftware* where the product has hosts; the price and *exkl. MWST*
-  on one line (a demo *kostenlos*); *Anzahl* (starts at the minimum) beside
-  *In den Warenkorb*. Nothing to pick, so no select: a long name wraps.
+  *Hostsoftware* where the product has hosts; the price (a demo
+  *kostenlos*); *Anzahl* (starts at the minimum) beside *In den
+  Warenkorb*. Nothing to pick, so no select: a long name wraps. Name teal
+  (`h3`), maker on its line at the right, 64px between products; *Alle
+  Preise exkl. MwSt.* once under the list.
   Then **Kurse** (the courses that teach it, as course cards),
   *Detailbeschrieb*, *Weitere Informationen* (`span-8`), *Kundenmeinungen* (testimonials
   whose subject is the software, as a course's), and *Weitere Software*.
