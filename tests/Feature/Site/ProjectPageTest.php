@@ -3,7 +3,10 @@
 declare(strict_types=1);
 
 use App\Models\Course;
+use App\Models\LicenceProduct;
+use App\Models\LicenceVariant;
 use App\Models\Project;
+use App\Models\Software;
 
 /**
  * The Vorhaben ([[04-content]]): a page each, title, text and the courses
@@ -25,6 +28,23 @@ it('renders the title, lead and text, and the picked courses in their order', fu
 		->assertSee('<title>Räume visualisieren • Visualisierungs-Akademie</title>', false)
 		->assertSeeInOrder(['Räume visualisieren', 'Ein Projekt überzeugend zeigen.', 'Für Architekt:innen.', 'Twinmotion Einführungskurs', 'Lumion Einstiegskurs'])
 		->assertDontSee('Entwurf');
+});
+
+it('lists the picked software after the courses, only what the shop sells', function () {
+	$project = Project::factory()->create(['slug' => ['de' => 'raeume-visualisieren']]);
+	$project->courses()->attach(Course::factory()->create(['title' => ['de' => 'Lumion Einstiegskurs']]), ['order' => 1]);
+
+	foreach ([['Twinmotion', true, 2], ['Enscape', true, 1], ['Veras', false, 3]] as [$title, $listed, $order]) {
+		$software = Software::create(['title' => ['de' => $title], 'publish' => true]);
+		$product = LicenceProduct::factory()->create(['software_id' => $software->id]);
+		LicenceVariant::factory()->create(['licence_product_id' => $product->id, 'listed' => $listed]);
+		$project->software()->attach($software, ['order' => $order]);
+	}
+
+	$this->get('/de/vorhaben/raeume-visualisieren')
+		->assertOk()
+		->assertSeeInOrder(['Kurs', 'Lumion Einstiegskurs', 'Software', 'Enscape', 'Software', 'Twinmotion'])
+		->assertDontSee('Veras');
 });
 
 it('carries its own meta description and keywords, the lead standing in for a missing description', function () {

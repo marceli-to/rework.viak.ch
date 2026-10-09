@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Course;
 use App\Models\Project;
+use App\Models\Software;
 use App\Models\User;
 
 /**
@@ -22,6 +23,7 @@ function projectPayload(array $overrides = []): array
 		'lead' => 'Ein Projekt überzeugend zeigen.',
 		'text' => '<p>Für Architekt:innen.</p>',
 		'courses' => [],
+		'software' => [],
 		'publish' => true,
 		...$overrides,
 	];
@@ -71,6 +73,20 @@ it('saves the courses in the order they were picked', function () {
 	expect($project->courses()->pluck('courses.uuid')->all())->toBe([$b->uuid, $c->uuid]);
 });
 
+it('saves the software in the order it was picked', function () {
+	$project = Project::factory()->create();
+	[$a, $b] = [Software::create(['title' => ['de' => 'Twinmotion']]), Software::create(['title' => ['de' => 'Enscape']])];
+
+	$this->actingAs($this->admin)
+		->putJson("/api/admin/projects/{$project->uuid}", projectPayload(['software' => [$b->uuid, $a->uuid]]))
+		->assertJsonPath('data.software', [$b->uuid, $a->uuid]);
+
+	expect($project->software()->pluck('software.uuid')->all())->toBe([$b->uuid, $a->uuid]);
+
+	$this->putJson("/api/admin/projects/{$project->uuid}", projectPayload(['software' => ['not-a-software']]))
+		->assertJsonValidationErrors('software.0');
+});
+
 it('refuses a course that does not exist, or one twice', function () {
 	$course = Course::factory()->create();
 
@@ -85,6 +101,7 @@ it('refuses a course that does not exist, or one twice', function () {
 it('sends back exactly what it loads', function () {
 	$project = Project::factory()->create();
 	$project->courses()->attach(Course::factory()->create(), ['order' => 1]);
+	$project->software()->attach(Software::create(['title' => ['de' => 'Lumion']]), ['order' => 1]);
 	$form = $this->actingAs($this->admin)->getJson("/api/admin/projects/{$project->uuid}")->json('data');
 
 	expect($this->putJson("/api/admin/projects/{$project->uuid}", $form)->assertOk()->json('data'))->toBe($form);
@@ -129,6 +146,18 @@ it('serves the form with every course to pick from', function () {
 
 	expect($offers['type'])->toBe('offers')
 		->and($offers['options'][0])->toMatchArray(['label' => 'Entwurf', 'publish' => false]);
+});
+
+it('serves the form with every software to pick from, after the courses', function () {
+	Software::create(['title' => ['de' => 'Lumion'], 'publish' => true]);
+
+	$fields = collect($this->actingAs($this->admin)->getJson('/api/admin/forms/project')->json('data.fields'));
+	$offers = $fields->firstWhere('name', 'software');
+
+	expect($fields->pluck('name')->search('software'))->toBe($fields->pluck('name')->search('courses') + 1)
+		->and($offers['type'])->toBe('offers')
+		->and($offers['label'])->toBe('Software')
+		->and($offers['options'][0])->toMatchArray(['label' => 'Lumion', 'publish' => true]);
 });
 
 it('keeps the page’s meta description and keywords', function () {

@@ -10,8 +10,8 @@ use Illuminate\View\View;
 
 /**
  * One Vorhaben ([[04-content]]): the title and text the review asked for
- * (Räume marker 3) and the courses the dashboard picked, published only, in
- * the dashboard's order.
+ * (Räume marker 3), the courses the dashboard picked, published only, then
+ * the software, only what the shop sells, each in the dashboard's order.
  */
 class ProjectController extends Controller
 {
@@ -31,6 +31,15 @@ class ProjectController extends Controller
 					'categories',
 					'media',
 					'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
+				])
+				->get(),
+			// What `x-card.software` reads, as the Software page loads it ([[Site\SoftwareController]]).
+			'software' => $project->software()
+				->onSite()
+				->with([
+					'categories',
+					'media',
+					'products' => fn ($query) => $query->published()->ordered()->with(['manufacturer', 'variants']),
 				])
 				->get(),
 		]);

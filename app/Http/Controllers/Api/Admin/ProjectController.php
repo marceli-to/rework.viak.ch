@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\SaveProjectRequest;
 use App\Http\Resources\Admin\ProjectFormResource;
 use App\Models\Course;
 use App\Models\Project;
+use App\Models\Software;
 use App\Support\Slug;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,12 +29,12 @@ class ProjectController extends Controller
 {
 	public function index(): AnonymousResourceCollection
 	{
-		return ProjectFormResource::collection(Project::query()->with('courses:id,uuid')->ordered()->get());
+		return ProjectFormResource::collection(Project::query()->with(['courses:id,uuid', 'software:id,uuid'])->ordered()->get());
 	}
 
 	public function show(Project $project): ProjectFormResource
 	{
-		return new ProjectFormResource($project->load('courses:id,uuid'));
+		return new ProjectFormResource($project->load(['courses:id,uuid', 'software:id,uuid']));
 	}
 
 	/** A new one goes to the end of the list. */
@@ -49,11 +50,12 @@ class ProjectController extends Controller
 			]);
 
 			$this->syncCourses($project, $request->courses());
+			$this->syncSoftware($project, $request->software());
 
 			return $project;
 		});
 
-		return (new ProjectFormResource($project->load('courses:id,uuid')))->response()->setStatusCode(201);
+		return (new ProjectFormResource($project->load(['courses:id,uuid', 'software:id,uuid'])))->response()->setStatusCode(201);
 	}
 
 	public function update(SaveProjectRequest $request, Project $project): ProjectFormResource
@@ -61,9 +63,10 @@ class ProjectController extends Controller
 		DB::transaction(function () use ($request, $project): void {
 			$project->update($request->projectAttributes());
 			$this->syncCourses($project, $request->courses());
+			$this->syncSoftware($project, $request->software());
 		});
 
-		return new ProjectFormResource($project->load('courses:id,uuid'));
+		return new ProjectFormResource($project->load(['courses:id,uuid', 'software:id,uuid']));
 	}
 
 	public function order(Request $request): JsonResponse
@@ -95,6 +98,17 @@ class ProjectController extends Controller
 		$ids = Course::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid');
 
 		$project->courses()->sync(collect($uuids)
+			->values()
+			->mapWithKeys(fn (string $uuid, int $position) => [$ids[$uuid] => ['order' => $position + 1]])
+			->all());
+	}
+
+	/** @param  array<int, string>  $uuids  in the order the page lists them */
+	private function syncSoftware(Project $project, array $uuids): void
+	{
+		$ids = Software::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid');
+
+		$project->software()->sync(collect($uuids)
 			->values()
 			->mapWithKeys(fn (string $uuid, int $position) => [$ids[$uuid] => ['order' => $position + 1]])
 			->all());

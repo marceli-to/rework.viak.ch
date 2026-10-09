@@ -52,4 +52,10 @@ class SaveProjectRequest extends FormRequest
 	{
 		return array_values($this->validated()['courses'] ?? []);
 	}
+
+	/** @return array<int, string> the picked software's uuids, in order */
+	public function software(): array
+	{
+		return array_values($this->validated()['software'] ?? []);
+	}
 }

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Forms;
 
 use App\Models\Course;
+use App\Models\Software;
 
 /**
  * *Vorhaben erfassen* / *bearbeiten* ([[04-content]]): what the review left of
  * the Räume mockup, a title and a text (marker 3), the tile's line for the
- * homepage, and the courses the page lists.
+ * homepage, and the courses and software the page lists.
  */
 final class ProjectSchema extends Schema
 {
@@ -27,6 +28,12 @@ final class ProjectSchema extends Schema
 					'hint' => $course->displayNumber(),
 					'publish' => $course->publish,
 				]])->all())->label('Kurse'),
+			// Listed after the courses ([[04-content]]); a software the shop does not sell stays off the page.
+			Field::offers('software', fn () => Software::query()->ordered()->get()
+				->mapWithKeys(fn (Software $software) => [$software->uuid => [
+					'label' => $software->getTranslation('title', 'de'),
+					'publish' => $software->publish,
+				]])->all())->label('Software'),
 			Field::row([
 				Field::checkbox('publish')->label('Publizieren'),
 			]),
@@ -40,6 +47,6 @@ final class ProjectSchema extends Schema
 
 	public function defaults(): array
 	{
-		return ['title' => '', 'teaser' => '', 'lead' => '', 'text' => '', 'courses' => [], 'publish' => false, 'seo_description' => '', 'seo_tags' => ''];
+		return ['title' => '', 'teaser' => '', 'lead' => '', 'text' => '', 'courses' => [], 'software' => [], 'publish' => false, 'seo_description' => '', 'seo_tags' => ''];
 	}
 }

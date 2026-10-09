@@ -13,7 +13,7 @@ use Spatie\Translatable\HasTranslations;
 
 /**
  * A Vorhaben ([[04-content]]): what a visitor wants to do, *Räume
- * visualisieren*, and the courses for it. A tile on the homepage and a page at
+ * visualisieren*, and the courses and software for it. A tile on the homepage and a page at
  * `/de/vorhaben/{slug}`. Called `Project` in code, as a Veranstaltung is an
  * `Event`; the dashboard and the site say *Vorhaben*.
  */
@@ -40,6 +40,14 @@ class Project extends Model
 	public function courses(): BelongsToMany
 	{
 		return $this->belongsToMany(Course::class)
+			->withPivot('order')
+			->orderByPivot('order');
+	}
+
+	/** The software for it, after the courses, in its own dragged order. */
+	public function software(): BelongsToMany
+	{
+		return $this->belongsToMany(Software::class, 'project_software')
 			->withPivot('order')
 			->orderByPivot('order');
 	}

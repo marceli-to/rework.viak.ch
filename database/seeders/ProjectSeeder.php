@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Course;
 use App\Models\Project;
+use App\Models\Software;
 use App\Support\Slug;
 use Illuminate\Database\Seeder;
 
@@ -16,7 +17,8 @@ use Illuminate\Database\Seeder;
  * **The copy is the mockups' filler**, and only Räume was discussed in the
  * review; which of the six are real is `Open-Questions.md` #4. So this is not
  * run in production, where VIAK enters its own. The courses are the mockups'
- * offer lists, matched to the catalogue by number where a course exists.
+ * offer lists, matched to the catalogue by number where a course exists,
+ * and the software their tools lines name, by slug where it has a page.
  */
 class ProjectSeeder extends Seeder
 {
@@ -30,6 +32,7 @@ class ProjectSeeder extends Seeder
 				'Nach einem Kurs hier erstellst du aus Archicad, Revit, SketchUp oder Rhino eigene Renderings und kurze Animationen und weisst, welche Software zu deinem Büro passt. Die Lizenz dazu bekommst du direkt bei uns.',
 			],
 			'courses' => [23, 35, 29, 16, 10, 15, 14],
+			'software' => ['enscape', 'twinmotion', 'lumion', 'v-ray'],
 		],
 		[
 			'title' => 'Objekte entwerfen',
@@ -40,6 +43,7 @@ class ProjectSeeder extends Seeder
 				'Nach dem Einstiegskurs modellierst du in Rhino eigene Objekte für die Fertigung; mit SubD und Grasshopper kommen Freiformen und parametrisches Design dazu. KeyShot macht aus den CAD-Daten in Minuten ein Produktbild.',
 			],
 			'courses' => [7, 26, 8, 2, 28, 9],
+			'software' => ['rhinoceros', 'keyshot'],
 		],
 		[
 			'title' => 'Bilder gestalten',
@@ -50,6 +54,7 @@ class ProjectSeeder extends Seeder
 				'Nach diesen Kursen fotografierst du Architektur mit Plan statt Zufall, beurteilst Renderings nach Bildaufbau und Licht und bearbeitest Bilder in Photoshop so, dass sie ihre Wirkung behalten.',
 			],
 			'courses' => [17, 10, 3, 16],
+			'software' => ['veras', 'hdr-light-studio', 'v-ray', 'maxwell-render'],
 		],
 		[
 			'title' => 'Bewegtbild erstellen',
@@ -60,6 +65,7 @@ class ProjectSeeder extends Seeder
 				'Nach den Einstiegskursen schneidest du in Premiere Pro, animierst in After Effects und weisst, wo Echtzeit-Engines wie Twinmotion oder Unreal ins Spiel kommen. Für Animation in 3D gibt es Blender und Cinema 4D.',
 			],
 			'courses' => [11, 27, 32, 4, 23, 33, 18],
+			'software' => ['twinmotion', 'unreal-engine', 'cinema-4d'],
 		],
 		[
 			'title' => 'Mit KI gestalten',
@@ -70,6 +76,7 @@ class ProjectSeeder extends Seeder
 				'Die Kurse bauen auf euren bestehenden Programmen auf: Veras in Archicad, Enscape oder SketchUp, KI-Werkzeuge in Photoshop und Premiere Pro, eigene Abläufe mit Figma Weave. Was in der Werkstatt täglich läuft, zeigen wir so, wie es dort läuft.',
 			],
 			'courses' => [32, 29, 16, 1, 40],
+			'software' => ['veras', 'myarchitectai'],
 		],
 		[
 			'title' => 'Teams & Unternehmen',
@@ -80,6 +87,7 @@ class ProjectSeeder extends Seeder
 				'Die Kurse bauen aufeinander auf: Visual Facilitator in fünf Teilen vom ersten Strich bis zum Graphic Recording, LEGO Serious Play in drei Stufen bis zur zertifizierten Moderation. Alle Kurse sind offen buchbar. Wer die Methoden im eigenen Unternehmen einführen will, findet unter Firmenschulung das passende Format.',
 			],
 			'courses' => [70, 71, 73, 74, 75, 21, 80, 40],
+			'software' => [],
 		],
 	];
 
@@ -105,6 +113,14 @@ class ProjectSeeder extends Seeder
 				->filter(fn (int $number) => isset($ids[$number]))
 				->values()
 				->mapWithKeys(fn (int $number, int $position) => [$ids[$number] => ['order' => $position + 1]])
+				->all());
+
+			$software = Software::query()->get()->keyBy(fn (Software $item) => $item->getTranslation('slug', 'de'));
+
+			$project->software()->sync(collect($data['software'])
+				->filter(fn (string $slug) => $software->has($slug))
+				->values()
+				->mapWithKeys(fn (string $slug, int $position) => [$software[$slug]->id => ['order' => $position + 1]])
 				->all());
 		}
 	}

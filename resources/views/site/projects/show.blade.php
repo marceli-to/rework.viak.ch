@@ -10,9 +10,10 @@
 	([[training._intro]]), the title teal in the aside, the lead the column's
 	bold `h2`, the text below it. The offer list is the Kurse page's own cards,
 	`x-card.course`: `span-6`, `span-4` from sm, which is the width they have
-	in the Kurse grid, so they draw the same. The mockup's *Alle / Kurse /
-	Software* chips wait for the licences (chunk 05), the other half of the
-	list.
+	in the Kurse grid, so they draw the same. **Then the software**
+	(`x-card.software`), picked in the same form (Marcel, 2026-10-09), each
+	card tagged *Kurs* or *Software* as *Beliebte Angebote* does. The mockup's
+	*Alle / Kurse / Software* chips are not built.
 --}}
 @php
 	$locale = app()->getLocale();
@@ -42,10 +43,14 @@
 		</div>
 	</article>
 
-	@if ($courses->isNotEmpty())
+	@if ($courses->isNotEmpty() || $software->isNotEmpty())
 		<div class="grid grid-cols-12 gap-16 lg:gap-40">
 			@foreach ($courses as $course)
-				<x-card.course :course="$course" :eager="$loop->index < 3" class="col-span-6 sm:col-span-4" />
+				<x-card.course :course="$course" kind="Kurs" :eager="$loop->index < 3" class="col-span-6 sm:col-span-4" />
+			@endforeach
+
+			@foreach ($software as $item)
+				<x-card.software :software="$item" kind="Software" :eager="$courses->count() + $loop->index < 3" class="col-span-6 sm:col-span-4" />
 			@endforeach
 		</div>
 	@endif
