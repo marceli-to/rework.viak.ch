@@ -29,13 +29,17 @@
 	`span-4` for the two side by side. Between the licences the event's own
 	spacing, 32px over the hairline and 16 under it from `sm`.
 
+	**Between products twice the event's 32px** above the black rule (Marcel,
+	2026-10-09): with a licence's hairline 32px under its row too, the
+	products ran together. The first keeps the event's.
+
 	*Anzahl* has no spinner arrows (Marcel, 2026-10-09): typed, not stepped.
 
 	**The button waits for the checkout** (chunk 13, [[13-checkout]]): the
 	basket holds courses only and needs a login, so it is drawn and does
 	nothing yet (Marcel, 2026-10-08).
 --}}
-<article {{ $attributes->class(['relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
+<article {{ $attributes->class(['relative mt-48 border-t border-black pt-8 leading-[1.5] first:mt-16 sm:mt-64 sm:pt-16 sm:first:mt-32 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
 	<strong class="font-bold">{{ $product->getTranslation('title', $locale) }}</strong>
 	@if ($product->manufacturer)
 		<div>von {{ $product->manufacturer->getTranslation('title', $locale) }}</div>
