@@ -252,8 +252,9 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   checkbox beside *Publizieren*), as `x-card.software`, only software the
   shop sells (`Software::onSite()`). Marcel chose this over the mockup's
   paired tiles (*Kurs ab CHF … / Lizenz ab CHF …*, software only) and over a
-  hand-picked list in *Seiteninhalte*. The heading carries *Alle Kurse* and
-  *Alle Software*; the mockup's *Alle Angebote von A bis Z* has no page.
+  hand-picked list in *Seiteninhalte*. Each card says *Kurs* or *Software*
+  in its top right corner. No link beside the heading for now (Marcel); the
+  mockup's *Alle Angebote von A bis Z* has no page.
 - **Marker 9, the About teaser** (2026-10-07): *Warum bei der VIAK*, drawn
   as the Firmenschulung teaser's grey panel, and *Mehr über uns* to *Über
   uns*. **No experts** (Marcel). **Editable, with an image** (Marcel, the

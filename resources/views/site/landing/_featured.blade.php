@@ -8,23 +8,12 @@
 	card says *Kurs* or *Software* in its top right corner, since a software's
 	card and its course's can carry the same picture.
 
-	The mockup's link is *Alle Angebote von A bis Z*, a page there is not, so
-	the two lists it would have joined stand beside the heading instead.
+	**No link beside the heading for now** (Marcel, 2026-10-09). The mockup's
+	is *Alle Angebote von A bis Z*, a page there is not; *Alle Kurse* and
+	*Alle Software* stood there for a day.
 --}}
 <section class="mt-48 lg:mt-64">
-	<div class="mb-16 flex flex-wrap items-baseline justify-between gap-x-16 lg:mb-24">
-		<h2 class="font-bold">Beliebte Angebote</h2>
-		<div class="flex flex-wrap gap-x-24">
-			<a href="{{ \App\Support\SiteUrl::courses() }}" class="inline-flex items-center gap-8 text-teal hover:underline">
-				Alle Kurse
-				<x-icon.arrow-right />
-			</a>
-			<a href="{{ \App\Support\SiteUrl::softwareIndex() }}" class="inline-flex items-center gap-8 text-teal hover:underline">
-				Alle Software
-				<x-icon.arrow-right />
-			</a>
-		</div>
-	</div>
+	<h2 class="mb-16 font-bold lg:mb-24">Beliebte Angebote</h2>
 
 	<div class="grid grid-cols-12 gap-16 lg:gap-40">
 		@foreach ($featured as $course)
