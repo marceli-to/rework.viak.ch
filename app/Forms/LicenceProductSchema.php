@@ -39,12 +39,13 @@ final class LicenceProductSchema extends Schema
 				Field::checkboxes('hosts', Software::class)->label('Hostsoftware')
 					->with(['columns' => 2, 'legend' => false, 'hint' => 'Nur für Plugins: die Programme, in denen das Plugin läuft. Bei der Bestellung muss eines davon gewählt werden. Sonst keines ankreuzen.']),
 			])->with(['count' => 'hosts']),
+			// Saved on their own, each in its own form ([[LicenceVariantSchema]]).
+			Field::custom('variants'),
+			// After the licences, the last thing before *Speichern* (Marcel, 2026-10-09).
 			Field::row([
 				Field::checkbox('three_years_on_request')->label('3-Jahreslizenz auf Anfrage'),
 				Field::checkbox('publish')->label('Publizieren'),
 			]),
-			// Saved on their own, each in its own form ([[LicenceVariantSchema]]).
-			Field::custom('variants'),
 		];
 	}
 
