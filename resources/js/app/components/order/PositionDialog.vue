@@ -45,7 +45,7 @@ function save() {
 	if (!draft.choice) missing.variant = 'Bitte die Software wählen.';
 	if (draft.choice === props.free && !String(draft.title).trim()) missing.title = 'Bitte eine Bezeichnung eingeben.';
 	if (draft.choice === props.free && (draft.price === '' || Number.isNaN(Number(draft.price)))) missing.price = 'Bitte einen Preis eingeben.';
-	if (hosts.value.length && !draft.host) missing.host = 'Bitte die Host-Software wählen.';
+	if (hosts.value.length && !draft.host) missing.host = 'Bitte die Hostsoftware wählen.';
 	if (!(Number(draft.quantity) >= 1)) missing.quantity = 'Bitte eine Anzahl ab 1 eingeben.';
 
 	local.value = missing;
@@ -63,7 +63,7 @@ function save() {
 				<Field v-model="draft.price" label="Preis (CHF, netto)" required :error="error('price')" />
 			</template>
 
-			<Select v-if="hosts.length" v-model="draft.host" label="Host-Software" :options="hosts" placeholder="Bitte wählen" required :error="error('host')" />
+			<Select v-if="hosts.length" v-model="draft.host" label="Hostsoftware" :options="hosts" placeholder="Bitte wählen" required :error="error('host')" />
 
 			<Field
 				v-model="draft.quantity"

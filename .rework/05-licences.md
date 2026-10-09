@@ -111,7 +111,7 @@ right below, which supersedes parts of *The real catalogue*.
   invoice address from the customer's own, *Lizenzen an* (empty: the
   account's), positions of one select over the whole catalogue (**unlisted
   variants marked *nicht im Shop***) or ***Freie Position*** (Bezeichnung,
-  Preis netto), *Host-Software* where the product has hosts, *Anzahl*
+  Preis netto), *Hostsoftware* where the product has hosts, *Anzahl*
   starting at the minimum but not held to it, and the running total.
 - Not decided, so not built: **no mail** goes out yet, neither to the
   customer (the invoice is in *Rechnungen* to send) nor to VIAK; that is the

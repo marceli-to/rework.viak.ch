@@ -72,7 +72,7 @@ class StoreLicenceOrderRequest extends FormRequest
 				$hosts = $variant?->product?->hosts ?? [];
 
 				if ($hosts !== [] && ! in_array($line['host'] ?? null, $hosts, true)) {
-					$validator->errors()->add("lines.{$index}.host", 'Bitte die Host-Software wählen.');
+					$validator->errors()->add("lines.{$index}.host", 'Bitte die Hostsoftware wählen.');
 				}
 			}
 		}];
