@@ -11,8 +11,8 @@
 	One software ([[05-licences]]), drawn as a course page is
 	(`site/courses/show.blade.php`, Marcel 2026-10-08): the teal hero, then the
 	collapsibles. *Aktuelle Kurse* becomes *Lizenzen*, every product with its
-	licences (`card/product.blade.php`); *Kurse* lists the courses that teach
-	it as the course list's cards; *Detailbeschrieb*, *Weitere Informationen* (one
+	licences (`card/product.blade.php`), *exkl. MWST* under each price;
+	*Kurse* lists the courses that teach it as the course list's cards; *Detailbeschrieb*, *Weitere Informationen* (one
 	column), *Kundenmeinungen* and the browse pair are the course page's.
 
 	As on a course page, the phone's header row says the list's name.
@@ -62,9 +62,6 @@
 			@foreach ($products as $product)
 				<x-card.product :product="$product" />
 			@endforeach
-
-			{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
-			<p class="mt-16 sm:mt-32 sm:text-lg lg:text-xl">Preise exkl. MWST.</p>
 		</x-ui.collapsible>
 
 		@if ($courses->isNotEmpty())
