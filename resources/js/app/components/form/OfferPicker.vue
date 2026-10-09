@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { useSortable } from '@/composables/useSortable';
 import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
+import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
 import IconPlus from '@/components/icons/Plus.vue';
 import IconTrash from '@/components/icons/Trash.vue';
@@ -11,10 +12,12 @@ import NoResults from '@/components/ui/NoResults.vue';
 import SearchField from '@/components/list/SearchField.vue';
 
 /**
- * A Vorhaben's offer list ([[Field::offers]], [[04-content]]): drawn as the
- * testimonial picker is, the picked ones as rows dragged into order, a bin on
- * each, and a `+` at the top right that opens the rest in a lightbox. Forty
- * courses is too many to scan, so the lightbox has a search.
+ * A Vorhaben's offer list ([[Field::offers]], [[04-content]]): a collapsible
+ * with the count beside its title, shut until opened (Marcel, 2026-10-09),
+ * as the product form's *Lizenzen* ([[VariantSection]]): the picked ones as
+ * rows dragged into order, a bin on each, and a `+` under them that opens
+ * the rest in a lightbox. Forty courses is too many to scan, so the lightbox
+ * has a search.
  *
  * `v-model` is the picked uuids, in order; `options` is every choice there is,
  * `{ value, label, hint, publish }`. An unpublished course can be picked and
@@ -52,13 +55,8 @@ const available = computed(() => {
 </script>
 
 <template>
-	<div class="mb-32 border-b border-black pb-24">
-		<div class="flex items-center justify-between gap-16">
-			<h3 class="font-bold sm:text-lg lg:text-xl" :class="{ 'text-danger': error }">{{ label }}</h3>
-			<button type="button" class="block hover:text-teal" :title="`${label} hinzufügen`" @click="adding = true">
-				<IconPlus size="lg" class="block" />
-			</button>
-		</div>
+	<Collapsible :count="rows.length" :invalid="!!error">
+		<template #title>{{ label }}</template>
 
 		<EditableListItem
 			v-for="(item, index) in rows"
@@ -82,6 +80,12 @@ const available = computed(() => {
 		<NoResults v-if="!rows.length">Noch nichts ausgewählt.</NoResults>
 		<div v-if="error" class="mt-16 text-md text-danger lg:text-lg">{{ error }}</div>
 
+		<div class="mt-24 flex">
+			<button type="button" class="block hover:text-teal" :title="`${label} hinzufügen`" @click="adding = true">
+				<IconPlus size="lg" class="block" />
+			</button>
+		</div>
+
 		<Lightbox v-if="adding" :title="`${label} hinzufügen`" narrow @close="adding = false">
 			<SearchField v-model="search" class="mb-24" />
 			<NoResults v-if="!available.length">Nichts mehr hinzuzufügen.</NoResults>
@@ -95,5 +99,5 @@ const available = computed(() => {
 				</li>
 			</ul>
 		</Lightbox>
-	</div>
+	</Collapsible>
 </template>
