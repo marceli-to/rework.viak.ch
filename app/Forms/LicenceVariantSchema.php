@@ -28,7 +28,7 @@ final class LicenceVariantSchema extends Schema
 					'max:32',
 					Rule::unique('licence_variants', 'sku')->whereNull('deleted_at')->ignore($variant?->getKey()),
 				])->message('unique', 'Diese Artikelnummer hat bereits eine andere Lizenz.'),
-				Field::number('price')->label('Preis CHF exkl. MWST')->required()->rules(['min:0', 'max:99999.99', 'decimal:0,2'])
+				Field::number('price')->label('Preis CHF exkl. '.config('invoice.vat_label'))->required()->rules(['min:0', 'max:99999.99', 'decimal:0,2'])
 					->with(['hint' => '0 für eine Demoversion.']),
 			])->with(['columns' => 2]),
 			Field::row([

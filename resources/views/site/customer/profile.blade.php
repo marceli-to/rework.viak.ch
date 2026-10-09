@@ -173,7 +173,7 @@
 								<div class="sm:pr-40 lg:pr-80">
 									Falls Du keinen Laptop hast, oder dieser den Anforderungen nicht
 									genügt, kannst Du bei uns einen Computer mieten. Die Kosten dafür
-									belaufen sich auf CHF {{ number_format((float) config('invoice.rental_fee'), 2, '.', '') }} (exkl. MwSt.)
+									belaufen sich auf CHF {{ number_format((float) config('invoice.rental_fee'), 2, '.', '') }} (exkl. {{ config('invoice.vat_label') }})
 								</div>
 								{{-- `max-w-200px` is legacy's own cap on this one
 								     button, and it is the only place on the site

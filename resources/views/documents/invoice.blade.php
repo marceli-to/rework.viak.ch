@@ -113,7 +113,7 @@
 
 			@foreach ($vatRows as $vat)
 				<tr>
-					<td colspan="2">Mehrwertsteuer ({{ $vat['rate'] }}%)</td>
+					<td colspan="2">{{ config('invoice.vat_label') }} ({{ $vat['rate'] }}%)</td>
 					<td class="right">CHF {{ $money($vat['amount']) }}</td>
 				</tr>
 			@endforeach

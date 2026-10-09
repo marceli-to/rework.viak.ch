@@ -227,8 +227,8 @@ it('prints one VAT row per rate, where legacy hardcoded the label', function () 
 		'qrBill' => '',
 	])->render();
 
-	expect($html)->toContain('Mehrwertsteuer (0%)')
-		->and($html)->toContain('Mehrwertsteuer (8.1%)')
+	expect($html)->toContain('MWST (0%)')
+		->and($html)->toContain('MWST (8.1%)')
 		->and($html)->toContain('Laptopmiete');
 });
 

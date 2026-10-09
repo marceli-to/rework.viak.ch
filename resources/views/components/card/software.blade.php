@@ -37,7 +37,7 @@
 					@endif
 					<li class="py-4">{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
 					@if ($from)
-						<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. MWST</li>
+						<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
 					@endif
 				</ul>
 				<div class="flex items-center gap-8">

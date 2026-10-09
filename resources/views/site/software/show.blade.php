@@ -11,7 +11,7 @@
 	One software ([[05-licences]]), drawn as a course page is
 	(`site/courses/show.blade.php`, Marcel 2026-10-08): the teal hero, then the
 	collapsibles. *Aktuelle Kurse* becomes *Lizenzen*, every product with its
-	licences (`card/product.blade.php`), *Alle Preise exkl. MwSt.* once under
+	licences (`card/product.blade.php`), *Alle Preise exkl. MWST* once under
 	them; *Kurse* lists the courses that teach it as the course list's cards;
 	*Detailbeschrieb*, *Weitere Informationen* (one column), *Kundenmeinungen*
 	and the browse pair are the course page's.
@@ -65,7 +65,7 @@
 			@endforeach
 
 			{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
-			<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">Alle Preise exkl. MwSt.</p>
+			<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
 		</x-ui.collapsible>
 
 		@if ($courses->isNotEmpty())

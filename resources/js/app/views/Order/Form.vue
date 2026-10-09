@@ -198,7 +198,7 @@ async function save() {
 			     A free order raises none. -->
 			<dl class="mt-48 mb-16 divide-y divide-gray-400 border-y border-black text-lg tabular-nums lg:mb-32 lg:text-xl">
 				<div class="flex justify-between gap-16 py-10"><dt>Netto</dt><dd>{{ chf(totals.net) }}</dd></div>
-				<div class="flex justify-between gap-16 py-10"><dt>MWST {{ totals.rate }} %</dt><dd>{{ chf(totals.vat) }}</dd></div>
+				<div class="flex justify-between gap-16 py-10"><dt>{{ page?.vat_label }} {{ totals.rate }} %</dt><dd>{{ chf(totals.vat) }}</dd></div>
 				<div class="flex justify-between gap-16 py-10 font-bold"><dt>Total</dt><dd>{{ chf(totals.total) }}</dd></div>
 			</dl>
 			<p class="mb-16 text-md text-gray-600 lg:mb-32 lg:text-lg">

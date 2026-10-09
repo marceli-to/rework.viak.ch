@@ -26,7 +26,7 @@
 	column instead of hiding in a select. From `lg` the row is `5 / 3 / 4`:
 	the licence with its platforms, note and *Hostsoftware*; the price;
 	*Anzahl* beside the button. The last needs `span-4` for the two side by
-	side. *Alle Preise exkl. MwSt.* is said once, under the list, by the
+	side. *Alle Preise exkl. MWST* is said once, under the list, by the
 	page. Between the licences the event's own
 	spacing, 32px over the hairline and 16 under it from `sm`.
 

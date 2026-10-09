@@ -22,6 +22,16 @@ return [
 	'vat_rate' => env('INVOICE_VAT_RATE', 8.1),
 
 	/*
+	 * What the tax is called wherever it is named: on the site, in the mails,
+	 * on the invoice, in the dashboard. **MWST** is the Swiss spelling, the
+	 * one the ESTV and VIAK's own imprint use; the German *MwSt.* and the
+	 * spelled-out *Mehrwertsteuer* had both crept in (Marcel, 2026-10-09).
+	 * The imprint's *MWST-Nr. … MWST* is a registration number and keeps its
+	 * own text.
+	 */
+	'vat_label' => 'MWST',
+
+	/*
 	 * Days a customer has to pay. The deadline is the later of
 	 * `today + payment_period` and `event date - payment_period`, so money
 	 * for a course arrives before the course runs, and a late-confirmed event

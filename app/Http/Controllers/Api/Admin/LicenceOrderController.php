@@ -81,6 +81,7 @@ class LicenceOrderController extends Controller
 			]),
 			// For the form's running total; the invoice computes its own, per line ([[Vat]]).
 			'vat_rate' => (string) config('invoice.vat_rate'),
+			'vat_label' => config('invoice.vat_label'),
 			'products' => $products->map(fn (LicenceProduct $product) => [
 				'title' => $product->getTranslation('title', 'de'),
 				'hosts' => $product->hosts ?? [],

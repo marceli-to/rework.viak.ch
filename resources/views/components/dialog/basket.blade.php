@@ -32,7 +32,7 @@
 	<x-slot:text>
 		Falls Du keinen Laptop hast, oder dieser den Anforderungen nicht genügt, kannst
 		Du bei uns einen Computer mieten. Die Kosten dafür belaufen sich auf CHF 80.–
-		(exkl. MwSt.) (Du kannst dies auch später noch anpassen)
+		(exkl. {{ config('invoice.vat_label') }}) (Du kannst dies auch später noch anpassen)
 	</x-slot:text>
 
 	<x-slot:actions>

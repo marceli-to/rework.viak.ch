@@ -107,7 +107,7 @@
 		<template x-if="pricing && pricing.vat > 0">
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="sm:col-span-4">MwSt. {{ config('invoice.vat_rate') }} % auf Mietcomputer</div>
+					<div class="sm:col-span-4">{{ config('invoice.vat_label') }} {{ config('invoice.vat_rate') }} % auf Mietcomputer</div>
 					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.vat}`"></div>
 				</div>
 			</div>
@@ -121,7 +121,7 @@
 						{{-- Both labels are true. Without a rental nothing on the
 						     basket is taxed, which is legacy's sentence; with one
 						     the total already carries its VAT. --}}
-						<span x-text="pricing.vat > 0 ? 'inkl. Mehrwertsteuer' : 'exkl. Mehrwertsteuer'"></span>
+						<span x-text="(pricing.vat > 0 ? 'inkl. ' : 'exkl. ') + @js(config('invoice.vat_label'))"></span>
 					</div>
 					<div class="sm:col-span-8 sm:text-right">
 						<strong class="font-bold" x-text="`CHF ${pricing.total}`"></strong>

@@ -24,7 +24,7 @@
   </tr>
   <tr>
     <td>Kosten</td>
-    <td>CHF {{ $booking->rental_fee }} (exkl. MwSt.)</td>
+    <td>CHF {{ $booking->rental_fee }} (exkl. {{ config('invoice.vat_label') }})</td>
   </tr>
 </table>
 <p>Die Rechnung erhältst Du, sobald wir wissen, dass die Mindestanzahl Teilnehmende erreicht ist und der Kurs definitiv stattfinden wird.</p>
