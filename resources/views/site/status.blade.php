@@ -53,6 +53,11 @@
 			'decides' => 'Die Preisregeln im Shop.',
 		],
 		[
+			'title' => 'Bundles: mit eigenem Preis?',
+			'text' => 'Statt fester Bundles zeigt «Das könnte dich auch interessieren» passende Software und Kurse, die VIAK selbst auswählt; die Kund:innen stellen sich ihr Bundle so selbst zusammen. Soll ein selbst zusammengestelltes Bundle günstiger sein, oder genügen die Empfehlungen? Und sollen sie auch auf den Kursseiten erscheinen (etwa eine Rhino-Lizenz beim Rhino-Kurs), oder nur auf den Software-Seiten und im Warenkorb?',
+			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
+		],
+		[
 			'title' => 'Newsletter an Mailchimp?',
 			'text' => 'Die Anmeldung im Fuss der Startseite wird im Moment nur aufgezeichnet. Soll sie wie heute an Mailchimp gehen?',
 			'decides' => 'Ob die neue Website eine Mailchimp-Anbindung braucht.',
@@ -111,6 +116,7 @@
 		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
 		['Newsletter-Anbindung', 'Die Anmeldung an Mailchimp übergeben.', 'Wartet auf die Mailchimp-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
+		['«Das könnte dich auch interessieren»', 'Empfehlungen, die VIAK je Software und Kurs im Dashboard auswählt, unter der Software-Seite und im Warenkorb. Ersetzt die festen Bundles.', 'Wartet auf die Bundle-Frage', false],
 		['Software-Bestellung stornieren', 'Eine Bestellung im Dashboard zurücknehmen, mit Storno der Rechnung.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];
