@@ -20,6 +20,9 @@ class FakeAccountingSystem implements AccountingSystem
 	/** @var array<int, array{number: string, amount: string, cancellation: bool}> */
 	public array $recorded = [];
 
+	/** @var array<int, string> Invoice numbers a card payment was booked against. */
+	public array $payments = [];
+
 	/** @var array<string, InvoiceStatus> Statuses a test wants the books to report. */
 	private array $statuses = [];
 
@@ -37,6 +40,13 @@ class FakeAccountingSystem implements AccountingSystem
 	public function statusOf(Invoice $invoice): ?InvoiceStatus
 	{
 		return $this->statuses[$invoice->number] ?? null;
+	}
+
+	public function recordPayment(Invoice $invoice): void
+	{
+		$this->payments[] = $invoice->number;
+
+		Log::info('Accounting (not posted): card payment for invoice '.$invoice->number);
 	}
 
 	public function reports(string $number, InvoiceStatus $status): void

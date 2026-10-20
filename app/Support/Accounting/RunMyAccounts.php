@@ -36,6 +36,7 @@ class RunMyAccounts implements AccountingSystem
 		private readonly string $apiKey,
 		private readonly string $createPath,
 		private readonly string $statusPath,
+		private readonly string $paymentPath = '',
 		private readonly string $prefix = 'VIAK_',
 	) {
 		if ($this->baseUrl === '' || $this->apiKey === '') {
@@ -63,6 +64,22 @@ class RunMyAccounts implements AccountingSystem
 		}
 
 		return InvoiceStatus::tryFrom((string) $response->json('status'));
+	}
+
+	/**
+	 * Legacy's payload, field for field: the card payments arrive on account
+	 * 1107, Stripe's clearing account, not the bank's.
+	 */
+	public function recordPayment(Invoice $invoice): void
+	{
+		$url = $this->baseUrl.str_replace('%INVOICE_NO%', $this->number($invoice), $this->paymentPath);
+
+		Http::withToken($this->apiKey)->acceptJson()->post($url, [
+			'datepaid' => ($invoice->paid_at ?? now())->toIso8601String(),
+			'amount_paid' => (string) $invoice->grand_total,
+			'memo' => 'Zahlung via Kreditkarte',
+			'payment_accno' => '1107',
+		])->throw();
 	}
 
 	/** @return array<string, mixed> */

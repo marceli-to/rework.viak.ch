@@ -5,16 +5,16 @@ real student ever receives one.
 
 ## Status
 
-**Built 2026-09-29**, except the two *Invoice paid* rows. Every row of the
+**Built 2026-09-29**; the two *Invoice paid* rows on 2026-10-20, with the
+card-payment page. Every row of the
 flow table below is a queued [[VIAKMail]] with its listener, its tests and its
 scenario step; the Kontakt and Firmenschulung mails followed on 2026-10-06.
 What is in place is listed under *Built so far*.
 
 Still open:
 
-- **Invoice paid** (`InvoicePaidConfirmation`, `InvoicePaidNotification`):
-  legacy sends them only from its Stripe payment page, so they come with the
-  card-payment page (#28), designed with the checkout ([[13-checkout]]).
+- ~~**Invoice paid**~~ **built 2026-10-20** with the card-payment page
+  ([[13-checkout]]): sent once per card payment, from [[RecordCardPayment]].
 - **Licence orders send nothing**, neither to the customer nor to VIAK
   ([[05-licences]]). Legacy's shop is not in this table; those mails are
   designed with the checkout too.
@@ -93,8 +93,8 @@ in a scenario (below).
 | Event closed | `EventClosedStudent` | each student who **participated** | participation confirmation | Teilnahmebestätigung – *course* | **Built 2026-09-29** ([[SendClosingMails]]): only seats ticked as attended (`bookings.participated_at`, ported from `hasParticipated`, 439 ticks), the PDF made by `RenderParticipationConfirmation` before the mail attaches it |
 | Expert posts a message | `EventMessageStudent` | each booked student | — (files linked in the body, `storage/uploads/…`) | the message's subject | **Built 2026-09-29**: `PostMessage` announces [[MessagePosted]], every frozen recipient is mailed; files link to the gated download |
 | | `EventMessageExpert` | the author, if *selfcopy* | — (files linked) | ″ | **Built** |
-| Invoice paid | `InvoicePaidConfirmation` | student | — | Zahlungsbestätigung Rechnung *no.* | **Waits for the card-payment page.** Legacy fires `InvoicePaid` only from its Stripe `PaymentController` (*Bezahlt per Kreditkarte*), never for a bank payment the books report. Built with that page (`Todo.md`, #28) |
-| | `InvoicePaidNotification` | admin | — | ″ | ″ (with the page) |
+| Invoice paid | `InvoicePaidConfirmation` | student | — | Zahlungsbestätigung Rechnung *no.* | **Built 2026-10-20** ([[SendInvoicePaidMails]]). As in legacy only for a card payment, never for a bank payment the books report; once per payment, however often Stripe reports it |
+| | `InvoicePaidNotification` | admin | — | ″ | **Built**; *Kund:in* for legacy's *Teilnehmer*, as a licence order has no participant |
 | Event deleted | nothing — **refused while active bookings exist** | — | — | — | The API deletes regardless — see *Oddities* |
 
 24 mailables, 28 rows: four are sent from two triggers.

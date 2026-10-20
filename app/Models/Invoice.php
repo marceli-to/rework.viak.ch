@@ -43,7 +43,7 @@ class Invoice extends Model
 
 	protected $fillable = [
 		'number', 'user_id', 'status', 'date', 'due_at',
-		'paid_at', 'cancelled_at', 'cancellation_reason', 'replaced_by_invoice_id',
+		'paid_at', 'card_payment', 'cancelled_at', 'cancellation_reason', 'replaced_by_invoice_id',
 		'invoice_address', 'net', 'discount', 'vat', 'grand_total', 'filename',
 	];
 

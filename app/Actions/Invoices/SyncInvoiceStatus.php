@@ -13,9 +13,10 @@ use App\Support\Accounting\AccountingSystem;
  *
  * Payment is not something this application observes: the money arrives at the
  * bank, Run My Accounts matches it against the QR reference, and the site asks.
- * Nobody marks an invoice paid by hand, which is why there is no action to do
- * so — the books are the source of truth for money, the same way `events.state`
- * is for a course.
+ * Nobody marks an invoice paid by hand. The one exception is a card payment
+ * ([[RecordCardPayment]]), which the site sees before the books do, and which
+ * it then posts to them. Otherwise the books are the source of truth for money,
+ * the same way `events.state` is for a course.
  *
  * Legacy carried a `queued` boolean on every invoice and a pair of nightly
  * tasks that set it on all pending invoices and then cleared it one row at a

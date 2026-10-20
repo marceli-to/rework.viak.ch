@@ -40,4 +40,12 @@ interface AccountingSystem
 	 * say yet. This is how an invoice becomes PAID: nobody marks it by hand.
 	 */
 	public function statusOf(Invoice $invoice): ?InvoiceStatus;
+
+	/**
+	 * Book a card payment against the invoice. The one payment the site sees
+	 * first: the money goes to Stripe, not the bank account the books match QR
+	 * references against, so the books are told (legacy's
+	 * `UpdateInvoiceStatusToPaid`, [[RecordCardPayment]]).
+	 */
+	public function recordPayment(Invoice $invoice): void;
 }

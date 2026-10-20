@@ -94,7 +94,7 @@ it('previews every mail from fixtures, and leaves nothing behind', function () {
 	$index = $this->get('/dev/mails')->assertOk()->assertSee('Kursbestätigung – Rhino Einstiegskurs');
 
 	preg_match_all('#/dev/mails/([a-z-]+)#', $index->getContent(), $keys);
-	expect(array_unique($keys[1]))->toHaveCount(27);
+	expect(array_unique($keys[1]))->toHaveCount(29);
 
 	foreach (array_unique($keys[1]) as $key) {
 		$this->get("/dev/mails/{$key}")->assertOk()->assertSee('Visualisierungs-Akademie');

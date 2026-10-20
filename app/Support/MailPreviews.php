@@ -22,6 +22,8 @@ use App\Mail\EventConfirmationCustomer;
 use App\Mail\EventConfirmationExpert;
 use App\Mail\EventMessageCustomer;
 use App\Mail\EventMessageExpert;
+use App\Mail\InvoicePaidConfirmation;
+use App\Mail\InvoicePaidNotification;
 use App\Mail\ParticipantsChange;
 use App\Mail\PasswordReset;
 use App\Mail\RentalAdded;
@@ -63,6 +65,8 @@ final class MailPreviews
 
 	private UserDocument $invoice;
 
+	private Invoice $paid;
+
 	private UserDocument $certificate;
 
 	private Message $post;
@@ -99,6 +103,12 @@ final class MailPreviews
 			'grand_total' => '890.00',
 		]);
 		$this->invoice = $this->document(DocumentType::Invoice, $invoice, 'viak-rechnung-vorschau.pdf');
+		$this->paid = Invoice::factory()->paid()->create([
+			'number' => app(InvoiceNumber::class)->next(),
+			'user_id' => $this->student->id,
+			'net' => '890.00',
+			'grand_total' => '890.00',
+		]);
 		$this->certificate = $this->document(DocumentType::ParticipationConfirmation, $this->booking, 'viak-teilnahmebestaetigung-vorschau.pdf');
 
 		$this->post = Message::factory()->create([
@@ -144,6 +154,8 @@ final class MailPreviews
 			'teilnahme' => ['Date closed: each student who attended', fn () => new EventClosedCustomer($this->booking, $this->certificate)],
 			'nachricht' => ['Expert posts a message: each student', fn () => new EventMessageCustomer($this->post)],
 			'nachricht-kopie' => ['Expert posts a message: the author\'s copy', fn () => new EventMessageExpert($this->post)],
+			'zahlung' => ['Invoice paid by card: customer', fn () => new InvoicePaidConfirmation($this->paid)],
+			'zahlung-buero' => ['Invoice paid by card: office', fn () => new InvoicePaidNotification($this->paid)],
 		];
 	}
 

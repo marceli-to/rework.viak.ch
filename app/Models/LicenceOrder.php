@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * lists until every line has gone out.
  *
  * **Paid** has two sources: a free order is paid when placed (#35), a priced
- * one when its invoice is. The shop's card payment will set `paid_at` too
- * (`13-checkout.md`).
+ * one when its invoice is. A card payment sets `paid_at` too
+ * ([[RecordCardPayment]]).
  */
 class LicenceOrder extends Model
 {

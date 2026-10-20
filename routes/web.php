@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Dev\FakeCheckoutController;
 use App\Http\Controllers\Dev\MailPreviewController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
@@ -18,12 +19,14 @@ use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\NewsletterController;
+use App\Http\Controllers\Site\PaymentController;
 use App\Http\Controllers\Site\ProjectController;
 use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\SoftwareController;
 use App\Http\Controllers\Site\TrainingController;
 use App\Http\Middleware\SetLocaleFromUrl;
 use App\Support\SiteUrl;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -159,14 +162,21 @@ Route::prefix('{locale}')
 			Route::redirect($segments['training_legacy'], SiteUrl::training($locale), 301);
 
 			/*
-			 * Paying an invoice by card — the course confirmation mail links
-			 * here, on legacy's URL. **A placeholder** until the Stripe page is
-			 * rebuilt ([[SiteUrl::invoicePayment]], `Todo.md`). It says nothing
-			 * about the invoice, so it needs no sign-in.
+			 * Paying an invoice by card ([[PaymentController]], #28): legacy's
+			 * `/de/zahlung/rechnung/{uuid}`, which the course confirmation mail
+			 * links to, and its `/de/zahlung/erfolgreich`. Signed in, and the
+			 * invoice has to be the account's own; legacy's cancel page is the
+			 * payment page again, with its sentence.
 			 */
-			Route::view($segments['payment'].'/'.$segments['invoice'].'/{uuid}', 'site.payment.placeholder')
-				->whereUuid('uuid')
-				->name("{$locale}.payment.invoice");
+			Route::middleware(['auth', 'verified'])
+				->prefix($segments['payment'])
+				->group(function () use ($locale, $segments): void {
+					Route::get($segments['invoice'].'/{invoice:uuid}', [PaymentController::class, 'show'])
+						->name("{$locale}.payment.invoice");
+					Route::post($segments['invoice'].'/{invoice:uuid}', [PaymentController::class, 'start']);
+					Route::get($segments['success'], [PaymentController::class, 'success'])
+						->name("{$locale}.payment.success");
+				});
 
 			/*
 			 * The checkout, a student's ([[09-public-site]]).
@@ -445,6 +455,23 @@ Route::get('/dashboard/{any?}', DashboardController::class)
  * has to catch the unprefixed one.
  */
 Route::redirect('/register', '/de/registration', 301);
+
+/*
+ * Stripe's webhook ([[PaymentController::webhook]]): outside the locales,
+ * without a session or CSRF token, verified by its signature instead.
+ */
+Route::post('/stripe/webhook', [PaymentController::class, 'webhook'])
+	->withoutMiddleware([ValidateCsrfToken::class])
+	->name('payment.webhook');
+
+/*
+ * The fake Stripe page ([[FakePaymentGateway]]), wherever the fake can be
+ * bound: everywhere but production.
+ */
+if (! app()->isProduction()) {
+	Route::get('/dev/zahlung/{session}', [FakeCheckoutController::class, 'show'])->name('dev.payment.show');
+	Route::post('/dev/zahlung/{session}', [FakeCheckoutController::class, 'update'])->name('dev.payment.update');
+}
 
 /*
  * Dev tools, never in production ([[10-mail]]): every mail rendered from

@@ -57,11 +57,23 @@ return [
 	 * accounting. Do not put these keys in a local .env to "test the real
 	 * thing"; the fake records what would have been posted.
 	 */
+	/*
+	 * Card payment ([[PaymentGateway]], `13-checkout.md`). Empty outside
+	 * production means the local fake; a test key (`sk_test_…`) means Stripe's
+	 * test mode; a live key is refused anywhere but production.
+	 */
+	'stripe' => [
+		'secret' => env('STRIPE_SECRET', ''),
+		'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
+	],
+
 	'run_my_accounts' => [
 		'base_url' => env('RMA_API_BASE', ''),
 		'key' => env('RMA_API_KEY', ''),
 		'create_path' => env('RMA_API_CREATE', ''),
 		'status_path' => env('RMA_API_STATUS', ''),
+		// Legacy's `RMA_ROUTE_API_UPDATE`: `/invoices/%INVOICE_NO%/payments`.
+		'payment_path' => env('RMA_API_PAYMENT', ''),
 		'prefix' => env('RMA_INVOICE_PREFIX', 'VIAK_'),
 	],
 

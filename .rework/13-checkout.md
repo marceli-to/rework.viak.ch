@@ -1,4 +1,4 @@
-# 13 — The checkout, rethought (not yet built)
+# 13 — The checkout, rethought (being built)
 
 The checkout chunk 06 built is legacy's: courses only, an account before the
 basket, no payment. With licences for sale (chunk 05) that no longer fits.
@@ -10,6 +10,62 @@ Designed before anything is built, because it replaces the flow in
 `06-bookings.md` rather than adding to it. ~~Waits on the licence answers
 (#33–39)~~ **answered 2026-10-08** (`05-licences.md`): one select per product,
 a quantity with a minimum on four variants, and demos at CHF 0.
+
+**Built 2026-10-20, first slice: paying an invoice by card** (#28, below).
+The checkout itself and the account's orders come next.
+
+## Paying an invoice by card — built 2026-10-20
+
+Legacy's flow, with Marcel's word for it: **a course is paid only after it is
+confirmed**, from the *Zahlung per Kreditkarte* button in the confirmation
+mail; legacy's checkout takes no payment. A licence order's invoice exists the
+moment it is placed, so the same page settles it, at checkout and later.
+
+**How legacy does it** (`../viak.ch/app/Http/Controllers/PaymentController.php`):
+`/de/zahlung/rechnung/{uuid}` shows the booking and the total; *Weiter zur
+Zahlung* puts the invoice uuid in the session and opens a Stripe Checkout
+session (card only, one line); `/de/zahlung/erfolgreich` reads the uuid back,
+marks the invoice PAID, posts the payment to Run My Accounts (account 1107,
+*Zahlung via Kreditkarte*) and fires `InvoicePaid`, whose handler mails the
+student and the office. `/de/zahlung/abbrechen` clears the session.
+
+**Its weak spots, read from the code** (Marcel: fix them or make sure they are
+covered):
+
+1. **No webhook, nothing asked of Stripe.** The success URL alone settles the
+   invoice, so an abandoned payment followed by a visit to it marks the invoice
+   paid and sends both mails; a customer who pays and closes the tab leaves it
+   open. *Fixed*: the browser hands back only `session_id`; the return page
+   asks Stripe whether that session is paid, and a webhook
+   (`checkout.session.completed`, `/stripe/webhook`, signature checked) settles
+   the ones who never return. [[RecordCardPayment]] is safe to call from both:
+   it locks the row and keys on Stripe's payment id (`invoices.card_payment`).
+2. **Course invoices only.** The Stripe line was built from
+   `$invoice->booking->event->course`; a licence invoice has no booking.
+   *Fixed*: the line is *Rechnung {number}* with the invoice's lines as its
+   description, and the page lists the invoice's lines.
+3. **`create()` did not check the invoice was the user's** (`index()` did).
+   *Fixed*: every step 404s on somebody else's invoice.
+4. **The books were posted inline**, after the invoice was already marked
+   paid: a Run My Accounts error left the books open for good. *Now* a queued,
+   retried job ([[RecordPaymentInBooks]]).
+
+Also refused, and logged for a refund by hand: an amount or currency that is
+not the invoice's, and a payment for an invoice already settled (paid by QR,
+paid in a second tab, cancelled). Paid or cancelled, the page says so instead
+of offering *Weiter zur Zahlung* (legacy's `info` page).
+
+**No real money from a prototype**, as with Run My Accounts
+([[AppServiceProvider]]): without `STRIPE_SECRET`, every environment but
+production gets a fake Stripe page at `/dev/zahlung/{session}` (*Bezahlen* /
+*Abbrechen*), and the rest of the flow is the real one. A test key
+(`sk_test_…`) uses Stripe's test mode; a live key outside production, and
+production without a key, throw. Legacy's `.env` holds a test key for VIAK's
+Stripe account, not copied here.
+
+Mails: *Zahlungsbestätigung Rechnung …* to the customer and the office
+([[10-mail]]), legacy's text. Cancel on Stripe's page returns to the invoice
+with legacy's cancel sentence above it, rather than a page of its own.
 
 ## What there is today
 
