@@ -34,23 +34,25 @@
 			</h2>
 		</header>
 
-		{{--
-			**Without an image, the card carries its facts instead** (Marcel,
-			2026-10-20): the overview the hover shows over a picture, in the
-			picture's square, so the card keeps its place in a grid of cards
-			with images. Most software has no image yet.
-		--}}
-		@if ($image = $software->teaser())
-			<figure class="relative mt-8 block">
-				<div class="absolute hidden h-full w-full bg-teal p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
-					<h3 class="mb-8">Übersicht:</h3>
-					<x-software.facts :makers="$makers" :products="$products" :from="$from" class="mb-16 sm:mb-24" />
-					<div class="flex items-center gap-8">
-						Weitere Informationen
-						<x-icon.arrow-right class="shrink-0" />
-					</div>
+		<figure class="relative mt-8 block">
+			<div class="absolute hidden h-full w-full bg-teal p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
+				<h3 class="mb-8">Übersicht:</h3>
+				<ul class="mb-16 sm:mb-24">
+					@if ($makers->isNotEmpty())
+						<li class="py-4">{{ $makers->map(fn ($maker) => $maker->getTranslation('title', $locale))->join(', ') }}</li>
+					@endif
+					<li class="py-4">{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+					@if ($from)
+						<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
+					@endif
+				</ul>
+				<div class="flex items-center gap-8">
+					Weitere Informationen
+					<x-icon.arrow-right class="shrink-0" />
 				</div>
+			</div>
 
+			@if ($image = $software->teaser())
 				<x-media.image
 					:media="$image"
 					ratio="1/1"
@@ -59,18 +61,9 @@
 					:loading="$eager ? 'eager' : 'lazy'"
 					class="block w-full"
 				/>
-			</figure>
-		@else
-			<div class="mt-8 flex aspect-square w-full flex-col justify-between border-t border-teal pt-8 leading-[1.2] font-bold sm:text-md lg:pt-16 lg:text-xl">
-				<div>
-					<h3 class="mb-8">Übersicht:</h3>
-					<x-software.facts :makers="$makers" :products="$products" :from="$from" />
-				</div>
-				<div class="flex items-center gap-8 transition-colors group-hover:text-teal">
-					Weitere Informationen
-					<x-icon.arrow-right class="shrink-0" />
-				</div>
-			</div>
-		@endif
+			@else
+				<div class="aspect-square w-full bg-gray-200"></div>
+			@endif
+		</figure>
 	</a>
 </article>
