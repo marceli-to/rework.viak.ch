@@ -28,6 +28,8 @@
 	'canonical' => null,
 	'auth' => false,
 	'heading' => null,
+	// Kept out of search engines: an internal page such as *Projektstand*.
+	'noindex' => false,
 ])
 
 @php
@@ -70,6 +72,9 @@
 	<title>{{ $seo['title'] }}</title>
 	<meta name="description" content="{{ $seo['description'] }}">
 	<meta name="keywords" content="{{ $seo['keywords'] }}">
+	@if ($noindex)
+		<meta name="robots" content="noindex, nofollow">
+	@endif
 
 	{{-- Neither of these exists on the live site. Legacy has no canonical
 	     anywhere and serves `/` and `/de` with an identical title, which is

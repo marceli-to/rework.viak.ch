@@ -119,6 +119,13 @@ Route::prefix('{locale}')
 			 * ([[04-content]], decided 2026-10-06). Legacy's `/de/experten` is
 			 * indexed, so it 301s here.
 			 */
+			/*
+			 * *Projektstand* (2026-10-20): what is still open, for the client's
+			 * review of the prototype. Linked from nowhere, kept out of search
+			 * engines and the sitemap; it goes before the launch.
+			 */
+			Route::view('projektstand', 'site.status')->name("{$locale}.status");
+
 			Route::get($segments['about'], AboutController::class)
 				->name("{$locale}.about");
 
