@@ -34,12 +34,17 @@
 		</div>
 
 		<div class="flex justify-between gap-16 max-sm:mt-16 sm:col-span-5">
+			{{-- The amount, then the badges on a line of their own, 8px apart
+			     across and down, as the event row draws its state
+			     (`row/event`, Marcel, 2026-10-20). --}}
 			<div>
 				@if ($order->invoice)
-					CHF {{ number_format((float) $order->invoice->grand_total, 2, '.', '') }}
+					<div>CHF {{ number_format((float) $order->invoice->grand_total, 2, '.', '') }}</div>
 				@endif
-				<x-ui.badge :variant="$payment[1]" class="align-middle {{ $order->invoice ? 'ml-8' : '' }}">{{ $payment[0] }}</x-ui.badge>
-				<x-ui.badge :variant="$sent ? 'success' : 'neutral'" class="ml-8 align-middle">{{ $sent ? 'Versendet' : 'Nicht versendet' }}</x-ui.badge>
+				<div @class(['flex flex-wrap items-start gap-8', 'mt-4' => $order->invoice])>
+					<x-ui.badge :variant="$payment[1]">{{ $payment[0] }}</x-ui.badge>
+					<x-ui.badge :variant="$sent ? 'success' : 'neutral'">{{ $sent ? 'Versendet' : 'Nicht versendet' }}</x-ui.badge>
+				</div>
 			</div>
 
 			@if ($order->invoice?->isPending())
