@@ -5,7 +5,7 @@
 	([[13-checkout]]): the course row's frame (`row/basket`), its rule,
 	spacing and three columns, so courses and licences read as one list.
 
-	What, and for which host | how many | the line's net, bare and
+	What, and for which host | how many, *X Stk.* | the line's net, bare and
 	right-aligned as the course fees are, then *Entfernen*. The VAT is in the
 	totals, as the software page's *Alle Preise exkl. MWST* promises.
 
@@ -20,7 +20,7 @@
 		</div>
 
 		<div class="sm:col-span-4">
-			<span x-text="`Anzahl ${line.quantity}`"></span>
+			<span x-text="`${line.quantity} Stk.`"></span>
 		</div>
 
 		<div class="sm:col-span-4 sm:flex sm:items-start sm:justify-between">

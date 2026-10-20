@@ -109,11 +109,13 @@
 			</div>
 
 			{{-- How many, and the way in --}}
-			<div class="mt-16 flex items-center gap-16 sm:col-span-12 sm:mt-0 sm:justify-end lg:col-span-4 lg:gap-24">
+			{{-- *X Stk.*, the unit after the field, and 32px to the button, 48
+			     from `lg` (Marcel, 2026-10-20: was *Anzahl* before it, 16/24). --}}
+			<div class="mt-16 flex items-center gap-32 sm:col-span-12 sm:mt-0 sm:justify-end lg:col-span-4 lg:gap-48">
 				<label class="flex shrink-0 items-center gap-8">
-					<span>Anzahl</span>
-					<input type="number" min="{{ $licence['min'] }}" x-model="quantity" @keydown.enter="add()"
+					<input type="number" min="{{ $licence['min'] }}" x-model="quantity" @keydown.enter="add()" aria-label="Anzahl"
 						class="w-56 [appearance:textfield] border-b border-black bg-transparent text-center outline-hidden focus:border-teal [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+					<span>Stk.</span>
 				</label>
 
 				<x-ui.button @click="add()" class="max-sm:grow">In den Warenkorb</x-ui.button>

@@ -179,7 +179,7 @@ async function save() {
 						<span class="flex flex-wrap gap-8">
 							<Badge v-if="line.choice === FREE">Freie Position</Badge>
 							<Badge v-else>{{ variants.get(line.choice)?.sku }}</Badge>
-							<Badge v-if="Number(line.quantity) > 1">{{ line.quantity }} Stück</Badge>
+							<Badge v-if="Number(line.quantity) > 1">{{ line.quantity }} Stk.</Badge>
 							<Badge>{{ chf(unit(line) * (Number(line.quantity) || 0)) }}</Badge>
 							<Badge v-if="failed(index)" variant="danger">Unvollständig</Badge>
 						</span>
