@@ -24,8 +24,8 @@ import PaymentBadge from '@/components/order/PaymentBadge.vue';
  * reads as *Rechnungen*' row, labelled columns over a rule (Marcel picked it
  * from four on 2026-10-08, over a fact list and the homepage's grey panel).
  *
- * *Bestellung stornieren* at the foot, in the forms' danger zone, **while
- * nothing has been sent** (Marcel, 2026-10-20): the invoice is cancelled and
+ * *Stornieren* under the lines, **while nothing has been sent** (Marcel,
+ * 2026-10-20), what it does said in its dialog: the invoice is cancelled and
  * reversed in the books; a paid one is refunded by hand.
  */
 const route = useRoute();
@@ -48,9 +48,9 @@ const cancelling = ref(false);
 
 async function cancel() {
 	const paid = order.value.payment === 'paid';
-	const text = paid
-		? `Die Rechnung ${order.value.invoice.number} wird storniert. Sie ist bezahlt: den Betrag von Hand zurückzahlen.`
-		: order.value.invoice ? `Die Rechnung ${order.value.invoice.number} wird storniert.` : 'Die Bestellung verschwindet aus den offenen Bestellungen.';
+	const what = order.value.invoice ? `Die Bestellung und ihre Rechnung ${order.value.invoice.number} werden` : 'Die Bestellung wird';
+	const text = `${what} storniert, die Bestellung steht danach unter «Stornierte Bestellungen».`
+		+ (paid ? ' Sie ist bezahlt: den Betrag von Hand zurückzahlen.' : '');
 	if (!(await confirm('Bestellung stornieren?', text))) return;
 
 	cancelling.value = true;
@@ -113,7 +113,7 @@ async function dispatch(item, dispatched) {
 			<Collapsible expanded :count="order.items.length">
 				<template #title>Positionen</template>
 
-				<article v-for="item in order.items" :key="item.uuid" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
+				<article v-for="(item, index) in order.items" :key="item.uuid" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 						<div class="sm:col-span-7">
 							<strong class="font-bold"><template v-if="item.quantity > 1">{{ item.quantity }} × </template>{{ item.title }}</strong>
@@ -125,26 +125,18 @@ async function dispatch(item, dispatched) {
 								<Badge v-if="item.dispatched_at" variant="success">Versendet am {{ shortDate(item.dispatched_at.slice(0, 10)) }}<template v-if="item.dispatched_by"> von {{ item.dispatched_by }}</template></Badge>
 							</div>
 						</div>
-						<div v-if="!order.cancelled_at" class="mt-16 flex items-start sm:col-span-5 sm:mt-0 sm:justify-end">
+						<div v-if="!order.cancelled_at" class="mt-16 flex flex-col items-stretch gap-8 sm:col-span-5 sm:mt-0 sm:items-end">
 							<Button v-if="!item.dispatched_at" variant="success" :disabled="busy === item.uuid" @click="dispatch(item, true)">Versendet</Button>
 							<Button v-else variant="secondary" :disabled="busy === item.uuid" @click="dispatch(item, false)">Versand offen</Button>
+							<!-- *Stornieren* right under the last line's *Versendet*, the
+							     explanation in its dialog (Marcel, 2026-10-20). Gone once
+							     anything has been sent. -->
+							<Button v-if="index === order.items.length - 1 && !sent" variant="danger" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Wird storniert …' : 'Stornieren' }}</Button>
 						</div>
 					</div>
 				</article>
-			</Collapsible>
-		</div>
 
-		<!-- The forms' `.form-danger-zone` ([[ResourceForm]]), eight of twelve
-		     columns, centred, and close under *Positionen* (Marcel, 2026-10-20). -->
-		<div v-if="!order.cancelled_at" class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-			<div class="mt-16 border-2 border-danger p-8 text-md text-danger sm:col-span-8 sm:col-start-3 sm:mt-0 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
-				<h2 class="mb-8 font-bold sm:mb-16">Bestellung stornieren</h2>
-				<p v-if="sent">Es wurde bereits etwas versendet, die Bestellung kann nicht mehr storniert werden.</p>
-				<template v-else>
-					<p class="mb-12 lg:mb-16">Die Bestellung und ihre Rechnung werden storniert. Ist sie bezahlt, wird der Betrag von Hand zurückgezahlt.</p>
-					<Button variant="danger" class="w-full" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Wird storniert …' : 'Stornieren' }}</Button>
-				</template>
-			</div>
+			</Collapsible>
 		</div>
 	</section>
 </template>
