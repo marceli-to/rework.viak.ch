@@ -134,10 +134,10 @@ async function dispatch(item, dispatched) {
 			</Collapsible>
 		</div>
 
-		<!-- The forms' `.form-danger-zone` ([[ResourceForm]]), in their column too:
-		     the right eight of twelve (Marcel, 2026-10-20: full width looked odd). -->
+		<!-- The forms' `.form-danger-zone` ([[ResourceForm]]), eight of twelve
+		     columns, centred, and close under *Positionen* (Marcel, 2026-10-20). -->
 		<div v-if="!order.cancelled_at" class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-			<div class="mt-24 border-2 border-danger p-8 text-md text-danger sm:col-span-8 sm:col-start-5 sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
+			<div class="mt-16 border-2 border-danger p-8 text-md text-danger sm:col-span-8 sm:col-start-3 sm:mt-0 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
 				<h2 class="mb-8 font-bold sm:mb-16">Bestellung stornieren</h2>
 				<p v-if="sent">Es wurde bereits etwas versendet, die Bestellung kann nicht mehr storniert werden.</p>
 				<template v-else>
