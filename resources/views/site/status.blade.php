@@ -1,8 +1,8 @@
 {{--
 	*Projektstand*, `/de/projektstand` (2026-10-20): what is still open when
-	the client reviews the prototype, in the site's own look. Drawn as the
-	checkout's steps are: a numbered header per part, then rows on a black
-	rule, the title in `span-4` and the text in `span-8`.
+	the client reviews the prototype, in the site's own look. Each part a plain
+	heading and lead, full width (Marcel, 2026-10-20: no grid, no number), then
+	rows on a black rule, the title in `span-4` and the text in `span-8`.
 
 	The content is `.rework/Open-Questions.md`, the chunk docs' open points
 	and `Todo.md`'s cutover list, rewritten for the client. Not linked, not
@@ -145,12 +145,9 @@
 
 	{{-- 1. What to look at --}}
 	<section class="mt-48 lg:mt-64">
-		<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
-			<div class="mb-8 sm:col-span-4"><strong class="font-bold">1</strong></div>
-			<div class="mb-8 sm:col-span-8">
-				<h2 class="font-bold">Bitte anschauen</h2>
-				<p class="mt-8">Die Seiten des Prototyps. Zahlungen laufen über eine Testseite, Mails gehen an eine Testadresse: es kann gefahrlos bestellt und gebucht werden. Die Zugangsdaten folgen separat.</p>
-			</div>
+		<header class="mb-8 sm:text-lg lg:text-xl">
+			<h2 class="font-bold">Bitte anschauen</h2>
+			<p class="mt-8">Die Seiten des Prototyps. Zahlungen laufen über eine Testseite, Mails gehen an eine Testadresse: es kann gefahrlos bestellt und gebucht werden. Die Zugangsdaten folgen separat.</p>
 		</header>
 
 		@foreach ($review as [$title, $url, $text])
@@ -167,12 +164,9 @@
 
 	{{-- 2. Questions for the client --}}
 	<section class="mt-48 lg:mt-64">
-		<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
-			<div class="mb-8 sm:col-span-4"><strong class="font-bold">2</strong></div>
-			<div class="mb-8 sm:col-span-8">
-				<h2 class="font-bold">Fragen an VIAK</h2>
-				<p class="mt-8">Was wir von VIAK brauchen. Die ersten drei braucht es vor dem Go-live, die übrigen halten nichts auf.</p>
-			</div>
+		<header class="mb-8 sm:text-lg lg:text-xl">
+			<h2 class="font-bold">Fragen an VIAK</h2>
+			<p class="mt-8">Was wir von VIAK brauchen. Die ersten drei braucht es vor dem Go-live, die übrigen halten nichts auf.</p>
 		</header>
 
 		@foreach ($questions as $i => $question)
@@ -195,12 +189,9 @@
 
 	{{-- 3. Content VIAK enters --}}
 	<section class="mt-48 lg:mt-64">
-		<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
-			<div class="mb-8 sm:col-span-4"><strong class="font-bold">3</strong></div>
-			<div class="mb-8 sm:col-span-8">
-				<h2 class="font-bold">Inhalte</h2>
-				<p class="mt-8">Was VIAK im Dashboard selbst pflegt. Die Funktionen sind fertig, es fehlen die Texte und Bilder.</p>
-			</div>
+		<header class="mb-8 sm:text-lg lg:text-xl">
+			<h2 class="font-bold">Inhalte</h2>
+			<p class="mt-8">Was VIAK im Dashboard selbst pflegt. Die Funktionen sind fertig, es fehlen die Texte und Bilder.</p>
 		</header>
 
 		@foreach ($content as [$title, $text])
@@ -215,12 +206,9 @@
 
 	{{-- 4. Not built yet --}}
 	<section class="mt-48 lg:mt-64">
-		<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
-			<div class="mb-8 sm:col-span-4"><strong class="font-bold">4</strong></div>
-			<div class="mb-8 sm:col-span-8">
-				<h2 class="font-bold">Noch nicht gebaut</h2>
-				<p class="mt-8">Das meiste davon wartet auf eine der Fragen oben.</p>
-			</div>
+		<header class="mb-8 sm:text-lg lg:text-xl">
+			<h2 class="font-bold">Noch nicht gebaut</h2>
+			<p class="mt-8">Das meiste davon wartet auf eine der Fragen oben.</p>
 		</header>
 
 		@foreach ($unbuilt as [$title, $text, $state, $goLive])
@@ -243,12 +231,9 @@
 
 	{{-- 5. Before the launch --}}
 	<section class="mt-48 lg:mt-64">
-		<header class="sm:grid sm:grid-cols-12 sm:gap-16 sm:text-lg lg:gap-40 lg:text-xl">
-			<div class="mb-8 sm:col-span-4"><strong class="font-bold">5</strong></div>
-			<div class="mb-8 sm:col-span-8">
-				<h2 class="font-bold">Vor dem Go-live</h2>
-				<p class="mt-8">Was wir beim Umschalten erledigen. Wo wir etwas von VIAK brauchen, ist es markiert.</p>
-			</div>
+		<header class="mb-8 sm:text-lg lg:text-xl">
+			<h2 class="font-bold">Vor dem Go-live</h2>
+			<p class="mt-8">Was wir beim Umschalten erledigen. Wo wir etwas von VIAK brauchen, ist es markiert.</p>
 		</header>
 
 		@foreach ($launch as [$title, $text, $needsViak])
