@@ -195,6 +195,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		// Licence orders and the dispatch worklist ([[05-licences]]).
 		Route::get('licence-orders', [Admin\LicenceOrderController::class, 'index']);
 		Route::get('licence-orders/{order}', [Admin\LicenceOrderController::class, 'show']);
+		Route::patch('licence-orders/{order}/cancel', [Admin\LicenceOrderController::class, 'cancel']);
 		Route::patch('licence-order-items/{item}/dispatch', [Admin\LicenceOrderController::class, 'dispatch']);
 		Route::get('customers/{customer}/licence-orders/create', [Admin\LicenceOrderController::class, 'create']);
 		Route::post('customers/{customer}/licence-orders', [Admin\LicenceOrderController::class, 'store']);

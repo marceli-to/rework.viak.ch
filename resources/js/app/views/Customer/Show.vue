@@ -148,7 +148,8 @@ async function cancel(booking) {
 					<div class="col-span-12 pr-40 sm:col-span-8">
 						<div v-for="(line, index) in order.lines" :key="index">{{ line }}</div>
 						<div class="mt-8 flex flex-wrap gap-8">
-							<Badge v-if="order.open" variant="warning">{{ order.open === order.lines.length ? 'Nicht versendet' : `${order.open} nicht versendet` }}</Badge>
+							<Badge v-if="order.cancelled">Storniert</Badge>
+							<Badge v-else-if="order.open" variant="warning">{{ order.open === order.lines.length ? 'Nicht versendet' : `${order.open} nicht versendet` }}</Badge>
 							<Badge v-else variant="success">Versendet</Badge>
 						</div>
 					</div>

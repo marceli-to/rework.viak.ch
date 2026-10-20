@@ -28,7 +28,8 @@ class LicenceOrderRowResource extends JsonResource
 			'lines' => $this->items->map(fn (LicenceOrderItem $item) => $item->description())->all(),
 			'total' => $this->invoice ? (string) $this->invoice->grand_total : '0.00',
 			'payment' => LicenceOrderResource::payment($this->resource),
-			'open' => $this->items->whereNull('dispatched_at')->count(),
+			'open' => $this->isCancelled() ? 0 : $this->items->whereNull('dispatched_at')->count(),
+			'cancelled' => $this->isCancelled(),
 		];
 	}
 }

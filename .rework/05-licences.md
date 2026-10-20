@@ -113,6 +113,13 @@ right below, which supersedes parts of *The real catalogue*.
   variants marked *nicht im Shop***) or ***Freie Position*** (Bezeichnung,
   Preis netto), *Hostsoftware* where the product has hosts, *Anzahl*
   starting at the minimum but not held to it, and the running total.
+- *(2026-10-20: **an order can be cancelled** while nothing on it has been
+  sent, paid or not (Marcel): *Bestellung stornieren* in the order page's
+  danger zone ([[CancelLicenceOrder]]). It leaves the worklist for a third
+  list, *Stornierte Bestellungen*; its invoice is cancelled
+  (`order_cancelled`) and reversed in the books; a paid one shows *Bezahlt:
+  von Hand zurückzahlen*, and its storno stays open in Run My Accounts until
+  the refund. The customer's profile shows *Storniert*. No mail goes out.)*
 - *(2026-10-20: shop orders now mail the customer and the office,
   `13-checkout.md`; an order entered here still mails nobody.)*
 - Not decided, so not built: **no mail** goes out yet, neither to the

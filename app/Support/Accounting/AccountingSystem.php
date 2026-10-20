@@ -48,4 +48,14 @@ interface AccountingSystem
 	 * `UpdateInvoiceStatusToPaid`, [[RecordCardPayment]]).
 	 */
 	public function recordPayment(Invoice $invoice): void;
+
+	/**
+	 * Reverse a cancelled invoice in the books, as legacy did
+	 * (`Facades/Invoice::cancel()` and `::delete()`): a `_STORNO` invoice
+	 * with the negated amount, then, **while nothing was paid**, both closed
+	 * against each other (account 1090, memo *STORNO*). A paid one keeps its
+	 * storno open: that is the money owed back, settled when it is refunded
+	 * by hand ([[ReverseInvoiceInBooks]]).
+	 */
+	public function reverse(Invoice $invoice, bool $paid): void;
 }

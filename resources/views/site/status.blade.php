@@ -117,7 +117,6 @@
 		['Newsletter-Anbindung', 'Die Anmeldung an Mailchimp übergeben.', 'Wartet auf die Mailchimp-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
 		['«Das könnte dich auch interessieren»', 'Empfehlungen, die VIAK je Software und Kurs im Dashboard auswählt, unter der Software-Seite und im Warenkorb. Ersetzt die festen Bundles.', 'Wartet auf die Bundle-Frage', false],
-		['Software-Bestellung stornieren', 'Eine Bestellung im Dashboard zurücknehmen, mit Storno der Rechnung.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];
 

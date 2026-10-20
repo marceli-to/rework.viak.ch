@@ -82,6 +82,29 @@ class RunMyAccounts implements AccountingSystem
 		])->throw();
 	}
 
+	public function reverse(Invoice $invoice, bool $paid): void
+	{
+		$this->record($invoice, cancellation: true);
+
+		if ($paid) {
+			return;
+		}
+
+		$this->close($this->number($invoice).'_STORNO', '-'.$invoice->grand_total);
+		$this->close($this->number($invoice), (string) $invoice->grand_total);
+	}
+
+	/** Legacy's `CloseInvoice`: a payment on account 1090, memo *STORNO*. */
+	private function close(string $number, string $amount): void
+	{
+		Http::withToken($this->apiKey)->acceptJson()->post($this->baseUrl.str_replace('%INVOICE_NO%', $number, $this->paymentPath), [
+			'datepaid' => now()->toIso8601String(),
+			'amount_paid' => $amount,
+			'memo' => 'STORNO',
+			'payment_accno' => '1090',
+		])->throw();
+	}
+
 	/** @return array<string, mixed> */
 	private function payload(Invoice $invoice, bool $cancellation): array
 	{

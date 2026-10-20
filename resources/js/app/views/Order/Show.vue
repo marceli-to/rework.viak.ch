@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { fetchOrder, setDispatched } from '@/api/licenceOrders';
+import { cancelOrder, fetchOrder, setDispatched } from '@/api/licenceOrders';
 import { confirm } from '@/composables/useConfirm';
 import { toast } from '@/composables/useToast';
 import { returnTo } from '@/router';
@@ -23,6 +23,10 @@ import PaymentBadge from '@/components/order/PaymentBadge.vue';
  * The head is not the forms' aside and column: the order is a record, so it
  * reads as *Rechnungen*' row, labelled columns over a rule (Marcel picked it
  * from four on 2026-10-08, over a fact list and the homepage's grey panel).
+ *
+ * *Bestellung stornieren* at the foot, in the forms' danger zone, **while
+ * nothing has been sent** (Marcel, 2026-10-20): the invoice is cancelled and
+ * reversed in the books; a paid one is refunded by hand.
  */
 const route = useRoute();
 const order = ref(null);
@@ -39,6 +43,26 @@ onMounted(async () => {
 
 const chf = (value) => `CHF ${Number(value).toFixed(2)}`;
 const open = computed(() => order.value?.items.filter((item) => !item.dispatched_at).length ?? 0);
+const sent = computed(() => order.value?.items.some((item) => item.dispatched_at) ?? false);
+const cancelling = ref(false);
+
+async function cancel() {
+	const paid = order.value.payment === 'paid';
+	const text = paid
+		? `Die Rechnung ${order.value.invoice.number} wird storniert. Sie ist bezahlt: den Betrag von Hand zurückzahlen.`
+		: order.value.invoice ? `Die Rechnung ${order.value.invoice.number} wird storniert.` : 'Die Bestellung verschwindet aus den offenen Bestellungen.';
+	if (!(await confirm('Bestellung stornieren?', text))) return;
+
+	cancelling.value = true;
+	try {
+		order.value = await cancelOrder(order.value.uuid);
+		toast('Die Bestellung ist storniert.');
+	} catch (problem) {
+		toast(problem.message, 'error');
+	} finally {
+		cancelling.value = false;
+	}
+}
 
 async function dispatch(item, dispatched) {
 	if (!dispatched && !(await confirm('Versand wieder offen?', `${item.title} wird wieder als offen geführt.`))) return;
@@ -64,6 +88,10 @@ async function dispatch(item, dispatched) {
 		<!-- *Zurück* under the title on the left, as every other screen's aside has it. -->
 		<h1 class="font-bold text-teal">Bestellung {{ order.number }}</h1>
 		<BackLink :to="returnTo({ name: 'backoffice.orders' })" />
+		<p v-if="order.cancelled_at" class="mt-16 flex flex-wrap gap-8">
+			<Badge>Storniert am {{ shortDate(order.cancelled_at.slice(0, 10)) }}<template v-if="order.cancelled_by"> von {{ order.cancelled_by }}</template></Badge>
+			<Badge v-if="order.refund" variant="warning">Bezahlt: von Hand zurückzahlen</Badge>
+		</p>
 		<div class="mt-24 grid grid-cols-12 gap-x-16 gap-y-16 border-t border-black pt-16 text-lg leading-[1.4] lg:mt-32 lg:gap-x-40 lg:text-xl">
 			<div class="col-span-6 sm:col-span-2"><div class="text-md text-gray-600 lg:text-lg">Datum</div>{{ shortDate(order.date) }}</div>
 			<div class="col-span-6 sm:col-span-3">
@@ -97,13 +125,23 @@ async function dispatch(item, dispatched) {
 								<Badge v-if="item.dispatched_at" variant="success">Versendet am {{ shortDate(item.dispatched_at.slice(0, 10)) }}<template v-if="item.dispatched_by"> von {{ item.dispatched_by }}</template></Badge>
 							</div>
 						</div>
-						<div class="mt-16 flex items-start sm:col-span-5 sm:mt-0 sm:justify-end">
+						<div v-if="!order.cancelled_at" class="mt-16 flex items-start sm:col-span-5 sm:mt-0 sm:justify-end">
 							<Button v-if="!item.dispatched_at" variant="success" :disabled="busy === item.uuid" @click="dispatch(item, true)">Versendet</Button>
 							<Button v-else variant="secondary" :disabled="busy === item.uuid" @click="dispatch(item, false)">Versand offen</Button>
 						</div>
 					</div>
 				</article>
 			</Collapsible>
+		</div>
+
+		<!-- The forms' `.form-danger-zone` ([[ResourceForm]]). -->
+		<div v-if="!order.cancelled_at" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
+			<h2 class="mb-8 font-bold sm:mb-16">Bestellung stornieren</h2>
+			<p v-if="sent">Es wurde bereits etwas versendet, die Bestellung kann nicht mehr storniert werden.</p>
+			<template v-else>
+				<p class="mb-12 lg:mb-16">Die Bestellung und ihre Rechnung werden storniert. Ist sie bezahlt, wird der Betrag von Hand zurückgezahlt.</p>
+				<Button variant="danger" class="w-full" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Wird storniert …' : 'Stornieren' }}</Button>
+			</template>
 		</div>
 	</section>
 </template>

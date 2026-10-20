@@ -10,5 +10,8 @@ export const fetchOrder = (uuid) => client.get(`/admin/licence-orders/${uuid}`).
 export const fetchOrderForm = (customer) => client.get(`/admin/customers/${customer}/licence-orders/create`).then((r) => r.data.data);
 export const placeOrder = (customer, form) => client.post(`/admin/customers/${customer}/licence-orders`, form).then((r) => r.data.data);
 
+/** *Bestellung stornieren*, while nothing has been sent. Answers with the whole order. */
+export const cancelOrder = (uuid) => client.patch(`/admin/licence-orders/${uuid}/cancel`).then((r) => r.data.data);
+
 /** *Versendet*, per line, and back. Answers with the whole order. */
 export const setDispatched = (item, dispatched) => client.patch(`/admin/licence-order-items/${item}/dispatch`, { dispatched }).then((r) => r.data.data);

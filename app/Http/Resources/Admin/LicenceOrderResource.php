@@ -17,10 +17,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class LicenceOrderResource extends JsonResource
 {
-	/** `free` (no invoice, #35), `paid` or `open`. */
+	/** `cancelled`, `free` (no invoice, #35), `paid` or `open`. */
 	public static function payment(LicenceOrder $order): string
 	{
 		return match (true) {
+			$order->isCancelled() => 'cancelled',
 			$order->invoice_id === null => 'free',
 			$order->isPaid() => 'paid',
 			default => 'open',
@@ -41,6 +42,10 @@ class LicenceOrderResource extends JsonResource
 			],
 			'delivery_email' => $this->deliveryEmail(),
 			'entered_by' => $this->enteredBy?->name,
+			'cancelled_at' => $this->cancelled_at?->toIso8601String(),
+			'cancelled_by' => $this->canceller?->name,
+			// Paid and cancelled: the money goes back by hand (Marcel, 2026-10-20).
+			'refund' => $this->isCancelled() && $this->isPaid(),
 			'payment' => self::payment($this->resource),
 			'invoice' => $this->invoice ? [
 				'uuid' => $this->invoice->uuid,

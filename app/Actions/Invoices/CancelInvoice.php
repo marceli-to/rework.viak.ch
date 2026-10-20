@@ -6,6 +6,7 @@ namespace App\Actions\Invoices;
 
 use App\Enums\CancellationReason;
 use App\Enums\InvoiceStatus;
+use App\Jobs\ReverseInvoiceInBooks;
 use App\Models\Invoice;
 use RuntimeException;
 
@@ -23,7 +24,8 @@ use RuntimeException;
  *
  * An invoice is a document that was sent. Cancelling does not delete it, edit
  * its lines or change its total: it marks it withdrawn and, where something
- * supersedes it, links to the replacement.
+ * supersedes it, links to the replacement. In the books it is reversed with a
+ * storno, as legacy did ([[ReverseInvoiceInBooks]]).
  */
 class CancelInvoice
 {
@@ -40,12 +42,18 @@ class CancelInvoice
 			throw new RuntimeException("Invoice {$invoice->number} cannot be cancelled as *replaced* without the invoice that replaces it — that is the whole difference between this and an unexplained cancellation.");
 		}
 
+		$paid = $invoice->isPaid();
+
 		$invoice->forceFill([
 			'status' => InvoiceStatus::Cancelled,
 			'cancelled_at' => now(),
 			'cancellation_reason' => $reason,
 			'replaced_by_invoice_id' => $replacedBy?->id,
 		])->save();
+
+		// The books are told, which the rework did not do until 2026-10-20:
+		// legacy posted a storno on every cancellation ([[ReverseInvoiceInBooks]]).
+		ReverseInvoiceInBooks::dispatch($invoice, $paid);
 
 		return $invoice;
 	}

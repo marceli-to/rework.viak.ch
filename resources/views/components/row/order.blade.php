@@ -6,6 +6,7 @@
 	 * and customer page use ([[viak-portals-mirror-dashboard]]).
 	 */
 	$payment = match (true) {
+		$order->isCancelled() => ['Storniert', 'neutral'],
 		$order->invoice === null => ['Kostenlos', 'neutral'],
 		$order->isPaid() => ['Bezahlt', 'success'],
 		$order->invoice->isCancelled() => ['Storniert', 'neutral'],
@@ -43,7 +44,9 @@
 				@endif
 				<div @class(['flex flex-wrap items-start gap-8', 'mt-4' => $order->invoice])>
 					<x-ui.badge :variant="$payment[1]">{{ $payment[0] }}</x-ui.badge>
-					<x-ui.badge :variant="$sent ? 'success' : 'neutral'">{{ $sent ? 'Versendet' : 'Nicht versendet' }}</x-ui.badge>
+					@unless ($order->isCancelled())
+						<x-ui.badge :variant="$sent ? 'success' : 'neutral'">{{ $sent ? 'Versendet' : 'Nicht versendet' }}</x-ui.badge>
+					@endunless
 				</div>
 			</div>
 

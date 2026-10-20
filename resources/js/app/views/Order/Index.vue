@@ -34,6 +34,7 @@ const setSearch = (value) => router.replace({ query: value ? { suche: value } : 
 const GROUPS = [
 	{ status: 'offen', title: 'Offene Bestellungen', open: true, empty: 'Es sind keine offenen Bestellungen vorhanden.' },
 	{ status: 'versendet', title: 'Versendete Bestellungen', open: false, empty: 'Es sind noch keine Bestellungen versendet.' },
+	{ status: 'storniert', title: 'Stornierte Bestellungen', open: false, empty: 'Es sind keine Bestellungen storniert.' },
 ];
 
 const lists = reactive(Object.fromEntries(GROUPS.map((group) => [group.status, { rows: [], page: 1, lastPage: 1, total: 0, more: false }])));

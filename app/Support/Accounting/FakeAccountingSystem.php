@@ -49,6 +49,17 @@ class FakeAccountingSystem implements AccountingSystem
 		Log::info('Accounting (not posted): card payment for invoice '.$invoice->number);
 	}
 
+	/** @var array<int, array{number: string, paid: bool}> */
+	public array $reversals = [];
+
+	public function reverse(Invoice $invoice, bool $paid): void
+	{
+		$this->record($invoice, cancellation: true);
+		$this->reversals[] = ['number' => $invoice->number, 'paid' => $paid];
+
+		Log::info('Accounting (not posted): invoice '.$invoice->number.' reversed'.($paid ? ', storno left open for the refund' : ', both closed'));
+	}
+
 	public function reports(string $number, InvoiceStatus $status): void
 	{
 		$this->statuses[$number] = $status;

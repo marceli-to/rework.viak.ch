@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Licences\CancelLicenceOrder;
 use App\Actions\Licences\PlaceLicenceOrder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreLicenceOrderRequest;
@@ -37,11 +38,12 @@ class LicenceOrderController extends Controller
 	public function index(Request $request): AnonymousResourceCollection
 	{
 		$status = (string) $request->query('status');
-		abort_unless(in_array($status, ['offen', 'versendet'], true), 404);
+		abort_unless(in_array($status, ['offen', 'versendet', 'storniert'], true), 404);
 
 		$orders = LicenceOrder::query()
 			->when($status === 'offen', fn (Builder $query) => $query->outstanding()->orderBy('created_at')->orderBy('id'))
 			->when($status === 'versendet', fn (Builder $query) => $query->dispatched()->orderByDesc('created_at')->orderByDesc('id'))
+			->when($status === 'storniert', fn (Builder $query) => $query->cancelled()->orderByDesc('cancelled_at')->orderByDesc('id'))
 			->with(['user', 'invoice', 'items'])
 			->tap(fn (Builder $query) => $this->search($query, (string) $request->query('suche', '')))
 			->paginate(self::PER_PAGE);
@@ -51,7 +53,15 @@ class LicenceOrderController extends Controller
 
 	public function show(LicenceOrder $order): LicenceOrderResource
 	{
-		return new LicenceOrderResource($order->load(['user', 'invoice.document', 'items.dispatcher', 'enteredBy']));
+		return new LicenceOrderResource($order->load(['user', 'invoice.document', 'items.dispatcher', 'enteredBy', 'canceller']));
+	}
+
+	/** *Bestellung stornieren*, while nothing has been sent ([[CancelLicenceOrder]]). */
+	public function cancel(Request $request, LicenceOrder $order, CancelLicenceOrder $cancel): LicenceOrderResource
+	{
+		$cancel->execute($order, $request->user());
+
+		return $this->show($order->refresh());
 	}
 
 	/**
@@ -115,13 +125,15 @@ class LicenceOrderController extends Controller
 	/** *Versendet*, per line, and back: a tick set by mistake is taken off again. */
 	public function dispatch(Request $request, LicenceOrderItem $item): JsonResponse
 	{
+		abort_if($item->order->isCancelled(), 422, 'Die Bestellung ist storniert.');
+
 		$dispatched = $request->validate(['dispatched' => ['required', 'boolean']])['dispatched'];
 
 		$item->forceFill($dispatched
 			? ['dispatched_at' => $item->dispatched_at ?? now(), 'dispatched_by' => $item->dispatched_by ?? $request->user()->id]
 			: ['dispatched_at' => null, 'dispatched_by' => null])->save();
 
-		return response()->json(['data' => (new LicenceOrderResource($item->order->load(['user', 'invoice.document', 'items.dispatcher', 'enteredBy'])))->resolve()]);
+		return response()->json(['data' => (new LicenceOrderResource($item->order->load(['user', 'invoice.document', 'items.dispatcher', 'enteredBy', 'canceller'])))->resolve()]);
 	}
 
 	/** Every word has to match the number, the customer, or a line's title or article number. */

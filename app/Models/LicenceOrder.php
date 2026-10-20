@@ -25,13 +25,14 @@ class LicenceOrder extends Model
 	use HasFactory;
 	use HasUuid;
 
-	protected $fillable = ['number', 'user_id', 'invoice_id', 'invoice_address', 'delivery_email', 'entered_by', 'paid_at'];
+	protected $fillable = ['number', 'user_id', 'invoice_id', 'invoice_address', 'delivery_email', 'entered_by', 'paid_at', 'cancelled_at', 'cancelled_by'];
 
 	protected function casts(): array
 	{
 		return [
 			'invoice_address' => 'array',
 			'paid_at' => 'datetime',
+			'cancelled_at' => 'datetime',
 		];
 	}
 
@@ -50,9 +51,20 @@ class LicenceOrder extends Model
 		return $this->belongsTo(User::class, 'entered_by');
 	}
 
+	public function canceller(): BelongsTo
+	{
+		return $this->belongsTo(User::class, 'cancelled_by');
+	}
+
 	public function items(): HasMany
 	{
 		return $this->hasMany(LicenceOrderItem::class)->orderBy('position');
+	}
+
+	/** Cancelled before anything was sent ([[CancelLicenceOrder]]). */
+	public function isCancelled(): bool
+	{
+		return $this->cancelled_at !== null;
 	}
 
 	public function isPaid(): bool
@@ -72,14 +84,19 @@ class LicenceOrder extends Model
 		return $this->items->reduce(fn (string $sum, LicenceOrderItem $item) => bcadd($sum, $item->net(), 2), '0.00');
 	}
 
-	/** On the worklist: a line still to send. */
+	/** On the worklist: a line still to send, and not cancelled. */
 	public function scopeOutstanding(Builder $query): void
 	{
-		$query->whereHas('items', fn (Builder $items) => $items->whereNull('dispatched_at'));
+		$query->whereNull('cancelled_at')->whereHas('items', fn (Builder $items) => $items->whereNull('dispatched_at'));
 	}
 
 	public function scopeDispatched(Builder $query): void
 	{
-		$query->whereDoesntHave('items', fn (Builder $items) => $items->whereNull('dispatched_at'));
+		$query->whereNull('cancelled_at')->whereDoesntHave('items', fn (Builder $items) => $items->whereNull('dispatched_at'));
+	}
+
+	public function scopeCancelled(Builder $query): void
+	{
+		$query->whereNotNull('cancelled_at');
 	}
 }

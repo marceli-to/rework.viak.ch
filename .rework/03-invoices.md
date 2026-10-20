@@ -636,3 +636,22 @@ customer's hands says 07.10.2024.** That is `invoices.due_at overwrites itself`
 — already written up in `Todo.md` — seen from the other side: the document is
 the record of what was actually demanded, and the column no longer agrees with
 it.
+
+## A cancelled invoice is reversed in the books — 2026-10-20
+
+**Found while building the licence order cancellation: the rework never told
+Run My Accounts about a cancellation.** `CancelInvoice` marked the invoice
+CANCELLED here and nothing else, so every seat withdrawn and every invoice
+replaced by a penalty would have stayed open in the books. Legacy reversed each
+one (`Facades/Invoice::cancel()` and `::delete()`, `Actions/RMA/CloseInvoice`):
+a `VIAK_…_STORNO` invoice with the negated amount, then that storno and the
+original closed against each other with a payment on account 1090, memo
+*STORNO*.
+
+Now `CancelInvoice` queues [[ReverseInvoiceInBooks]] (retried, after the
+commit), which does the same through `AccountingSystem::reverse()`. **A paid
+invoice keeps its storno open**: legacy never cancelled a paid invoice, and
+closing the original a second time would book a payment that never came; the
+open storno is the money owed back, cleared when it is refunded by hand. Only
+a licence order can reach that case (a paid course seat becomes a credit code,
+[[CancelBooking]]).

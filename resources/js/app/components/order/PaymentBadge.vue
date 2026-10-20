@@ -13,6 +13,7 @@ const LABELS = {
 	free: ['Kostenlos', 'neutral'],
 	paid: ['Bezahlt', 'success'],
 	open: ['Rechnung offen', 'warning'],
+	cancelled: ['Storniert', 'neutral'],
 };
 </script>
 
