@@ -1,4 +1,4 @@
-@props(['software', 'eager' => false, 'kind' => null])
+@props(['software', 'eager' => false, 'kind' => null, 'plain' => false])
 
 @php
 	$locale = app()->getLocale();
@@ -14,8 +14,8 @@
 	maker, how many products and the cheapest licence, net. Same border,
 	header, square image and hover.
 --}}
-<article {{ $attributes->class(['border border-teal p-8 lg:p-16']) }}>
-	<a href="{{ \App\Support\SiteUrl::software($software->getTranslation('slug', $locale)) }}" class="group block text-black">
+<article {{ $attributes->class(['border border-teal p-8 lg:p-16', 'flex flex-col' => $plain]) }}>
+	<a href="{{ \App\Support\SiteUrl::software($software->getTranslation('slug', $locale)) }}" @class(['group text-black', 'flex flex-1 flex-col' => $plain, 'block' => ! $plain])>
 		<header class="min-h-70 sm:min-h-90 lg:min-h-130">
 			{{-- *Kurs* or *Software* in the top right, where the two share a
 			     grid (*Beliebte Angebote*, Marcel 2026-10-09); a list of one
@@ -34,36 +34,57 @@
 			</h2>
 		</header>
 
-		<figure class="relative mt-8 block">
-			<div class="absolute hidden h-full w-full bg-teal p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
-				<h3 class="mb-8">Übersicht:</h3>
-				<ul class="mb-16 sm:mb-24">
+		{{-- **`plain`: no picture** (*Das könnte dich auch interessieren*,
+		     Marcel 2026-10-20). The overview the hover shows, as text under the
+		     title, and the way on at the foot. --}}
+		@if ($plain)
+			<div class="flex flex-1 flex-col justify-between gap-16 text-md leading-[1.3] lg:text-lg">
+				<ul>
 					@if ($makers->isNotEmpty())
-						<li class="py-4">{{ $makers->map(fn ($maker) => $maker->getTranslation('title', $locale))->join(', ') }}</li>
+						<li>{{ $makers->map(fn ($maker) => $maker->getTranslation('title', $locale))->join(', ') }}</li>
 					@endif
-					<li class="py-4">{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+					<li>{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
 					@if ($from)
-						<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
+						<li>ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
 					@endif
 				</ul>
-				<div class="flex items-center gap-8">
+				<div class="flex items-center gap-8 transition-colors group-hover:text-teal">
 					Weitere Informationen
 					<x-icon.arrow-right class="shrink-0" />
 				</div>
 			</div>
+		@else
+			<figure class="relative mt-8 block">
+				<div class="absolute hidden h-full w-full bg-teal p-8 leading-[1.2] font-bold text-white opacity-0 transition-opacity duration-[120ms] ease-in-out group-hover:opacity-100 sm:block sm:text-md lg:p-16 lg:text-xl">
+					<h3 class="mb-8">Übersicht:</h3>
+					<ul class="mb-16 sm:mb-24">
+						@if ($makers->isNotEmpty())
+							<li class="py-4">{{ $makers->map(fn ($maker) => $maker->getTranslation('title', $locale))->join(', ') }}</li>
+						@endif
+						<li class="py-4">{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+						@if ($from)
+							<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
+						@endif
+					</ul>
+					<div class="flex items-center gap-8">
+						Weitere Informationen
+						<x-icon.arrow-right class="shrink-0" />
+					</div>
+				</div>
 
-			@if ($image = $software->teaser())
-				<x-media.image
-					:media="$image"
-					ratio="1/1"
-					sizes="(min-width: 1132px) 350px, (min-width: 700px) 45vw, 100vw"
-					:max-width="1024"
-					:loading="$eager ? 'eager' : 'lazy'"
-					class="block w-full"
-				/>
-			@else
-				<div class="aspect-square w-full bg-gray-200"></div>
-			@endif
-		</figure>
+				@if ($image = $software->teaser())
+					<x-media.image
+						:media="$image"
+						ratio="1/1"
+						sizes="(min-width: 1132px) 350px, (min-width: 700px) 45vw, 100vw"
+						:max-width="1024"
+						:loading="$eager ? 'eager' : 'lazy'"
+						class="block w-full"
+					/>
+				@else
+					<div class="aspect-square w-full bg-gray-200"></div>
+				@endif
+			</figure>
+		@endif
 	</a>
 </article>
