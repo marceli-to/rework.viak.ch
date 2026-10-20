@@ -54,7 +54,7 @@
 		],
 		[
 			'title' => 'Bundles: mit eigenem Preis?',
-			'text' => 'Statt fester Bundles zeigt «Das könnte dich auch interessieren» passende Software und Kurse, die VIAK selbst auswählt; die Kund:innen stellen sich ihr Bundle so selbst zusammen. Soll ein selbst zusammengestelltes Bundle günstiger sein, oder genügen die Empfehlungen? Und sollen sie auch auf den Kursseiten erscheinen (etwa eine Rhino-Lizenz beim Rhino-Kurs), oder nur auf den Software-Seiten und im Warenkorb?',
+			'text' => '«Das könnte dich auch interessieren» ist gebaut: VIAK wählt je Software und je Kurs im Dashboard passende Kurse und Software aus, sie erscheinen unter der Software-Seite und im Warenkorb (Beispiel: Rhinoceros). Die Kund:innen stellen sich ihr Bundle so selbst zusammen. Soll ein selbst zusammengestelltes Bundle günstiger sein, oder genügen die Empfehlungen? Und sollen sie auch auf den Kursseiten erscheinen (etwa eine Rhino-Lizenz beim Rhino-Kurs)?',
 			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
 		],
 		[
@@ -116,7 +116,6 @@
 		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
 		['Newsletter-Anbindung', 'Die Anmeldung an Mailchimp übergeben.', 'Wartet auf die Mailchimp-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
-		['«Das könnte dich auch interessieren»', 'Empfehlungen, die VIAK je Software und Kurs im Dashboard auswählt, unter der Software-Seite und im Warenkorb. Ersetzt die festen Bundles.', 'Wartet auf die Bundle-Frage', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];
 

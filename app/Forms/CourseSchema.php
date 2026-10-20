@@ -10,6 +10,7 @@ use App\Models\Level;
 use App\Models\Software;
 use App\Models\Tag;
 use App\Support\CourseNumber;
+use App\Support\Recommendations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
@@ -62,6 +63,10 @@ final class CourseSchema extends Schema
 				Field::checkboxes('tags', Tag::class)->label('Tags')->with(['columns' => 2]),
 			])->with(['open' => true]),
 
+			// *Das könnte dich auch interessieren* ([[Recommendations]]); shown on
+			// the software pages and in the basket, the course page waits on the client.
+			...Recommendations::fields(),
+
 			// Saved on their own, each action at once ([[ImageSection]]).
 			Field::section('Bilder', [Field::custom('images')]),
 
@@ -90,6 +95,7 @@ final class CourseSchema extends Schema
 			'short_description' => '', 'full_description' => '', 'information_booking' => '', 'information_content' => '', 'summary' => '',
 			'facts' => ['', '', ''],
 			'categories' => [], 'languages' => [], 'levels' => [], 'software' => [], 'tags' => [],
+			'recommended_courses' => [], 'recommended_software' => [],
 			'videos' => [],
 			'seo_description' => '', 'seo_tags' => '',
 		];

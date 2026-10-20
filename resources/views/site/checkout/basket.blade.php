@@ -95,6 +95,14 @@
 		</template>
 	</div>
 
+	{{-- *Das könnte dich auch interessieren* ([[Recommendations]], client
+	     2026-10-20): what VIAK picked for what is in the basket, so a customer
+	     can put their own bundle together. Under the list, on this step only. --}}
+	<section x-data="basketRecommendations" x-show="html" x-cloak class="mt-48 lg:mt-64">
+		<h2 class="mb-16 font-bold lg:mb-24">Das könnte dich auch interessieren</h2>
+		<div x-html="html"></div>
+	</section>
+
 	{{-- *Entfernen* raises the same toast it does on the course page, and the
 	     rental question has nowhere to fire here — but the pair is one
 	     component and costs nothing hidden. --}}

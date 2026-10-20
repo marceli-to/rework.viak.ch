@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\SaveCourseRequest;
 use App\Http\Resources\Admin\CourseFormResource;
 use App\Http\Resources\Admin\CourseRowResource;
 use App\Models\Course;
+use App\Support\Recommendations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -84,6 +85,7 @@ class CourseController extends Controller
 	{
 		$course = DB::transaction(function () use ($request, $create, $relations): Course {
 			$course = $create->execute($request->courseAttributes());
+			Recommendations::sync($course, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 
 			return $relations->execute($course, $request->taxonomies(), $request->videos());
 		});
@@ -95,6 +97,7 @@ class CourseController extends Controller
 	{
 		$course = DB::transaction(function () use ($request, $course, $update, $relations): Course {
 			$course = $update->execute($course, $request->courseAttributes($course));
+			Recommendations::sync($course, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 
 			return $relations->execute($course, $request->taxonomies(), $request->videos());
 		});

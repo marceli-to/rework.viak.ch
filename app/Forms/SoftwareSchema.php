@@ -6,6 +6,7 @@ namespace App\Forms;
 
 use App\Models\Category;
 use App\Models\Software;
+use App\Support\Recommendations;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -50,6 +51,9 @@ final class SoftwareSchema extends Schema
 			])->with(['open' => true]),
 
 			// Saved on their own, each action at once ([[ImageSection]]).
+			// *Das könnte dich auch interessieren* under the page and in the basket ([[Recommendations]]).
+			...Recommendations::fields(),
+
 			Field::section('Bilder', [Field::custom('images')->with(['owner' => 'software'])]),
 
 			Field::section('Metatags + SEO', [
@@ -65,6 +69,7 @@ final class SoftwareSchema extends Schema
 			'title' => '', 'subtitle' => '', 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'information' => '',
 			'categories' => [],
+			'recommended_courses' => [], 'recommended_software' => [],
 			'seo_description' => '', 'seo_tags' => '',
 		];
 	}

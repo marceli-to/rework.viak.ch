@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveSoftwareRequest;
 use App\Http\Resources\Admin\SoftwareFormResource;
 use App\Models\Software;
+use App\Support\Recommendations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +34,7 @@ class SoftwareController extends Controller
 				'order' => (int) Software::max('order') + 1,
 			]);
 			$software->categories()->sync($request->categoryIds());
+			Recommendations::sync($software, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 
 			return $software;
 		});
@@ -45,6 +47,7 @@ class SoftwareController extends Controller
 		DB::transaction(function () use ($request, $software): void {
 			$software->update($request->softwareAttributes());
 			$software->categories()->sync($request->categoryIds());
+			Recommendations::sync($software, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 		});
 
 		return new SoftwareFormResource($software->refresh()->load('categories'));

@@ -11,7 +11,12 @@ use App\Http\Requests\Bookings\CompleteCheckoutRequest;
 use App\Http\Requests\Bookings\PriceBasketRequest;
 use App\Http\Resources\BasketResource;
 use App\Http\Resources\CheckoutResource;
+use App\Models\Course;
+use App\Models\Software;
+use App\Support\Recommendations;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 
 /**
  * Pricing a basket, and turning one into bookings ([[06-bookings]]).
@@ -31,6 +36,34 @@ class BasketController extends Controller
 		return new BasketResource(
 			$price->execute($request->selections(), $request->code(), $request->user(), $request->licences())
 		);
+	}
+
+	/**
+	 * *Das könnte dich auch interessieren* under the basket ([[Recommendations]]):
+	 * what VIAK picked for the courses and the software in it, without what is
+	 * already there, at most six cards. Rendered here, since the cards are
+	 * Blade components and the basket page is drawn in the browser.
+	 */
+	public function recommendations(Request $request): JsonResponse
+	{
+		$input = $request->validate([
+			'items' => ['array'],
+			'items.*.event' => ['string'],
+			'licences' => ['array'],
+			'licences.*.variant' => ['string'],
+		]);
+
+		$courses = Course::query()->whereHas('events', fn ($query) => $query->whereIn('uuid', collect($input['items'] ?? [])->pluck('event')))->get();
+		$software = Software::query()->whereHas('products.variants', fn ($query) => $query->whereIn('uuid', collect($input['licences'] ?? [])->pluck('variant')))->get();
+
+		$recommended = Recommendations::for($courses->concat($software), $courses->modelKeys(), $software->modelKeys(), Recommendations::BASKET);
+
+		$empty = $recommended['courses']->isEmpty() && $recommended['software']->isEmpty();
+
+		return response()->json(['html' => $empty ? '' : Blade::render(
+			'<x-recommendations :courses="$courses" :software="$software" />',
+			['courses' => $recommended['courses'], 'software' => $recommended['software']],
+		)]);
 	}
 
 	/**

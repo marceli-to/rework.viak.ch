@@ -191,3 +191,27 @@ and *Bezahlen* while the invoice is open.
 Still open: dispatch is not held back for an unpaid order (#2, the client);
 orders cannot be cancelled; VIAK gets no reminder of unpaid orders (Marcel,
 2026-10-20: none wanted, the dashboard shows *Rechnung offen*).
+
+## Das könnte dich auch interessieren — built 2026-10-20
+
+The client (2026-10-20): the shop's fixed bundles, software and software plus
+course, give way to recommendations VIAK maintains, so customers put their own
+bundle together ("beim Kauf von Rhino unten beliebte Plugins oder unsere
+Kurse").
+
+- **Picked** in the software form and the course form: *Empfohlene Kurse* and
+  *Empfohlene Software*, the Vorhaben's ordered pickers (`Field::offers`),
+  kept in one `recommendations` table (owner and item both morphs, `order`)
+  ([[Recommendations]]). A software never recommends itself.
+- **Shown** under a software's page, a collapsible after *Kurse*, without the
+  courses the page already lists there; and **under the basket** (step 1
+  only), what was picked for its courses and software, without what is in
+  it, at most six cards, courses first. *Beliebte Angebote*'s cards and grid,
+  tagged *Kurs* / *Software* (`x-recommendations`). The basket asks
+  `/api/basket/recommendations`, which answers rendered cards, since they are
+  Blade components and the basket is drawn in the browser.
+- **Not on course pages yet**, though a course can carry picks: whether they
+  show there is the client's question (*Projektstand*), as is whether a
+  bundle is cheaper. No price rule is built; if it comes, it touches #3.
+- Dev data: Rhinoceros recommends its three courses and V-Ray, Twinmotion,
+  Enscape, Maxwell.

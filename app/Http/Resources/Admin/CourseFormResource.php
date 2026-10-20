@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Http\Requests\Admin\SaveCourseRequest;
 use App\Models\Course;
+use App\Support\Recommendations;
 use App\Support\SiteUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -59,6 +60,8 @@ class CourseFormResource extends JsonResource
 			'code' => $video->code,
 			'publish' => $video->publish,
 		])->all();
+
+		$form += Recommendations::form($this->resource);
 
 		$form['seo_description'] = $de('seo_description');
 		$form['seo_tags'] = $de('seo_tags');

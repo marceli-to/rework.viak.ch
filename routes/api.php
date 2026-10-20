@@ -32,6 +32,7 @@ Route::get('events/{event}', [EventController::class, 'show']);
  * the line they already booked marked ([[PriceBasket]]).
  */
 Route::post('basket/price', [BasketController::class, 'price']);
+Route::post('basket/recommendations', [BasketController::class, 'recommendations']);
 
 Route::middleware('auth:sanctum')->group(function (): void {
 	/*

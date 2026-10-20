@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Software;
+use App\Support\Recommendations;
 use App\Support\SoftwareFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -38,15 +39,20 @@ class SoftwareController extends Controller
 			->with(['categories', 'media', 'products' => $this->products()])
 			->firstOrFail();
 
+		// As the course list's cards have them ([[CourseController::index]]).
+		$courses = $software->courses()
+			->published()
+			->with(['categories', 'media', 'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts')])
+			->ordered()
+			->get();
+
 		return view('site.software.show', [
 			'software' => $software,
 			'products' => $software->products->filter->isListed()->values(),
-			// As the course list's cards have them ([[CourseController::index]]).
-			'courses' => $software->courses()
-				->published()
-				->with(['categories', 'media', 'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts')])
-				->ordered()
-				->get(),
+			'courses' => $courses,
+			// *Das könnte dich auch interessieren*, without the courses the
+			// page already lists under *Kurse* ([[Recommendations]]).
+			'recommended' => Recommendations::for([$software], $courses->modelKeys(), [$software->id]),
 			'testimonials' => $software->testimonialsAbout()->published()->ordered()->get(),
 			'browse' => $this->browse($software),
 		]);

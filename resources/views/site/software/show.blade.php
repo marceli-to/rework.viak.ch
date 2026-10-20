@@ -78,6 +78,14 @@
 			</x-ui.collapsible>
 		@endif
 
+		{{-- Picked in the software's form ([[Recommendations]], client 2026-10-20):
+		     plugins for it, courses, whatever makes the customer's bundle. --}}
+		@if ($recommended['courses']->isNotEmpty() || $recommended['software']->isNotEmpty())
+			<x-ui.collapsible title="Das könnte dich auch interessieren">
+				<x-recommendations :courses="$recommended['courses']" :software="$recommended['software']" class="mt-16 sm:mt-32" />
+			</x-ui.collapsible>
+		@endif
+
 		@if ($html = $software->getTranslation('full_description', $locale, false))
 			<x-ui.collapsible title="Detailbeschrieb">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">

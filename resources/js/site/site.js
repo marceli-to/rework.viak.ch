@@ -11,6 +11,7 @@ import Alpine from 'alpinejs';
 
 import basket from './stores/basket';
 import basketList from './components/basket-list';
+import basketRecommendations from './components/basket-recommendations';
 import bookmark from './components/bookmark';
 import confirm from './stores/confirm';
 import cookieConsent, { showCookiePreferences } from './components/cookie-consent';
@@ -51,6 +52,7 @@ Alpine.data('courseFilter', courseFilter);
 Alpine.data('menu', menu);
 Alpine.data('bookmark', bookmark);
 Alpine.data('basketList', basketList);
+Alpine.data('basketRecommendations', basketRecommendations);
 Alpine.data('fileDrop', fileDrop);
 Alpine.data('editor', editor);
 Alpine.data('slider', slider);

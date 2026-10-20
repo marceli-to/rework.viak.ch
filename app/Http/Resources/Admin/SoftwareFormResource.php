@@ -6,6 +6,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Http\Requests\Admin\SaveSoftwareRequest;
 use App\Models\Software;
+use App\Support\Recommendations;
 use App\Support\SiteUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -39,6 +40,7 @@ class SoftwareFormResource extends JsonResource
 		}
 
 		$form['categories'] = $this->categories->pluck('uuid')->all();
+		$form += Recommendations::form($this->resource);
 		$form['seo_description'] = $de('seo_description');
 		$form['seo_tags'] = $de('seo_tags');
 
