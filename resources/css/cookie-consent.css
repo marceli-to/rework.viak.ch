@@ -1,0 +1,73 @@
+/*
+ * The cookie banner in the site's look ([[11-tracking]]): legacy's overrides in
+ * `../viak.ch/resources/sass/vendor/_cookieconsent.scss`. Effra, black text, a
+ * teal title, the site's buttons: teal, square, bold 14/16px at least 28px
+ * high, black on hover. The bar's body runs in the site's 1200px column.
+ *
+ * Plain CSS on the library's own variables and classes, since its markup is
+ * not ours to put Tailwind classes on.
+ */
+#cc-main {
+	--cc-font-family: var(--font-sans);
+	--cc-primary-color: var(--color-black);
+	--cc-secondary-color: var(--color-black);
+	--cc-link-color: var(--color-black);
+	--cc-btn-primary-bg: var(--color-teal);
+	--cc-btn-primary-color: #fff;
+	--cc-btn-primary-border-color: var(--color-teal);
+	--cc-btn-primary-hover-bg: var(--color-black);
+	--cc-btn-primary-hover-color: #fff;
+	--cc-btn-primary-hover-border-color: var(--color-black);
+	--cc-btn-secondary-bg: var(--color-teal);
+	--cc-btn-secondary-color: #fff;
+	--cc-btn-secondary-border-color: var(--color-teal);
+	--cc-btn-secondary-hover-bg: var(--color-black);
+	--cc-btn-secondary-hover-color: #fff;
+	--cc-btn-secondary-hover-border-color: var(--color-black);
+	--cc-toggle-on-bg: var(--color-teal);
+	--cc-toggle-off-bg: var(--color-gray-400);
+	--cc-toggle-readonly-bg: var(--color-gray-200);
+	--cc-cookie-category-block-bg: var(--color-gray-200);
+	--cc-cookie-category-block-border: var(--color-gray-200);
+	--cc-cookie-category-block-hover-bg: var(--color-gray-200);
+	--cc-cookie-category-block-hover-border: var(--color-gray-200);
+	--cc-cookie-category-expanded-block-bg: transparent;
+	--cc-cookie-category-expanded-block-hover-bg: var(--color-gray-200);
+	--cc-section-category-border: var(--color-gray-200);
+	--cc-separator-border-color: var(--color-gray-200);
+	/* Legacy's `.cm__footer`: white, no rule, the link plain. */
+	--cc-footer-bg: #fff;
+	--cc-footer-color: var(--color-black);
+	--cc-footer-border-color: #fff;
+	--cc-modal-border-radius: 0;
+	--cc-btn-border-radius: 0;
+	--cc-pm-toggle-border-radius: 0;
+	font-weight: 400;
+}
+
+#cc-main .cm__title,
+#cc-main .pm__title {
+	color: var(--color-teal);
+	font-weight: 700;
+}
+
+#cc-main .cm--bar .cm__body,
+#cc-main .cm--bar .cm__footer {
+	margin-inline: auto;
+	max-width: 1200px;
+}
+
+#cc-main .cm__btn,
+#cc-main .pm__btn {
+	font-size: 14px;
+	font-weight: 700;
+	min-height: 28px;
+	line-height: 1;
+}
+
+@media (min-width: 640px) {
+	#cc-main .cm__btn,
+	#cc-main .pm__btn {
+		font-size: 16px;
+	}
+}

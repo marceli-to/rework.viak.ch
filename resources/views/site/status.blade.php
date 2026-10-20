@@ -112,7 +112,7 @@
 	];
 
 	$unbuilt = [
-		['Tracking und Cookie-Banner', 'Tag Manager, Einwilligung und die Frage «Wie wurdest du auf uns aufmerksam?». Ohne sie würde die Messung beim Umschalten ausfallen.', 'Wartet auf die Tracking-Fragen', true],
+		['Tracking: Kauf-Events und Herkunft', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Offen: Käufe mit Betrag an Google Ads und Meta melden, die Herkunft jeder Buchung festhalten und die Frage «Wie wurdest du auf uns aufmerksam?».', 'Wartet auf die Tracking-Fragen', true],
 		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
 		['Newsletter-Anbindung', 'Die Anmeldung an Mailchimp übergeben.', 'Wartet auf die Mailchimp-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],

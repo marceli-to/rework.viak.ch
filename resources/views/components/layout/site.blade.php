@@ -105,6 +105,8 @@
 	{{-- Stops iOS turning course numbers like `07-120326` into phone links. --}}
 	<meta name="format-detection" content="telephone=no">
 
+	<x-tracking.head />
+
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
 </head>
 {{-- The container and the body type, from `components/_blocks.scss` and
@@ -132,6 +134,8 @@
      white (`layout/_base.scss:26`); a transparent one would let `is-auth`
      through the whole page rather than only past the column's edges. --}}
 <body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1200px] lg:text-3xl">
+	<x-tracking.body />
+
 	{{-- Legacy keeps these apart — `seo_title` and `page_title` are two
 	     sections — and the course page is where they differ: the tab says the
 	     course, the phone's header row says **Kurse**. Everywhere else they are

@@ -5,7 +5,9 @@ spend brings in.
 
 ## Status
 
-**Not built. Scoped 2026-09-29** from the client's input (below) and a read of
+**Step 1 built 2026-10-20** (*Step 1 as built*, below): GTM and the cookie
+banner come across, with findings 2, 4 and 5 fixed. Steps 2 to 5 wait on #29 to
+#32. **Scoped 2026-09-29** from the client's input (below) and a read of
 what the live site sends today. Nothing in the rework tracks anything yet, and
 **that is a parity gap**, not a neutral starting point: the live site runs a
 Google Tag Manager container and a cookie banner, and the rework's layout
@@ -113,6 +115,33 @@ runs the ads then wires networks to those events in GTM without touching code.
 - The Google map and the Elfsight widgets are third-party loads on page view;
   whether they wait for consent is the question already open under #18 and in
   `x-ui.map`. Settle it here, once, for all of them.
+
+### Step 1 as built — 2026-10-20
+
+- `x-tracking.head` in the site layout's `<head>` (not the dashboard's):
+  `dataLayer` and `gtag`, Consent Mode v2 with all four signals `denied` and
+  `wait_for_update: 500`, then the container from `GTM_ID`, **in production
+  only and only when set**. `x-tracking.body` carries the `<noscript>`.
+- The banner is `vanilla-cookieconsent` 3.1 from npm, the library legacy
+  vendored (`site/components/cookie-consent.js`): legacy's cookie name
+  `viak_cookie_consent`, its bar and box layouts and its wording, plus a
+  **Marketing** category and an *Einstellungen* button on the bar (legacy's
+  bar had only *Akzeptieren* / *Ablehnen*, so the categories were never
+  reachable). `onConsent` / `onChange` send `gtag('consent', 'update')` and
+  push `consent_update`; `onConsent` runs on every page load once a choice
+  exists, so tags see it before they fire.
+- Links: *Datenschutzerklärung* and *Kontakt* go to `/de/kontakt`, where the
+  policy is (legacy linked a 2023 PDF, `#` and `chamgroup.ch`). Section 8.1 of
+  the policy has *Cookie-Einstellungen ändern*, which reopens the box.
+- Styled in `resources/css/cookie-consent.css` after legacy's overrides:
+  Effra, teal title, the site's square teal buttons going black on hover,
+  greys from the palette, a white footer.
+- **Shown in every environment**, so the client sees it on the prototype; only
+  GTM is production-only. The library hides itself from bots (headless
+  browsers included), which is right for search engines; a Playwright check
+  has to mask `navigator.webdriver`.
+- Finding 3 (Meta ignores consent) is fixed in the container, by whoever
+  holds it: the tag needs a consent requirement or Meta's template.
 
 ### Step 2 — Events in `dataLayer`
 

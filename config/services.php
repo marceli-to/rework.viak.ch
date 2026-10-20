@@ -62,6 +62,14 @@ return [
 	 * production means the local fake; a test key (`sk_test_…`) means Stripe's
 	 * test mode; a live key is refused anywhere but production.
 	 */
+	/*
+	 * Google Tag Manager ([[11-tracking]]): the live site's `GTM-M3L7WVP`.
+	 * Loaded in production only, and only when set.
+	 */
+	'gtm' => [
+		'id' => env('GTM_ID', ''),
+	],
+
 	'stripe' => [
 		'secret' => env('STRIPE_SECRET', ''),
 		'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),

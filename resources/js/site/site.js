@@ -13,6 +13,7 @@ import basket from './stores/basket';
 import basketList from './components/basket-list';
 import bookmark from './components/bookmark';
 import confirm from './stores/confirm';
+import cookieConsent, { showCookiePreferences } from './components/cookie-consent';
 import courseFilter from './components/course-filter';
 import editor from './components/editor';
 import fileDrop from './components/file-drop';
@@ -57,3 +58,10 @@ Alpine.data('testimonialSlider', testimonialSlider);
 
 window.Alpine = Alpine;
 Alpine.start();
+
+/*
+ * The cookie banner ([[11-tracking]]). *Cookie-Einstellungen* on the Kontakt
+ * page reopens it through `window`, so a plain button can call it.
+ */
+cookieConsent();
+window.showCookiePreferences = showCookiePreferences;
