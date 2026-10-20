@@ -12,7 +12,7 @@
 		</x-slot:aside>
 
 		@if ($invoice)
-			<p>Wir haben deine Zahlung für die Rechnung Nr. {{ $invoice->number }} erhalten. Vielen Dank.</p>
+			<p>Wir haben deine Zahlung für die Rechnung Nr. {{ $invoice->number }} erhalten.<br>Vielen Dank.</p>
 		@else
 			<p>Vielen Dank. Sobald deine Zahlung bestätigt ist, erhältst du eine Bestätigung per E-Mail.</p>
 		@endif
