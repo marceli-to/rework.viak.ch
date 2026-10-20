@@ -11,7 +11,9 @@
 <section class="mt-48 lg:mt-64">
 	<div class="mb-16 flex flex-wrap items-baseline justify-between gap-x-16 lg:mb-24">
 		<h2 class="font-bold">Nächste Kurstermine</h2>
-		<a href="{{ \App\Support\SiteUrl::courses() }}" class="inline-flex items-center gap-8 text-teal hover:underline">
+		{{-- The rows' size, not the heading's (Marcel, 2026-10-20), as the
+		     profile's *Alle Dokumente anzeigen* is. --}}
+		<a href="{{ \App\Support\SiteUrl::courses() }}" class="inline-flex items-center gap-8 text-teal hover:underline sm:text-lg lg:text-xl">
 			Alle Kurse und Termine
 			<x-icon.arrow-right />
 		</a>
