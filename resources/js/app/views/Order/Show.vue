@@ -134,14 +134,17 @@ async function dispatch(item, dispatched) {
 			</Collapsible>
 		</div>
 
-		<!-- The forms' `.form-danger-zone` ([[ResourceForm]]). -->
-		<div v-if="!order.cancelled_at" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
-			<h2 class="mb-8 font-bold sm:mb-16">Bestellung stornieren</h2>
-			<p v-if="sent">Es wurde bereits etwas versendet, die Bestellung kann nicht mehr storniert werden.</p>
-			<template v-else>
-				<p class="mb-12 lg:mb-16">Die Bestellung und ihre Rechnung werden storniert. Ist sie bezahlt, wird der Betrag von Hand zurückgezahlt.</p>
-				<Button variant="danger" class="w-full" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Wird storniert …' : 'Stornieren' }}</Button>
-			</template>
+		<!-- The forms' `.form-danger-zone` ([[ResourceForm]]), in their column too:
+		     the right eight of twelve (Marcel, 2026-10-20: full width looked odd). -->
+		<div v-if="!order.cancelled_at" class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+			<div class="mt-24 border-2 border-danger p-8 text-md text-danger sm:col-span-8 sm:col-start-5 sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">
+				<h2 class="mb-8 font-bold sm:mb-16">Bestellung stornieren</h2>
+				<p v-if="sent">Es wurde bereits etwas versendet, die Bestellung kann nicht mehr storniert werden.</p>
+				<template v-else>
+					<p class="mb-12 lg:mb-16">Die Bestellung und ihre Rechnung werden storniert. Ist sie bezahlt, wird der Betrag von Hand zurückgezahlt.</p>
+					<Button variant="danger" class="w-full" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Wird storniert …' : 'Stornieren' }}</Button>
+				</template>
+			</div>
 		</div>
 	</section>
 </template>
