@@ -101,6 +101,8 @@ it('leaves an unpublished video off the page', function () {
 });
 
 it('shows a dated row with its times, place and expert', function () {
+	// The date is written out, so the clock is held before it: a past event is not listed.
+	$this->travelTo('2026-09-01');
 	$course = detailCourse();
 	$location = Location::factory()->create(['description' => ['de' => 'Zürich, Hardturmstrasse']]);
 	$event = Event::factory()->for($course)->create([
