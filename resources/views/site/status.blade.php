@@ -154,7 +154,7 @@
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					<div class="sm:col-span-4">
-						<a href="{{ $url }}" class="font-bold underline decoration-1 underline-offset-[3px] hover:text-teal">{{ $title }}</a>
+						<a href="{{ $url }}" target="_blank" class="font-bold underline decoration-1 underline-offset-[3px] hover:text-teal">{{ $title }}</a>
 					</div>
 					<div class="sm:col-span-8">{{ $text }}</div>
 				</div>
