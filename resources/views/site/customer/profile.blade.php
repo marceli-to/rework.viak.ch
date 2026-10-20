@@ -221,6 +221,18 @@
 				<x-ui.no-results>Du hast noch keine Kurse absolviert.</x-ui.no-results>
 			@endforelse
 		</x-ui.collapsible>
+
+		{{-- *Bestellungen*, the licence orders ([[13-checkout]]), shut, with
+		     their count, and only for a customer who has one: most never buy
+		     software, and an empty list would be noise on every profile. An
+		     unpaid one is paid from here (#45). --}}
+		@if ($orders->isNotEmpty())
+			<x-ui.collapsible dashboard title="Bestellungen" :expanded="false" :count="$orders->count()">
+				@foreach ($orders as $order)
+					<x-row.order :order="$order" />
+				@endforeach
+			</x-ui.collapsible>
+		@endif
 	</div>
 
 	<div class="mt-48 lg:mt-64">

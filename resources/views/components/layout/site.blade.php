@@ -64,13 +64,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
-	{{-- The basket store reads this and stops asking for a price when nobody is
-	     signed in — every screen that shows one is behind the login, on both
-	     sites, and `/api/basket/price` answers a guest with `Unauthenticated.`
-	     by design ([[09-public-site]]). Beside `csrf-token` because that is
-	     where the store already looks. --}}
-	<meta name="authenticated" content="{{ auth()->check() ? '1' : '0' }}">
-
 	{{-- `page • Visualisierungs-Akademie`, as legacy composes it from
 	     `config('seo.title')` — which is the short name, not the legal entity in
 	     `APP_NAME`. Here they are the same string. --}}

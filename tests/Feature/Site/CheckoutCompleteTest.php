@@ -51,7 +51,7 @@ it('takes no payment on the payment step', function () {
 		->assertSee('Zahlungsoptionen')
 		->assertSee('QR-Einzahlungsschein')
 		->assertSee('Gutschein-Code')
-		// There is no Stripe anywhere in this flow: invoices are raised on
+		// Courses take no payment here: invoices are raised on
 		// `EventConfirmed`, days or weeks later ([[03-invoices]]).
 		->assertDontSee('stripe', false);
 });

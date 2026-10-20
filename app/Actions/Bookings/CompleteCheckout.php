@@ -138,14 +138,8 @@ class CompleteCheckout
 	 */
 	private function guardPrice(Basket $basket, ?string $totalShown): void
 	{
-		if ($totalShown === null) {
-			return;
-		}
-
-		$actual = $basket->total();
-
-		if (bccomp($totalShown, $actual, 2) !== 0) {
-			throw new BasketPriceChanged($totalShown, $actual);
+		if ($totalShown !== null) {
+			$basket->assertShown($totalShown);
 		}
 	}
 

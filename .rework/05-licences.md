@@ -113,6 +113,8 @@ right below, which supersedes parts of *The real catalogue*.
   variants marked *nicht im Shop***) or ***Freie Position*** (Bezeichnung,
   Preis netto), *Hostsoftware* where the product has hosts, *Anzahl*
   starting at the minimum but not held to it, and the running total.
+- *(2026-10-20: shop orders now mail the customer and the office,
+  `13-checkout.md`; an order entered here still mails nobody.)*
 - Not decided, so not built: **no mail** goes out yet, neither to the
   customer (the invoice is in *Rechnungen* to send) nor to VIAK; that is the
   checkout's design ([[10-mail]]). Dispatch does not wait for payment, since

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use App\Models\LicenceOrder;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Support\Facades\Session;
@@ -34,6 +35,11 @@ final class CheckoutSession
 {
 	private const INVOICE_ADDRESS = 'checkout.invoice_address_uuid';
 
+	/** What the last checkout made, for its confirmation page ([[13-checkout]]). */
+	private const BOOKED = 'checkout.booked';
+
+	private const LICENCE_ORDER = 'checkout.licence_order_uuid';
+
 	/**
 	 * The chosen invoice address, or null for *entspricht Teilnehmer-Adresse*.
 	 *
@@ -63,5 +69,29 @@ final class CheckoutSession
 	public static function clear(): void
 	{
 		Session::forget(self::INVOICE_ADDRESS);
+	}
+
+	/**
+	 * What the confirmation page reports: whether courses were booked, and the
+	 * licence order placed. Kept after the page is shown, so a reload, or the
+	 * way back from Stripe, still finds them; the next checkout replaces them.
+	 */
+	public static function setOutcome(bool $booked, ?LicenceOrder $order): void
+	{
+		Session::put(self::BOOKED, $booked);
+		$order === null ? Session::forget(self::LICENCE_ORDER) : Session::put(self::LICENCE_ORDER, $order->uuid);
+	}
+
+	public static function booked(): bool
+	{
+		return (bool) Session::get(self::BOOKED, false);
+	}
+
+	/** The order the last checkout placed, if it is this customer's. */
+	public static function licenceOrder(User $user): ?LicenceOrder
+	{
+		$uuid = Session::get(self::LICENCE_ORDER);
+
+		return is_string($uuid) ? $user->licenceOrders()->where('uuid', $uuid)->with('items', 'invoice')->first() : null;
 	}
 }

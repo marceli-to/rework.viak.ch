@@ -88,9 +88,10 @@ it('refuses a seat on a course that is full', function () {
 		->assertJsonPath('event', $event->uuid);
 });
 
-it('will not price a basket for a guest', function () {
+it('prices a basket for a guest too, the basket being open to everyone (13-checkout)', function () {
 	$this->postJson('/api/basket/price', ['items' => [['event' => bookableEvent()->uuid]]])
-		->assertUnauthorized();
+		->assertOk()
+		->assertJsonPath('data.items.0.booked', false);
 });
 
 it('lists only the caller’s own bookings', function () {

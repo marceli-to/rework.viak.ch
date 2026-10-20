@@ -66,3 +66,20 @@
 		</x-ui.button>
 	</x-slot:actions>
 </x-ui.modal>
+
+{{-- The same, for a licence ([[13-checkout]]): the software page. --}}
+<x-ui.modal
+	variant="success"
+	message="Die Lizenz wurde im Warenkorb abgelegt."
+	show="$store.basket.confirmedLicence"
+	close="$store.basket.confirmedLicence = false">
+
+	<x-slot:actions>
+		<x-ui.button variant="success" href="{{ \App\Support\SiteUrl::checkout('basket') }}">
+			Warenkorb
+		</x-ui.button>
+		<x-ui.button variant="success-outline" @click="$store.basket.confirmedLicence = false">
+			Schliessen
+		</x-ui.button>
+	</x-slot:actions>
+</x-ui.modal>

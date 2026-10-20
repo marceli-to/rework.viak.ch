@@ -54,7 +54,11 @@
 		--}}
 		<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-				<div class="sm:col-span-4"><strong class="font-bold">Kursteilnehmer</strong></div>
+				{{-- *Kursteilnehmer* with a course in the basket; a basket of
+				     licences only has no participant, so it is *Adresse*, as on
+				     the summary. The RAV passage and *entspricht
+				     Teilnehmer-Adresse* below follow it. --}}
+				<div class="sm:col-span-4"><strong class="font-bold" x-text="$store.basket.items.length ? 'Kursteilnehmer' : 'Adresse'">Kursteilnehmer</strong></div>
 				<div class="sm:col-span-8">
 					{{-- Legacy prints this through `v-html` from an accessor
 					     that builds `<br>`s into a string. Lines here — the
@@ -84,7 +88,7 @@
 					     checkout and the only one a customer has to act on — it
 					     tells a RAV client whose address to put in — and a
 					     phone is where it is hardest to read. --}}
-					<p class="mt-16 text-md leading-[inherit] lg:text-lg">
+					<p x-show="$store.basket.items.length" class="mt-16 text-md leading-[inherit] lg:text-lg">
 						Sollte Ihre Kursteilnahme vom RAV bezahlt werden, so geben Sie bitte die
 						Adresse des RAVs ein, welche Sie gemeinsam mit dem Entscheid erhalten
 						haben. Sie brauchen die Rechnung weder zu bezahlen noch ans RAV
@@ -109,7 +113,7 @@
 						<x-form.checkbox id="same_address" name="same_address"
 							x-bind:checked="! separate"
 							@change="separate = ! separate">
-							<em class="italic">entspricht Teilnehmer-Adresse</em>
+							<em class="italic" x-text="$store.basket.items.length ? 'entspricht Teilnehmer-Adresse' : 'entspricht obiger Adresse'">entspricht Teilnehmer-Adresse</em>
 						</x-form.checkbox>
 					</div>
 
@@ -169,6 +173,34 @@
 					</template>
 				</div>
 			</div>
+
+			{{--
+				*Lizenzen senden an* (#46, [[13-checkout]]), only when the basket
+				holds a licence, which only the browser knows: `x-if`, so the
+				field is not posted otherwise. Empty means the account's own
+				address, which is the placeholder. Kept on the account, so the
+				next order asks with the answer filled in.
+			--}}
+			<template x-if="$store.basket.licences.length">
+				<div class="mt-16 border-t border-black pt-8 sm:mt-32 sm:pt-16">
+					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+						<div class="sm:col-span-4">
+							<strong class="font-bold">Lizenzen senden an</strong>
+							<p class="mt-16 text-md leading-[inherit] lg:text-lg">
+								Leer lassen, wenn die Lizenzen an deine eigene E-Mail-Adresse gehen sollen.
+							</p>
+						</div>
+						<div class="max-sm:mt-24 sm:col-span-8">
+							<input type="email" name="licence_email" value="{{ old('licence_email', $user->licence_email) }}"
+								placeholder="{{ $user->email }}" autocomplete="email"
+								class="block w-full border-b border-black bg-transparent py-4 outline-hidden focus:border-teal">
+							@error('licence_email')
+								<div class="mt-4 text-md text-danger">{{ $message }}</div>
+							@enderror
+						</div>
+					</div>
+				</div>
+			</template>
 
 			{{--
 				`.stacked-list-footer` again, but with **both** halves this

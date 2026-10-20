@@ -26,7 +26,7 @@
 		     Claiming *leer* for the moment between paint and response is the
 		     one thing this page must not do — it is the screen a customer
 		     reaches by clicking *Warenkorb* in the confirmation. --}}
-		<template x-if="settled && ! items.length">
+		<template x-if="settled && ! lines">
 			{{-- `.checkout-basket-empty`: 12px above, 24 from `sm`, 36 from `lg`.
 			     Legacy stops at *leer...*; the link home is new (Marcel,
 			     2026-10-07), drawn as a link in running text is
@@ -34,7 +34,7 @@
 			<p class="mt-12 sm:mt-24 lg:mt-36">Dein Warenkorb ist leer. Zurück zur <a href="{{ \App\Support\SiteUrl::home() }}" class="underline decoration-1 underline-offset-3 hover:text-teal">Startseite</a>.</p>
 		</template>
 
-		<template x-if="items.length">
+		<template x-if="lines">
 			<div>
 				{{--
 					`.stacked-list-header` — a 12-column grid from `sm` with the
@@ -62,6 +62,11 @@
 
 				<template x-for="item in items" :key="item.event.uuid">
 					<x-row.basket removable />
+				</template>
+
+				{{-- The licences under the courses ([[13-checkout]]). --}}
+				<template x-for="line in licences" :key="`${line.variant}:${line.host}`">
+					<x-row.licence removable />
 				</template>
 
 				{{--

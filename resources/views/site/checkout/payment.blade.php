@@ -5,9 +5,9 @@
 
 		**It takes no payment.** The whole step is a paragraph of text and a
 		discount-code field, because invoices are raised on `EventConfirmed`
-		days or weeks later ([[03-invoices]]) — so there is no Stripe anywhere
-		in this flow. `PaymentController` and its checkout session are a
-		separate thing, for paying an invoice that already exists.
+		days or weeks later ([[03-invoices]]). Licences are paid by card after
+		the summary ([[13-checkout]]), on Stripe's page ([[PaymentGateway]]),
+		and this step only says so.
 
 		**The code belongs to the basket, not to the session**, which is the one
 		design decision on this page. Everything else the checkout remembers is
@@ -60,15 +60,26 @@
 		<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-4"><strong class="font-bold">Zahlungsoptionen</strong></div>
+				{{-- Legacy's sentence for the courses; the licences' beside it
+				     when the basket holds any ([[13-checkout]]): a licence is
+				     invoiced and paid at once, a course when it is confirmed. --}}
 				<div class="sm:col-span-8">
-					Unsere Rechnungen können entweder mittels QR-Einzahlungsschein oder per
-					Kreditkarte bezahlt werden. Die Rechnungsstellung erfolgt, sobald die
-					Durchführung eines Kurses feststeht.
+					<p x-show="$store.basket.items.length">
+						Unsere Rechnungen können entweder mittels QR-Einzahlungsschein oder per
+						Kreditkarte bezahlt werden. Die Rechnungsstellung erfolgt, sobald die
+						Durchführung eines Kurses feststeht.
+					</p>
+					<p x-show="$store.basket.licences.length" :class="$store.basket.items.length && 'mt-16'">
+						Software bezahlst du nach der Zusammenfassung per Kreditkarte. Die
+						Rechnung erhältst du per E-Mail, die Lizenzen nach Zahlungseingang.
+					</p>
 				</div>
 			</div>
 		</div>
 
-		<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
+		{{-- A code discounts courses only ([[PriceBasket]], #3), so a basket of
+		     licences is not asked for one. --}}
+		<div x-show="$store.basket.items.length" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				{{-- The label **is** the error: legacy swaps the heading for a
 				     red *Gutschein-Code ist ungültig!* rather than putting a

@@ -18,27 +18,17 @@ import Alpine from 'alpinejs';
  */
 export default {
 	items: [],
+
+	/**
+	 * Licences ([[13-checkout]]): `{ variant, quantity, host }`, beside the
+	 * courses rather than among them, so nothing that asks `item.event` meets
+	 * a line that has none. One line per licence and host.
+	 */
+	licences: [],
 	code: null,
 	pricing: null,
 	loading: false,
 	error: null,
-
-	/**
-	 * Whether anyone is signed in, from the `<meta>` the layout writes.
-	 *
-	 * **Pricing is behind the session guard and that is deliberate**, on both
-	 * sites. Legacy leaves `PUT /basket/{event}` open to a guest and puts
-	 * `GET /basket` behind `auth:sanctum + verified + role:student`, so a
-	 * visitor can fill a basket and cannot see what it costs until they log in;
-	 * the rework's `/api/basket/price` is the same line in the same place, and
-	 * `BookingApiTest` pins it.
-	 *
-	 * So the fix for a guest is not to open the endpoint — it is to not ask.
-	 * Before this, `add()` and `init()` called `price()` regardless and set
-	 * `error` to `Unauthenticated.` on every guest click, which was invisible
-	 * only because nothing rendered `error` yet ([[09-public-site]]).
-	 */
-	authenticated: false,
 
 	/** The uuid waiting on the rental question, or null when nothing is. */
 	rentalFor: null,
@@ -46,18 +36,19 @@ export default {
 	/** The confirmation that follows an add. */
 	confirmed: false,
 
-	init() {
-		this.authenticated =
-			document.querySelector('meta[name="authenticated"]')?.content === '1';
+	/** The same, for a licence: its own sentence. */
+	confirmedLicence: false,
 
+	init() {
 		// Per-viewer convenience only. What is *charged* is priced server-side at
 		// checkout, so a stale or tampered basket costs nothing: the worst case
 		// is a course that no longer exists, which the till refuses.
 		try {
 			const saved = window.localStorage.getItem('viak.basket');
 			if (saved) {
-				const { items, code } = JSON.parse(saved);
+				const { items, licences, code } = JSON.parse(saved);
 				this.items = Array.isArray(items) ? items : [];
+				this.licences = Array.isArray(licences) ? licences : [];
 				this.code = code ?? null;
 			}
 		} catch {
@@ -65,11 +56,11 @@ export default {
 			// is a perfectly good outcome.
 		}
 
-		if (this.items.length) this.price();
+		if (this.count) this.price();
 	},
 
 	get count() {
-		return this.items.length;
+		return this.items.length + this.licences.length;
 	},
 
 	has(uuid) {
@@ -128,7 +119,35 @@ export default {
 
 		Alpine.store('toast').show('Der Kurs wurde aus dem Warenkorb gelöscht.');
 
-		return this.items.length ? this.price() : this.clearPricing();
+		return this.count ? this.price() : this.clearPricing();
+	},
+
+	/**
+	 * *In den Warenkorb* on a software page. The same licence for the same
+	 * host again adds to its quantity rather than making a second line.
+	 */
+	addLicence(variant, quantity, host = null) {
+		const line = this.licences.find((l) => l.variant === variant && l.host === host);
+
+		if (line) {
+			line.quantity += quantity;
+		} else {
+			this.licences.push({ variant, quantity, host });
+		}
+
+		this.persist();
+		this.confirmedLicence = true;
+
+		return this.price();
+	},
+
+	removeLicence(variant, host = null) {
+		this.licences = this.licences.filter((l) => !(l.variant === variant && l.host === host));
+		this.persist();
+
+		Alpine.store('toast').show('Die Lizenz wurde aus dem Warenkorb gelöscht.');
+
+		return this.count ? this.price() : this.clearPricing();
 	},
 
 	/**
@@ -157,6 +176,7 @@ export default {
 
 	clear() {
 		this.items = [];
+		this.licences = [];
 		this.code = null;
 		this.persist();
 		this.clearPricing();
@@ -169,11 +189,7 @@ export default {
 
 	/** Ask the server what this costs. The only source of a number on screen. */
 	async price() {
-		if (!this.items.length) return this.clearPricing();
-
-		// A guest has nothing to be told: every screen that shows a price is
-		// behind the login. See `authenticated`, above.
-		if (!this.authenticated) return this.clearPricing();
+		if (!this.count) return this.clearPricing();
 
 		this.loading = true;
 		this.error = null;
@@ -186,10 +202,28 @@ export default {
 					Accept: 'application/json',
 					'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
 				},
-				body: JSON.stringify({ items: this.items, code: this.code }),
+				body: JSON.stringify({ items: this.items, licences: this.licences, code: this.code }),
 			});
 
 			const body = await response.json();
+
+			// A licence that left the shop, or lost its host, while it sat in
+			// the basket: the line goes and the message says which. Otherwise
+			// one stale line would keep the whole basket from being priced, and
+			// with no prices there are no rows to remove it from.
+			const stale = Object.keys(body.errors ?? {})
+				.map((key) => key.match(/^licences\.(\d+)\./)?.[1])
+				.filter((index) => index !== undefined)
+				.map(Number);
+
+			if (response.status === 422 && stale.length) {
+				this.licences = this.licences.filter((_, index) => !stale.includes(index));
+				this.persist();
+				Alpine.store('toast').show(body.message, 'error');
+
+				await this.price();
+				return;
+			}
 
 			if (!response.ok) {
 				// A code that will not apply is shown, never swallowed. Legacy's
@@ -212,7 +246,7 @@ export default {
 		try {
 			window.localStorage.setItem(
 				'viak.basket',
-				JSON.stringify({ items: this.items, code: this.code }),
+				JSON.stringify({ items: this.items, licences: this.licences, code: this.code }),
 			);
 		} catch {
 			// See init(): storage can be unavailable, and the basket still works.

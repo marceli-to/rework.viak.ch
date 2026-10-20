@@ -26,6 +26,16 @@ export default () => ({
 		return this.basket.pricing?.items ?? [];
 	},
 
+	/** The licence lines, as the server priced them ([[13-checkout]]). */
+	get licences() {
+		return this.basket.pricing?.licences ?? [];
+	},
+
+	/** Anything at all, priced: what the empty state and the footer wait for. */
+	get lines() {
+		return this.items.length + this.licences.length;
+	},
+
 	/** The priced basket, or null until the server has answered. */
 	get pricing() {
 		return this.basket.pricing;

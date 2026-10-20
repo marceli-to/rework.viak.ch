@@ -193,17 +193,19 @@ Route::prefix('{locale}')
 			 * basket itself needs no server state, because the selection is in
 			 * the browser and the price comes from `/api/basket/price`.
 			 */
+			/*
+			 * The basket is a bare view: its contents are in the browser and
+			 * its prices come from `/api/basket/price`, so there is nothing for
+			 * a controller to hand it. **Open to everyone** ([[13-checkout]]):
+			 * the login comes at *Weiter*, where the address step's guard sends
+			 * a guest to it and back.
+			 */
+			Route::view($segments['checkout'].'/basket', 'site.checkout.basket')
+				->name("{$locale}.checkout.basket");
+
 			Route::middleware(['auth', 'verified'])
 				->prefix($segments['checkout'])
 				->group(function () use ($locale): void {
-					/*
-					 * The basket is a bare view: its contents are in the
-					 * browser and its prices come from `/api/basket/price`, so
-					 * there is nothing for a controller to hand it.
-					 */
-					Route::view('basket', 'site.checkout.basket')
-						->name("{$locale}.checkout.basket");
-
 					/*
 					 * From here on every step is Blade with a POST and the
 					 * answers in the session ([[CheckoutSession]]).

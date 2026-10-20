@@ -24,6 +24,8 @@ use App\Mail\EventMessageCustomer;
 use App\Mail\EventMessageExpert;
 use App\Mail\InvoicePaidConfirmation;
 use App\Mail\InvoicePaidNotification;
+use App\Mail\LicenceOrderConfirmation;
+use App\Mail\LicenceOrderInfoAdmin;
 use App\Mail\ParticipantsChange;
 use App\Mail\PasswordReset;
 use App\Mail\RentalAdded;
@@ -34,6 +36,7 @@ use App\Models\Booking;
 use App\Models\DiscountCode;
 use App\Models\Event;
 use App\Models\Invoice;
+use App\Models\LicenceOrder;
 use App\Models\Location;
 use App\Models\Message;
 use App\Models\User;
@@ -66,6 +69,8 @@ final class MailPreviews
 	private UserDocument $invoice;
 
 	private Invoice $paid;
+
+	private LicenceOrder $order;
 
 	private UserDocument $certificate;
 
@@ -103,6 +108,7 @@ final class MailPreviews
 			'grand_total' => '890.00',
 		]);
 		$this->invoice = $this->document(DocumentType::Invoice, $invoice, 'viak-rechnung-vorschau.pdf');
+		$this->order = $this->licenceOrder();
 		$this->paid = Invoice::factory()->paid()->create([
 			'number' => app(InvoiceNumber::class)->next(),
 			'user_id' => $this->student->id,
@@ -154,9 +160,35 @@ final class MailPreviews
 			'teilnahme' => ['Date closed: each student who attended', fn () => new EventClosedCustomer($this->booking, $this->certificate)],
 			'nachricht' => ['Expert posts a message: each student', fn () => new EventMessageCustomer($this->post)],
 			'nachricht-kopie' => ['Expert posts a message: the author\'s copy', fn () => new EventMessageExpert($this->post)],
+			'bestellung' => ['Licences ordered in the shop: customer, with the invoice', fn () => new LicenceOrderConfirmation($this->order)],
+			'bestellung-buero' => ['Licences ordered in the shop: office', fn () => new LicenceOrderInfoAdmin($this->order)],
 			'zahlung' => ['Invoice paid by card: customer', fn () => new InvoicePaidConfirmation($this->paid)],
 			'zahlung-buero' => ['Invoice paid by card: office', fn () => new InvoicePaidNotification($this->paid)],
 		];
+	}
+
+	/** Two lines, one for a host, invoiced and open: what the shop places ([[PlaceLicenceOrder]]). */
+	private function licenceOrder(): LicenceOrder
+	{
+		$order = LicenceOrder::create([
+			'number' => app(LicenceOrderNumber::class)->next(),
+			'user_id' => $this->student->id,
+			'delivery_email' => 'it@firma.test',
+		]);
+		$order->items()->createMany([
+			['title' => 'V-Ray, Solo, Jahresmietlizenz, Einzelplatz (named)', 'sku' => 'VRY-1001', 'host' => 'SketchUp Pro', 'price' => '450.00', 'quantity' => 2, 'position' => 1],
+			['title' => 'Enscape, Demo', 'sku' => 'ENS-0001', 'price' => '0.00', 'quantity' => 1, 'position' => 2],
+		]);
+		$invoice = Invoice::factory()->create([
+			'number' => app(InvoiceNumber::class)->next(),
+			'user_id' => $this->student->id,
+			'status' => InvoiceStatus::Open,
+			'net' => '900.00',
+			'vat' => '72.90',
+			'grand_total' => '972.90',
+		]);
+
+		return tap($order)->update(['invoice_id' => $invoice->id])->load('items', 'invoice');
 	}
 
 	private function date(int $courseId, ?int $locationId, int $daysOut): Event

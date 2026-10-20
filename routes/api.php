@@ -26,6 +26,13 @@ Route::get('courses/{course}', [CourseController::class, 'show']);
 Route::get('events', [EventController::class, 'index']);
 Route::get('events/{event}', [EventController::class, 'show']);
 
+/*
+ * Pricing a basket, guest or not ([[13-checkout]]): the basket is open to
+ * everyone and the login comes at *Weiter*. A signed-in customer still gets
+ * the line they already booked marked ([[PriceBasket]]).
+ */
+Route::post('basket/price', [BasketController::class, 'price']);
+
 Route::middleware('auth:sanctum')->group(function (): void {
 	/*
 	 * Basket and checkout ([[06-bookings]]).
@@ -35,7 +42,6 @@ Route::middleware('auth:sanctum')->group(function (): void {
 	 * is no basket on the server to GET. Legacy kept one in the session, which
 	 * is why a completed checkout left nothing behind.
 	 */
-	Route::post('basket/price', [BasketController::class, 'price']);
 	Route::post('checkout', [BasketController::class, 'store']);
 
 	Route::get('bookings', [BookingController::class, 'index']);

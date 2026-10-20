@@ -40,7 +40,7 @@ use Laravel\Sanctum\HasApiTokens;
  * status without ever being proven. 16 of the 578 users are unverified today.
  */
 #[Fillable([
-	'first_name', 'last_name', 'company', 'email', 'password',
+	'first_name', 'last_name', 'company', 'email', 'licence_email', 'password',
 	'street', 'street_no', 'zip', 'city', 'country_code', 'phone',
 	'gender', 'operating_systems', 'subscribe_newsletter',
 ])]
@@ -149,6 +149,12 @@ class User extends Authenticatable implements MustVerifyEmail
 	public function addresses(): HasMany
 	{
 		return $this->hasMany(UserAddress::class);
+	}
+
+	/** Where licences go (#46): the address given, else the account's own. */
+	public function licenceEmail(): string
+	{
+		return $this->licence_email ?: (string) $this->email;
 	}
 
 	/** Licences bought, or entered for them by VIAK ([[05-licences]]). */

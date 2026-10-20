@@ -58,12 +58,24 @@
 					</div>
 				@endif
 			</div>
+
+			{{-- Where the licences go (#46), the answer from step 2. --}}
+			<div x-show="$store.basket.licences.length" class="mt-12 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+				<div class="sm:col-span-4">
+					<strong class="font-bold">Lizenzen an</strong>
+					<div>{{ $user->licenceEmail() }}</div>
+				</div>
+			</div>
 		</div>
 
 		{{-- The same row as step 1, without its *Entfernen*: legacy renders the
 		     same `StackedListEvent` here with the `action` slot unfilled. --}}
 		<template x-for="item in items" :key="item.event.uuid">
 			<x-row.basket />
+		</template>
+
+		<template x-for="line in licences" :key="`${line.variant}:${line.host}`">
+			<x-row.licence />
 		</template>
 
 		{{--
@@ -84,11 +96,11 @@
 			`Gesamtnettosumme` → `zzgl. 8.1 % MwSt.` → `Gesamtsumme`
 			([[03-invoices]]).
 		--}}
-		<template x-if="pricing && (pricing.discount > 0 || pricing.vat > 0)">
+		<template x-if="pricing && (pricing.discount > 0 || pricing.vat_total > 0)">
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					<div class="sm:col-span-4">Zwischentotal</div>
-					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.net}`"></div>
+					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.subtotal}`"></div>
 				</div>
 			</div>
 		</template>
@@ -104,11 +116,13 @@
 			</div>
 		</template>
 
-		<template x-if="pricing && pricing.vat > 0">
+		{{-- *auf Mietcomputer* while the laptops are all that is taxed; with a
+		     licence in the basket it is the VAT on both. --}}
+		<template x-if="pricing && pricing.vat_total > 0">
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="sm:col-span-4">{{ config('invoice.vat_label') }} {{ config('invoice.vat_rate') }} % auf Mietcomputer</div>
-					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.vat}`"></div>
+					<div class="sm:col-span-4" x-text="@js(config('invoice.vat_label').' '.config('invoice.vat_rate').' %') + (licences.length ? '' : ' auf Mietcomputer')"></div>
+					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.vat_total}`"></div>
 				</div>
 			</div>
 		</template>
@@ -121,11 +135,29 @@
 						{{-- Both labels are true. Without a rental nothing on the
 						     basket is taxed, which is legacy's sentence; with one
 						     the total already carries its VAT. --}}
-						<span x-text="(pricing.vat > 0 ? 'inkl. ' : 'exkl. ') + @js(config('invoice.vat_label'))"></span>
+						<span x-text="(pricing.vat_total > 0 ? 'inkl. ' : 'exkl. ') + @js(config('invoice.vat_label'))"></span>
 					</div>
 					<div class="sm:col-span-8 sm:text-right">
 						<strong class="font-bold" x-text="`CHF ${pricing.total}`"></strong>
 					</div>
+				</div>
+			</div>
+		</template>
+
+		{{--
+			**Which part is paid now** ([[13-checkout]]), when the basket holds
+			both: the licences by card after *Bestellen*, the courses by invoice
+			once each is confirmed.
+		--}}
+		<template x-if="pricing && items.length && licences.length && pricing.licence_total > 0">
+			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
+				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+					<div class="sm:col-span-4">Software, jetzt per Kreditkarte</div>
+					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.licence_total}`"></div>
+				</div>
+				<div class="mt-8 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+					<div class="sm:col-span-4">Kurse, auf Rechnung nach Kursbestätigung</div>
+					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.booking_total}`"></div>
 				</div>
 			</div>
 		</template>
@@ -144,13 +176,21 @@
 			refused if the real total has moved since.
 		--}}
 		<form method="POST" action="{{ \App\Support\SiteUrl::checkout('summary') }}"
-			x-show="items.length" x-cloak>
+			x-show="lines" x-cloak>
 			@csrf
 
 			<template x-for="(item, i) in $store.basket.items" :key="item.event">
 				<span>
 					<input type="hidden" :name="`items[${i}][event]`" :value="item.event">
 					<input type="hidden" :name="`items[${i}][rental]`" :value="item.rental ? 1 : 0">
+				</span>
+			</template>
+
+			<template x-for="(line, i) in $store.basket.licences" :key="`${line.variant}:${line.host}`">
+				<span>
+					<input type="hidden" :name="`licences[${i}][variant]`" :value="line.variant">
+					<input type="hidden" :name="`licences[${i}][quantity]`" :value="line.quantity">
+					<input type="hidden" :name="`licences[${i}][host]`" :value="line.host ?? ''">
 				</span>
 			</template>
 
@@ -168,14 +208,17 @@
 				<div class="col-span-6 flex justify-end">
 					<button type="submit" :disabled="! pricing"
 						class="flex items-center py-12 leading-none transition-colors hover:text-teal disabled:opacity-60 sm:py-16 sm:text-xl lg:text-3xl">
-						<span class="mr-8 sm:mr-12">Buchen</span>
+						{{-- *Buchen* for courses, as legacy; *Bestellen* once a
+						     licence is in it, *und bezahlen* when it costs. --}}
+						<span class="mr-8 sm:mr-12"
+							x-text="! licences.length ? 'Buchen' : (pricing?.licence_total > 0 ? 'Bestellen und bezahlen' : 'Bestellen')">Buchen</span>
 						<x-icon.arrow-right />
 					</button>
 				</div>
 			</footer>
 		</form>
 
-		<template x-if="settled && ! items.length">
+		<template x-if="settled && ! lines">
 			{{-- As the basket's empty state ([[checkout.basket]]). --}}
 			<p class="mt-12 sm:mt-24 lg:mt-36">Dein Warenkorb ist leer. Zurück zur <a href="{{ \App\Support\SiteUrl::home() }}" class="underline decoration-1 underline-offset-3 hover:text-teal">Startseite</a>.</p>
 		</template>

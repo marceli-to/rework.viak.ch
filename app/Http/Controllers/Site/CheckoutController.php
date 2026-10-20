@@ -6,11 +6,15 @@ namespace App\Http\Controllers\Site;
 
 use App\Actions\Bookings\CompleteCheckout;
 use App\Actions\Bookings\PriceBasket;
+use App\Actions\Invoices\RecordCardPayment;
+use App\Actions\Licences\PlaceLicenceOrder;
+use App\Events\LicenceOrderPlaced;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounts\StoreAddressRequest;
 use App\Http\Requests\Bookings\CompleteCheckoutRequest;
 use App\Models\Country;
 use App\Support\CheckoutSession;
+use App\Support\Payments\PaymentGateway;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,7 +64,8 @@ class CheckoutController extends Controller
 
 		$validated = $request->validate([
 			'invoice_address' => ['nullable', 'string', 'uuid'],
-		], [], ['invoice_address' => 'Rechnungsadresse']);
+			'licence_email' => ['nullable', 'email', 'max:255'],
+		], [], ['invoice_address' => 'Rechnungsadresse', 'licence_email' => 'E-Mail']);
 
 		$uuid = $validated['invoice_address'] ?? null;
 		$address = $uuid === null ? null : $user->addresses()->where('uuid', $uuid)->first();
@@ -72,6 +77,13 @@ class CheckoutController extends Controller
 		}
 
 		CheckoutSession::setInvoiceAddress($address);
+
+		// Posted only when the basket holds a licence (#46). Kept on the
+		// account; the account's own address is no answer worth storing.
+		if ($request->has('licence_email')) {
+			$email = $validated['licence_email'] ?? null;
+			$user->forceFill(['licence_email' => $email && strcasecmp($email, $user->email) !== 0 ? $email : null])->save();
+		}
 
 		return redirect(SiteUrl::checkout('payment'));
 	}
@@ -102,9 +114,8 @@ class CheckoutController extends Controller
 	 *
 	 * `Payment.vue` is a paragraph of text and a discount-code field, and that
 	 * is the whole step: invoices are raised on `EventConfirmed`, days or weeks
-	 * later ([[03-invoices]]), so **there is no Stripe anywhere in this flow**.
-	 * The `PaymentController` and its checkout session are a separate thing,
-	 * for paying an invoice that already exists.
+	 * later ([[03-invoices]]). Licences are paid by card after the summary
+	 * ([[complete]]); this step only says so.
 	 *
 	 * Nothing to hand it — the code belongs to the basket, which is the
 	 * browser's ([[09-public-site]]).
@@ -140,24 +151,61 @@ class CheckoutController extends Controller
 	 * from the row as it is now, so an address edited between step 2 and this
 	 * moment bills the edit rather than a stale copy.
 	 */
+	/**
+	 * **With licences** ([[13-checkout]]): the courses are booked first, as
+	 * before, because that is the part that can still be refused (a seat gone,
+	 * a code expired); then the licences become an order, invoiced at once
+	 * ([[PlaceLicenceOrder]]), and a priced one goes to Stripe's page. A
+	 * payment abandoned there leaves the order waiting and the courses booked
+	 * (#45): the confirmation offers the payment again, and so does the
+	 * account.
+	 */
 	public function complete(
 		CompleteCheckoutRequest $request,
 		PriceBasket $price,
 		CompleteCheckout $checkout,
+		PlaceLicenceOrder $placeOrder,
+		PaymentGateway $gateway,
 	): RedirectResponse {
 		$user = $request->user();
 		$address = CheckoutSession::invoiceAddress($user);
 
-		$basket = $price->execute($request->selections(), $request->code(), $user);
+		$basket = $price->execute($request->selections(), $request->code(), $user, $request->licences());
+		$basket->assertShown($request->totalShown());
 
-		$checkout->execute(
-			user: $user,
-			basket: $basket,
-			totalShown: $request->totalShown(),
-			invoiceAddress: $address?->toSnapshot(),
-		);
+		if ($basket->hasCourses()) {
+			$checkout->execute(
+				user: $user,
+				basket: $basket,
+				invoiceAddress: $address?->toSnapshot(),
+			);
+		}
+
+		$order = null;
+
+		if ($basket->hasLicences()) {
+			$order = $placeOrder->execute(
+				user: $user,
+				lines: array_map(fn ($line) => $line->line(), $basket->licences),
+				invoiceAddress: $address?->toSnapshot(),
+				deliveryEmail: $user->licence_email,
+			);
+
+			LicenceOrderPlaced::dispatch($order);
+		}
 
 		CheckoutSession::clear();
+		CheckoutSession::setOutcome($basket->hasCourses(), $order);
+
+		// Read back, not taken from the order: a fresh invoice carries its
+		// status as the database defaulted it, not as a model attribute.
+		$invoice = $order?->invoice?->fresh();
+
+		if ($invoice?->isPending()) {
+			$back = url(SiteUrl::checkout('confirmation'));
+
+			return redirect()->away($gateway->checkout($invoice, $back.'?session_id={CHECKOUT_SESSION_ID}', $back.'?abgebrochen'));
+		}
 
 		return redirect(SiteUrl::checkout('confirmation'));
 	}
@@ -171,8 +219,26 @@ class CheckoutController extends Controller
 	 * dropped it, which is the same reason nothing recorded that two bookings
 	 * had been one purchase ([[06-bookings]]).
 	 */
-	public function confirmation(): View
+	public function confirmation(Request $request, PaymentGateway $gateway, RecordCardPayment $record): View
 	{
-		return view('site.checkout.confirmation');
+		$user = $request->user();
+
+		// Back from Stripe: settled here if paid, as on the invoice's own
+		// payment page ([[PaymentController::success]]); the webhook too.
+		$payment = $request->filled('session_id') ? $gateway->paidSession((string) $request->query('session_id')) : null;
+
+		if ($payment !== null) {
+			$record->execute($payment);
+		}
+
+		$order = CheckoutSession::licenceOrder($user);
+
+		return view('site.checkout.confirmation', [
+			'booked' => CheckoutSession::booked() || $order === null,
+			'order' => $order,
+			'paid' => $order?->isPaid() ?? false,
+			'confirming' => $request->filled('session_id') && ! ($order?->isPaid() ?? false),
+			'email' => $order?->deliveryEmail(),
+		]);
 	}
 }

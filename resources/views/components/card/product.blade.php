@@ -40,9 +40,10 @@
 
 	*Anzahl* has no spinner arrows (Marcel, 2026-10-09): typed, not stepped.
 
-	**The button waits for the checkout** (chunk 13, [[13-checkout]]): the
-	basket holds courses only and needs a login, so it is drawn and does
-	nothing yet (Marcel, 2026-10-08).
+	*In den Warenkorb* adds the licence with its *Anzahl* and host to the
+	basket ([[13-checkout]]), after the checks the server makes again
+	([[PriceBasketRequest]]): a plugin needs its host, and a licence with a
+	minimum takes no fewer.
 --}}
 <article {{ $attributes->class(['relative mt-48 border-t border-black pt-8 leading-[1.5] first:mt-16 sm:mt-64 sm:pt-16 sm:first:mt-32 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
 	<div class="flex flex-wrap items-baseline justify-between gap-x-16">
@@ -61,7 +62,24 @@
 	@endif
 
 	@foreach ($licences as $licence)
-		<div class="mt-16 border-t border-gray-400 pt-8 sm:mt-32 sm:grid sm:pt-16 sm:grid-cols-12 sm:items-start sm:gap-x-16 sm:gap-y-16 lg:gap-x-40">
+		<div class="mt-16 border-t border-gray-400 pt-8 sm:mt-32 sm:grid sm:pt-16 sm:grid-cols-12 sm:items-start sm:gap-x-16 sm:gap-y-16 lg:gap-x-40"
+			x-data="{
+				quantity: {{ $licence['min'] }},
+				host: '',
+				add() {
+					const quantity = parseInt(this.quantity, 10);
+
+					if (@js($hosts->isNotEmpty()) && ! this.host) {
+						return $store.toast.show('Bitte Hostsoftware wählen.', 'error');
+					}
+
+					if (! (quantity >= {{ $licence['min'] }})) {
+						return $store.toast.show(@js('Mindestens '.$licence['min'].' Stück.'), 'error');
+					}
+
+					$store.basket.addLicence(@js($licence['uuid']), quantity, this.host || null);
+				},
+			}">
 			{{-- Which licence, for what --}}
 			<div class="sm:col-span-6 lg:col-span-5">
 				<div>{{ $licence['label'] }}</div>
@@ -75,7 +93,7 @@
 
 				@if ($hosts->isNotEmpty())
 					<div class="select-chevron relative mt-16 flex w-full items-center border-b border-black py-4">
-						<select aria-label="Hostsoftware" class="block w-full cursor-pointer appearance-none bg-transparent pr-16 outline-hidden">
+						<select aria-label="Hostsoftware" x-model="host" class="block w-full cursor-pointer appearance-none bg-transparent pr-16 outline-hidden">
 							<option value="">Hostsoftware wählen</option>
 							@foreach ($hosts as $host)
 								<option value="{{ $host }}">{{ $host }}</option>
@@ -94,11 +112,11 @@
 			<div class="mt-16 flex items-center gap-16 sm:col-span-12 sm:mt-0 sm:justify-end lg:col-span-4 lg:gap-24">
 				<label class="flex shrink-0 items-center gap-8">
 					<span>Anzahl</span>
-					<input type="number" min="{{ $licence['min'] }}" value="{{ $licence['min'] }}"
+					<input type="number" min="{{ $licence['min'] }}" x-model="quantity" @keydown.enter="add()"
 						class="w-56 [appearance:textfield] border-b border-black bg-transparent text-center outline-hidden focus:border-teal [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
 				</label>
 
-				<x-ui.button disabled title="Folgt mit dem Checkout" class="cursor-not-allowed opacity-40 max-sm:grow">In den Warenkorb</x-ui.button>
+				<x-ui.button @click="add()" class="max-sm:grow">In den Warenkorb</x-ui.button>
 			</div>
 		</div>
 	@endforeach

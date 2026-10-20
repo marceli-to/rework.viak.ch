@@ -1,4 +1,4 @@
-# 13 — The checkout, rethought (being built)
+# 13 — The checkout, rethought
 
 The checkout chunk 06 built is legacy's: courses only, an account before the
 basket, no payment. With licences for sale (chunk 05) that no longer fits.
@@ -11,8 +11,10 @@ Designed before anything is built, because it replaces the flow in
 (#33–39)~~ **answered 2026-10-08** (`05-licences.md`): one select per product,
 a quantity with a minimum on four variants, and demos at CHF 0.
 
-**Built 2026-10-20, first slice: paying an invoice by card** (#28, below).
-The checkout itself and the account's orders come next.
+**Built 2026-10-20**: paying an invoice by card (#28, below), then the
+checkout with licences and the account's orders (*The checkout as built*,
+below). Marcel confirmed the two open points the same day: orders listed in
+the profile and paid from there; card only for licences at checkout.
 
 ## Paying an invoice by card — built 2026-10-20
 
@@ -138,3 +140,54 @@ Already settled in `05-licences.md`, and the reason for this chunk:
 - **A zero total** (a basket of demos, 2026-10-08): Stripe Checkout cannot
   charge 0. Proposed in `05-licences.md`, *A free order*: skip payment, the
   order is paid, no invoice, onto the dispatch worklist.
+
+## The checkout as built — 2026-10-20
+
+**The basket is open to everyone.** `/de/checkout/basket` and
+`/api/basket/price` no longer need a login; *Weiter* goes to the address step,
+whose guard sends a guest to the login (or registration) and back. The layout's
+`authenticated` meta, which only existed to stop guests asking for a price, is
+gone.
+
+**Licences in the basket** sit beside the courses (`basket.licences`:
+variant, quantity, host), one line per licence and host. *In den Warenkorb* on
+the software page checks the host and the minimum, and the server checks them
+again with the licence still in the shop ([[PriceBasketRequest]]); a line that
+fails is dropped from the basket with the message as a toast, so one stale
+licence cannot block the whole basket. Each line is priced with **its VAT per
+line, as the invoice will be** ([[BasketLicence]]): a summed VAT could differ
+from the invoice by a centime, and Stripe's amount check would refuse it. A
+discount code touches courses only (#3), so the payment step asks for one
+only when there is a course.
+
+**The steps**: the address step asks *Lizenzen senden an* when there is a
+licence (kept as `users.licence_email`, #46; empty, or the account's own
+address, stores nothing) and says *Adresse* / *entspricht obiger Adresse*
+without the RAV passage when there is no course. The payment step says
+licences are paid by card after the summary. The summary lists the licence
+rows, *Lizenzen an*, one MWST row for laptops and licences, and, when the
+basket holds both, which part is paid now by card and which by invoice later.
+The button is *Buchen* for courses, *Bestellen und bezahlen* with a priced
+licence, *Bestellen* for demos only.
+
+**Bestellen**: the total shown is checked against the whole basket; the
+courses are booked first (the part that can still be refused), then the
+licences are placed ([[PlaceLicenceOrder]]) and invoiced, and a priced order
+goes straight to Stripe. Its return lands on the confirmation, which settles
+the payment as the invoice page does; the webhook covers the rest. Cancelled
+there, the confirmation says the order is waiting and offers *Jetzt bezahlen*;
+the courses stay booked (#45). A free order skips Stripe.
+
+**Mails** ([[LicenceOrderPlaced]], shop orders only, not the dashboard's):
+*Bestellbestätigung – Bestellung …* to the customer with the invoice attached,
+worded when it is sent (paid, or the card button), and *Neue Softwarebestellung
+…* to the office with article numbers, hosts and a link to the dashboard order.
+
+**The profile** lists *Bestellungen* (shut, with the count, only for a
+customer who has one): number and date, the lines, the amount with
+*Bezahlt* / *Rechnung offen* / *Kostenlos* and *Versendet* / *Nicht versendet*,
+and *Bezahlen* while the invoice is open.
+
+Still open: dispatch is not held back for an unpaid order (#2, the client);
+orders cannot be cancelled; VIAK gets no reminder of unpaid orders (Marcel,
+2026-10-20: none wanted, the dashboard shows *Rechnung offen*).

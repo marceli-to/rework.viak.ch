@@ -23,8 +23,9 @@ function student(): User
 	return User::factory()->create(['email_verified_at' => now()]);
 }
 
-it('sends a guest to the login rather than showing a basket', function () {
-	$this->get('/de/checkout/basket')->assertRedirect('/login');
+it('shows a guest the basket, and sends them to the login at Weiter (13-checkout)', function () {
+	$this->get('/de/checkout/basket')->assertOk()->assertSee('Schritt 1/4');
+	$this->get('/de/checkout/address')->assertRedirect('/login');
 });
 
 /**
@@ -41,7 +42,7 @@ it('is open to any account, an admin without the student role too', function () 
 it('sends an unverified student to the verification notice', function () {
 	$user = User::factory()->create(['email_verified_at' => null]);
 
-	$this->actingAs($user)->get('/de/checkout/basket')->assertRedirect('/email/verify');
+	$this->actingAs($user)->get('/de/checkout/address')->assertRedirect('/email/verify');
 });
 
 it('gives a student the shell, on legacy’s URL and behind the teal gutters', function () {

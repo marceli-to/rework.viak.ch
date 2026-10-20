@@ -73,6 +73,8 @@ class CustomerPortalController extends Controller
 				->get(),
 			'documentCount' => $user->documents()->count(),
 			'penalties' => $this->penalties($upcoming, $penalty),
+			// Licence orders, newest first ([[13-checkout]]).
+			'orders' => $user->licenceOrders()->with(['items', 'invoice'])->latest()->get(),
 		]);
 	}
 

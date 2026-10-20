@@ -127,4 +127,7 @@
 			</div>
 		@endif
 	</div>
+
+	{{-- *Die Lizenz wurde im Warenkorb abgelegt.*, once per page. --}}
+	<x-dialog.basket />
 </x-layout.site>

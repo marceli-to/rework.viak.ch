@@ -29,7 +29,7 @@ class BasketController extends Controller
 	public function price(PriceBasketRequest $request, PriceBasket $price): BasketResource
 	{
 		return new BasketResource(
-			$price->execute($request->selections(), $request->code(), $request->user())
+			$price->execute($request->selections(), $request->code(), $request->user(), $request->licences())
 		);
 	}
 

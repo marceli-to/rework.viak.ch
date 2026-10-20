@@ -8,16 +8,18 @@ use App\Enums\DiscountType;
 use App\Exceptions\DiscountCodeNotRedeemable;
 use App\Models\DiscountCode;
 use App\Models\Event;
+use App\Models\LicenceVariant;
 use App\Models\User;
 use App\Support\Basket;
 use App\Support\BasketItem;
+use App\Support\BasketLicence;
 
 /**
  * Prices a basket, server-side ([[06-bookings]]).
  *
  * Takes what the customer *selected* — event uuids and whether they want a
- * laptop — and returns what it *costs*. Nothing about the price comes from the
- * client.
+ * laptop, licences with their quantity and host ([[13-checkout]]) — and
+ * returns what it *costs*. Nothing about the price comes from the client.
  *
  * ## One code discounts the order
  *
@@ -44,11 +46,17 @@ class PriceBasket
 {
 	/**
 	 * @param  array<int, array{event: Event, rental?: bool}>  $selections
+	 * @param  array<int, array{variant: LicenceVariant, quantity: int, host: ?string}>  $licences  checked by [[PriceBasketRequest]]
 	 *
 	 * @throws DiscountCodeNotRedeemable when a code was typed in and will not apply
 	 */
-	public function execute(array $selections, ?string $code = null, ?User $for = null): Basket
+	public function execute(array $selections, ?string $code = null, ?User $for = null, array $licences = []): Basket
 	{
+		$licences = array_map(
+			fn (array $line) => new BasketLicence($line['variant'], $line['quantity'], $line['host'] ?? null),
+			array_values($licences),
+		);
+
 		$items = array_map(
 			fn (array $selection) => $this->item(
 				$selection['event'],
@@ -59,13 +67,13 @@ class PriceBasket
 		);
 
 		$discountCode = $this->resolve($code);
-		$basket = Basket::of($items, $discountCode, '0.00');
+		$basket = Basket::of($items, $discountCode, '0.00', $licences);
 
 		if ($discountCode === null) {
 			return $basket;
 		}
 
-		return Basket::of($items, $discountCode, $this->discountFor($discountCode, $basket->courseNet()));
+		return Basket::of($items, $discountCode, $this->discountFor($discountCode, $basket->courseNet()), $licences);
 	}
 
 	private function item(Event $event, bool $rental, ?User $for): BasketItem
