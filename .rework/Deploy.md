@@ -58,10 +58,16 @@ Still open: which PHP production runs (#11).
    `port:invoices`, `port:documents`, `port:media`, `port:messages`. Each
    has `--dry-run`. Each one reports findings, and every finding is a decision.
    `port:messages` writes attachments to the private disk itself.
+   **Run them on an empty database, and not again once VIAK has edited
+   anything.** `port:courses` clears and rebuilds `events`, `courses` and
+   `software` with new ids: software pages, recommendations, testimonials and
+   media attached since would point at nothing, and nothing would say so.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
-4. The data checks: rentals against laptop counts, invoice 000419 at
-   CHF −149.00, every pivot and `mediable_type` the ports fill
-   (`Open-Questions.md`, *pending actions*).
-5. The redirect map (`09-public-site.md`), and the new GTM container
+4. **`php artisan port:verify`**: every polymorphic row has an existing
+   class and owner, and the relation that reads it is named. Fails on a row
+   that points at nothing ([[VerifyPort]]).
+5. The data checks: rentals against laptop counts, invoice 000419 at
+   CHF −149.00 (`Open-Questions.md`, *pending actions*).
+6. The redirect map (`09-public-site.md`), and the new GTM container
    version published together with the DNS switch (`11-tracking.md`, step 5).

@@ -448,8 +448,18 @@ the same breath.
   `News`; `Hero` and `News` are chunk 04 and do not exist yet).
 
   So the check is now two-sided: every pivot a port fills, **and every
-  `mediable_type` it writes, against a model that can read it back**. Still not
-  done as a sweep.
+  `mediable_type` it writes, against a model that can read it back**.
+
+  **Swept 2026-10-21, and now a command, `port:verify`** (`Deploy.md`, the
+  cutover). Every pivot a port fills has a reader (`course_taxonomy`,
+  `event_expert`, `message_user`; `role_user` through `User::roles()`), and
+  foreign keys keep a pivot from pointing at nothing. The polymorphic columns
+  have no such guard, so the command checks every `*_type` / `*_id` pair in the
+  schema: the class exists, the owner exists, and which relation reads it.
+  `User` has read its 48 since `HasMedia`. Found **3 media rows on messages
+  that no longer existed**: walkthrough attachments from 2026-09-22/23, their
+  messages gone with a later `port:courses` re-run (it rebuilds `events`, the
+  cascade takes the messages, a morph row stays). Deleted with their files.
 - ~~**Move the 13 course-material files off the public disk.**~~ **Done
   2026-10-21**, and the 20 message attachments with them: the private
   `attachments` disk, for ported and new uploads alike (`08-accounts.md`).
