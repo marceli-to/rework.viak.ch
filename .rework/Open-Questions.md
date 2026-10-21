@@ -137,7 +137,7 @@ Questions 14–17 arrived with `08-accounts.md` on 2026-09-18. **5 and 15 were
 answered the same day** — the media pipeline is a port of Marcel's
 `forrerzimmermann.ch` subsystem, which is also the client's "image handling
 (frontend output)" requirement met. 14, 16 and 17 remain.
-| 14 | How does the queue worker run in production? | Marcel | Deploy |
+| 14 | ~~How does the queue worker run in production?~~ **Answered**: cron, decided 2026-09-29, confirmed 2026-10-21; Marcel sets up the crontab line (`Deploy.md`) | Marcel | Deploy |
 
 ---
 
@@ -377,7 +377,10 @@ and a decision about whether submissions are also stored.
 
 **Decides:** nothing until mail exists. Phase two.
 
-### 14. How does the queue worker run in production?
+### ~~14. How does the queue worker run in production?~~
+
+**Answered: cron** (decided 2026-09-29, confirmed 2026-10-21). Marcel sets up
+the one crontab line on the server; `Deploy.md`, *Every deploy*, has it.
 
 The rework puts mail, PDFs and accounting posts on the database queue, replacing
 legacy's two-emails-a-minute scheduler task. That leaves the worker's lifecycle
