@@ -131,7 +131,7 @@
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					<div class="sm:col-span-4">
-						<strong class="font-bold">Total</strong><br>
+						<strong class="font-bold">Total</strong>
 						{{-- Both labels are true. Without a rental nothing on the
 						     basket is taxed, which is legacy's sentence; with one
 						     the total already carries its VAT. --}}
