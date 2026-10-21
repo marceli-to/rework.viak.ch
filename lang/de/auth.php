@@ -13,5 +13,7 @@ return [
     */
 
     'failed' => 'Diese Kombination aus Zugangsdaten wurde nicht in unserer Datenbank gefunden.',
-    'throttle' => 'Zu viele Loginversuche. Versuchen Sie es bitte in :seconds Sekunden nochmal.',
+    // Legacy's text, in the site's *du* (Marcel, 2026-10-21). Shown on the
+    // login form by the `login` limiter (FortifyServiceProvider).
+    'throttle' => 'Zu viele Loginversuche. Versuche es bitte in :seconds Sekunden nochmal.',
 ];

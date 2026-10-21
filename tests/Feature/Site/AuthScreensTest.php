@@ -142,7 +142,7 @@ it('requires the terms and at least one operating system', function () {
  * through the validator, so legacy's German throttle message never gets a
  * chance to render. Worth a friendly 429 view; noted in `Open-Questions.md`.
  */
-it('rate limits login attempts after five', function () {
+it('rate limits login attempts after five, back on the form with the wait in German', function () {
 	User::factory()->create(['email' => 'kundin@example.test', 'password' => Hash::make('the-right-password')]);
 
 	foreach (range(1, 5) as $attempt) {
@@ -152,8 +152,13 @@ it('rate limits login attempts after five', function () {
 	}
 
 	$this->from('/login')
-		->post('/login', ['email' => 'kundin@example.test', 'password' => 'nope'])
-		->assertStatus(429);
+		->post('/login', ['email' => 'kundin@example.test', 'password' => 'the-right-password'])
+		->assertRedirect('/login')
+		->assertSessionHasErrors(['email' => 'Zu viele Loginversuche. Versuche es bitte in 60 Sekunden nochmal.'])
+		->assertSessionHasInput('email', 'kundin@example.test');
+	$this->assertGuest();
+
+	$this->postJson('/login', ['email' => 'kundin@example.test', 'password' => 'nope'])->assertStatus(429);
 });
 
 it('keeps two-factor and passkeys off, as the live site has neither', function () {

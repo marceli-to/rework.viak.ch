@@ -466,7 +466,10 @@ the same breath.
   2026-10-21**, and the 20 message attachments with them: the private
   `attachments` disk, for ported and new uploads alike (`08-accounts.md`).
 
-- **A friendly 429 for a throttled login.** Fortify throttles through route
+- ~~**A friendly 429 for a throttled login.**~~ **Done 2026-10-21**: the
+  `login` limiter's response sends the sixth attempt back to the form, email
+  kept, the wait under it (`FortifyServiceProvider`); the text is in *du*.
+  Legacy never throttled, so the line had never been shown there. Fortify throttles through route
   middleware, so the sixth failed attempt in a minute is Laravel's bare 429 page
   rather than legacy's "Zu viele Loginversuche. Versuchen Sie es bitte in
   :seconds Sekunden nochmal." — which is sitting unused in `lang/de/auth.php`.

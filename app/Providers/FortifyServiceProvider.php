@@ -80,9 +80,23 @@ class FortifyServiceProvider extends ServiceProvider
 		 * takes a default over parity: a login form without it is a password
 		 * spray away from an account, and `08-accounts.md` already has one
 		 * account-takeover finding on the live site.
+		 *
+		 * **The sixth attempt sees the form again**, its email kept and
+		 * `auth.throttle` under it, not Laravel's bare 429 page (2026-10-21).
+		 * The `Retry-After` header carries the seconds. A JSON request keeps the
+		 * 429.
 		 */
 		RateLimiter::for('login', fn (Request $request) => Limit::perMinute(5)
-			->by(Str::transliterate(Str::lower((string) $request->input(Fortify::username())).'|'.$request->ip())));
+			->by(Str::transliterate(Str::lower((string) $request->input(Fortify::username())).'|'.$request->ip()))
+			->response(function (Request $request, array $headers) {
+				$message = __('auth.throttle', ['seconds' => $headers['Retry-After'] ?? 60]);
+
+				if ($request->expectsJson()) {
+					return response()->json(['message' => $message], 429, $headers);
+				}
+
+				return back()->withErrors([Fortify::username() => $message])->onlyInput(Fortify::username());
+			}));
 
 	}
 }
