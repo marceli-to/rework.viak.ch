@@ -241,6 +241,24 @@ its uuid and look up the current slug.
 
 ### The redirect map
 
+**Checked 2026-10-21, and now a command: `port:check-urls`** (`Deploy.md`, the
+cutover). It builds every URL legacy answers from the legacy database (the
+fixed pages and portal paths, all 41 courses, every listed expert, the PDFs
+under `/media/downloads`, ported images, an old card-payment link) and
+follows each one on the rework. All land on a page, by 301 or directly,
+with three exceptions. Two were found and fixed. One is expected:
+
+- **Legacy's two privacy-policy PDFs** (the registration form linked the 2023
+  one) 404'd. They now 301 to `/de/kontakt`, where the policy is.
+- **`/robots.txt` and `/favicon.ico` answer 404 under Herd** with the file's
+  own body. Herd's quirk: `php artisan serve` gives 200. Check them on the
+  real server.
+- **The 9 unpublished courses 404**, where legacy's `show` serves any course,
+  published or not. Nothing links to them, so this is reported, not fixed.
+
+The table below is the sketch from 2026-09-18. One row is out of date: experts
+kept legacy's `/de/experte/{slug}/{uuid}` (`SiteUrl::expert`).
+
 About **60 URLs**, which is the good news — 41 courses, ~17 experts with bios, and
 a handful of fixed pages. Not thousands.
 

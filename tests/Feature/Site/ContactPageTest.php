@@ -62,6 +62,10 @@ it('links the AGB to a file that exists, at legacy’s path', function () {
 	expect(public_path($path))->toBeFile();
 });
 
+it('sends legacy’s privacy PDFs to the policy on this page', function (string $file) {
+	$this->get('/media/downloads/'.$file)->assertStatus(301)->assertRedirect('/de/kontakt');
+})->with(['Visualisierungs-Akademie_Datenschutzerklaerung.pdf', 'Visualisierungs-Akademie_Datenschutzerklaerung_Feb23.pdf']);
+
 it('draws the map’s box without a key, and loads Google only with one', function () {
 	config(['services.google_maps.key' => null]);
 

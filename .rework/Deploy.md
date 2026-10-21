@@ -69,5 +69,9 @@ Still open: which PHP production runs (#11).
    that points at nothing ([[VerifyPort]]).
 5. The data checks: rentals against laptop counts, invoice 000419 at
    CHF −149.00 (`Open-Questions.md`, *pending actions*).
-6. The redirect map (`09-public-site.md`), and the new GTM container
-   version published together with the DNS switch (`11-tracking.md`, step 5).
+6. **`php artisan port:check-urls --base=https://<the new server>`**, before
+   the DNS moves. Every URL legacy answers, followed on the rework. It fails
+   when one does not land on a page ([[CheckLegacyUrls]], `Todo.md`, *The
+   redirect map*). Under Herd, `/robots.txt` and `/favicon.ico` fail falsely.
+7. The new GTM container version, published together with the DNS switch
+   (`11-tracking.md`, step 5).

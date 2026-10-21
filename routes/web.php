@@ -466,6 +466,16 @@ Route::get('/dashboard/{any?}', DashboardController::class)
 Route::redirect('/register', '/de/registration', 301);
 
 /*
+ * Legacy's privacy policy as a PDF, two editions: the registration form
+ * linked the 2023 one. The policy is on the Kontakt page now
+ * ([[09-public-site]]), and that is where an old link lands. The AGB PDF
+ * is still a file, in `public/media/downloads`. Found by `port:check-urls`.
+ */
+foreach (['Visualisierungs-Akademie_Datenschutzerklaerung.pdf', 'Visualisierungs-Akademie_Datenschutzerklaerung_Feb23.pdf'] as $policy) {
+	Route::redirect('/media/downloads/'.$policy, SiteUrl::contact('de'), 301);
+}
+
+/*
  * Stripe's webhook ([[PaymentController::webhook]]): outside the locales,
  * without a session or CSRF token, verified by its signature instead.
  */
