@@ -122,6 +122,10 @@ right below, which supersedes parts of *The real catalogue*.
   the refund. The customer's profile shows *Storniert*. No mail goes out.)*
 - *(2026-10-20: shop orders now mail the customer and the office,
   `13-checkout.md`; an order entered here still mails nobody.)*
+- *(2026-10-21, Marcel: an order entered here mails the customer the same
+  *Bestellbestätigung* with the invoice attached, through the same
+  [[LicenceOrderPlaced]]; the office gets no copy of an order it entered
+  itself. The form says so above *Bestellung erfassen*.)*
 - Not decided, so not built: **no mail** goes out yet, neither to the
   customer (the invoice is in *Rechnungen* to send) nor to VIAK; that is the
   checkout's design ([[10-mail]]). Dispatch does not wait for payment, since

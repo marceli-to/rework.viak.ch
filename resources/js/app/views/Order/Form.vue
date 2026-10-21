@@ -202,7 +202,11 @@ async function save() {
 				<div class="flex justify-between gap-16 py-10 font-bold"><dt>Total</dt><dd>{{ chf(totals.total) }}</dd></div>
 			</dl>
 			<p class="mb-16 text-md text-gray-600 lg:mb-32 lg:text-lg">
-				{{ totals.net > 0 ? 'Die Rechnung wird beim Erfassen erstellt.' : 'Eine kostenlose Bestellung hat keine Rechnung.' }}
+				{{
+					totals.net > 0
+						? 'Die Rechnung wird beim Erfassen erstellt und mit der Bestellbestätigung an den Kunden gesendet.'
+						: 'Eine kostenlose Bestellung hat keine Rechnung. Der Kunde erhält eine Bestellbestätigung.'
+				}}
 			</p>
 
 			<div class="mb-16 lg:mb-32">

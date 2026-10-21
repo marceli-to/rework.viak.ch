@@ -8,9 +8,9 @@ use App\Models\LicenceOrder;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * A customer ordered licences in the shop ([[13-checkout]]). Not fired for an
- * order VIAK enters on the dashboard, whose invoice VIAK sends itself
- * ([[05-licences]]).
+ * Licences were ordered: by a customer in the shop ([[13-checkout]]), or by
+ * VIAK on the dashboard for one ([[05-licences]]); the order's `entered_by`
+ * tells the two apart.
  */
 class LicenceOrderPlaced
 {

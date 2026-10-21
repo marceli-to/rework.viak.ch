@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Licences\CancelLicenceOrder;
 use App\Actions\Licences\PlaceLicenceOrder;
+use App\Events\LicenceOrderPlaced;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreLicenceOrderRequest;
 use App\Http\Resources\Admin\LicenceOrderResource;
@@ -118,6 +119,8 @@ class LicenceOrderController extends Controller
 			deliveryEmail: $request->validated('delivery_email'),
 			enteredBy: $request->user(),
 		);
+
+		LicenceOrderPlaced::dispatch($order);
 
 		return response()->json(['data' => ['uuid' => $order->uuid]], 201);
 	}

@@ -18,7 +18,8 @@ Still open:
 - ~~**Licence orders send nothing**~~ **built 2026-10-20** for shop orders
   ([[13-checkout]]): `LicenceOrderConfirmation` to the customer with the
   invoice, `LicenceOrderInfoAdmin` to the office. An order VIAK enters on the
-  dashboard still sends nothing.
+  dashboard sends the customer's mail too, not the office's (Marcel,
+  2026-10-21).
 
 *As scoped, 2026-09-24:* no Mailable existed. The domain events fired —
 `BookingMade`, `BookingCancelled`, `EventConfirmed`,
@@ -96,8 +97,8 @@ in a scenario (below).
 | | `EventMessageExpert` | the author, if *selfcopy* | — (files linked) | ″ | **Built** |
 | Invoice paid | `InvoicePaidConfirmation` | student | — | Zahlungsbestätigung Rechnung *no.* | **Built 2026-10-20** ([[SendInvoicePaidMails]]). As in legacy only for a card payment, never for a bank payment the books report; once per payment, however often Stripe reports it |
 | | `InvoicePaidNotification` | admin | — | ″ | **Built**; *Kund:in* for legacy's *Teilnehmer*, as a licence order has no participant |
-| Licences ordered in the shop | — (new, legacy sold none) | customer | invoice, if priced | Bestellbestätigung – Bestellung *no.* | **Built 2026-10-20** ([[SendLicenceOrderMails]]); says *bezahlt* or offers the card, whichever is true when it is sent |
-| | — (new) | admin | — | Neue Softwarebestellung *no.* | **Built**, with article numbers, hosts and the dashboard link |
+| Licences ordered (shop or dashboard) | — (new, legacy sold none) | customer | invoice, if priced | Bestellbestätigung – Bestellung *no.* | **Built 2026-10-20** ([[SendLicenceOrderMails]]); says *bezahlt* or offers the card, whichever is true when it is sent |
+| | — (new) | admin | — | Neue Softwarebestellung *no.* | **Built**, with article numbers, hosts and the dashboard link; shop orders only |
 | Event deleted | nothing — **refused while active bookings exist** | — | — | — | The API deletes regardless — see *Oddities* |
 
 24 mailables, 28 rows: four are sent from two triggers.

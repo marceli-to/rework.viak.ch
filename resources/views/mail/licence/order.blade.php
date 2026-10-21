@@ -1,5 +1,5 @@
 {{--
-	A shop order, to the customer and to the office ([[LicenceOrderConfirmation]],
+	A licence order, to the customer and to the office ([[LicenceOrderConfirmation]],
 	[[LicenceOrderInfoAdmin]]). New, so no legacy text to keep: written in the
 	course mails' words and table (`mail/event/confirmation`).
 --}}

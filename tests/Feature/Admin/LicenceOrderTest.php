@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Enums\InvoiceItemType;
 use App\Enums\InvoiceStatus;
+use App\Mail\LicenceOrderConfirmation;
+use App\Mail\LicenceOrderInfoAdmin;
 use App\Models\Invoice;
 use App\Models\LicenceOrder;
 use App\Models\LicenceProduct;
@@ -11,6 +13,7 @@ use App\Models\LicenceVariant;
 use App\Models\Software;
 use App\Models\User;
 use App\Models\UserAddress;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -65,6 +68,18 @@ it('enters an order with a variant and a free line, and invoices it at once with
 		->and($invoice->items[0]->description)->toBe('2 × V-Ray, Solo, Jahresmietlizenz, Einzelplatz (named)')
 		->and($invoice->items[0]->itemable->is($order->items[0]))->toBeTrue()
 		->and($invoice->document)->not->toBeNull();
+});
+
+it('mails the customer the order with its invoice, and not the office that entered it', function () {
+	Mail::fake();
+	config(['mail.admin' => 'office@viak.test']);
+
+	$this->actingAs($this->admin);
+	placeOrder($this->customer, ['lines' => [['variant' => $this->variant->uuid, 'quantity' => 1]]])->assertCreated();
+
+	Mail::assertQueued(LicenceOrderConfirmation::class, fn ($mail) => $mail->hasTo($this->customer->email)
+		&& $mail->attachments() !== []);
+	Mail::assertNotQueued(LicenceOrderInfoAdmin::class);
 });
 
 it('freezes the line: a later price change does not reach the order', function () {
