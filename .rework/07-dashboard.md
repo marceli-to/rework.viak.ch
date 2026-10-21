@@ -360,7 +360,9 @@ dashboard; the fields are the site's own (`x-form.field` sizes throughout).
   **The link is edited in a lightbox** since 2026-10-08 (Marcel,
   [[LinkDialog]]): *Adresse*, *Text* when nothing is selected (empty: the
   address), *Übernehmen*, *Entfernen* on an existing link. The site's
-  composer (`x-form.editor`) keeps its bar over the text for now.
+  composer (`x-form.editor`) has the same lightbox since 2026-10-21 (Marcel),
+  in `x-ui.lightbox`; it keeps its own link rule (no relative links, which
+  [[MessageHtml]] would strip).
 - **Videos save with the form**, as a list: kept by uuid, added, removed,
   ordered ([[SaveCourseRelations]]).
 - **Delete is refused while any date has a booking**, cancelled ones

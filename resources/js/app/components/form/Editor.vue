@@ -17,8 +17,8 @@ import LinkDialog from './LinkDialog.vue';
  * here is what [[EditorHtml]] keeps.
  *
  * A 1px black box, 320px high, the toolbar a 39px strip over the text. The
- * link is edited in a lightbox ([[LinkDialog]], Marcel 2026-10-08), not the
- * composer's bar over the text. `v-model` is the
+ * link is edited in a lightbox ([[LinkDialog]], Marcel 2026-10-08); the
+ * composer's has drawn the same one since 2026-10-21. `v-model` is the
  * HTML, and an empty editor is `''`, not `<p></p>`.
  *
  * **The Editor is held in a `shallowRef`**, never made reactive: ProseMirror

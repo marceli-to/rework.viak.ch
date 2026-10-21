@@ -26,7 +26,11 @@ export default () => {
 		bulletList: false,
 		link: false,
 		linking: false,
+		// Nothing selected and not inside a link: the link needs words of its own.
+		needsText: false,
 		url: '',
+		text: '',
+		urlError: null,
 
 		async init() {
 			const [{ Editor }, { default: extensions }] = await Promise.all([
@@ -82,26 +86,31 @@ export default () => {
 			editor.chain().focus().toggleBulletList().run();
 		},
 
+		// The lightbox, as the dashboard's `LinkDialog.vue`: keep the two in step.
 		openLink() {
-			this.url = editor.getAttributes('link').href ?? '';
+			this.url = this.link ? (editor.getAttributes('link').href ?? '') : '';
+			this.text = '';
+			this.urlError = null;
+			this.needsText = !this.link && editor.state.selection.empty;
 			this.linking = true;
-			this.$nextTick(() => this.$refs.url.focus());
 		},
 
 		applyLink() {
-			const url = this.normalise(this.url.trim());
+			const typed = this.url.trim();
 
-			if (url === '') {
-				this.removeLink();
+			if (typed === '') {
+				this.urlError = 'Bitte eine Adresse eingeben.';
 				return;
 			}
 
-			editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+			const href = this.normalise(typed);
 
-			// A link on nothing selected would be invisible; put the address in
-			// as its own text, which is what TinyMCE's dialog does too.
-			if (editor.state.selection.empty && !editor.isActive('link')) {
-				editor.chain().focus().insertContent({ type: 'text', text: url, marks: [{ type: 'link', attrs: { href: url } }] }).run();
+			// A link on nothing selected would be invisible; the text typed in
+			// the lightbox, else the address, goes in linked.
+			if (this.needsText) {
+				editor.chain().focus().insertContent({ type: 'text', text: this.text.trim() || typed, marks: [{ type: 'link', attrs: { href } }] }).run();
+			} else {
+				editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
 			}
 
 			this.linking = false;
@@ -113,6 +122,7 @@ export default () => {
 		},
 
 		cancelLink() {
+			if (!this.linking) return;
 			this.linking = false;
 			editor.commands.focus();
 		},

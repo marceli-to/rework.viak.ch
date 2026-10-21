@@ -31,8 +31,11 @@
 	icons are TinyMCE 6.8's, which is MIT — 5.x, the version legacy runs, is
 	LGPL.
 
-	Legacy's link button opens a modal with four fields. This asks for the one
-	that matters, in a bar under the toolbar.
+	Legacy's link button opens a modal with four fields. This one asks for
+	*Adresse*, and for *Text* when nothing is selected to put the link on;
+	left empty, the address is the text. *Entfernen* on a link that is there
+	already. A lightbox, as the dashboard's `LinkDialog.vue` is (Marcel,
+	2026-10-21); it was a bar over the text until then.
 
 	Without JavaScript the box stays cloaked and the textarea is the field,
 	styled as the site's inputs are but with the body's 1.3 line height — legacy's
@@ -92,19 +95,6 @@
 			@endforeach
 		</div>
 
-		{{-- The link bar: over the text, under the toolbar, so the box keeps
-		     its 320px. Enter applies, Escape leaves. --}}
-		<div x-show="linking" x-on:keydown.escape.prevent.stop="cancelLink()"
-			class="absolute inset-x-0 top-39 z-10 flex flex-wrap items-center gap-x-16 gap-y-8 border-b border-black bg-white px-16 py-8 text-md sm:text-lg">
-			<label for="{{ $name }}-url" class="sr-only">Adresse</label>
-			<input id="{{ $name }}-url" type="text" x-ref="url" x-model="url" placeholder="www.beispiel.ch oder name@beispiel.ch"
-				x-on:keydown.enter.prevent="applyLink()"
-				class="min-w-0 flex-1 border-b border-black bg-transparent py-4 text-teal outline-hidden placeholder:text-gray-400">
-			<button type="button" x-on:click="applyLink()" class="transition-colors hover:text-teal">Übernehmen</button>
-			<button type="button" x-show="link" x-on:click="removeLink()" class="transition-colors hover:text-teal">Entfernen</button>
-			<button type="button" x-on:click="cancelLink()" class="transition-colors hover:text-teal">Abbrechen</button>
-		</div>
-
 		{{-- ProseMirror's own element goes in here, styled with
 		     `x-ui.rich-text`'s rules so the composer shows the message as
 		     the thread will. `[&_li>p]:mb-0` is in both: tiptap wraps a list
@@ -113,6 +103,43 @@
 		<div x-ref="content" x-on:click.self="$el.querySelector('[contenteditable]')?.focus()"
 			class="min-h-0 flex-1 cursor-text overflow-y-auto p-16 text-md text-black sm:text-lg lg:text-xl [&_.ProseMirror]:min-h-full [&_p]:mb-12 lg:[&_p]:mb-16 [&_p:last-child]:mb-0 [&_li>p]:mb-0 [&_strong]:font-bold [&_ul]:mb-12 [&_ul]:list-disc lg:[&_ul]:mb-16 [&_ul:last-child]:mb-0 [&_li]:ml-20 [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-[3px]"></div>
 	</div>
+
+	{{-- The link, in `x-ui.lightbox`. `x-if`, so the fields start empty each
+	     time and the address takes the focus when it appears. The inputs are
+	     drawn as `x-form.field` draws its own, but carry **no `name`**: they
+	     sit inside the composer's form and must not be sent with it. Enter
+	     applies, as a form's submit would; there can be no form in a form. --}}
+	<template x-if="linking">
+		<x-ui.lightbox show="true" close="cancelLink()" title-expression="link ? 'Link bearbeiten' : 'Link einfügen'">
+			<div class="relative mb-16 lg:mb-32">
+				<label for="{{ $name }}-url" class="mb-4 block text-md sm:text-lg lg:text-xl">Adresse *</label>
+				<input id="{{ $name }}-url" type="text" x-model="url" x-init="$nextTick(() => $el.focus())"
+					x-on:keydown.enter.prevent="applyLink()"
+					x-bind:aria-invalid="urlError ? 'true' : null"
+					class="block w-full border-b border-black bg-transparent py-4 text-lg leading-[normal] font-bold text-teal outline-hidden sm:text-xl lg:text-3xl"
+					x-bind:class="urlError && 'border-danger'">
+				<p class="pt-8 text-md lg:text-lg">www.beispiel.ch oder name@beispiel.ch</p>
+				<div x-show="urlError" x-text="urlError" class="pt-8 text-md text-danger lg:text-lg"></div>
+			</div>
+
+			<template x-if="needsText">
+				<div class="relative mb-16 lg:mb-32">
+					<label for="{{ $name }}-text" class="mb-4 block text-md sm:text-lg lg:text-xl">Text</label>
+					<input id="{{ $name }}-text" type="text" x-model="text"
+						x-on:keydown.enter.prevent="applyLink()"
+						class="block w-full border-b border-black bg-transparent py-4 text-lg leading-[normal] font-bold text-teal outline-hidden sm:text-xl lg:text-3xl">
+					<p class="pt-8 text-md lg:text-lg">Leer lassen, um die Adresse als Text zu zeigen.</p>
+				</div>
+			</template>
+
+			<div class="flex flex-col gap-12 sm:flex-row">
+				<x-ui.button x-on:click="applyLink()" class="sm:flex-1">Übernehmen</x-ui.button>
+				<template x-if="link">
+					<x-ui.button variant="secondary" x-on:click="removeLink()" class="sm:flex-1">Entfernen</x-ui.button>
+				</template>
+			</div>
+		</x-ui.lightbox>
+	</template>
 
 	@error($name)
 		<div id="{{ $name }}-error" class="pt-8 text-md text-danger lg:text-lg">{{ $message }}</div>

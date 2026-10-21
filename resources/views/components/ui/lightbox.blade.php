@@ -1,4 +1,4 @@
-@props(['title' => null, 'show' => 'false', 'close' => ''])
+@props(['title' => null, 'titleExpression' => null, 'show' => 'false', 'close' => ''])
 
 {{--
 	`components/_lightbox.scss` — the bigger overlay, the one legacy puts a whole
@@ -23,6 +23,10 @@
 	padding, so a long form scrolls inside the box rather than pushing it off
 	the screen. That is the whole reason legacy has a second overlay.
 
+	`title-expression` is a title Alpine writes, for a box whose title
+	changes with what it is open on (the editor's *Link einfügen* or
+	*Link bearbeiten*).
+
 	Like the modal: an empty `x-data`, because Alpine 3 evaluates a directive
 	only inside a component; and the backdrop closes, which is what the
 	`%lightbox`'s own `cursor` says it should.
@@ -39,7 +43,7 @@
 		'max-w-[90%] cursor-default border-2 border-gray-600 bg-white p-12 sm:max-w-900 sm:min-w-600 sm:p-24',
 	]) }}>
 		<div class="max-h-[90vh] overflow-y-auto px-4">
-			@if ($title)
+			@if ($title || $titleExpression)
 				{{-- `components/headings/_h1.scss`: bold, teal, 12px below it.
 				     The close is `.feather-icon` — black, teal on hover — and
 				     legacy draws it with feather's `XIcon` at 24 rather than
@@ -47,7 +51,7 @@
 				     Ours is legacy's own cross at 22, which is the same thin X
 				     and keeps the icon set to one source. --}}
 				<header class="flex justify-between">
-					<h1 class="mb-12 font-bold text-teal">{{ $title }}</h1>
+					<h1 class="mb-12 font-bold text-teal" @if ($titleExpression) x-text="{{ $titleExpression }}" @endif>{{ $title }}</h1>
 
 					@if ($close)
 						<button type="button" @click="{{ $close }}"
@@ -72,7 +76,7 @@
 				1717px: 24px, not 48. Reading the markup would have given the
 				wrong number; the class is there and does nothing.
 			--}}
-			<div @class(['mt-24' => $title])>{{ $slot }}</div>
+			<div @class(['mt-24' => $title || $titleExpression])>{{ $slot }}</div>
 		</div>
 	</div>
 </div>
