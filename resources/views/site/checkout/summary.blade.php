@@ -34,8 +34,9 @@
 			<div class="mb-8 sm:col-span-8"><h2 class="font-bold">Zusammenfassung</h2></div>
 		</header>
 
-		{{-- `Adresse` in `span-4`, and the invoice address beside it in `span-8`
-		     only when there is one — `mt-3x` below `sm`, where they stack. --}}
+		{{-- `Adresse`, the invoice address and the licence email side by side in
+		     `span-4` each, the last two only when there is one. `mt-3x` below
+		     `sm`, where they stack. --}}
 		<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 			<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 				<div class="sm:col-span-4">
@@ -48,7 +49,7 @@
 				</div>
 
 				@if ($invoiceAddress)
-					<div class="mt-12 sm:col-span-8 sm:mt-0">
+					<div class="mt-12 sm:col-span-4 sm:mt-0">
 						<strong class="font-bold">Rechnungsadresse</strong>
 						<div>
 							@foreach ($invoiceAddress->lines() as $line)
@@ -57,11 +58,9 @@
 						</div>
 					</div>
 				@endif
-			</div>
 
-			{{-- Where the licences go (#46), the answer from step 2. --}}
-			<div x-show="$store.basket.licences.length" class="mt-12 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-				<div class="sm:col-span-4">
+				{{-- Where the licences go (#46), the answer from step 2. --}}
+				<div x-show="$store.basket.licences.length" class="mt-12 sm:col-span-4 sm:mt-0">
 					<strong class="font-bold">Lizenzen an</strong>
 					<div>{{ $user->licenceEmail() }}</div>
 				</div>
