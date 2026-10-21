@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
  */
 beforeEach(function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	Events::fake([BookingMade::class, MessagePosted::class]);
 	$this->admin = User::factory()->admin()->create();
 	$this->event = Event::factory()->for(Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs']]))

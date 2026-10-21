@@ -39,7 +39,8 @@
 
 	Legacy truncates the name at 35 characters and links it at
 	`/storage/uploads/{name}` — a direct path on the public disk, which is
-	finding 3. Here the link is the policy-gated route ([[MediaController]]).
+	finding 3. Here the link is the policy-gated route ([[MediaController]]),
+	and the file is on a private disk, so there is no other way to it.
 --}}
 <article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 	<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">

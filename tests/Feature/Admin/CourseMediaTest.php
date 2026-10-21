@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
  */
 beforeEach(function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	$this->admin = User::factory()->admin()->create(['email_verified_at' => now()]);
 	$this->course = Course::factory()->create();
 });

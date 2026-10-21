@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Binds uploads to the thing they belong to ([[08-accounts]]).
  *
- * Moves each file out of `temp/` and into `uploads/`, then writes the row. New
- * items go on the end of whatever order already exists.
+ * Moves each file out of `temp/` to where its owner keeps it ([[Media::disk]]):
+ * `uploads/` for an image, the private disk for a Veranstaltung's or a
+ * message's file. New items go on the end of whatever order already exists.
  */
 class AttachMedia
 {
@@ -35,10 +36,16 @@ class AttachMedia
 				continue;
 			}
 
-			Storage::disk('public')->move($temp, 'uploads/'.$media->file);
-
 			$media->sort_order = ++$sort;
 			$media->mediable()->associate($parent);
+
+			if ($media->isAttachment()) {
+				$media->disk()->writeStream($media->path(), Storage::disk('public')->readStream($temp));
+				Storage::disk('public')->delete($temp);
+			} else {
+				Storage::disk('public')->move($temp, $media->path());
+			}
+
 			$media->save();
 
 			$attached[] = $media;

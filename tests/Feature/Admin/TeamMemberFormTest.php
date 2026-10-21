@@ -82,6 +82,7 @@ it('lists them in their order, and saves a new one', function () {
 
 it('uploads a portrait, which becomes the card’s image', function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	$member = TeamMember::factory()->create();
 
 	$this->actingAs($this->admin)
@@ -94,6 +95,7 @@ it('uploads a portrait, which becomes the card’s image', function () {
 
 it('deletes one, portrait and all', function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	$member = TeamMember::factory()->create();
 	$portrait = Media::factory()->for($member, 'mediable')->create();
 

@@ -98,6 +98,7 @@ it('tells a bot it worked and logs nothing, and takes five an hour', function ()
 
 it('lets an admin manage the homepage’s images', function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
 
 	$this->actingAs(User::factory()->expert()->create())->getJson('/api/admin/pages/home/media')->assertForbidden();

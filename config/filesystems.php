@@ -67,6 +67,22 @@ return [
 		],
 
 		/*
+		 * The files on a Veranstaltung (its *Kurs-Dokumente*) and on a message:
+		 * as private as what they are attached to, so off the public disk and
+		 * served only through [[MediaController]] and [[MediaPolicy]]. Legacy
+		 * kept them in `uploads/` beside the images, reachable without
+		 * authenticating. Images of pages stay public; Glide needs them there.
+		 * [[Media::disk]] decides which is which.
+		 */
+		'attachments' => [
+			'driver' => 'local',
+			'root' => storage_path('app/attachments'),
+			'serve' => false,
+			'throw' => false,
+			'report' => false,
+		],
+
+		/*
 		 * Read-only snapshot of the legacy site's `storage/app/public`, used by
 		 * the port commands the way the `legacy` database connection is. Never
 		 * written to.

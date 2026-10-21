@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\Media;
 
 use App\Models\Media;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Removes an upload and its file ([[08-accounts]]).
@@ -18,7 +17,7 @@ class DeleteMedia
 {
 	public function execute(Media $media): void
 	{
-		Storage::disk('public')->delete('uploads/'.$media->file);
+		$media->disk()->delete($media->path());
 
 		$media->delete();
 	}

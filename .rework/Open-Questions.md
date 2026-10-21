@@ -450,14 +450,9 @@ the same breath.
   So the check is now two-sided: every pivot a port fills, **and every
   `mediable_type` it writes, against a model that can read it back**. Still not
   done as a sweep.
-- **Move the 13 course-material files off the public disk.** The portal's
-  *Kurs-Dokumente* links now go through `MediaController` and `MediaPolicy`, but
-  the files still sit in `storage/app/public/uploads` under the storage symlink
-  — so the direct path is reachable without authenticating, which is the same
-  shape as `08-accounts.md`'s finding 3 for the generated PDFs. Those were moved
-  to a private disk because the storage decision came first; these were not,
-  because moving them is a change to `port:media` rather than to a view. Found
-  2026-09-22.
+- ~~**Move the 13 course-material files off the public disk.**~~ **Done
+  2026-10-21**, and the 20 message attachments with them: the private
+  `attachments` disk, for ported and new uploads alike (`08-accounts.md`).
 
 - **A friendly 429 for a throttled login.** Fortify throttles through route
   middleware, so the sixth failed attempt in a minute is Laravel's bare 429 page

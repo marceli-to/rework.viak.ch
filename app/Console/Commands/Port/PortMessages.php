@@ -184,7 +184,8 @@ class PortMessages extends Command
 				continue;
 			}
 
-			Storage::disk('public')->put('uploads/'.$file->name, (string) file_get_contents($source));
+			// The private disk, not legacy's public `uploads/` ([[Media::disk]]).
+			Storage::disk('attachments')->put($file->name, (string) file_get_contents($source));
 
 			Media::create([
 				'uuid' => $file->uuid,
@@ -192,7 +193,7 @@ class PortMessages extends Command
 				'mediable_id' => $id,
 				'file' => $file->name,
 				'original_name' => $file->original_name,
-				'mime_type' => @mime_content_type(Storage::disk('public')->path('uploads/'.$file->name)) ?: null,
+				'mime_type' => @mime_content_type(Storage::disk('attachments')->path($file->name)) ?: null,
 				'size' => (int) $file->size,
 				'caption' => $file->caption,
 				// Not an image, so no dimensions and no crop. `media` holds both

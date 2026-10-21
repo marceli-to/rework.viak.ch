@@ -40,8 +40,11 @@ was already built and green, and they are listed in `09-public-site.md` under
 
 `MediaPolicy` and an authenticated `/medien/{media:uuid}` arrive with the
 portal, so a course's materials go through a policy the way its documents
-already do. **The files themselves are still on the public disk** — moving them
-is a port change rather than a view change, and `Todo.md` carries it.
+already do. ~~**The files themselves are still on the public disk**~~ **Moved
+2026-10-21**: a Veranstaltung's and a message's files live on the private
+`attachments` disk ([[Media::disk]]), written there by `port:messages` and by
+[[AttachMedia]]; a migration moved the ones already ported. Images stay in
+the public `uploads/`, where Glide reads them.
 
 All three ports ran clean against the production snapshot:
 

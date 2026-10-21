@@ -178,6 +178,7 @@ it('saves the order the list was dragged into', function () {
 
 it('deletes an expert nothing points at, portraits and all', function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	$expert = expertAccount();
 	$portrait = Media::factory()->for($expert, 'mediable')->create();
 
@@ -212,6 +213,7 @@ it('refuses to delete your own account', function () {
 
 it('takes portraits on the expert, the first as the teaser', function () {
 	Storage::fake('public');
+	Storage::fake('attachments');
 	$expert = expertAccount();
 
 	$this->actingAs($this->admin)

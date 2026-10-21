@@ -68,6 +68,7 @@ function expertSeatOn(Event $event, array $userAttributes = []): Booking
 beforeEach(function () {
 	Country::query()->firstOrCreate(['code' => 'ch'], ['name' => ['de' => 'Schweiz'], 'order' => 1]);
 	Storage::fake('public');
+	Storage::fake('attachments');
 });
 
 /*
@@ -474,7 +475,8 @@ it('takes an attachment with the form and moves it out of temp', function () {
 	// `UploadMedia` leaves a file in `temp/` and `AttachMedia` is what moves it
 	// across — handing the row to `PostMessage` instead would leave it there and
 	// `MediaController` would answer 404 for it.
-	Storage::disk('public')->assertExists('uploads/'.$media->file);
+	Storage::disk('attachments')->assertExists($media->file);
+	Storage::disk('public')->assertMissing('uploads/'.$media->file);
 	Storage::disk('public')->assertMissing('temp/'.$media->file);
 });
 
@@ -525,7 +527,7 @@ it('uploads course materials and attaches them to the event', function () {
 		->and($event->media()->pluck('original_name')->all())
 		->toBe(['modelle.zip', 'workshop.pdf']);
 
-	Storage::disk('public')->assertExists('uploads/'.$event->media()->first()->file);
+	Storage::disk('attachments')->assertExists($event->media()->first()->file);
 });
 
 it('keeps the Bezeichnung typed beside each file, and none where it was left empty', function () {
@@ -631,14 +633,34 @@ it('deletes a course document, and its file with it', function () {
 		'mediable_id' => $event->id,
 		'original_name' => 'modelle.zip',
 	]);
-	Storage::disk('public')->put('uploads/'.$media->file, 'x');
+	Storage::disk('attachments')->put($media->file, 'x');
 
 	$this->actingAs($expert)->delete(
 		'/de/experte/profil/kurs/veranstaltung/'.$event->uuid.'/dokumente/'.$media->uuid
 	)->assertRedirect('/de/experte/profil/kurs/veranstaltung/'.$event->uuid);
 
 	expect(Media::query()->whereKey($media->id)->exists())->toBeFalse();
+	Storage::disk('attachments')->assertMissing($media->file);
+});
+
+it('hands over a course document from the private disk, and only through the route', function () {
+	$expert = expertUser();
+	$event = taughtEvent($expert);
+	$media = Media::factory()->create([
+		'mediable_type' => Event::class,
+		'mediable_id' => $event->id,
+		'original_name' => 'modelle.zip',
+	]);
+	Storage::disk('attachments')->put($media->file, 'inhalt');
+
+	expect($media->path())->toBe($media->file);
 	Storage::disk('public')->assertMissing('uploads/'.$media->file);
+
+	$response = $this->actingAs($expert)->get(route('media.download', $media->uuid))->assertOk();
+	expect($response->streamedContent())->toBe('inhalt')
+		->and($response->headers->get('content-disposition'))->toContain('modelle.zip');
+
+	$this->actingAs(User::factory()->create())->get(route('media.download', $media->uuid))->assertForbidden();
 });
 
 it('will not delete a message s attachment through the document route', function () {

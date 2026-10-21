@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * An uploaded file, image or otherwise ([[08-accounts]]).
@@ -42,6 +44,27 @@ class Media extends Model
 	public function mediable(): MorphTo
 	{
 		return $this->morphTo();
+	}
+
+	/**
+	 * A Veranstaltung's or a message's file, kept on the private `attachments`
+	 * disk; everything else is a picture on a page, on the public one
+	 * (`config/filesystems.php`).
+	 */
+	public function isAttachment(): bool
+	{
+		return in_array($this->mediable_type, [Event::class, Message::class], true);
+	}
+
+	public function disk(): Filesystem
+	{
+		return Storage::disk($this->isAttachment() ? 'attachments' : 'public');
+	}
+
+	/** Where the file is on {@see disk()}: an attachment by its name, an image under `uploads/`. */
+	public function path(): string
+	{
+		return $this->isAttachment() ? $this->file : 'uploads/'.$this->file;
 	}
 
 	public function isImage(): bool
