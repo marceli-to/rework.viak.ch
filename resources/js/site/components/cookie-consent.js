@@ -64,11 +64,10 @@ export default function cookieConsent() {
 				de: {
 					consentModal: {
 						title: 'Verwendung von Cookies',
-						description: 'Unsere Website verwendet Tracking-Cookies, um zu verstehen, wie Sie mit ihr interagieren. Das Tracking wird nur aktiviert, wenn Sie ausdrücklich zustimmen.',
+						description: `Unsere Website verwendet Tracking-Cookies, um zu verstehen, wie Sie mit ihr interagieren. Das Tracking wird nur aktiviert, wenn Sie ausdrücklich zustimmen. Mehr dazu in der <a href="${privacy}">Datenschutzerklärung</a>.`,
 						acceptAllBtn: 'Akzeptieren',
 						acceptNecessaryBtn: 'Ablehnen',
 						showPreferencesBtn: 'Einstellungen',
-						footer: `<a href="${privacy}">Datenschutzerklärung</a>`,
 					},
 					preferencesModal: {
 						title: 'Cookie Einstellungen',

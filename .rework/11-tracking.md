@@ -135,7 +135,13 @@ runs the ads then wires networks to those events in GTM without touching code.
   the policy has *Cookie-Einstellungen ändern*, which reopens the box.
 - Styled in `resources/css/cookie-consent.css` after legacy's overrides:
   Effra, teal title, the site's square teal buttons going black on hover,
-  greys from the palette, a white footer.
+  greys from the palette.
+- **The bar redesigned, 2026-10-21** (Marcel's call, not parity): one row in
+  the page column, text left, then *Einstellungen* as a link, *Ablehnen* as the
+  outline button and *Akzeptieren* as the one solid button, both the same size
+  so refusing stays as easy as accepting. *Datenschutzerklärung* moved into the
+  text and the centred footer row went. In the box: a 20/24px title, and the
+  close cross and category chevrons black on no background.
 - **Shown in every environment**, so the client sees it on the prototype; only
   GTM is production-only. The library hides itself from bots (headless
   browsers included), which is right for search engines; a Playwright check

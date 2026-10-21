@@ -2,7 +2,7 @@
  * The cookie banner in the site's look ([[11-tracking]]): legacy's overrides in
  * `../viak.ch/resources/sass/vendor/_cookieconsent.scss`. Effra, black text, a
  * teal title, the site's buttons: teal, square, bold 14/16px at least 28px
- * high, black on hover. The bar's body runs in the site's 1200px column.
+ * high, black on hover. The bar itself is redesigned, below.
  *
  * Plain CSS on the library's own variables and classes, since its markup is
  * not ours to put Tailwind classes on.
@@ -35,10 +35,6 @@
 	--cc-cookie-category-expanded-block-hover-bg: var(--color-gray-200);
 	--cc-section-category-border: var(--color-gray-200);
 	--cc-separator-border-color: var(--color-gray-200);
-	/* Legacy's `.cm__footer`: white, no rule, the link plain. */
-	--cc-footer-bg: #fff;
-	--cc-footer-color: var(--color-black);
-	--cc-footer-border-color: #fff;
 	--cc-modal-border-radius: 0;
 	--cc-btn-border-radius: 0;
 	--cc-pm-toggle-border-radius: 0;
@@ -49,12 +45,6 @@
 #cc-main .pm__title {
 	color: var(--color-teal);
 	font-weight: 700;
-}
-
-#cc-main .cm--bar .cm__body,
-#cc-main .cm--bar .cm__footer {
-	margin-inline: auto;
-	max-width: 1200px;
 }
 
 #cc-main .cm__btn,
@@ -70,4 +60,211 @@
 	#cc-main .pm__btn {
 		font-size: 16px;
 	}
+}
+
+/*
+ * The bar, redesigned (Marcel, 2026-10-21) rather than legacy's: one row in the
+ * page's column, the text left and the three choices right, in the order of
+ * weight. *Akzeptieren* is the one solid button, *Ablehnen* the site's outline
+ * button at the same size (refusing must stay as easy as accepting), and
+ * *Einstellungen* a plain link. The privacy link moved into the text, so the
+ * centred footer row is gone.
+ *
+ * The column is the body's: 100% less 32px on a phone, less 64px from `sm`,
+ * 1200 less its 16px padding from `lg` (`layout/site.blade.php`).
+ *
+ * The library restates its phone layout with `!important` below 640px, so the
+ * rules it would otherwise win there carry one as well.
+ */
+#cc-main .cm--bar {
+	border-top: 1px solid rgb(0 0 0 / 0.1);
+	box-shadow: 0 -8px 24px rgb(0 0 0 / 0.06);
+}
+
+#cc-main .cm--bar .cm__body {
+	align-items: stretch;
+	flex-direction: column !important;
+	gap: 16px;
+	margin-inline: auto;
+	max-width: none;
+	padding: 20px 0 !important;
+	width: min(1168px, 100% - 32px);
+}
+
+#cc-main .cm--bar .cm__texts {
+	padding: 0;
+}
+
+#cc-main .cm--bar .cm__title,
+#cc-main .cm--bar .cm__desc {
+	padding: 0 !important;
+}
+
+#cc-main .cm--bar .cm__title {
+	font-size: 18px;
+	line-height: 1.2;
+}
+
+#cc-main .cm--bar .cm__title + .cm__desc {
+	margin-top: 6px;
+}
+
+#cc-main .cm--bar .cm__desc {
+	font-size: 14px;
+	line-height: 1.4;
+	max-height: none;
+	padding-bottom: 0;
+	text-wrap: pretty;
+}
+
+#cc-main .cm--bar .cm__desc a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
+#cc-main .cm--bar .cm__desc a:hover {
+	text-decoration: none;
+}
+
+/*
+ * The two button groups dissolve, so `order` can arrange all three. On a
+ * phone they sit in a grid, *Ablehnen* and *Akzeptieren* side by side; the
+ * library's flipped bar pins every last button to column 1, hence the
+ * `!important` cells.
+ */
+#cc-main .cm--bar .cm__btns {
+	align-items: center;
+	border-top: none !important;
+	display: grid;
+	gap: 8px;
+	grid-template-columns: 1fr 1fr;
+	max-width: none !important;
+	padding: 0 !important;
+}
+
+#cc-main .cm--bar .cm__btn-group {
+	display: contents !important;
+}
+
+#cc-main .cm--bar .cm__btns .cm__btn {
+	margin: 0 !important;
+	min-height: 40px;
+	min-width: 0;
+	padding-inline: 24px;
+}
+
+#cc-main .cm--bar .cm__btn[data-role='necessary'] {
+	background: #fff;
+	border-color: var(--color-teal);
+	color: var(--color-teal);
+	font-weight: 400;
+	grid-area: 1 / 1 !important;
+	order: 1;
+}
+
+#cc-main .cm--bar .cm__btn[data-role='necessary']:hover {
+	border-color: var(--color-black);
+	color: var(--color-black);
+}
+
+#cc-main .cm--bar .cm__btn[data-role='all'] {
+	grid-area: 1 / 2 !important;
+	order: 2;
+}
+
+#cc-main .cm--bar .cm__btn[data-role='show'] {
+	background: none;
+	border-color: transparent;
+	color: var(--color-black);
+	grid-area: 2 / 1 / 3 / -1 !important;
+	min-height: 32px;
+	order: 3;
+	padding-inline: 0;
+}
+
+#cc-main .cm--bar .cm__btn[data-role='show']:hover {
+	color: var(--color-teal);
+}
+
+@media (min-width: 640px) {
+	#cc-main .cm--bar .cm__body {
+		width: min(1168px, 100% - 64px);
+	}
+
+	#cc-main .cm--bar .cm__title {
+		font-size: 20px;
+	}
+
+	#cc-main .cm--bar .cm__desc {
+		font-size: 16px;
+	}
+
+	#cc-main .cm--bar .cm__btns {
+		display: flex;
+		flex-direction: row !important;
+		justify-content: flex-end;
+	}
+
+	#cc-main .cm--bar .cm__btn {
+		min-width: 140px;
+	}
+
+	#cc-main .cm--bar .cm__btn[data-role='show'] {
+		margin-right: 16px !important;
+		min-width: 0;
+		order: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	#cc-main .cm--bar .cm__body {
+		align-items: center;
+		flex-direction: row !important;
+		gap: 48px;
+		padding: 24px 0 !important;
+	}
+
+	#cc-main .cm--bar .cm__texts {
+		max-width: 70ch;
+	}
+
+	#cc-main .cm--bar .cm__btns {
+		flex: none;
+		margin-left: auto;
+	}
+}
+
+/*
+ * The box: a title the size of the site's section headings, and the close
+ * cross and the category chevrons drawn in black on nothing, rather than
+ * white on a teal square and on a grey dot that vanished into the grey row.
+ */
+#cc-main .pm__title {
+	font-size: 20px;
+}
+
+@media (min-width: 1024px) {
+	#cc-main .pm__title {
+		font-size: 24px;
+	}
+}
+
+#cc-main .pm__close-btn,
+#cc-main .pm__close-btn:hover {
+	background: none;
+	border-color: transparent;
+}
+
+#cc-main .pm__close-btn svg,
+#cc-main .pm__section--expandable .pm__section-arrow svg {
+	stroke: var(--color-black);
+}
+
+#cc-main .pm__close-btn:hover svg {
+	stroke: var(--color-teal);
+}
+
+#cc-main .pm__section--expandable .pm__section-arrow {
+	background: none;
 }
