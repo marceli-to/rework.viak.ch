@@ -143,7 +143,10 @@ runs the ads then wires networks to those events in GTM without touching code.
   text and the centred footer row went. In the box: a 20/24px title, and the
   close cross and category chevrons black on no background.
 - **Shown in every environment**, so the client sees it on the prototype; only
-  GTM is production-only. The library hides itself from bots (headless
+  GTM is production-only. Confirmed 2026-10-21 (Marcel).
+- **The copy says *du***, as the site does (Marcel, 2026-10-21); legacy's
+  banner said *Sie*. The Marketing category's text is new, the rest is
+  legacy's turned to *du*. A *Sie* left in it means the cookies. The library hides itself from bots (headless
   browsers included), which is right for search engines; a Playwright check
   has to mask `navigator.webdriver`.
 - Finding 3 (Meta ignores consent) is fixed in the container, by whoever
