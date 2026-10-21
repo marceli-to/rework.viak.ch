@@ -423,7 +423,9 @@ the same breath.
   the cutover dump — any date where active rentals exceed `rentals_available`
   — and settle each with VIAK: raise the count, or drop the rental before its
   invoice is raised. Found 2026-09-24 with the laptop-count fix
-  (`06-bookings.md`, *Laptops are counted*).
+  (`06-bookings.md`, *Laptops are counted*). **The script is
+  `port:check-rentals`** (2026-10-21), a step in `Deploy.md`; on the current
+  copy it finds this one and no other.
 - **A fresh production dump before the cutover rehearsal.** The current copy is
   2026-09-11.
 - **Licence copy at launch.** The mockups are wireframes, so nothing to decide,

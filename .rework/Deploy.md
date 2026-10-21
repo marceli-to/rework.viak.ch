@@ -67,8 +67,13 @@ Still open: which PHP production runs (#11).
 4. **`php artisan port:verify`**: every polymorphic row has an existing
    class and owner, and the relation that reads it is named. Fails on a row
    that points at nothing ([[VerifyPort]]).
-5. The data checks: rentals against laptop counts, invoice 000419 at
-   CHF −149.00 (`Open-Questions.md`, *pending actions*).
+5. **`php artisan port:check-rentals`**: upcoming Veranstaltungen with more
+   laptops rented than the room has, and the bookings holding them. Settle
+   each with VIAK before its rental is invoiced: raise the count, or drop a
+   laptop ([[CheckRentals]]). On the 2026-09-11 copy: one, event `eac2d8b5…`
+   on 15.12.2026.
+   Then invoice 000419 at CHF −149.00 (`Open-Questions.md`, *pending
+   actions*).
 6. **`php artisan port:check-urls --base=https://<the new server>`**, before
    the DNS moves. Every URL legacy answers, followed on the rework. It fails
    when one does not land on a page ([[CheckLegacyUrls]], `Todo.md`, *The
