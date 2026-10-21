@@ -519,6 +519,8 @@ then they show how many are booked.
 
 ## Before cutover
 
+The steps themselves are in `Deploy.md`; this list is what is still to build or decide.
+
 - ~~**Rebuild the invoice card-payment page, or drop its button**~~ **Built 2026-10-20** (`13-checkout.md`; production needs the Stripe keys and webhook) (Marcel,
   2026-09-29: *"make sure to not forget this one"*). Legacy's
   `/de/zahlung/rechnung/{uuid}` is a Stripe checkout session

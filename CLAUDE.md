@@ -58,6 +58,8 @@ domain 301s to it). The legacy application is checked out beside this one at
   measurement behind it. Read the chunk's doc before touching a chunk; code
   comments cross-reference them with `[[wiki-links]]`. `.rework/Open-Questions.md`
   is what is still unanswered and who owes it.
+- **`.rework/Deploy.md`** — the runbook: every deploy, the environment, the
+  cutover. Anything a server has to do goes there when it is built.
 - **`resources/css/README.md`** — styling conventions for **both** the Blade site
   and the Vue dashboard. Three of the four differ from stock Tailwind, so a class
   copied from the docs will compile and be silently wrong.
