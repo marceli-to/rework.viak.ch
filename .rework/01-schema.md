@@ -32,7 +32,7 @@ of rows. A count check cannot see a column it does not read.
 | `users.firstname` + `users.name` | `first_name` + `last_name`, `name` accessor | `name` meant *surname* on User and *full name* on every other model |
 | `users.gender_id` → `genders` | `users.gender` enum | Three fixed rows nobody can usefully extend |
 | `users.country_id` → `countries.id` | `users.country_code` → `countries.code` | ISO 3166-1 alpha-2 is readable without a join and survives a re-import |
-| `users.operating_system` CSV | `users.operating_systems` JSON array | `"macOS,Windows"` and `"Windows,macOS"` were two different values |
+| `users.operating_system` CSV | dropped | Asked at registration, used for nothing; removed by decision on 2026-10-23 |
 | `users.expert_*`, `publish`, `visible` | `expert_profiles` 1:1 | 17 of 578 have a bio; the public page should not query the password table |
 | `discount_codes.fix` + `.percent` | `discount_codes.type` enum | Two booleans could say "both" and "neither" — states with no meaning |
 | `bookings.discount_code` string | `discount_code_id` FK + kept `discount_amount` | All 79 uses resolve, so the link is safe; the amount stays frozen |

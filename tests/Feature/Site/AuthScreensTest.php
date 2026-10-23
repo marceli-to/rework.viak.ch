@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Enums\Gender;
-use App\Enums\OperatingSystem;
 use App\Enums\Role;
 use App\Http\Middleware\SignOutDeactivated;
 use App\Models\Country;
@@ -43,7 +42,6 @@ function registration(array $overrides = []): array
 		'email_confirmation' => 'ada@example.test',
 		'password' => 'a-long-enough-password',
 		'password_confirmation' => 'a-long-enough-password',
-		'operating_systems' => [OperatingSystem::Windows->value],
 		'accept_tos' => '1',
 		...$overrides,
 	];
@@ -99,8 +97,7 @@ it('registers a student with every field legacy asks for', function () {
 		->and($user->gender)->toBe(Gender::Female)
 		->and($user->zip)->toBe('8001')
 		->and($user->country_code)->toBe('ch')
-		->and($user->subscribe_newsletter)->toBeFalse()
-		->and(collect($user->operating_systems)->pluck('value')->all())->toBe(['windows']);
+		->and($user->subscribe_newsletter)->toBeFalse();
 
 	// Everyone who signs up here is a customer, which takes no role.
 	expect($user->roles())->toBeEmpty();
@@ -124,12 +121,9 @@ it('will not take a mistyped email confirmation', function () {
 	expect(User::where('email', 'ada@example.test')->exists())->toBeFalse();
 });
 
-it('requires the terms and at least one operating system', function () {
+it('requires the terms', function () {
 	$this->from('/de/registration')->post('/de/registration', registration(['accept_tos' => null]))
 		->assertSessionHasErrors('accept_tos');
-
-	$this->from('/de/registration')->post('/de/registration', registration(['operating_systems' => []]))
-		->assertSessionHasErrors('operating_systems');
 
 	expect(User::where('email', 'ada@example.test')->exists())->toBeFalse();
 });

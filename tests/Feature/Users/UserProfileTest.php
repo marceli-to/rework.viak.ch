@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Enums\Gender;
-use App\Enums\OperatingSystem;
 use App\Models\ExpertProfile;
 use App\Models\User;
 
@@ -22,15 +21,6 @@ it('does not leave a stray space when half the name is missing', function () {
 	$user = User::factory()->create(['first_name' => '', 'last_name' => 'Haller']);
 
 	expect($user->name)->toBe('Haller');
-});
-
-it('reads several operating systems off one user', function () {
-	$user = User::factory()->create([
-		'operating_systems' => [OperatingSystem::MacOS, OperatingSystem::Windows],
-	]);
-
-	expect($user->fresh()->operating_systems)->toHaveCount(2)
-		->and($user->fresh()->operating_systems->first())->toBe(OperatingSystem::MacOS);
 });
 
 it('casts gender to the enum', function () {

@@ -6,7 +6,6 @@ namespace App\Console\Commands\Port;
 
 use App\Enums\DiscountType;
 use App\Enums\Gender;
-use App\Enums\OperatingSystem;
 use App\Enums\Role;
 use App\Models\Booking;
 use App\Models\Country;
@@ -158,7 +157,6 @@ class PortUsers extends Command
 				'country_code' => $countryCode ?: null,
 				'phone' => $row->phone,
 				'gender' => Gender::fromLegacyId((int) $row->gender_id),
-				'operating_systems' => $this->operatingSystems($row->operating_system),
 				'subscribe_newsletter' => (bool) $row->subscribe_newsletter,
 			]);
 
@@ -360,25 +358,6 @@ class PortUsers extends Command
 				'participated_at' => LegacyTime::local($participated[$row->id] ?? null),
 			]);
 		}
-	}
-
-	/** Legacy stored the multi-select as a CSV of display labels. */
-	private function operatingSystems(?string $value): ?array
-	{
-		if (blank($value)) {
-			return null;
-		}
-
-		$systems = array_values(array_unique(array_filter(array_map(
-			fn (string $label) => OperatingSystem::fromLegacyLabel($label)?->value,
-			explode(',', $value),
-		))));
-
-		if ($systems === []) {
-			$this->findings[] = "operating_system value '{$value}' matched no known system; dropped";
-		}
-
-		return $systems ?: null;
 	}
 
 	private function discountType(object $row): ?DiscountType

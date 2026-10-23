@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Enums;
 
 /**
- * What a licence runs on ([[05-licences]]). Not [[OperatingSystem]]: that one
- * is what a student brings to a course, and has an *anderes*.
+ * What a licence runs on ([[05-licences]]).
  */
 enum Platform: string
 {

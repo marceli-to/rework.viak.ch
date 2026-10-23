@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Accounts;
 
 use App\Enums\Gender;
-use App\Enums\OperatingSystem;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -37,8 +36,6 @@ class UpdateProfileRequest extends FormRequest
 			'phone' => ['nullable', 'string', 'max:50'],
 			'gender' => ['nullable', Rule::enum(Gender::class)],
 			'country_code' => ['nullable', 'string', 'size:2', 'exists:countries,code'],
-			'operating_systems' => ['nullable', 'array'],
-			'operating_systems.*' => [Rule::enum(OperatingSystem::class)],
 
 			'email' => [
 				'nullable', 'email', 'max:255',
@@ -97,7 +94,7 @@ class UpdateProfileRequest extends FormRequest
 		return array_filter(
 			$this->only([
 				'first_name', 'last_name', 'company', 'street', 'street_no',
-				'zip', 'city', 'phone', 'gender', 'country_code', 'operating_systems',
+				'zip', 'city', 'phone', 'gender', 'country_code',
 			]),
 			fn ($value) => $value !== null,
 		);

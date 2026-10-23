@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Gender;
-use App\Enums\OperatingSystem;
 use App\Enums\Role;
 use App\Mail\EmailVerification;
 use App\Mail\PasswordReset;
@@ -16,7 +15,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,7 +40,7 @@ use Laravel\Sanctum\HasApiTokens;
 #[Fillable([
 	'first_name', 'last_name', 'company', 'email', 'licence_email', 'password',
 	'street', 'street_no', 'zip', 'city', 'country_code', 'phone',
-	'gender', 'operating_systems', 'subscribe_newsletter',
+	'gender', 'subscribe_newsletter',
 ])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
@@ -74,7 +72,6 @@ class User extends Authenticatable implements MustVerifyEmail
 			'deactivated_at' => 'datetime',
 			'password' => 'hashed',
 			'gender' => Gender::class,
-			'operating_systems' => AsEnumCollection::class.':'.OperatingSystem::class,
 			'subscribe_newsletter' => 'boolean',
 		];
 	}

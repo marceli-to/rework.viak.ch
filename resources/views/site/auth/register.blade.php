@@ -15,21 +15,14 @@
 		$genders = collect(\App\Enums\Gender::cases())
 			->mapWithKeys(fn (\App\Enums\Gender $gender) => [$gender->value => $gender->label()])
 			->all();
-
-		$operatingSystems = [
-			\App\Enums\OperatingSystem::Windows->value => 'Windows',
-			\App\Enums\OperatingSystem::MacOS->value => 'macOS',
-			\App\Enums\OperatingSystem::Other->value => 'anderes',
-		];
-
-		$chosenSystems = (array) old('operating_systems', []);
 	@endphp
 
 	{{--
-		`frontend/register/Index.vue`, rebuilt as a form: the same seventeen
-		fields in the same order. Legacy's was a Vue island posting JSON and
-		painting its own validation errors; this posts to Fortify and Laravel
-		paints them, which is the same page with 200 fewer lines behind it.
+		`frontend/register/Index.vue`, rebuilt as a form: legacy's fields in
+		the same order, less *Betriebssystem* (dropped 2026-10-23). Legacy's
+		was a Vue island posting JSON and painting its own validation errors;
+		this posts to Fortify and Laravel paints them, which is the same page
+		with 200 fewer lines behind it.
 	--}}
 	<x-layout.article>
 		<x-slot:aside>
@@ -112,27 +105,6 @@
 
 			<x-form.field name="password" label="Passwort" type="password" required autocomplete="new-password" />
 			<x-form.field name="password_confirmation" label="Passwort wiederholen" type="password" required autocomplete="new-password" />
-
-			{{-- Which machines the student works on. It is what decides whether a
-			     rented laptop is any use to them. --}}
-			<div class="mb-16 lg:mb-32">
-				<span class="mb-4 block text-md sm:text-lg lg:text-xl">Betriebssystem *</span>
-
-				<div class="flex flex-col gap-8">
-					@foreach ($operatingSystems as $value => $label)
-						<x-form.checkbox
-							name="operating_systems[]"
-							:id="'os_'.$value"
-							:value="$value"
-							:checked="in_array($value, $chosenSystems, true)"
-						>{{ $label }}</x-form.checkbox>
-					@endforeach
-				</div>
-
-				@error('operating_systems')
-					<div class="pt-8 text-md text-danger lg:text-lg">{{ $message }}</div>
-				@enderror
-			</div>
 
 			<div class="mb-16 flex flex-col gap-8 lg:mb-32">
 				<x-form.checkbox name="accept_tos" :checked="(bool) old('accept_tos')">

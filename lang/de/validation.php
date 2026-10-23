@@ -191,7 +191,6 @@ return [
         'zip' => 'PLZ',
         'country_code' => 'Land',
         'email_confirmation' => 'E-Mail-Bestätigung',
-        'operating_systems' => 'Betriebssystem',
         'accept_tos' => 'AGB',
         'subscribe_newsletter' => 'Newsletter',
         'total_shown' => 'Gesamtbetrag',

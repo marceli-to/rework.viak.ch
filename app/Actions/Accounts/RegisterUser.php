@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\Accounts;
 
 use App\Enums\Gender;
-use App\Enums\OperatingSystem;
 use App\Http\Middleware\SignOutDeactivated;
 use App\Models\Country;
 use App\Models\User;
@@ -20,17 +19,16 @@ use Laravel\Fortify\Contracts\CreatesNewUsers;
  *
  * The replacement for legacy's `StudentRegisterController`, and the field list
  * is legacy's form exactly: salutation, name, company, phone, address, email
- * twice, password twice, which machines you work on, the terms, the newsletter.
+ * twice, password twice, the terms, the newsletter. Legacy's *Betriebssystem*
+ * is gone, by decision on 2026-10-23.
  *
- * Three things legacy does that are worth keeping, and one that is not:
+ * Two things legacy does that are worth keeping, and one that is not:
  *
  * - **The email is typed twice and paste is blocked on the second.** A typo
  *   here is an account nobody can recover, because every reset goes to the
  *   address that was mistyped.
  * - **Accepting the terms is required**, and it is not stored — legacy has no
  *   column for it and neither does this. It gates the form, nothing more.
- * - **At least one operating system.** It is what tells VIAK whether a rented
- *   laptop is any use to this student.
  * - Legacy signs the new user in **without verifying the address first**, then
  *   mails a verification link that nothing enforces. Here `MustVerifyEmail` is
  *   on the model and Fortify's `verified` middleware is what enforces it.
@@ -65,15 +63,12 @@ class RegisterUser implements CreatesNewUsers
 				'unique:users,email',
 			],
 			'password' => ['required', 'string', 'confirmed', 'min:8'],
-			'operating_systems' => ['required', 'array', 'min:1'],
-			'operating_systems.*' => ['string', 'in:'.implode(',', array_column(OperatingSystem::cases(), 'value'))],
 			'accept_tos' => ['accepted'],
 			'subscribe_newsletter' => ['nullable', 'boolean'],
 		], [
 			'email.confirmed' => 'Die beiden E-Mail-Adressen stimmen nicht überein.',
 			'password.confirmed' => 'Die beiden Passwörter stimmen nicht überein.',
 			'accept_tos.accepted' => 'Bitte akzeptieren Sie die AGB.',
-			'operating_systems.required' => 'Bitte wählen Sie mindestens ein Betriebssystem.',
 		])->validate();
 
 		return DB::transaction(function () use ($input): User {
@@ -90,10 +85,6 @@ class RegisterUser implements CreatesNewUsers
 				'country_code' => $input['country_code'],
 				'email' => $input['email'],
 				'password' => Hash::make($input['password']),
-				'operating_systems' => array_map(
-					fn (string $value) => OperatingSystem::from($value),
-					$input['operating_systems'],
-				),
 				'subscribe_newsletter' => (bool) ($input['subscribe_newsletter'] ?? false),
 			]);
 

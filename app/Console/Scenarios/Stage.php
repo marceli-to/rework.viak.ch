@@ -131,7 +131,6 @@ class Stage
 			'email_confirmation' => $email,
 			'password' => DevUsersSeeder::PASSWORD,
 			'password_confirmation' => DevUsersSeeder::PASSWORD,
-			'operating_systems' => ['windows'],
 			'accept_tos' => true,
 		]);
 
