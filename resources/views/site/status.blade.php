@@ -49,8 +49,8 @@
 		],
 		[
 			'title' => 'Software: Gutscheincodes und Studierendenpreise?',
-			'text' => 'Gutscheincodes gelten heute nur für Kurse. Sollen sie auch für Software gelten, und gibt es Preise für Studierende?',
-			'decides' => 'Die Preisregeln im Shop.',
+			'text' => 'Gutscheincodes sollen auch für Software gelten (siehe «Noch nicht gebaut»). Zwei Punkte dazu: Die Software-Preise sind exkl. MWST. Zieht ein Gutschein über CHF 50 vom Preis exkl. MWST ab (die Kund:in spart dann CHF 54.05) oder vom Endbetrag? Und gilt ein fester Betrag bei Kursen und Software im selben Warenkorb zuerst für die Software, die sofort bezahlt wird? Ausserdem: Gibt es Preise für Studierende?',
+			'decides' => 'Wie ein Gutschein auf Software angerechnet wird, und ob es eine Preisregel für Studierende braucht.',
 		],
 		[
 			'title' => 'Bundles: mit eigenem Preis?',
@@ -116,6 +116,7 @@
 		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
 		['Newsletter-Anbindung', 'Die Anmeldung an Mailchimp übergeben.', 'Wartet auf die Mailchimp-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
+		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];
 
