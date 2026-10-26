@@ -16,6 +16,9 @@ checkout with licences and the account's orders (*The checkout as built*,
 below). Marcel confirmed the two open points the same day: orders listed in
 the profile and paid from there; card only for licences at checkout.
 
+**Reopened 2026-10-26** by the client: licences paid by invoice as well as by
+card (*Invoice only, as well as split*, at the end). Not built; #58 and #59.
+
 ## Paying an invoice by card — built 2026-10-20
 
 Legacy's flow, with Marcel's word for it: **a course is paid only after it is
@@ -215,3 +218,37 @@ Kurse").
   bundle is cheaper. No price rule is built; if it comes, it touches #3.
 - Dev data: Rhinoceros recommends its three courses and V-Ray, Twinmotion,
   Enscape, Maxwell.
+
+## Invoice only, as well as split — asked 2026-10-26
+
+The client, in the meeting of 2026-10-26: two payment options, **invoice only**
+(courses and licences) or **split**, as built (licences by card now, courses
+invoiced on confirmation). This reverses *card only for licences at checkout*
+(Marcel, 2026-10-20, *Status*).
+
+**Most of it exists.** A licence order whose card payment is abandoned is
+already an order with an open invoice, payable later from the profile or the
+invoice page (#45, *The checkout as built*). *Invoice only* is that order
+placed on purpose: [[PlaceLicenceOrder]] and its invoice as now, no Stripe,
+and the order mail worded for an invoice (with the QR bill and the card
+button, as a course invoice has).
+
+**What changes:**
+
+- The payment step offers the choice when the basket holds a priced licence:
+  *Per Rechnung* or *Per Karte* (courses are invoiced either way). The summary
+  and its button follow it (*Bestellen* rather than *Bestellen und bezahlen*).
+- The confirmation and the mails say the invoice follows, for both parts.
+- Dispatch: today nothing holds a licence back for an unpaid order (#2). With
+  invoice as a chosen option rather than an abandoned card, #2 stops being
+  theoretical: VIAK will see paid and unpaid orders on the worklist and must
+  decide what it sends.
+
+**Questions** (in `Open-Questions.md`):
+
+- **58.** Who chooses: the customer at checkout, or VIAK per customer (say,
+  invoice only for known companies, card for everyone else)? Or a site-wide
+  setting?
+- **59.** The due date of a licence invoice: the 10 days every invoice has
+  today (`invoice.payment_period`), or another period? A course invoice is
+  also due 10 days before the course; a licence has no such date.

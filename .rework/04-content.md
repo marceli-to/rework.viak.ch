@@ -255,6 +255,8 @@ homepage (homepage marker 1). First pass, built to be reshaped:
   hand-picked list in *Seiteninhalte*. Each card says *Kurs* or *Software*
   in its top right corner. No link beside the heading for now (Marcel); the
   mockup's *Alle Angebote von A bis Z* has no page.
+  **Reversed by the client on 2026-10-26**: the paired tiles and the page
+  come back, `14-angebote.md`.
 - **Vorhaben list software too** (2026-10-09, Marcel): the form has a
   second picker, *Software*, under *Kurse* (`project_software`, ordered as
   `course_project` is); the page draws the courses, then the software that

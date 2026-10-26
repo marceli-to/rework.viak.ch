@@ -8,7 +8,9 @@ settled.
 **Nothing on this list blocks anything that is being built.** Chunk 03 is built
 and none of these held it up. Updated 2026-09-24, with the 2026-09-23 mockup
 review (22–24 are from it), and 2026-09-29 with the licence catalogue (33–39), all answered 2026-10-08
-(47–49 are what those answers left).
+(47–49 are what those answers left), and 2026-10-26 with the client meeting
+(50–65). **That last batch is the exception**: 50, 51 and 53 shape chunk 14
+(`14-angebote.md`) and are best answered before it is built.
 
 **The live site is not fixed** (Marcel, 2026-09-29). What the rework finds in
 legacy, including the `/expert/finish` account-takeover path found 2026-09-18
@@ -23,7 +25,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | # | Question | Owner | Blocks |
 |---|---|---|---|
 | ~~1~~ | ~~Is the Bildung licence tier real?~~ — **answered 2026-10-08 with 36: no tier.** EDU licences are hidden variants VIAK enters by hand. See `05-licences.md` | — | — |
-| 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly |
+| 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly. **Urgent with 58** (2026-10-26): invoice as a chosen option makes unpaid orders normal |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy | Client | Copy only |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
@@ -58,6 +60,22 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~35~~ | ~~What does "buying" a demo mean?~~ — **answered 2026-10-08: a free order.** No payment, no invoice is the proposal, see `05-licences.md`, *A free order* | — | — |
 | ~~36~~ | ~~Can a customer order a hidden product on the site?~~ — **answered 2026-10-08: no.** VIAK enters the order taken by mail or phone, and wants the blank line (free title and price) back | — | — |
 | ~~37~~ | ~~Updates and upgrades: edition or own product?~~ — **answered 2026-10-08: variants in the dropdown, consistently** | — | — |
+| 50 | Courses with no software (*Geheimnisse der ArchViz*): a tile linking to the course page, or an Angebot of their own? | Client | `14-angebote.md`, *Alle Angebote*. Raised 2026-10-26 |
+| 51 | Does the course page stay, and is a course with several Veranstaltungen one row per date or one row with the next date? | Client | `14-angebote.md`, the Angebot's *Kurse*. Raised 2026-10-26 |
+| 52 | *Kurs ab CHF*: from every published course, or only those with a date? *auf Anfrage* when neither? | Client | `14-angebote.md`, *Beliebte Angebote*. Raised 2026-10-26 |
+| 53 | The nav: *Angebot* (review marker 8), or *Kurse* and *Software* as the 2026-10-26 screenshots have it? Does `/de/kurse` stay? | Client | `14-angebote.md`, the nav and redirects. Raised 2026-10-26 |
+| 54 | Who writes *Mehr über …*, the licence features and the one-line leads? | Client | Content only; the pages draw without them. Raised 2026-10-26 |
+| 55 | *Beliebte Angebote*: featured software only, or featured courses without software too? | Client | `14-angebote.md`, the homepage. Raised 2026-10-26 |
+| 56 | Search: the catalogue only, or experts and pages too? | Client | `15-search.md`, what is indexed. Raised 2026-10-26 |
+| 57 | Search results: with prices and dates, or titles and leads? | Client | `15-search.md`, the result page. Raised 2026-10-26 |
+| 58 | *Invoice only* for licences: chosen by the customer at checkout, by VIAK per customer, or site-wide? | Client | `13-checkout.md`, *Invoice only, as well as split*. Raised 2026-10-26; makes #2 urgent |
+| 59 | A licence invoice's due date: the 10 days of every invoice, or another period? | Client | Nothing; 10 days until answered. Raised 2026-10-26 |
+| 60 | Firmenkurse: do participants exist in the app (accounts, documents, confirmations), or only the event and one invoice? | Client | `16-firmenkurse.md`, its size. Raised 2026-10-26 |
+| 61 | Firmenkurse: priced per day, per participant or flat? | Client | `16-firmenkurse.md`, the invoice lines. Raised 2026-10-26 |
+| 62 | Firmenkurse: one invoice, or partial invoices? | Client | `16-firmenkurse.md`. Raised 2026-10-26 |
+| 63 | Should a Firmenschulung enquiry be stored and become a Firmenkurs? | Client | `16-firmenkurse.md`; changes #24's *nothing stored*. Raised 2026-10-26 |
+| 64 | The MCP server: which questions should it answer, and may anything be changed through it? | Client | `17-mcp.md`, every tool. Raised 2026-10-26 |
+| 65 | The MCP server: which AI client connects, and who at VIAK uses it? | Client | `17-mcp.md`, tokens; production data leaves the app through it. Raised 2026-10-26 |
 | ~~38~~ | ~~"Nur zusammen mit Neulizenz": enforced or a note?~~ — **answered 2026-10-08: a note** | — | — |
 | ~~39~~ | ~~Minimum and maximum quantities beyond the Teams licences' 3?~~ — **answered 2026-10-08: none** | — | — |
 | 40 | The homepage's Firmenschulung teaser: is *Ab CHF 2'400 pro Tag, pauschal* the real price, and which clients may it name under *Zuletzt geschult*? | Client | Nothing: the price shows as the mockup has it, the client line is left out until named. Raised 2026-10-07 |
@@ -176,6 +194,15 @@ answers*). Three small things are left, none of them blocking a start on the bui
   LUM-10260 in the old shop's URL. **Decides:** one SKU.
 - **49. The grouping.** 107 rows into 38 products, drawn by us from "variants
   as a dropdown, consistently". **Decides:** the import; VIAK can regroup later.
+
+### 50–65. From the meeting of 2026-10-26
+
+The client raised five changes: Kurs and Software merged into one Angebot
+(`14-angebote.md`, 50–55), full-text search (`15-search.md`, 56–57), invoice
+only as a payment option (`13-checkout.md`, 58–59), Firmenkurse in the
+dashboard (`16-firmenkurse.md`, 60–63), and an MCP server (`17-mcp.md`,
+64–65). Each chunk doc has the reasoning; the table above has the questions.
+The biggest is 53: it decides the nav on every page and which URLs redirect.
 
 ### 4. Which of the six Vorhaben are real, and are there more coming?
 
