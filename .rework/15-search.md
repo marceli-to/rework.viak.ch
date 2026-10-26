@@ -121,8 +121,8 @@ nav. So the proposal uses the site's own pieces:
   Arrows move through the hits, Enter opens the marked one or the result
   page, Escape or a click outside shuts it ([[siteSearch]]).
 - **`/de/suche?q=…`**: the article with *Suche* in the aside and the field at
-  the top of the column, every hit under it as **one ranked list** with its
-  badge, as the panel draws them, the field's rule the first row's (Marcel,
+  the top of the column, *13 Einträge gefunden* under it, then every hit as
+  **one ranked list** with its badge, as the panel draws them (Marcel,
   2026-10-26; a first pass grouped them in collapsibles). `noindex`.
 - **On a phone** the field is the first row of the teal menu panel
   (*Suchen*, as a placeholder), a plain form to the result page: a live

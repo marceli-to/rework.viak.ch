@@ -1,9 +1,8 @@
 {{--
 	The site search's result page ([[15-search]]), `/de/suche?q=…`: the
 	article with *Suche* in the aside, the field at the top of the column and
-	every hit under it as one list, ranked, each with its badge, as the
-	header's panel draws them; the field's rule is the first row's
-	(Marcel, 2026-10-26).
+	how many it found, then every hit as one list, ranked, each with its
+	badge, as the header's panel draws them (Marcel, 2026-10-26).
 
 	Kept out of search engines: a page of results is not a page.
 --}}
@@ -22,8 +21,9 @@
 		@elseif ($hits->isEmpty())
 			<x-ui.no-results>Nichts gefunden für «{{ $query }}». Vielleicht ein anderes Wort, oder ein Blick in die <a href="{{ \App\Support\SiteUrl::courses() }}" class="underline decoration-1 underline-offset-[3px] hover:no-underline">Kurse</a>?</x-ui.no-results>
 		@else
-			{{-- Pulled up onto the field's rule: the field keeps its margin elsewhere. --}}
-			<div class="-mt-16 lg:-mt-32 [&>a:first-child]:border-t-0">
+			<p class="mb-16 text-md text-gray-600 sm:mb-24 sm:text-lg lg:text-xl">{{ $hits->count() === 1 ? '1 Eintrag' : $hits->count().' Einträge' }} gefunden</p>
+
+			<div>
 				@foreach ($hits as $hit)
 					<x-row.search-hit :hit="$hit" />
 				@endforeach

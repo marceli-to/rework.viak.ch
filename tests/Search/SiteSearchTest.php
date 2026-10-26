@@ -122,7 +122,7 @@ it('shows the hits as one ranked list on the result page, kept out of search eng
 	$this->get('/de/suche?q=rhino')
 		->assertOk()
 		->assertSee('noindex', false)
-		->assertSeeInOrder(['Rhinoceros', 'Software', 'Rhino Einstiegskurs', 'Kurs', 'Rhinoceros 8', 'Lizenz']);
+		->assertSeeInOrder(['3 Einträge gefunden', 'Rhinoceros', 'Software', 'Rhino Einstiegskurs', 'Kurs', 'Rhinoceros 8', 'Lizenz']);
 
 	$this->get('/de/suche?q=xyzzy')->assertOk()->assertSee('Nichts gefunden für «xyzzy»', false);
 	$this->get('/de/suche')->assertOk()->assertSee('Zum Beispiel');
