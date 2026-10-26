@@ -49,6 +49,11 @@
 			'decides' => 'Ob die Versandliste im Dashboard unbezahlte Bestellungen zurückhält, und was Bestätigung und E-Mail versprechen.',
 		],
 		[
+			'title' => 'Software: Zahlungsfrist der Rechnung?',
+			'text' => 'Eine Software-Rechnung ist heute 10 Tage nach Rechnungsdatum fällig. Eine Kurs-Rechnung ist 10 Tage vor dem Kurs fällig (frühestens 10 Tage nach Rechnungsdatum), bei Software gibt es kein solches Datum. Bleibt es bei 10 Tagen, oder gilt für Software eine andere Frist?',
+			'decides' => 'Das Fälligkeitsdatum auf der Software-Rechnung.',
+		],
+		[
 			'title' => 'Software: Gutscheincodes und Studierendenpreise?',
 			'text' => 'Gutscheincodes sollen auch für Software gelten (siehe «Noch nicht gebaut»). Zwei Punkte dazu: Die Software-Preise sind exkl. MWST. Zieht ein Gutschein über CHF 50 vom Preis exkl. MWST ab (die Kund:in spart dann CHF 54.05) oder vom Endbetrag? Und gilt ein fester Betrag bei Kursen und Software im selben Warenkorb zuerst für die Software, die sofort bezahlt wird? Ausserdem: Gibt es Preise für Studierende?',
 			'decides' => 'Wie ein Gutschein auf Software angerechnet wird, und ob es eine Preisregel für Studierende braucht.',
