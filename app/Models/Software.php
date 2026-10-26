@@ -41,13 +41,13 @@ class Software extends Model
 
 	protected $fillable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
-		'information', 'seo_description', 'seo_tags',
+		'information', 'licence_note', 'seo_description', 'seo_tags',
 		'order', 'publish', 'featured',
 	];
 
 	public $translatable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
-		'information', 'seo_description', 'seo_tags',
+		'information', 'licence_note', 'seo_description', 'seo_tags',
 	];
 
 	protected function casts(): array
@@ -79,6 +79,40 @@ class Software extends Model
 	public function products(): HasMany
 	{
 		return $this->hasMany(LicenceProduct::class);
+	}
+
+	/**
+	 * The Vorhaben it is picked for, in their order: the chips on the Angebot
+	 * page ([[14-angebote]]). The other side of [[Project::software]], which
+	 * is where it is edited.
+	 */
+	public function projects(): BelongsToMany
+	{
+		return $this->belongsToMany(Project::class, 'project_software')->published()->ordered();
+	}
+
+	/**
+	 * *Kurs ab CHF …* on the Angebot tile ([[14-angebote]]): the lowest fee of
+	 * a Veranstaltung that can be booked, of a published course for this
+	 * software. Null, *Kurs auf Anfrage*, when there is none. A free one
+	 * (`free_of_charge`, a 0 fee) does not count: *ab CHF 0* would be wrong.
+	 *
+	 * Whether a course with no date counts too is #52; if it does, this is
+	 * the course's own fee as well.
+	 */
+	public function courseFromPrice(): ?string
+	{
+		return Event::query()
+			->published()->active()->upcoming()
+			->whereHas('course', fn (Builder $courses) => $courses->published()
+				->whereHas('software', fn (Builder $software) => $software->whereKey($this->getKey())))
+			->with('course')
+			->get()
+			->filter(fn (Event $event) => $event->isBookable())
+			->map(fn (Event $event) => $event->fee())
+			->filter(fn (string $fee) => bccomp($fee, '0', 2) > 0)
+			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
+			->first();
 	}
 
 	/** The courses' categories: the software list filters by them too. */

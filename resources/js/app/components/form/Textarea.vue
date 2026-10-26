@@ -16,6 +16,8 @@ defineProps({
 	error: { type: String, default: null },
 	rows: { type: Number, default: 2 },
 	mono: { type: Boolean, default: false },
+	// A line under the field, as [[Field]] has it: a licence's *Eigenschaften*.
+	hint: { type: String, default: null },
 });
 
 const id = useId();
@@ -75,5 +77,6 @@ if (shown) watch(shown, (open) => open && grow());
 			:class="[error ? 'border-danger' : 'border-black', mono ? 'font-mono font-normal' : '']"
 		/>
 		<div v-if="error" class="pt-8 text-md text-danger lg:text-lg">{{ error }}</div>
+		<div v-else-if="hint" class="pt-8 text-md text-gray-600 lg:text-lg">{{ hint }}</div>
 	</div>
 </template>

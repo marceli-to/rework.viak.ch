@@ -86,7 +86,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<Field v-if="field.type === 'text'" v-model="value" :type="field.input ?? 'text'" :label="field.label" :required="field.required" :readonly="field.readonly" :hint="field.hint" :error="error" />
 	<Field v-else-if="field.type === 'number'" v-model="value" type="number" :label="field.label" :required="field.required" :hint="field.hint" :error="error" />
 	<MaskedField v-else-if="field.type === 'date' || field.type === 'time'" v-model="value" :kind="field.type" :label="field.label" :required="field.required" :error="error" />
-	<Textarea v-else-if="field.type === 'textarea'" v-model="value" :label="field.label" :required="field.required" :rows="field.rows ?? 2" :mono="field.mono" :error="error" />
+	<Textarea v-else-if="field.type === 'textarea'" v-model="value" :label="field.label" :required="field.required" :rows="field.rows ?? 2" :mono="field.mono" :hint="field.hint" :error="error" />
 	<Editor v-else-if="field.type === 'richtext'" v-model="value" :label="field.label" :required="field.required" :error="error" />
 	<Select v-else-if="field.type === 'select'" v-model="value" :label="field.label" :options="field.options" :placeholder="field.placeholder" :required="field.required" :error="error">
 		<template v-if="field.create" #action>

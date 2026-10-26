@@ -50,6 +50,7 @@ class SaveSoftwareRequest extends FormRequest
 		$attributes = [
 			'title' => ['de' => $data['title']],
 			'subtitle' => $de($data['subtitle'] ?? null),
+			'licence_note' => $de(isset($data['licence_note']) ? trim($data['licence_note']) : null),
 			'seo_description' => $de($data['seo_description'] ?? null),
 			'seo_tags' => $de($data['seo_tags'] ?? null),
 			'publish' => (bool) ($data['publish'] ?? false),

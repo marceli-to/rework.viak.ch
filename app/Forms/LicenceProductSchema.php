@@ -32,6 +32,9 @@ final class LicenceProductSchema extends Schema
 				->mapWithKeys(fn (Manufacturer $maker) => [$maker->uuid => $maker->getTranslation('title', 'de')])->all())
 				->label('Hersteller')->required()->with(['placeholder' => 'Bitte wählen', 'create' => 'manufacturers']),
 			Field::richtext('description')->label('Beschreibung'),
+			// The ticks on the Angebot's licence row ([[14-angebote]]), one per line.
+			Field::textarea('features')->label('Eigenschaften')->rules(['max:1000'])
+				->with(['hint' => 'Eine pro Zeile, kurz: «Kauflizenz, unbefristet», «Windows und Mac». Drei passen in eine Zeile.']),
 			// Maxwell V5 and the RealFlow Plugin: one price, the host chosen on the order.
 			// Picked from the Software list, so a program has one spelling (Marcel, 2026-10-09).
 			// In a collapsible, shut: two products of 39 have any (Marcel, 2026-10-09).
@@ -52,7 +55,7 @@ final class LicenceProductSchema extends Schema
 	public function defaults(): array
 	{
 		return [
-			'software' => '', 'manufacturer' => '', 'title' => '', 'description' => '', 'hosts' => [],
+			'software' => '', 'manufacturer' => '', 'title' => '', 'description' => '', 'features' => '', 'hosts' => [],
 			'three_years_on_request' => false, 'publish' => true,
 		];
 	}

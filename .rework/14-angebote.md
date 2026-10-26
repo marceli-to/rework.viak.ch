@@ -7,7 +7,8 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 
 ## Status
 
-**Scoped 2026-10-26**, nothing built. The screenshots shown in the meeting are
+**Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
+layout*, at the end); the pages are not. The screenshots shown in the meeting are
 in `history/meeting-2026-10-26/`: `homepage.png` (*Beliebte Angebote*, markers 6
 and 7 of the 2026-09-23 review), `angebote.png` (*Alle Angebote*), `rhino-1.png`
 and `rhino-2.png` (one Angebot). They are the 2026-09-23 mockups
@@ -129,3 +130,34 @@ Most of the data is in place; the change is in the pages.
   the 39 licence products? The import has none of it.
 - **55.** *Beliebte Angebote*: featured software only, or do featured courses
   without software appear too?
+
+## Built ahead of the layout — 2026-10-26
+
+What the pages will draw, whatever #50–55 decide about how. Nothing on the
+public site changed.
+
+- **A licence's features**: `licence_products.features`, a textarea
+  *Eigenschaften* in the product form, one per line
+  ([[LicenceProduct::featureList]]). Empty for all 39 products: the import
+  has none (#54).
+- **A licence sold elsewhere**: `software.licence_note`, *Lizenz-Hinweis* in
+  the software form (*Lizenz direkt bei Adobe*). **It has nowhere to show
+  yet**: a software is on the site only with a listed licence of its own
+  (`Software::onSite()`), so After Effects has no page and no tile. Which
+  software gets an Angebot without a licence is part of #50.
+- **The Vorhaben chips**: [[Software::projects]], the published Vorhaben a
+  software is picked for, in their order. Edited where it was, on the
+  Vorhaben.
+- **Kurs ab CHF**: [[Software::courseFromPrice]], the lowest fee of a
+  Veranstaltung that can be booked (published, not cancelled, ahead), of a
+  published course for the software; a free one does not count. Null means
+  *Kurs auf Anfrage*.
+
+  **On the dev data that rule says *auf Anfrage* for 16 of 17 software**:
+  only Rhinoceros (CHF 949) has a course with a date ahead. Twinmotion's
+  course is published at CHF 499 but has no Veranstaltung. The screenshot's
+  *Kurs ab CHF 590* is what the course's own fee would give, so #52 is worth
+  settling before the tiles are drawn: by date, the homepage mostly reads
+  *auf Anfrage*; by course fee, it shows prices for courses nobody can book.
+
+The textarea in the dashboard learned the `hint` line the text field has.

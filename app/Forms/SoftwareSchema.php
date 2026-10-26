@@ -40,6 +40,9 @@ final class SoftwareSchema extends Schema
 			Field::richtext('short_description')->label('Kurzbeschrieb'),
 			Field::richtext('full_description')->label('Detailbeschrieb'),
 			Field::richtext('information')->label('Weitere Informationen'),
+			// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
+			Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
+				->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
 
 			Field::section('Einstellungen', [
 				Field::row([
@@ -67,7 +70,7 @@ final class SoftwareSchema extends Schema
 	{
 		return [
 			'title' => '', 'subtitle' => '', 'publish' => false, 'featured' => false,
-			'short_description' => '', 'full_description' => '', 'information' => '',
+			'short_description' => '', 'full_description' => '', 'information' => '', 'licence_note' => '',
 			'categories' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
 			'seo_description' => '', 'seo_tags' => '',

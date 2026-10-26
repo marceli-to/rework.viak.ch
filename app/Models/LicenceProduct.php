@@ -32,10 +32,10 @@ class LicenceProduct extends Model
 	use IndexedForSearch;
 	use SoftDeletes;
 
-	protected $fillable = ['software_id', 'manufacturer_id', 'title', 'slug', 'description', 'three_years_on_request', 'publish', 'order'];
+	protected $fillable = ['software_id', 'manufacturer_id', 'title', 'slug', 'description', 'features', 'three_years_on_request', 'publish', 'order'];
 
 	/** @var array<int, string> */
-	public $translatable = ['title', 'slug', 'description'];
+	public $translatable = ['title', 'slug', 'description', 'features'];
 
 	protected function casts(): array
 	{
@@ -93,6 +93,19 @@ class LicenceProduct extends Model
 	public function isListed(): bool
 	{
 		return $this->publish && $this->variants->contains(fn (LicenceVariant $variant) => $variant->listed);
+	}
+
+	/**
+	 * The ticked lines on the Angebot's licence row ([[14-angebote]]): one per
+	 * line in the dashboard's field, blank lines dropped.
+	 *
+	 * @return list<string>
+	 */
+	public function featureList(?string $locale = null): array
+	{
+		$text = (string) $this->getTranslation('features', $locale ?? app()->getLocale(), false);
+
+		return array_values(array_filter(array_map('trim', preg_split('/\R/u', $text) ?: []), 'strlen'));
 	}
 
 	/** "ab CHF …": the cheapest listed variant that costs something; a demo is not a price. */

@@ -47,6 +47,7 @@ class SaveLicenceProductRequest extends FormRequest
 			'manufacturer_id' => Manufacturer::query()->where('uuid', $data['manufacturer'])->value('id'),
 			'title' => ['de' => $data['title']],
 			'description' => ['de' => blank($data['description'] ?? null) ? null : $data['description']],
+			'features' => ['de' => blank($data['features'] ?? null) ? null : trim($data['features'])],
 			'three_years_on_request' => (bool) ($data['three_years_on_request'] ?? false),
 			'publish' => (bool) ($data['publish'] ?? false),
 		];
