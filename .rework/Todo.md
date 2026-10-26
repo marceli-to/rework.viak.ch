@@ -507,6 +507,9 @@ items that are ours rather than the client's.
 - ~~Does the client want to build pages we have not designed?~~ —
   **answered 2026-09-16: no.** The no-Statamic decision in `04-content.md` is
   settled rather than assumed.
+- ~~Firmenkurse: participants, price, invoices, enquiry (#60–63)~~ —
+  **answered 2026-10-26 (Marcel), all the small way**: a number, free lines,
+  one invoice, the enquiry stays a mail. See `16-firmenkurse.md`.
 - ~~Who may pay licences by invoice (#58)?~~ — **answered 2026-10-26 (Marcel):
   the customer chooses at checkout.** The path was already built behind a
   switch; the switch went and the choice is on the payment step. See

@@ -70,10 +70,10 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 57 | Search results: with prices and dates, or titles and leads? | Client | `15-search.md`, the result page. Raised 2026-10-26 |
 | ~~58~~ | ~~*Invoice only* for licences: chosen by the customer at checkout, by VIAK per customer, or site-wide?~~ **Answered 2026-10-26: the customer, at checkout.** Built, see `13-checkout.md` | — | — |
 | 59 | A licence invoice's due date: the 10 days of every invoice, or another period? | Client | Nothing; 10 days until answered. Raised 2026-10-26, on *Projektstand* |
-| 60 | Firmenkurse: do participants exist in the app (accounts, documents, confirmations), or only the event and one invoice? | Client | `16-firmenkurse.md`, its size. Raised 2026-10-26 |
-| 61 | Firmenkurse: priced per day, per participant or flat? | Client | `16-firmenkurse.md`, the invoice lines. Raised 2026-10-26 |
-| 62 | Firmenkurse: one invoice, or partial invoices? | Client | `16-firmenkurse.md`. Raised 2026-10-26 |
-| 63 | Should a Firmenschulung enquiry be stored and become a Firmenkurs? | Client | `16-firmenkurse.md`; changes #24's *nothing stored*. Raised 2026-10-26 |
+| ~~60~~ | ~~Firmenkurse: do participants exist in the app?~~ **Answered 2026-10-26: no, a number.** See `16-firmenkurse.md` | — | — |
+| ~~61~~ | ~~Firmenkurse: priced per day, per participant or flat?~~ **Answered 2026-10-26: free lines per invoice** | — | — |
+| ~~62~~ | ~~Firmenkurse: one invoice, or partial invoices?~~ **Answered 2026-10-26: one** | — | — |
+| ~~63~~ | ~~Should a Firmenschulung enquiry be stored and become a Firmenkurs?~~ **Answered 2026-10-26: no, it stays a mail** | — | — |
 | 64 | The MCP server: which questions should it answer, and may anything be changed through it? | Client | `17-mcp.md`, every tool. Raised 2026-10-26 |
 | 65 | The MCP server: which AI client connects, and who at VIAK uses it? | Client | `17-mcp.md`, tokens; production data leaves the app through it. Raised 2026-10-26 |
 | ~~38~~ | ~~"Nur zusammen mit Neulizenz": enforced or a note?~~ — **answered 2026-10-08: a note** | — | — |
