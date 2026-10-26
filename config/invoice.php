@@ -40,6 +40,15 @@ return [
 	'payment_period' => 10,
 
 	/*
+	 * Licences paid by invoice at checkout, instead of by card on Stripe's
+	 * page ([[13-checkout]], *Invoice only, as well as split*). Built, and off
+	 * until the client says who may choose it (#58): this is a code change,
+	 * not a server setting, because the answer may be per customer rather
+	 * than a switch ([[LicencePayment::offeredTo]]).
+	 */
+	'licence_by_invoice' => false,
+
+	/*
 	 * CHF 80 laptop for students without a suitable machine. Still here
 	 * because it is the price a *new* rental is sold at; once sold it is
 	 * frozen on the booking as `rental_fee`, so a change to this number

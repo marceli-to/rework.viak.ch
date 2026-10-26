@@ -8,6 +8,7 @@ use App\Actions\Bookings\CompleteCheckout;
 use App\Actions\Bookings\PriceBasket;
 use App\Actions\Invoices\RecordCardPayment;
 use App\Actions\Licences\PlaceLicenceOrder;
+use App\Enums\LicencePayment;
 use App\Events\LicenceOrderPlaced;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounts\StoreAddressRequest;
@@ -194,14 +195,18 @@ class CheckoutController extends Controller
 			LicenceOrderPlaced::dispatch($order);
 		}
 
+		$payment = $request->licencePayment();
+
 		CheckoutSession::clear();
-		CheckoutSession::setOutcome($basket->hasCourses(), $order);
+		CheckoutSession::setOutcome($basket->hasCourses(), $order, $payment);
 
 		// Read back, not taken from the order: a fresh invoice carries its
 		// status as the database defaulted it, not as a model attribute.
 		$invoice = $order?->invoice?->fresh();
 
-		if ($invoice?->isPending()) {
+		// By invoice, the order waits for it as an abandoned card payment
+		// would (#45), and the mail already carries the invoice ([[LicencePayment]]).
+		if ($invoice?->isPending() && $payment === LicencePayment::Card) {
 			$back = url(SiteUrl::checkout('confirmation'));
 
 			return redirect()->away($gateway->checkout($invoice, $back.'?session_id={CHECKOUT_SESSION_ID}', $back.'?abgebrochen'));
@@ -238,6 +243,7 @@ class CheckoutController extends Controller
 			'order' => $order,
 			'paid' => $order?->isPaid() ?? false,
 			'confirming' => $request->filled('session_id') && ! ($order?->isPaid() ?? false),
+			'byInvoice' => CheckoutSession::licencePayment() === LicencePayment::Invoice,
 			'email' => $order?->deliveryEmail(),
 		]);
 	}

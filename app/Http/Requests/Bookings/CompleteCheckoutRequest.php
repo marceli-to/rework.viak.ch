@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Bookings;
 
+use App\Enums\LicencePayment;
+use Illuminate\Validation\Rule;
+
 /**
  * Confirming a basket ([[06-bookings]]).
  *
@@ -24,6 +27,8 @@ class CompleteCheckoutRequest extends PriceBasketRequest
 		return [
 			...parent::rules(),
 			'total_shown' => ['required', 'decimal:0,2'],
+			// Only what this customer is offered ([[LicencePayment::offeredTo]]); none means card.
+			'licence_payment' => ['nullable', Rule::in(array_map(fn (LicencePayment $way) => $way->value, LicencePayment::offeredTo($this->user())))],
 			/*
 			 * **The same fields a `UserAddress` has**, settled 2026-09-22.
 			 *
@@ -49,6 +54,11 @@ class CompleteCheckoutRequest extends PriceBasketRequest
 			'invoice_address.city' => ['required_with:invoice_address', 'string', 'max:255'],
 			'invoice_address.country_code' => ['required_with:invoice_address', 'string', 'size:2'],
 		];
+	}
+
+	public function licencePayment(): LicencePayment
+	{
+		return LicencePayment::tryFrom((string) $this->input('licence_payment')) ?? LicencePayment::Card;
 	}
 
 	public function totalShown(): string

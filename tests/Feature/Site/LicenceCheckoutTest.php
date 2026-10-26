@@ -172,3 +172,40 @@ it('leaves an abandoned payment waiting, payable from the confirmation and the p
 it('shows no Bestellungen to a customer who has none', function () {
 	$this->actingAs($this->buyer)->get('/de/konto')->assertOk()->assertDontSee('Bestellungen');
 });
+
+it('takes licences by invoice when that is offered, without Stripe', function () {
+	config(['invoice.licence_by_invoice' => true]);
+
+	$this->actingAs($this->buyer)
+		->post('/de/checkout/summary', ['licences' => [vrayLine(2)], 'total_shown' => '974.09', 'licence_payment' => 'invoice'])
+		->assertRedirect('/de/checkout/confirmation');
+
+	$order = LicenceOrder::query()->sole();
+	expect($order->isPaid())->toBeFalse()
+		->and($order->invoice->status)->toBe(InvoiceStatus::Open)
+		->and($order->invoice->grand_total)->toBe('974.09');
+
+	Mail::assertQueued(LicenceOrderConfirmation::class, fn ($mail) => $mail->hasTo('kim@example.test'));
+	Mail::assertQueued(LicenceOrderInfoAdmin::class);
+
+	$this->get('/de/checkout/confirmation')->assertOk()
+		->assertSee('Die Rechnung ist per')
+		->assertSee('Jetzt bezahlen')
+		->assertDontSee('noch nicht bezahlt');
+});
+
+it('refuses invoice for licences while it is not offered, and keeps card the default', function () {
+	expect(config('invoice.licence_by_invoice'))->toBeFalse();
+
+	$this->actingAs($this->buyer)
+		->from('/de/checkout/summary')
+		->post('/de/checkout/summary', ['licences' => [vrayLine(1)], 'total_shown' => '487.04', 'licence_payment' => 'invoice'])
+		->assertRedirect('/de/checkout/summary')
+		->assertSessionHasErrors('licence_payment');
+
+	expect(LicenceOrder::query()->count())->toBe(0);
+
+	config(['invoice.licence_by_invoice' => true]);
+	$to = $this->post('/de/checkout/summary', ['licences' => [vrayLine(1)], 'total_shown' => '487.04'])->headers->get('Location');
+	expect($to)->toContain('/dev/zahlung/cs_fake_');
+});

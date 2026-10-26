@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use App\Enums\LicencePayment;
 use App\Models\LicenceOrder;
 use App\Models\User;
 use App\Models\UserAddress;
@@ -39,6 +40,8 @@ final class CheckoutSession
 	private const BOOKED = 'checkout.booked';
 
 	private const LICENCE_ORDER = 'checkout.licence_order_uuid';
+
+	private const LICENCE_PAYMENT = 'checkout.licence_payment';
 
 	/**
 	 * The chosen invoice address, or null for *entspricht Teilnehmer-Adresse*.
@@ -76,10 +79,17 @@ final class CheckoutSession
 	 * licence order placed. Kept after the page is shown, so a reload, or the
 	 * way back from Stripe, still finds them; the next checkout replaces them.
 	 */
-	public static function setOutcome(bool $booked, ?LicenceOrder $order): void
+	public static function setOutcome(bool $booked, ?LicenceOrder $order, LicencePayment $payment = LicencePayment::Card): void
 	{
 		Session::put(self::BOOKED, $booked);
 		$order === null ? Session::forget(self::LICENCE_ORDER) : Session::put(self::LICENCE_ORDER, $order->uuid);
+		Session::put(self::LICENCE_PAYMENT, $payment->value);
+	}
+
+	/** How the last checkout's licences were to be paid ([[LicencePayment]]). */
+	public static function licencePayment(): LicencePayment
+	{
+		return LicencePayment::tryFrom((string) Session::get(self::LICENCE_PAYMENT)) ?? LicencePayment::Card;
 	}
 
 	public static function booked(): bool

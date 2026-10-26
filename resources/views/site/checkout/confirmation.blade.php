@@ -9,9 +9,9 @@
 		`<x-layout.article>` rather than the bare aside the steps use: the heading
 		and *Zum Profil* in the `span-4`, the thank-you in the `span-8`.
 
-		**And the licence order under it** ([[13-checkout]]): paid, free, being
-		confirmed by Stripe, or waiting, with *Jetzt bezahlen* for the last
-		(#45). A basket of licences only is *Bestellung abgeschlossen*.
+		**And the licence order under it** ([[13-checkout]]): paid, free, by
+		invoice, being confirmed by Stripe, or waiting, with *Jetzt bezahlen*
+		for the last two (#45, [[LicencePayment]]). A basket of licences only is *Bestellung abgeschlossen*.
 	--}}
 	<x-layout.article>
 		<x-slot:aside>
@@ -52,6 +52,11 @@
 					@elseif ($paid)
 						Vielen Dank für Deine Bestellung {{ $order->number }}. Wir senden die
 						Lizenzen an {{ $email }}.
+					@elseif ($byInvoice && $order->invoice)
+						Vielen Dank für Deine Bestellung {{ $order->number }}. Die Rechnung ist per
+						E-Mail unterwegs, Du kannst sie mit dem QR-Einzahlungsschein oder per
+						Kreditkarte bezahlen. Die Lizenzen senden wir nach Zahlungseingang an
+						{{ $email }}.
 					@elseif ($confirming)
 						Vielen Dank für Deine Bestellung {{ $order->number }}. Sobald Deine Zahlung
 						bestätigt ist, erhältst Du eine E-Mail, und wir senden die Lizenzen an
