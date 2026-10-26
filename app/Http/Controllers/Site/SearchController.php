@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
-use App\Support\Search\SearchDocument;
 use App\Support\Search\SearchIndex;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
  * `/de/suche?q=…`, where the header's field goes on Enter ([[15-search]]):
- * every hit, grouped by what it is, in the order [[SearchDocument::GROUPS]]
- * gives them, each group in the order the index ranked it.
+ * every hit as one list, in the order the index ranked them, each saying
+ * what it is with its badge (Marcel, 2026-10-26, rather than groups).
  */
 class SearchController extends Controller
 {
@@ -21,16 +20,9 @@ class SearchController extends Controller
 	{
 		$query = trim($request->string('q')->limit(100, '')->value());
 
-		$hits = mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), 60);
-
-		$groups = collect(SearchDocument::GROUPS)
-			->map(fn (string $label, string $type) => ['label' => $label, 'hits' => $hits->where('type', $type)->values()])
-			->filter(fn (array $group) => $group['hits']->isNotEmpty());
-
 		return view('site.search.index', [
 			'query' => $query,
-			'count' => $hits->count(),
-			'groups' => $groups,
+			'hits' => mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), 60),
 		]);
 	}
 }

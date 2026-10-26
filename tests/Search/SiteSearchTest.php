@@ -115,14 +115,14 @@ it('answers the header field as JSON, nothing under two characters', function ()
 	$this->getJson('/api/search?q=r')->assertOk()->assertJsonCount(0, 'data');
 });
 
-it('shows the hits grouped on the result page, kept out of search engines', function () {
+it('shows the hits as one ranked list on the result page, kept out of search engines', function () {
 	rhino();
 	Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs']]);
 
 	$this->get('/de/suche?q=rhino')
 		->assertOk()
 		->assertSee('noindex', false)
-		->assertSeeInOrder(['Software', 'Rhinoceros', 'Kurse', 'Rhino Einstiegskurs', 'Lizenzen', 'Rhinoceros 8']);
+		->assertSeeInOrder(['Rhinoceros', 'Software', 'Rhino Einstiegskurs', 'Kurs', 'Rhinoceros 8', 'Lizenz']);
 
 	$this->get('/de/suche?q=xyzzy')->assertOk()->assertSee('Nichts gefunden für «xyzzy»', false);
 	$this->get('/de/suche')->assertOk()->assertSee('Zum Beispiel');

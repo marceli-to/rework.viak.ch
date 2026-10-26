@@ -29,9 +29,6 @@ class SearchDocument
 
 	public const LABELS = ['course' => 'Kurs', 'software' => 'Software', 'licence' => 'Lizenz', 'project' => 'Vorhaben'];
 
-	/** The result page's group headings, in its order ([[Site\SearchController]]). */
-	public const GROUPS = ['software' => 'Software', 'course' => 'Kurse', 'project' => 'Vorhaben', 'licence' => 'Lizenzen'];
-
 	/** @return array{type: string, title: string, body: string, lead: ?string, url: string}|null */
 	public static function for(Model $record, string $locale): ?array
 	{
