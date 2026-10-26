@@ -80,6 +80,11 @@ const rows = computed(() => get(props.model, props.field.name) ?? []);
 // A plain copy: the schema arrives reactive, and `structuredClone` cannot copy
 // a proxy — it threw, silently, and *Video hinzufügen* added nothing.
 const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)));
+
+// A repeater row's *Entfernen* sits beside its checkbox (a video's *Publizieren*),
+// unless the checkbox belongs to the row's content (a Firmenkurs line's *MWST*):
+// `removeBelow` puts it on a line of its own underneath (Marcel, 2026-10-26).
+const removeBeside = computed(() => !props.field.removeBelow && (props.field.fields ?? []).some((child) => child.type === 'checkbox'));
 </script>
 
 <template>
@@ -157,14 +162,14 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<div v-else-if="field.type === 'repeater'">
 		<div v-for="(row, index) in rows" :key="row.uuid ?? `neu-${index}`" class="mb-32 border-b border-black pb-24">
 			<template v-for="(child, position) in field.fields" :key="child.name ?? position">
-				<div v-if="child.type === 'checkbox'" class="flex items-center justify-between">
+				<div v-if="child.type === 'checkbox' && removeBeside" class="flex items-center justify-between">
 					<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
 					<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
 				</div>
 				<FormNode v-else :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
 			</template>
 			<!-- A row with no checkbox to sit beside (an invoice address) takes it on a line of its own. -->
-			<div v-if="!field.fields.some((child) => child.type === 'checkbox')" class="flex justify-end">
+			<div v-if="!removeBeside" class="flex justify-end" :class="{ 'mt-16': field.removeBelow }">
 				<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
 			</div>
 		</div>
