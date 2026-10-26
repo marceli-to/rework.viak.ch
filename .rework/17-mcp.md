@@ -64,6 +64,10 @@ knowingly (#65).
   ([[McpTokens]], [[McpTokenController]]): an admin creates their own, named
   per AI client, sees it once with the server's address, and revokes it;
   each row says when it was last used.
+  Under the new token, *Befehl für Claude Code kopieren* puts the whole
+  `claude mcp add --scope user --transport http viak <address> --header
+  "Authorization: Bearer <token>"` on the clipboard, to paste into a
+  terminal (Marcel, 2026-10-26).
 - **A token opens `/mcp` and nothing else** ([[McpAccess]]). Sanctum takes
   any bearer token on every `auth:sanctum` route, the dashboard's writes
   included, so without this an MCP token would have been a full admin API

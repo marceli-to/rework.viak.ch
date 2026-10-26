@@ -15,6 +15,11 @@ import { toast } from '@/composables/useToast';
  * Shut, with the count, as the dashboard's lists are. A new token is shown
  * once, in a read-only field under the list, with the address to enter
  * beside it; Sanctum keeps only its hash, so there is no showing it again.
+ *
+ * And the two put together as Claude Code's command, to copy and paste into
+ * a terminal: `--scope user` so it answers in every folder, not only the one
+ * it was added in. Claude Code takes a bearer token; claude.ai and Claude
+ * Desktop's connectors want OAuth, which is not built (#65).
  */
 const tokens = ref([]);
 const name = ref('');
@@ -23,6 +28,17 @@ const created = ref(null);
 const busy = ref(false);
 
 const endpoint = `${window.location.origin}/mcp`;
+
+const command = (token) => `claude mcp add --scope user --transport http viak ${endpoint} --header "Authorization: Bearer ${token}"`;
+
+async function copyCommand() {
+	try {
+		await navigator.clipboard.writeText(command(created.value));
+		toast('Befehl kopiert');
+	} catch {
+		toast('Kopieren nicht möglich, bitte Token und Adresse von Hand eintragen', 'error');
+	}
+}
 
 onMounted(async () => {
 	tokens.value = await fetchMcpTokens();
@@ -81,6 +97,8 @@ async function revoke(token) {
 			<div v-if="created" class="mt-32 lg:mt-48">
 				<Field :model-value="created" label="Neues Token" readonly hint="Nur jetzt sichtbar. Kopieren und im KI-Programm eintragen; verloren heisst widerrufen und neu erstellen." />
 				<Field :model-value="endpoint" label="Adresse des Servers" readonly />
+				<Button class="mt-16 w-full" @click="copyCommand">Befehl für Claude Code kopieren</Button>
+				<p class="mt-8 text-md text-gray-600 lg:text-lg">Im Terminal einfügen und ausführen. Danach kennt Claude Code den Server unter dem Namen «viak».</p>
 			</div>
 		</Collapsible>
 	</div>
