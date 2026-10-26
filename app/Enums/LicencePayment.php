@@ -15,6 +15,8 @@ use App\Models\User;
  *   customer pays the invoice later (QR bill, or the card link in the mail
  *   and on the profile), as an abandoned card payment already leaves it
  *   (#45). Asked for by the client on 2026-10-26.
+ *
+ * **The customer chooses**, on the payment step (#58, answered 2026-10-26).
  */
 enum LicencePayment: string
 {
@@ -22,14 +24,13 @@ enum LicencePayment: string
 	case Invoice = 'invoice';
 
 	/**
-	 * What this customer may choose. **The one place #58's answer lands**:
-	 * everyone (the switch below), only some customers (a flag on the
-	 * account, checked here), or a site-wide invoice-only (card dropped).
+	 * What this customer may choose: both, for everyone (#58). Kept as the
+	 * one place a per-customer rule would go, should one ever be wanted.
 	 *
 	 * @return list<self>
 	 */
 	public static function offeredTo(?User $user): array
 	{
-		return config('invoice.licence_by_invoice') ? [self::Card, self::Invoice] : [self::Card];
+		return self::cases();
 	}
 }

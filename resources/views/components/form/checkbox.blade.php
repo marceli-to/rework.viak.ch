@@ -1,4 +1,4 @@
-@props(['name', 'value' => '1', 'checked' => false, 'id' => null])
+@props(['name', 'value' => '1', 'checked' => false, 'id' => null, 'type' => 'checkbox'])
 
 @php($id = $id ?? $name)
 
@@ -28,10 +28,14 @@
 	`items-center` would have been shorter and wrong: it centres against the
 	**whole** label, so a two-line one — which the registration form has — would
 	drag the box to the middle of both.
+
+	`type="radio"` draws the same square, for a choice of one: the payment
+	step's *Per Kreditkarte* / *Per Rechnung* ([[13-checkout]]). Legacy has no
+	radio of its own to copy.
 --}}
 <div class="flex items-start">
 	<input
-		type="checkbox"
+		type="{{ $type }}"
 		id="{{ $id }}"
 		name="{{ $name }}"
 		value="{{ $value }}"

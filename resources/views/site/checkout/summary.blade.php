@@ -144,14 +144,15 @@
 		</template>
 
 		{{--
-			**Which part is paid now** ([[13-checkout]]), when the basket holds
-			both: the licences by card after *Bestellen*, the courses by invoice
-			once each is confirmed.
+			**Which part is paid how** ([[13-checkout]]), when the basket holds
+			both: the licences by card after *Bestellen* or by invoice, as
+			chosen on the payment step, the courses by invoice once each is
+			confirmed.
 		--}}
 		<template x-if="pricing && items.length && licences.length && pricing.licence_total > 0">
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="sm:col-span-4">Software, jetzt per Kreditkarte</div>
+					<div class="sm:col-span-4" x-text="$store.basket.licencePayment === 'invoice' ? 'Software, auf Rechnung' : 'Software, jetzt per Kreditkarte'">Software, jetzt per Kreditkarte</div>
 					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.licence_total}`"></div>
 				</div>
 				<div class="mt-8 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
@@ -195,6 +196,7 @@
 
 			<input type="hidden" name="code" :value="$store.basket.code ?? ''">
 			<input type="hidden" name="total_shown" :value="pricing?.total ?? ''">
+			<input type="hidden" name="licence_payment" :value="$store.basket.licencePayment">
 
 			<footer class="mt-32 grid grid-cols-12 gap-16 border-t-2 border-gray-400 sm:mt-48 lg:gap-40">
 				<div class="col-span-6 flex justify-start">
@@ -208,9 +210,10 @@
 					<button type="submit" :disabled="! pricing"
 						class="flex items-center py-12 leading-none transition-colors hover:text-teal disabled:opacity-60 sm:py-16 sm:text-xl lg:text-3xl">
 						{{-- *Buchen* for courses, as legacy; *Bestellen* once a
-						     licence is in it, *und bezahlen* when it costs. --}}
+						     licence is in it, *und bezahlen* when it costs and
+						     goes to the card. --}}
 						<span class="mr-8 sm:mr-12"
-							x-text="! licences.length ? 'Buchen' : (pricing?.licence_total > 0 ? 'Bestellen und bezahlen' : 'Bestellen')">Buchen</span>
+							x-text="! licences.length ? 'Buchen' : (pricing?.licence_total > 0 && $store.basket.licencePayment === 'card' ? 'Bestellen und bezahlen' : 'Bestellen')">Buchen</span>
 						<x-icon.arrow-right />
 					</button>
 				</div>

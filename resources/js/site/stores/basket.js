@@ -26,6 +26,13 @@ export default {
 	 */
 	licences: [],
 	code: null,
+
+	/**
+	 * How the licences are paid, `card` or `invoice` ([[LicencePayment]]),
+	 * chosen on the payment step and posted with the summary. Kept beside the
+	 * code for the same reason: it is an answer about this basket.
+	 */
+	licencePayment: 'card',
 	pricing: null,
 	loading: false,
 	error: null,
@@ -46,10 +53,11 @@ export default {
 		try {
 			const saved = window.localStorage.getItem('viak.basket');
 			if (saved) {
-				const { items, licences, code } = JSON.parse(saved);
+				const { items, licences, code, licencePayment } = JSON.parse(saved);
 				this.items = Array.isArray(items) ? items : [];
 				this.licences = Array.isArray(licences) ? licences : [];
 				this.code = code ?? null;
+				this.licencePayment = licencePayment === 'invoice' ? 'invoice' : 'card';
 			}
 		} catch {
 			// Private windows and blocked site data throw here. An empty basket
@@ -174,10 +182,16 @@ export default {
 		return this.price();
 	},
 
+	setLicencePayment(way) {
+		this.licencePayment = way === 'invoice' ? 'invoice' : 'card';
+		this.persist();
+	},
+
 	clear() {
 		this.items = [];
 		this.licences = [];
 		this.code = null;
+		this.licencePayment = 'card';
 		this.persist();
 		this.clearPricing();
 	},
@@ -246,7 +260,7 @@ export default {
 		try {
 			window.localStorage.setItem(
 				'viak.basket',
-				JSON.stringify({ items: this.items, licences: this.licences, code: this.code }),
+				JSON.stringify({ items: this.items, licences: this.licences, code: this.code, licencePayment: this.licencePayment }),
 			);
 		} catch {
 			// See init(): storage can be unavailable, and the basket still works.

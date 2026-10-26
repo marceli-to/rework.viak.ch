@@ -25,7 +25,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | # | Question | Owner | Blocks |
 |---|---|---|---|
 | ~~1~~ | ~~Is the Bildung licence tier real?~~ — **answered 2026-10-08 with 36: no tier.** EDU licences are hidden variants VIAK enters by hand. See `05-licences.md` | — | — |
-| 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly. **Urgent with 58** (2026-10-26): invoice as a chosen option makes unpaid orders normal |
+| 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly. **Urgent** since 58 (2026-10-26): the customer may now choose invoice, so unpaid orders are normal |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy | Client | Copy only |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
@@ -68,7 +68,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 55 | *Beliebte Angebote*: featured software only, or featured courses without software too? | Client | `14-angebote.md`, the homepage. Raised 2026-10-26 |
 | 56 | Search: the catalogue only, or experts and pages too? | Client | `15-search.md`, what is indexed. Raised 2026-10-26 |
 | 57 | Search results: with prices and dates, or titles and leads? | Client | `15-search.md`, the result page. Raised 2026-10-26 |
-| 58 | *Invoice only* for licences: chosen by the customer at checkout, by VIAK per customer, or site-wide? | Client | `13-checkout.md`, *Invoice only, as well as split*. Raised 2026-10-26; makes #2 urgent |
+| ~~58~~ | ~~*Invoice only* for licences: chosen by the customer at checkout, by VIAK per customer, or site-wide?~~ **Answered 2026-10-26: the customer, at checkout.** Built, see `13-checkout.md` | — | — |
 | 59 | A licence invoice's due date: the 10 days of every invoice, or another period? | Client | Nothing; 10 days until answered. Raised 2026-10-26 |
 | 60 | Firmenkurse: do participants exist in the app (accounts, documents, confirmations), or only the event and one invoice? | Client | `16-firmenkurse.md`, its size. Raised 2026-10-26 |
 | 61 | Firmenkurse: priced per day, per participant or flat? | Client | `16-firmenkurse.md`, the invoice lines. Raised 2026-10-26 |

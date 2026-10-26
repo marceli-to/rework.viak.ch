@@ -173,9 +173,7 @@ it('shows no Bestellungen to a customer who has none', function () {
 	$this->actingAs($this->buyer)->get('/de/konto')->assertOk()->assertDontSee('Bestellungen');
 });
 
-it('takes licences by invoice when that is offered, without Stripe', function () {
-	config(['invoice.licence_by_invoice' => true]);
-
+it('takes licences by invoice when the customer chooses it, without Stripe', function () {
 	$this->actingAs($this->buyer)
 		->post('/de/checkout/summary', ['licences' => [vrayLine(2)], 'total_shown' => '974.09', 'licence_payment' => 'invoice'])
 		->assertRedirect('/de/checkout/confirmation');
@@ -194,18 +192,21 @@ it('takes licences by invoice when that is offered, without Stripe', function ()
 		->assertDontSee('noch nicht bezahlt');
 });
 
-it('refuses invoice for licences while it is not offered, and keeps card the default', function () {
-	expect(config('invoice.licence_by_invoice'))->toBeFalse();
-
+it('refuses a payment that is not offered, and keeps card the default', function () {
 	$this->actingAs($this->buyer)
 		->from('/de/checkout/summary')
-		->post('/de/checkout/summary', ['licences' => [vrayLine(1)], 'total_shown' => '487.04', 'licence_payment' => 'invoice'])
+		->post('/de/checkout/summary', ['licences' => [vrayLine(1)], 'total_shown' => '487.04', 'licence_payment' => 'twint'])
 		->assertRedirect('/de/checkout/summary')
 		->assertSessionHasErrors('licence_payment');
 
 	expect(LicenceOrder::query()->count())->toBe(0);
 
-	config(['invoice.licence_by_invoice' => true]);
 	$to = $this->post('/de/checkout/summary', ['licences' => [vrayLine(1)], 'total_shown' => '487.04'])->headers->get('Location');
 	expect($to)->toContain('/dev/zahlung/cs_fake_');
+});
+
+it('offers card and invoice on the payment step', function () {
+	$this->actingAs($this->buyer)->get('/de/checkout/payment')->assertOk()
+		->assertSee('Per Kreditkarte')
+		->assertSee('Per Rechnung');
 });

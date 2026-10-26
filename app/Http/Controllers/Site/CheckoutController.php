@@ -115,8 +115,9 @@ class CheckoutController extends Controller
 	 *
 	 * `Payment.vue` is a paragraph of text and a discount-code field, and that
 	 * is the whole step: invoices are raised on `EventConfirmed`, days or weeks
-	 * later ([[03-invoices]]). Licences are paid by card after the summary
-	 * ([[complete]]); this step only says so.
+	 * later ([[03-invoices]]). Licences are paid after the summary
+	 * ([[complete]]), by card or by invoice as the customer picks here; the
+	 * pick stays in the basket and comes back with the summary's post.
 	 *
 	 * Nothing to hand it — the code belongs to the basket, which is the
 	 * browser's ([[09-public-site]]).
@@ -156,8 +157,9 @@ class CheckoutController extends Controller
 	 * **With licences** ([[13-checkout]]): the courses are booked first, as
 	 * before, because that is the part that can still be refused (a seat gone,
 	 * a code expired); then the licences become an order, invoiced at once
-	 * ([[PlaceLicenceOrder]]), and a priced one goes to Stripe's page. A
-	 * payment abandoned there leaves the order waiting and the courses booked
+	 * ([[PlaceLicenceOrder]]), and a priced one goes to Stripe's page unless
+	 * the customer chose to pay by invoice ([[LicencePayment]]). A payment
+	 * abandoned there leaves the order waiting and the courses booked
 	 * (#45): the confirmation offers the payment again, and so does the
 	 * account.
 	 */

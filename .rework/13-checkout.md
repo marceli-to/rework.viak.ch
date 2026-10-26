@@ -17,8 +17,8 @@ below). Marcel confirmed the two open points the same day: orders listed in
 the profile and paid from there; card only for licences at checkout.
 
 **Reopened 2026-10-26** by the client: licences paid by invoice as well as by
-card (*Invoice only, as well as split*, at the end). **The path is built and
-switched off** until #58 says who may take it; #59 is open.
+card (*Invoice only, as well as split*, at the end). **Built and on**: the
+customer chooses on the payment step (#58, Marcel, 2026-10-26); #59 is open.
 
 ## Paying an invoice by card — built 2026-10-20
 
@@ -247,20 +247,19 @@ button, as a course invoice has).
 
 **Questions** (in `Open-Questions.md`):
 
-- **58.** Who chooses: the customer at checkout, or VIAK per customer (say,
+- ~~**58.** Who chooses: the customer at checkout, or VIAK per customer (say,
   invoice only for known companies, card for everyone else)? Or a site-wide
-  setting?
+  setting?~~ **Answered 2026-10-26 (Marcel): the customer, at checkout.**
 - **59.** The due date of a licence invoice: the 10 days every invoice has
   today (`invoice.payment_period`), or another period? A course invoice is
   also due 10 days before the course; a licence has no such date.
 
-### The path, built and off — 2026-10-26
+### The path, built — 2026-10-26
 
 - **[[LicencePayment]]**, `card` or `invoice`. `LicencePayment::offeredTo()`
-  is the one place #58's answer goes: today it reads
-  `config('invoice.licence_by_invoice')`, **false**, a code setting rather
-  than an env key because the answer may be per customer (a flag on the
-  account, checked there) or invoice-only for everyone.
+  offers both to everyone (#58). It stays the one place a per-customer
+  rule would go. The `invoice.licence_by_invoice` switch it read while #58
+  was open is gone.
 - **The summary's POST** takes `licence_payment`, only a value the customer
   is offered; none means card, so nothing that posts today changes. With
   `invoice`: courses booked, the order placed and invoiced as before, the
@@ -272,9 +271,15 @@ button, as a course invoice has).
   the confirmation.
 - **The confirmation** says the invoice is on its way, QR or card, licences
   after payment, with *Jetzt bezahlen* under it as for a waiting order.
-- **Not built, waiting on #58**: the choice on the payment step or summary
-  (two options, and *Bestellen* rather than *Bestellen und bezahlen* when
-  invoice is chosen). Switching it on is that UI and the line in
-  `offeredTo()`.
-- Tests in `LicenceCheckoutTest`: by invoice when offered; refused while it
-  is not; card still the default when it is.
+- **The choice is on the payment step**, under *Zahlungsoptionen*: *Per
+  Kreditkarte* (preselected) and *Per Rechnung*, shown only when the
+  licences cost something (a free order has nothing to pay). They are
+  `<x-form.checkbox type="radio">`, the site's square, since legacy has no
+  radio. The answer is kept in the basket store beside the code
+  (`licencePayment`, in `localStorage`), because the step has no POST; the
+  summary posts it as a hidden `licence_payment`.
+- **The summary follows it**: *Bestellen* rather than *Bestellen und
+  bezahlen*, and with courses in the basket the split row reads *Software,
+  auf Rechnung* rather than *jetzt per Kreditkarte*.
+- Tests in `LicenceCheckoutTest`: by invoice when chosen; a value that is
+  not offered refused; card still the default; the step shows both.

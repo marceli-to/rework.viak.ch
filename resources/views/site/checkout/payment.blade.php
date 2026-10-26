@@ -5,9 +5,9 @@
 
 		**It takes no payment.** The whole step is a paragraph of text and a
 		discount-code field, because invoices are raised on `EventConfirmed`
-		days or weeks later ([[03-invoices]]). Licences are paid by card after
-		the summary ([[13-checkout]]), on Stripe's page ([[PaymentGateway]]),
-		and this step only says so.
+		days or weeks later ([[03-invoices]]). Licences are paid after the
+		summary, by card on Stripe's page ([[PaymentGateway]]) or by invoice,
+		and this step is where the customer picks which ([[13-checkout]], #58).
 
 		**The code belongs to the basket, not to the session**, which is the one
 		design decision on this page. Everything else the checkout remembers is
@@ -62,7 +62,7 @@
 				<div class="sm:col-span-4"><strong class="font-bold">Zahlungsoptionen</strong></div>
 				{{-- Legacy's sentence for the courses; the licences' beside it
 				     when the basket holds any ([[13-checkout]]): a licence is
-				     invoiced and paid at once, a course when it is confirmed. --}}
+				     invoiced at once, a course when it is confirmed. --}}
 				<div class="sm:col-span-8">
 					<p x-show="$store.basket.items.length">
 						Unsere Rechnungen können entweder mittels QR-Einzahlungsschein oder per
@@ -70,9 +70,26 @@
 						Durchführung eines Kurses feststeht.
 					</p>
 					<p x-show="$store.basket.licences.length" :class="$store.basket.items.length && 'mt-16'">
-						Software bezahlst du nach der Zusammenfassung per Kreditkarte. Die
-						Rechnung erhältst du per E-Mail, die Lizenzen nach Zahlungseingang.
+						Software bezahlst du per Kreditkarte, gleich nach der Zusammenfassung,
+						oder per Rechnung. Die Rechnung erhältst du per E-Mail, die Lizenzen
+						nach Zahlungseingang.
 					</p>
+
+					{{-- The choice (#58), only when the licences cost something:
+					     a free order has nothing to pay. Remembered in the
+					     basket and posted from the summary ([[LicencePayment]]). --}}
+					<div x-cloak x-show="$store.basket.pricing?.licence_total > 0" class="mt-16 space-y-8 max-sm:mt-24">
+						<x-form.checkbox type="radio" id="licence_payment_card" name="licence_payment" value="card"
+							x-bind:checked="$store.basket.licencePayment === 'card'"
+							@change="$store.basket.setLicencePayment('card')">
+							Per Kreditkarte
+						</x-form.checkbox>
+						<x-form.checkbox type="radio" id="licence_payment_invoice" name="licence_payment" value="invoice"
+							x-bind:checked="$store.basket.licencePayment === 'invoice'"
+							@change="$store.basket.setLicencePayment('invoice')">
+							Per Rechnung
+						</x-form.checkbox>
+					</div>
 				</div>
 			</div>
 		</div>
