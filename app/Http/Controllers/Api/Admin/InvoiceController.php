@@ -42,7 +42,7 @@ class InvoiceController extends Controller
 
 		$invoices = Invoice::query()
 			->inStatus($status)
-			->with(['user', 'company', 'document'])
+			->with(['user', 'companyCourse', 'document'])
 			->tap(fn (Builder $query) => $this->search($query, (string) $request->query('suche', '')))
 			->orderByDesc('number')
 			->paginate(self::PER_PAGE);
@@ -52,7 +52,7 @@ class InvoiceController extends Controller
 
 	public function show(Invoice $invoice): InvoiceFormResource
 	{
-		return new InvoiceFormResource($invoice->load(['user', 'company', 'document']));
+		return new InvoiceFormResource($invoice->load(['user', 'companyCourse', 'document']));
 	}
 
 	/** Refused, not ignored, once it is paid or cancelled ([[ChangeInvoiceAddress]]). */
@@ -60,7 +60,7 @@ class InvoiceController extends Controller
 	{
 		abort_unless($invoice->isPending(), 409, 'Eine bezahlte oder stornierte Rechnung wird nicht mehr geändert.');
 
-		return new InvoiceFormResource($change->execute($invoice, $request->snapshot())->load(['user', 'company', 'document']));
+		return new InvoiceFormResource($change->execute($invoice, $request->snapshot())->load(['user', 'companyCourse', 'document']));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class InvoiceController extends Controller
 					->orWhere('last_name', 'like', $like)
 					->orWhere('city', 'like', $like)
 					->orWhere('company', 'like', $like))
-				->orWhereHas('company', fn (Builder $company) => $company
+				->orWhereHas('companyCourse', fn (Builder $company) => $company
 					->where('company', 'like', $like)
 					->orWhere('city', 'like', $like)));
 		}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Invoices;
 
-use App\Models\Company;
+use App\Models\CompanyCourse;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\User;
@@ -40,8 +40,8 @@ use InvalidArgumentException;
  * worklist can show, and the opposite mistake (books charged, no invoice) is
  * the one that cannot be repaired.
  *
- * **Billed to an account or to a company**: every invoice has a user, except
- * a Firmenkurs's, which has a company and no login ([[16-firmenkurse]]).
+ * **Billed to an account or to a Firmenkurs**: every invoice has a user, except
+ * a Firmenkurs's, whose company is an address and no login ([[16-firmenkurse]]).
  */
 class IssueInvoice
 {
@@ -55,7 +55,7 @@ class IssueInvoice
 	 * @param  array<string, mixed>|null  $invoiceAddress
 	 */
 	public function execute(
-		User|Company $customer,
+		User|CompanyCourse $customer,
 		array $lines,
 		?Carbon $dueAt = null,
 		?array $invoiceAddress = null,
@@ -69,7 +69,7 @@ class IssueInvoice
 			$invoice = Invoice::create([
 				'number' => $this->numbers->nextInTransaction(),
 				'user_id' => $customer instanceof User ? $customer->id : null,
-				'company_id' => $customer instanceof Company ? $customer->id : null,
+				'company_course_id' => $customer instanceof CompanyCourse ? $customer->id : null,
 				'date' => $date ?? today(),
 				'due_at' => $dueAt ?? today()->addDays((int) config('invoice.payment_period')),
 				'invoice_address' => $invoiceAddress,

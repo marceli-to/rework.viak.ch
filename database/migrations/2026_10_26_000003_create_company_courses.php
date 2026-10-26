@@ -10,21 +10,21 @@ use Illuminate\Support\Facades\Schema;
  * Firmenkurse ([[16-firmenkurse]]): a course held for one company, and the
  * one invoice it raises.
  *
- * - `companies`: the company as an invoice address, no account. Its id is the
- *   customer number in Run My Accounts, so it is kept and picked again.
  * - `company_courses`: what was taught (a catalogue course or a free title),
- *   where, for how many, and where the invoice is mailed. Its own table, not
- *   an `events` row: nothing public, no expert, no reminder may see it.
+ *   where, for how many, the company's invoice address typed in (no account,
+ *   no company kept: each Firmenkurs is a one-off), and where the invoice is
+ *   mailed. Its own table, not an `events` row: nothing public, no expert, no
+ *   reminder may see it.
  * - `company_course_dates`, `company_course_lines`: the days, and the lines
  *   the invoice is issued from.
- * - `invoices`: `user_id` nullable and `company_id` beside it, one of the two
- *   set. Every invoice before this one has a user.
+ * - `invoices`: `user_id` nullable and `company_course_id` beside it, one of
+ *   the two set. Every invoice before this one has a user.
  */
 return new class extends Migration
 {
 	public function up(): void
 	{
-		Schema::create('companies', function (Blueprint $table) {
+		Schema::create('company_courses', function (Blueprint $table) {
 			$table->id();
 			$table->uuid()->unique();
 			$table->string('company');
@@ -35,14 +35,6 @@ return new class extends Migration
 			$table->string('zip', 15);
 			$table->string('city');
 			$table->string('country_code', 2)->default('ch');
-			$table->timestamps();
-			$table->softDeletes();
-		});
-
-		Schema::create('company_courses', function (Blueprint $table) {
-			$table->id();
-			$table->uuid()->unique();
-			$table->foreignId('company_id')->constrained()->restrictOnDelete();
 			$table->foreignId('course_id')->nullable()->constrained()->nullOnDelete();
 			$table->string('title')->nullable();
 			$table->string('location')->nullable();
@@ -75,19 +67,18 @@ return new class extends Migration
 
 		Schema::table('invoices', function (Blueprint $table) {
 			$table->foreignId('user_id')->nullable()->change();
-			$table->foreignId('company_id')->nullable()->after('user_id')->constrained()->restrictOnDelete();
+			$table->foreignId('company_course_id')->nullable()->after('user_id')->constrained()->restrictOnDelete();
 		});
 	}
 
 	public function down(): void
 	{
 		Schema::table('invoices', function (Blueprint $table) {
-			$table->dropConstrainedForeignId('company_id');
+			$table->dropConstrainedForeignId('company_course_id');
 		});
 
 		Schema::dropIfExists('company_course_lines');
 		Schema::dropIfExists('company_course_dates');
 		Schema::dropIfExists('company_courses');
-		Schema::dropIfExists('companies');
 	}
 };

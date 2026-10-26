@@ -42,7 +42,7 @@ class Invoice extends Model
 	use SoftDeletes;
 
 	protected $fillable = [
-		'number', 'user_id', 'company_id', 'status', 'date', 'due_at',
+		'number', 'user_id', 'company_course_id', 'status', 'date', 'due_at',
 		'paid_at', 'card_payment', 'cancelled_at', 'cancellation_reason', 'replaced_by_invoice_id',
 		'invoice_address', 'net', 'discount', 'vat', 'grand_total', 'filename',
 	];
@@ -70,21 +70,21 @@ class Invoice extends Model
 	}
 
 	/** A Firmenkurs invoice's, in place of a user ([[16-firmenkurse]]). One of the two is set. */
-	public function company(): BelongsTo
+	public function companyCourse(): BelongsTo
 	{
-		return $this->belongsTo(Company::class)->withTrashed();
+		return $this->belongsTo(CompanyCourse::class)->withTrashed();
 	}
 
-	/** Who owes it, for a list: the account's name, or the company's. */
+	/** Who owes it, for a list: the account's name, or the Firmenkurs's company. */
 	public function customerName(): ?string
 	{
-		return $this->user?->name ?? $this->company?->company;
+		return $this->user?->name ?? $this->companyCourse?->company;
 	}
 
 	/** Where a Firmenkurs invoice's PDF is on the `documents` disk; null for any other ([[RenderInvoice::forCompany]]). */
 	public function companyPdfPath(): ?string
 	{
-		return $this->company_id !== null && $this->filename ? 'documents/companies/'.$this->company->uuid.'/'.$this->filename : null;
+		return $this->company_course_id !== null && $this->filename ? 'documents/company-courses/'.$this->companyCourse->uuid.'/'.$this->filename : null;
 	}
 
 	/** Where the dashboard downloads the PDF: the owner's document, or a Firmenkurs's file. */
@@ -99,7 +99,7 @@ class Invoice extends Model
 
 	public function customerCity(): ?string
 	{
-		return $this->user?->city ?? $this->company?->city;
+		return $this->user?->city ?? $this->companyCourse?->city;
 	}
 
 	public function items(): HasMany

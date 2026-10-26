@@ -1,13 +1,11 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute, useRouter } from 'vue-router';
-import { fetchCompanies } from '@/api/companies';
+import { useRoute, useRouter } from 'vue-router';
 import { fetchCompanyCourses } from '@/api/companyCourses';
 import { fold, shortDate } from '@/support/format';
 import Badge from '@/components/ui/Badge.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import EditableListItem from '@/components/list/EditableListItem.vue';
-import IconPlus from '@/components/icons/Plus.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import SearchField from '@/components/list/SearchField.vue';
@@ -15,9 +13,8 @@ import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Firmenkurse* ([[16-firmenkurse]]): the coming ones open, the past ones
- * shut, as *Rabatt-Codes* splits its two, and *Firmen* last, shut, with a `+`
- * under it as *Einstellungen* has. A row is the course and the company, its
- * days, and the invoice as a badge.
+ * shut, as *Rabatt-Codes* splits its two. A row is the company and the
+ * course, its days, and the invoice as a badge.
  *
  * A handful a year: loaded whole, searched in the browser.
  */
@@ -25,22 +22,19 @@ const route = useRoute();
 const router = useRouter();
 
 const courses = ref([]);
-const companies = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
 const search = computed(() => String(route.query.suche ?? ''));
 const setSearch = (value) => router.replace({ query: value ? { suche: value } : {} });
-const opened = computed(() => String(route.query.liste ?? ''));
 
 const words = computed(() => fold(search.value).split(/\s+/).filter(Boolean));
 const matches = (text) => words.value.every((word) => fold(text).includes(word));
 
 const today = new Date().toISOString().slice(0, 10);
-const shown = computed(() => courses.value.filter((course) => matches(`${course.name} ${course.company_name} ${course.location} ${course.invoice?.number ?? ''}`)));
+const shown = computed(() => courses.value.filter((course) => matches(`${course.name} ${course.company} ${course.city} ${course.location} ${course.invoice?.number ?? ''}`)));
 const upcoming = computed(() => shown.value.filter((course) => !course.last_date || course.last_date >= today).sort((a, b) => (a.first_date ?? '').localeCompare(b.first_date ?? '')));
 const past = computed(() => shown.value.filter((course) => course.last_date && course.last_date < today));
-const firms = computed(() => companies.value.filter((company) => matches(company.title)));
 
 const dates = (course) =>
 	!course.first_date ? null : course.first_date === course.last_date ? shortDate(course.first_date) : `${shortDate(course.first_date)} – ${shortDate(course.last_date)}`;
@@ -52,7 +46,7 @@ const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;
 
 onMounted(async () => {
 	try {
-		[courses.value, companies.value] = await Promise.all([fetchCompanyCourses(), fetchCompanies()]);
+		courses.value = await fetchCompanyCourses();
 	} catch (problem) {
 		error.value = problem.message;
 	} finally {
@@ -83,7 +77,7 @@ onMounted(async () => {
 				<template #title>{{ group.title }}</template>
 				<EditableListItem v-for="course in group.rows" :key="course.uuid" :edit="{ name: 'company-course.edit', params: { uuid: course.uuid } }" wide>
 					<div class="col-span-12 sm:col-span-4">
-						<strong>{{ course.company_name }}</strong>
+						<strong>{{ course.company }}</strong>
 						<span class="block">{{ course.name }}</span>
 					</div>
 					<div class="col-span-12 sm:col-span-3">
@@ -96,23 +90,6 @@ onMounted(async () => {
 					</div>
 				</EditableListItem>
 				<NoResults v-if="!group.rows.length">Keine Firmenkurse gefunden.</NoResults>
-			</Collapsible>
-
-			<Collapsible :key="`firmen-${search}`" :expanded="opened === 'firmen' || (Boolean(search) && firms.length > 0)" :count="firms.length">
-				<template #title>Firmen</template>
-				<EditableListItem v-for="company in firms" :key="company.uuid" :edit="{ name: 'company.edit', params: { uuid: company.uuid } }" wide>
-					<div class="col-span-12 sm:col-span-7">{{ company.title }}</div>
-					<div class="col-span-12 flex flex-wrap gap-8 pr-40 max-sm:mt-8 sm:col-span-5">
-						<Badge>{{ counted(company.courses, 'Firmenkurs', 'Firmenkurse') }}</Badge>
-					</div>
-				</EditableListItem>
-				<NoResults v-if="!firms.length">Noch keine Firmen erfasst.</NoResults>
-
-				<div class="mt-24 flex">
-					<RouterLink :to="{ name: 'company.create' }" title="Firma hinzufügen" class="block hover:text-teal">
-						<IconPlus size="lg" class="block" />
-					</RouterLink>
-				</div>
 			</Collapsible>
 		</div>
 	</section>

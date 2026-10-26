@@ -10,7 +10,6 @@ import OfferPicker from './OfferPicker.vue';
 import Select from './Select.vue';
 import Textarea from './Textarea.vue';
 import TermDialog from './TermDialog.vue';
-import CompanyDialog from './CompanyDialog.vue';
 import Collapsible from '@/components/ui/Collapsible.vue';
 import ImageSection from '@/components/media/ImageSection.vue';
 import VariantSection from '@/components/licence/VariantSection.vue';
@@ -28,8 +27,7 @@ import IconTrash from '@/components/icons/Trash.vue';
  * section and a licence's variants, each given the record it belongs to.
  *
  * A select with `create` (a settings kind) has a `+` beside its label that
- * adds a choice in a lightbox and picks it ([[TermDialog]]); a company has
- * a form of its own ([[CompanyDialog]]).
+ * adds a choice in a lightbox and picks it ([[TermDialog]]).
  */
 defineOptions({ name: 'FormNode' });
 
@@ -42,7 +40,6 @@ const props = defineProps({
 });
 
 const CUSTOM = { images: ImageSection, variants: VariantSection };
-const CREATORS = { companies: CompanyDialog };
 
 const key = computed(() => props.path + props.field.name);
 const value = computed({
@@ -96,8 +93,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 			<button type="button" :title="`${field.label} hinzufügen`" class="block transition-colors hover:text-teal" @click="creating = true">
 				<IconPlus size="md" class="block" />
 			</button>
-			<component :is="CREATORS[field.create]" v-if="creating && CREATORS[field.create]" @close="creating = false" @created="created" />
-			<TermDialog v-else-if="creating" :kind="field.create" @close="creating = false" @created="created" />
+			<TermDialog v-if="creating" :kind="field.create" @close="creating = false" @created="created" />
 		</template>
 	</Select>
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :hint="field.hint" :hide-label="field.legend === false" :error="error" />

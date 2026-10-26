@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin;
 
 use App\Forms\CompanyCourseSchema;
-use App\Models\Company;
 use App\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -40,8 +39,15 @@ class SaveCompanyCourseRequest extends FormRequest
 		$optional = fn (string $key) => ($data[$key] ?? '') === '' || ($data[$key] ?? null) === null ? null : $data[$key];
 
 		return [
-			// The selects take only their own options, so both are found.
-			'company_id' => Company::query()->where('uuid', $data['company'])->value('id'),
+			'company' => $data['company'],
+			'first_name' => $optional('first_name'),
+			'last_name' => $optional('last_name'),
+			'street' => $data['street'],
+			'street_no' => $optional('street_no'),
+			'zip' => $data['zip'],
+			'city' => $data['city'],
+			'country_code' => $data['country'],
+			// The select takes only its own options, so the course is found.
 			'course_id' => $optional('course') ? Course::query()->where('uuid', $data['course'])->value('id') : null,
 			'title' => $optional('title'),
 			'location' => $optional('location'),

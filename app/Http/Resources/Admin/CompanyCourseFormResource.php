@@ -24,7 +24,14 @@ class CompanyCourseFormResource extends JsonResource
 
 		return [
 			'uuid' => $this->uuid,
-			'company' => $this->company?->uuid ?? '',
+			'company' => $this->company,
+			'first_name' => $this->first_name ?? '',
+			'last_name' => $this->last_name ?? '',
+			'street' => $this->street,
+			'street_no' => $this->street_no ?? '',
+			'zip' => $this->zip,
+			'city' => $this->city,
+			'country' => $this->country_code,
 			'course' => $this->course?->uuid ?? '',
 			'title' => $this->title ?? '',
 			'location' => $this->location ?? '',
@@ -44,7 +51,6 @@ class CompanyCourseFormResource extends JsonResource
 
 			// Read, never sent ([[useResourceForm]]).
 			'name' => $this->name(),
-			'company_name' => $this->company?->company,
 			'first_date' => $this->dates->first()?->date->toDateString(),
 			'last_date' => $this->dates->last()?->date->toDateString(),
 			'locked' => $this->isLocked(),

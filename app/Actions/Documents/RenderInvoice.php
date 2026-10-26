@@ -116,16 +116,16 @@ class RenderInvoice
 	/**
 	 * A Firmenkurs's invoice ([[16-firmenkurse]]): the company has no account,
 	 * so nothing to file a [[UserDocument]] under and no profile to show it
-	 * in. The PDF goes beside the others under the company's uuid, the
+	 * in. The PDF goes beside the others under the Firmenkurs's uuid, the
 	 * invoice carries its name as always, and the dashboard serves it
 	 * ([[Invoice::companyPdfPath]]). Returns that path, for the mail.
 	 */
 	public function forCompany(Invoice $invoice): string
 	{
-		$invoice->loadMissing(['items', 'company']);
+		$invoice->loadMissing(['items', 'companyCourse']);
 
-		if ($invoice->company === null) {
-			throw new RuntimeException("Invoice {$invoice->number} has no company to file a document under.");
+		if ($invoice->companyCourse === null) {
+			throw new RuntimeException("Invoice {$invoice->number} has no Firmenkurs to file a document under.");
 		}
 
 		$pdf = $this->renderer->render('documents.invoice', [

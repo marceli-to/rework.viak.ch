@@ -21,7 +21,7 @@ use Illuminate\Validation\ValidationException;
  */
 class CompanyCourseController extends Controller
 {
-	private const WITH = ['company', 'course', 'dates', 'lines', 'invoice.document', 'invoice.company'];
+	private const WITH = ['course', 'dates', 'lines', 'invoice.document', 'invoice.companyCourse'];
 
 	public function index(): AnonymousResourceCollection
 	{

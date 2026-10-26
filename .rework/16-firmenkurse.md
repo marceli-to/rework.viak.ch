@@ -5,7 +5,7 @@ for in the meeting of 2026-10-26.
 
 ## Status
 
-**Scoped 2026-10-26**, nothing built. **60–63 answered the same day by
+**Scoped 2026-10-26.** **60–63 answered the same day by
 Marcel, all four the small way**: the participants are a number, the invoice
 is free lines, one invoice per Firmenkurs, the enquiry stays a mail. So this
 is the small module. **Built the same day** (*As built*, at the end).
@@ -55,10 +55,13 @@ Asked after 60–63, since they decide what a Firmenkurs is made of:
 - **The company is an address, not an account.** No `User`, no login, so the
   invoice is not in anybody's profile and **cannot be paid by card** (the card
   page is for the signed-in owner of the invoice): QR bill only.
-- **One `companies` row per company**, picked on the Firmenkurs or added
-  there in a lightbox. Its id is the customer number Run My Accounts files
-  the invoice under (`VIAK_F{id}`, beside `VIAK_{user id}`), so a company's
-  second Firmenkurs is the same customer in the books.
+- **Each Firmenkurs is a one-off** (Marcel, 2026-10-26, reversing his first
+  answer of *one record per company*): the company's address is typed on
+  the Firmenkurs, no company list is kept. Run My Accounts files each
+  Firmenkurs as its own customer (`VIAK_F{Firmenkurs id}`, beside
+  `VIAK_{user id}`), so a company that comes back is retyped and is a new
+  customer in the books. Built first with a `companies` table, a picker and
+  a lightbox; taken out the same day.
 - **An e-mail on the Firmenkurs**: *Rechnung stellen* sends the PDF there.
 - **The lines are typed on the Firmenkurs and frozen by *Rechnung stellen*.**
   Each is a text and a net amount, exempt like a course unless ticked
@@ -80,19 +83,18 @@ Asked after 60–63, since they decide what a Firmenkurs is made of:
 
 ## As built — 2026-10-26
 
-- **Tables** (`2026_10_26_000003_create_company_courses`): `companies`
-  (an invoice address: company, contact, street, zip, city, country, the
-  fields of [[UserAddress]]); `company_courses` (company, catalogue course or
-  `title`, `location`, `participants`, `email`, `remarks`, `invoice_id`);
-  `company_course_dates`; `company_course_lines` (`description`, `net`,
-  `taxed`). `invoices.user_id` is nullable now and `invoices.company_id`
-  sits beside it; one of the two is set.
+- **Tables** (`2026_10_26_000003_create_company_courses`): `company_courses`
+  (the company's invoice address, the fields of [[UserAddress]]; catalogue
+  course or `title`, `location`, `participants`, `email`, `remarks`,
+  `invoice_id`); `company_course_dates`; `company_course_lines`
+  (`description`, `net`, `taxed`). `invoices.user_id` is nullable now and
+  `invoices.company_course_id` sits beside it; one of the two is set.
 - **Invoicing** goes through [[IssueInvoice]] like every other invoice: it
-  takes `User|Company`. A line is `InvoiceItemType::Course` (exempt) or,
+  takes `User|CompanyCourse`. A line is `InvoiceItemType::Course` (exempt) or,
   ticked *MWST*, the new `InvoiceItemType::Other` (8.1 %). Run My Accounts
-  files a company as `VIAK_F{company id}` ([[RunMyAccounts::customerNumber]]).
+  files a Firmenkurs as `VIAK_F{id}` ([[RunMyAccounts::customerNumber]]).
 - **The PDF** has no [[UserDocument]] (no owner): [[RenderInvoice::forCompany]]
-  writes it to `documents/companies/{company uuid}/` and the dashboard serves
+  writes it to `documents/company-courses/{uuid}/` and the dashboard serves
   it from `/dokumente/firmenrechnung/{invoice}`, admins only. On the PDF the
   company's address stands alone, without the *Kursteilnehmer:in* block.
 - **The mail** [[CompanyCourseInvoice]] (*Sie*, QR bill only, the PDF
@@ -102,10 +104,8 @@ Asked after 60–63, since they decide what a Firmenkurs is made of:
   open or overdue invoice; a paid one is a refund, done by hand.
 - **The dashboard**: *Firmenkurse* in the burger panel, first. The list has
   *Bevorstehende* (open) and *Vergangene* (shut) Firmenkurse with the invoice
-  as a badge, and *Firmen* (shut, `+` under it). The form is
-  [[CompanyCourseSchema]]: the company picked or added in a lightbox
-  ([[CompanyDialog]]), the days as a Veranstaltung's, the lines as a
-  repeater; under it *Rechnung stellen* (waits while the form has unsaved
+  as a badge. The form is [[CompanyCourseSchema]]: the company's address,
+  the days as a Veranstaltung's, the lines as a repeater; under it *Rechnung stellen* (waits while the form has unsaved
   changes, since it bills what is saved), then the invoice box and
   *Rechnung stornieren*. An invoiced Firmenkurs is locked as a past
   Veranstaltung is. The invoice also shows under *Rechnungen*, by the
@@ -113,6 +113,6 @@ Asked after 60–63, since they decide what a Firmenkurs is made of:
 - **Nothing public sees it**: its own tables, so no list of Veranstaltungen,
   no search, no MCP tool, no reminder, no expert portal.
 - Tests: `tests/Feature/Admin/CompanyCourseTest.php`. Walked through in a
-  browser the same day: a company added in the lightbox, a Firmenkurs with
-  two lines saved, invoiced (CHF 2'400 exempt, CHF 150 + 12.15 VAT), the PDF
+  browser the same day (with the company table, before it went): a
+  Firmenkurs with two lines saved, invoiced (CHF 2'400 exempt, CHF 150 + 12.15 VAT), the PDF
   checked, withdrawn, unlocked.

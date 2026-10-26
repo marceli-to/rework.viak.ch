@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Forms\CompanyCourseSchema;
-use App\Forms\CompanySchema;
 use App\Forms\CourseSchema;
 use App\Forms\CustomerSchema;
 use App\Forms\DiscountCodeSchema;
@@ -49,7 +48,6 @@ class FormController extends Controller
 		'licence' => LicenceProductSchema::class,
 		'licence-variant' => LicenceVariantSchema::class,
 		'software' => SoftwareSchema::class,
-		'company' => CompanySchema::class,
 		'company-course' => CompanyCourseSchema::class,
 	];
 

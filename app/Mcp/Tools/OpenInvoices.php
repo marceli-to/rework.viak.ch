@@ -32,7 +32,7 @@ class OpenInvoices extends Tool
 				fn ($query) => $query->overdueOn(today()),
 				fn ($query) => $query->pending(),
 			)
-			->with('user', 'company')
+			->with('user', 'companyCourse')
 			->orderBy('due_at')
 			->get();
 
@@ -42,7 +42,7 @@ class OpenInvoices extends Tool
 			'invoices' => $invoices->map(fn (Invoice $invoice) => [
 				'number' => $invoice->number,
 				'customer' => $invoice->customerName(),
-				'company' => $invoice->user?->company ?? $invoice->company?->company,
+				'company' => $invoice->user?->company ?? $invoice->companyCourse?->company,
 				'email' => $invoice->user?->email,
 				'date' => $invoice->date?->toDateString(),
 				'due_at' => $invoice->due_at?->toDateString(),
