@@ -5,11 +5,14 @@ namespace App\Providers;
 use App\Support\Accounting\AccountingSystem;
 use App\Support\Accounting\FakeAccountingSystem;
 use App\Support\Accounting\RunMyAccounts;
+use App\Support\Mcp\McpAccess;
 use App\Support\Payments\FakePaymentGateway;
 use App\Support\Payments\PaymentGateway;
 use App\Support\Payments\StripeGateway;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
 use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
@@ -106,6 +109,11 @@ class AppServiceProvider extends ServiceProvider
 	public function boot(): void
 	{
 		$this->catchMailOutsideProduction();
+
+		// A token opens `/mcp` and nothing else ([[McpAccess]]).
+		Sanctum::authenticateAccessTokensUsing(
+			fn (PersonalAccessToken $token, bool $isValid): bool => McpAccess::admits($token, $isValid, request()),
+		);
 	}
 
 	/**

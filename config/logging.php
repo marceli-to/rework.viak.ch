@@ -73,6 +73,15 @@ return [
 			'replace_placeholders' => true,
 		],
 
+		// Every call to the MCP server, with whose token made it ([[LogMcpCall]], [[17-mcp]]).
+		'mcp' => [
+			'driver' => 'daily',
+			'path' => storage_path('logs/mcp.log'),
+			'level' => 'info',
+			'max_files' => 365,
+			'replace_placeholders' => true,
+		],
+
 		'monthly' => [
 			'driver' => 'monthly',
 			'path' => storage_path('logs/laravel.log'),

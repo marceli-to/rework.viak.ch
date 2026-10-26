@@ -46,8 +46,9 @@ return Application::configure(basePath: dirname(__DIR__))
 		$middleware->appendToGroup('api', SignOutDeactivated::class);
 	})
 	->withExceptions(function (Exceptions $exceptions): void {
+		// `mcp` too: a client without a token is told 401, not sent to the login.
 		$exceptions->shouldRenderJsonWhen(
-			fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+			fn (Request $request) => $request->is('api/*') || $request->is('mcp') || $request->expectsJson(),
 		);
 
 		/*

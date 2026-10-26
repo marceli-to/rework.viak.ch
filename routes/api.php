@@ -204,6 +204,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 
 		Route::get('profile', [Admin\ProfileController::class, 'show']);
 		Route::put('profile', [Admin\ProfileController::class, 'update']);
+		// The admin's own tokens for the MCP server ([[17-mcp]]).
+		Route::get('profile/mcp-tokens', [Admin\McpTokenController::class, 'index']);
+		Route::post('profile/mcp-tokens', [Admin\McpTokenController::class, 'store']);
+		Route::delete('profile/mcp-tokens/{token}', [Admin\McpTokenController::class, 'destroy'])->whereNumber('token');
 
 		Route::get('settings', [Admin\SettingController::class, 'index']);
 		Route::post('settings/{kind}', [Admin\SettingController::class, 'store']);

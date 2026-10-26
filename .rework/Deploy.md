@@ -27,6 +27,13 @@ In this order, from the release directory:
 6. `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
    Safe because `env()` is read only in `config/` (`00-foundation.md`).
 
+**The MCP server** (`17-mcp.md`) needs nothing at deploy, but two things on
+the server: the web server must pass the `Authorization` header through
+(`public/.htaccess` does it for Apache; nginx passes it by default), and
+`storage/logs/mcp.log-*` is the record of every call, a year of files, so it
+belongs in whatever backs up the server. `route:cache` picks up
+`routes/ai.php`, which the package loads itself.
+
 **Once per server:** one crontab line, `* * * * * php artisan schedule:run`.
 The schedule starts the queue worker every minute (`00-foundation.md`,
 *Queue and schedule*). Without it no mail goes out.
