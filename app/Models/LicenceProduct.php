@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use App\Support\Search\IndexedForSearch;
 use App\Support\Slug;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,7 @@ class LicenceProduct extends Model
 	use HasFactory;
 	use HasTranslations;
 	use HasUuid;
+	use IndexedForSearch;
 	use SoftDeletes;
 
 	protected $fillable = ['software_id', 'manufacturer_id', 'title', 'slug', 'description', 'three_years_on_request', 'publish', 'order'];

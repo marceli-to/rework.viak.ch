@@ -1,12 +1,15 @@
-# 15 — Full-text search (not yet built)
+# 15 — Full-text search (backend built 2026-10-26)
 
 A search field in the header, *Kurs oder Software*, as the screenshots of
 `14-angebote.md` show it. Asked for in the meeting of 2026-10-26.
 
 ## Status
 
-**Scoped 2026-10-26**, nothing built. Comes after `14-angebote.md`, because
-what a hit links to is the Angebot. Questions 56 and 57 in `Open-Questions.md`.
+**Backend built 2026-10-26** (*As built*, below): the index, the query, the
+rebuild command and a JSON endpoint. **The header field and the result page
+are not built**: they are design, and change the header on every page, so
+they wait for Marcel; after `14-angebote.md` too, because what a hit links to
+is the Angebot. Questions 56 and 57 in `Open-Questions.md`.
 
 ## What there is today
 
@@ -53,3 +56,47 @@ a FULLTEXT index over JSON would match keys and markup as well as words.
   (Firmenschulung, Über uns) and the blog if there is one (#22)?
 - **57.** Does the result page show prices and next dates, or titles and leads
   only?
+
+## As built — 2026-10-26
+
+- **`search_entries`** as proposed, plus `type`, `lead` and `url` so a
+  result list needs no second query. FULLTEXT on `title` and on
+  `title, body`.
+- **What is in it** ([[SearchDocument]]), by the rule each page uses, so the
+  search never finds a page that 404s:
+  - courses, published: title; subtitle, summary, descriptions, SEO tags, and
+    the titles of their software and categories;
+  - software on the site (`Software::onSite()`, a listed licence);
+  - licence products that are listed, of a software on the site: the
+    description, the software's and maker's names, the listed variants'
+    titles. A hit links to the software's page;
+  - Vorhaben, published: teaser, lead, text.
+  The dev data: 32 courses, 17 software, 36 licences, 6 Vorhaben.
+- **Kept current** by [[IndexedForSearch]] on the four models and on
+  `LicenceVariant`: saved, deleted, restored. A variant re-indexes its
+  product and software, a product its software, a software its products,
+  because each decides whether the other is on the site
+  ([[SearchIndex::syncRelated]]). A course's software or categories changed
+  without the course itself being saved are picked up by the next rebuild.
+- **The query** ([[SearchIndex::search]]): only letters and digits reach
+  MySQL, at most eight words, every one required.
+  - Three letters or more: boolean `+word*`.
+  - Shorter (*3D*, *KI*, the *V* of *V-Ray*): `REGEXP '\bword'`, at the
+    start of a word in the title or body. So *KI* finds *KI-Einstieg* and
+    not *Skizze*. Nothing to set on the server.
+  - **Order**: how many of the words start a word in the title; then
+    software, course, Vorhaben, licence; then relevance, a title hit three
+    times a body hit. *Lumion Pro* puts the licence above the Lumion course,
+    however often the course says Lumion; *Rhino* puts the Angebot first.
+- **`GET /api/search?q=…&limit=…`** ([[SearchController]]), public,
+  `throttle:120,1`: `type`, `label` (*Kurs*, *Software*, *Lizenz*,
+  *Vorhaben*), `title`, `lead`, `url`. Under two characters, an empty list.
+- **`php artisan search:rebuild`**, step 7 of every deploy and after the
+  ports (`Deploy.md`).
+- **Tests** in `tests/Search`, their own suite: InnoDB's FULLTEXT does not
+  see rows a transaction has not committed, so `RefreshDatabase` would make
+  every search find nothing. Those tests truncate instead (`tests/Pest.php`).
+
+Seen on the dev data: a licence and its software both appear (*V-Ray*:
+the software, then two licences), linking to the same page. Whether the
+result list groups them is for the design.

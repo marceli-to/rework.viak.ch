@@ -8,6 +8,7 @@ use App\Enums\LicenceAccess;
 use App\Enums\LicenceType;
 use App\Enums\Platform;
 use App\Models\Concerns\HasUuid;
+use App\Support\Search\IndexedForSearch;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ class LicenceVariant extends Model
 	use HasFactory;
 	use HasTranslations;
 	use HasUuid;
+	use IndexedForSearch;
 	use SoftDeletes;
 
 	protected $fillable = ['licence_product_id', 'title', 'sku', 'price', 'licence_type', 'access', 'platforms', 'note', 'min_quantity', 'listed', 'order'];

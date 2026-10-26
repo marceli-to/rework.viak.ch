@@ -8,6 +8,7 @@ use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasTestimonials;
 use App\Models\Concerns\HasUuid;
 use App\Models\Concerns\IsTaxonomy;
+use App\Support\Search\IndexedForSearch;
 use App\Support\Slug;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,7 @@ class Software extends Model
 	use HasTestimonials;
 	use HasTranslations;
 	use HasUuid;
+	use IndexedForSearch;
 	use IsTaxonomy;
 	use SoftDeletes;
 

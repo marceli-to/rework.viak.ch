@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use App\Support\Search\IndexedForSearch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ class Project extends Model
 	use HasFactory;
 	use HasTranslations;
 	use HasUuid;
+	use IndexedForSearch;
 
 	protected $fillable = ['title', 'slug', 'teaser', 'lead', 'text', 'seo_description', 'seo_tags', 'publish', 'order'];
 

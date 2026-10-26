@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasTestimonials;
 use App\Models\Concerns\HasUuid;
+use App\Support\Search\IndexedForSearch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,7 @@ class Course extends Model
 	use HasTestimonials;
 	use HasTranslations;
 	use HasUuid;
+	use IndexedForSearch;
 	use SoftDeletes;
 
 	protected $fillable = [

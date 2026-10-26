@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SearchController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,9 @@ Route::get('events/{event}', [EventController::class, 'show']);
  */
 Route::post('basket/price', [BasketController::class, 'price']);
 Route::post('basket/recommendations', [BasketController::class, 'recommendations']);
+
+// The site search ([[15-search]]), asked as a visitor types.
+Route::get('search', SearchController::class)->middleware('throttle:120,1');
 
 Route::middleware('auth:sanctum')->group(function (): void {
 	/*

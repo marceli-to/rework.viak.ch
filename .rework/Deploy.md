@@ -26,6 +26,11 @@ In this order, from the release directory:
    from `storage/app/public`).
 6. `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
    Safe because `env()` is read only in `config/` (`00-foundation.md`).
+7. **`php artisan search:rebuild`**: the site search's index from scratch
+   (`15-search.md`, [[RebuildSearchIndex]]). Saving a record keeps its row
+   current, but a deploy may change *what* is indexed, and a database
+   import or the ports write rows without saving them through Eloquent. A
+   second on a few hundred rows, safe at any time.
 
 **The MCP server** (`17-mcp.md`) needs nothing at deploy, but two things on
 the server: the web server must pass the `Authorization` header through
@@ -71,6 +76,8 @@ Still open: which PHP production runs (#11).
    media attached since would point at nothing, and nothing would say so.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
+   And step 7 (`search:rebuild`): the ports insert without Eloquent's
+   events, so until it runs the search finds nothing.
 4. **`php artisan port:verify`**: every polymorphic row has an existing
    class and owner, and the relation that reads it is named. Fails on a row
    that points at nothing ([[VerifyPort]]).
