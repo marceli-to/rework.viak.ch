@@ -202,7 +202,7 @@
 				</ul>
 
 				<a x-show="hits.length" :href="resultsFor(query)" class="mt-8 inline-flex flex-col items-start hover:text-teal">
-					<span>Alle Ergebnisse für «<span x-text="query.trim()"></span>»</span>
+					<span>Alle Ergebnisse für «<span x-text="query.trim()"></span>» anzeigen</span>
 					<x-icon.arrow-right class="mt-8" />
 				</a>
 
