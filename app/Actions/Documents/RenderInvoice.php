@@ -61,9 +61,8 @@ class RenderInvoice
 		$invoice->loadMissing(['items', 'user']);
 
 		if ($invoice->user === null) {
-			// Every one of the 569 ported invoices has a user, and the column
-			// is not nullable; this is the guard for a caller that built one by
-			// hand, not for data.
+			// A Firmenkurs's invoice has a company and no user, so no
+			// document row: that is [[forCompany]].
 			throw new RuntimeException("Invoice {$invoice->number} has no user to file a document against.");
 		}
 
@@ -112,6 +111,39 @@ class RenderInvoice
 
 			return $document;
 		});
+	}
+
+	/**
+	 * A Firmenkurs's invoice ([[16-firmenkurse]]): the company has no account,
+	 * so nothing to file a [[UserDocument]] under and no profile to show it
+	 * in. The PDF goes beside the others under the company's uuid, the
+	 * invoice carries its name as always, and the dashboard serves it
+	 * ([[Invoice::companyPdfPath]]). Returns that path, for the mail.
+	 */
+	public function forCompany(Invoice $invoice): string
+	{
+		$invoice->loadMissing(['items', 'company']);
+
+		if ($invoice->company === null) {
+			throw new RuntimeException("Invoice {$invoice->number} has no company to file a document under.");
+		}
+
+		$pdf = $this->renderer->render('documents.invoice', [
+			'invoice' => $invoice,
+			'qrBill' => $this->qrBill->html($invoice),
+		]);
+
+		$old = $invoice->companyPdfPath();
+		$invoice->forceFill(['filename' => $this->filename($invoice)])->save();
+		$path = (string) $invoice->companyPdfPath();
+
+		if ($old !== null && $old !== $path) {
+			Storage::disk('documents')->delete($old);
+		}
+
+		Storage::disk('documents')->put($path, $pdf);
+
+		return $path;
 	}
 
 	/** The bytes, without storing anything — for a preview or a test. */

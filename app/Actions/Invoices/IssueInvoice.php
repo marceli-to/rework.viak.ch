@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Invoices;
 
+use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\User;
@@ -38,6 +39,9 @@ use InvalidArgumentException;
  * exists and is missing from the books — which is a reconciliation the admin
  * worklist can show, and the opposite mistake (books charged, no invoice) is
  * the one that cannot be repaired.
+ *
+ * **Billed to an account or to a company**: every invoice has a user, except
+ * a Firmenkurs's, which has a company and no login ([[16-firmenkurse]]).
  */
 class IssueInvoice
 {
@@ -51,7 +55,7 @@ class IssueInvoice
 	 * @param  array<string, mixed>|null  $invoiceAddress
 	 */
 	public function execute(
-		User $user,
+		User|Company $customer,
 		array $lines,
 		?Carbon $dueAt = null,
 		?array $invoiceAddress = null,
@@ -61,10 +65,11 @@ class IssueInvoice
 			throw new InvalidArgumentException('An invoice with no lines is not a document, it is a mistake.');
 		}
 
-		$invoice = DB::transaction(function () use ($user, $lines, $dueAt, $invoiceAddress, $date): Invoice {
+		$invoice = DB::transaction(function () use ($customer, $lines, $dueAt, $invoiceAddress, $date): Invoice {
 			$invoice = Invoice::create([
 				'number' => $this->numbers->nextInTransaction(),
-				'user_id' => $user->id,
+				'user_id' => $customer instanceof User ? $customer->id : null,
+				'company_id' => $customer instanceof Company ? $customer->id : null,
 				'date' => $date ?? today(),
 				'due_at' => $dueAt ?? today()->addDays((int) config('invoice.payment_period')),
 				'invoice_address' => $invoiceAddress,

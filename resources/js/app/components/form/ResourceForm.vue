@@ -41,7 +41,7 @@ const props = defineProps({
 	prefill: { type: Object, default: () => ({}) },
 });
 
-const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy } = useResourceForm(props);
+const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, dirty, submit, destroy } = useResourceForm(props);
 
 // What the `danger` slot changes about the record without saving the form.
 const patchMeta = (changes) => Object.assign(meta.value, changes);
@@ -71,8 +71,10 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 			</fieldset>
 
 			<!-- Boxes that act on the record rather than its fields: a course
-			     date's *Bestätigen* and *Absagen*. Drawn by the form that has them. -->
-			<slot v-if="!creating" name="actions" :form="form" :meta="meta" :patch-meta="patchMeta" />
+			     date's *Bestätigen* and *Absagen*. Drawn by the form that has them.
+			     `dirty`: a Firmenkurs's *Rechnung stellen* bills what is saved, so
+			     it waits for *Speichern*. -->
+			<slot v-if="!creating" name="actions" :form="form" :meta="meta" :patch-meta="patchMeta" :dirty="dirty" />
 
 			<!-- `.form-danger-zone.is-danger`, as the student's address form has it. -->
 			<div v-if="!creating && !locked(meta) && (deletion || $slots.danger)" class="mt-24 border-2 border-danger p-8 text-md text-danger sm:mt-48 sm:p-12 sm:pt-8 sm:text-lg lg:p-16 lg:pt-12 lg:text-xl">

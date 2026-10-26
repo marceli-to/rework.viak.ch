@@ -21,6 +21,7 @@
 		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte oder Rechnung'],
 		['Profil', '/de/konto', 'Gebuchte Kurse, Dokumente, Bestellungen mit «Bezahlen»'],
 		['Dashboard', '/dashboard', 'Kurse, Veranstaltungen, Kund:innen, Software, Bestellungen, Rechnungen, Seiteninhalte'],
+		['Firmenkurse', '/dashboard/firmenkurse', 'Kurs für eine Firma erfassen, Rechnung aus eigenen Positionen stellen und per E-Mail senden'],
 	];
 
 	$questions = [

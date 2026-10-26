@@ -24,12 +24,15 @@ enum InvoiceItemType: string
 	case Rental = 'RENTAL';
 	case Licence = 'LICENCE';
 
+	/** A Firmenkurs line ticked *MWST*: expenses, material ([[CompanyCourseLine]]). */
+	case Other = 'OTHER';
+
 	/** The rate this kind of line is taxed at, as a percentage. */
 	public function vatRate(): string
 	{
 		return match ($this) {
 			self::Course => '0.00',
-			self::Rental, self::Licence => number_format((float) config('invoice.vat_rate'), 2, '.', ''),
+			self::Rental, self::Licence, self::Other => number_format((float) config('invoice.vat_rate'), 2, '.', ''),
 		};
 	}
 }

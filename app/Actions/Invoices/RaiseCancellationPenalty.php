@@ -72,7 +72,7 @@ class RaiseCancellationPenalty
 		}
 
 		$invoice = $this->issue->execute(
-			user: $booking->user,
+			customer: $booking->user,
 			lines: [new InvoiceLine(
 				// A penalty for a course is still education, and exempt. The
 				// rate follows the thing sold, not the reason for the bill.

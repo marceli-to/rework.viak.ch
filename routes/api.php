@@ -193,6 +193,20 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'update']);
 		Route::delete('discount-codes/{discountCode}', [Admin\DiscountCodeController::class, 'destroy']);
 
+		// Firmenkurse and the companies they are held for ([[16-firmenkurse]]).
+		Route::get('company-courses', [Admin\CompanyCourseController::class, 'index']);
+		Route::post('company-courses', [Admin\CompanyCourseController::class, 'store']);
+		Route::get('company-courses/{companyCourse}', [Admin\CompanyCourseController::class, 'show']);
+		Route::put('company-courses/{companyCourse}', [Admin\CompanyCourseController::class, 'update']);
+		Route::delete('company-courses/{companyCourse}', [Admin\CompanyCourseController::class, 'destroy']);
+		Route::post('company-courses/{companyCourse}/invoice', [Admin\CompanyCourseController::class, 'invoice']);
+		Route::patch('company-courses/{companyCourse}/invoice/withdraw', [Admin\CompanyCourseController::class, 'withdraw']);
+		Route::get('companies', [Admin\CompanyController::class, 'index']);
+		Route::post('companies', [Admin\CompanyController::class, 'store']);
+		Route::get('companies/{company}', [Admin\CompanyController::class, 'show']);
+		Route::put('companies/{company}', [Admin\CompanyController::class, 'update']);
+		Route::delete('companies/{company}', [Admin\CompanyController::class, 'destroy']);
+
 		Route::get('invoices', [Admin\InvoiceController::class, 'index']);
 		Route::get('invoices/{invoice}', [Admin\InvoiceController::class, 'show']);
 		Route::put('invoices/{invoice}', [Admin\InvoiceController::class, 'update']);

@@ -94,3 +94,8 @@ Still open: which PHP production runs (#11).
    redirect map*). Under Herd, `/robots.txt` and `/favicon.ico` fail falsely.
 7. The new GTM container version, published together with the DNS switch
    (`11-tracking.md`, step 5).
+8. **Before the first Firmenkurs is invoiced in production**: confirm with
+   VIAK that Run My Accounts takes the company customer numbers
+   (`VIAK_F{company id}`, beside the accounts' `VIAK_{user id}`) the way it
+   takes a new student's, and that the `F` suits their bookkeeping
+   (`16-firmenkurse.md`).

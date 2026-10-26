@@ -108,7 +108,7 @@ class RunMyAccounts implements AccountingSystem
 	/** @return array<string, mixed> */
 	private function payload(Invoice $invoice, bool $cancellation): array
 	{
-		$invoice->loadMissing('items.itemable', 'user');
+		$invoice->loadMissing('items.itemable', 'user', 'company');
 		$amount = $cancellation ? '-'.$invoice->grand_total : (string) $invoice->grand_total;
 		$vat = $cancellation ? '-'.$invoice->vat : (string) $invoice->vat;
 
@@ -122,8 +122,8 @@ class RunMyAccounts implements AccountingSystem
 			'description' => $invoice->items->pluck('description')->implode('; '),
 			'taxincluded' => 'false',
 			'customer' => [
-				'customernumber' => $this->prefix.$invoice->user_id,
-				'name' => $invoice->user?->name,
+				'customernumber' => $this->customerNumber($invoice),
+				'name' => $invoice->customerName(),
 			],
 			'incomeentries' => [
 				'incomeentry' => [
@@ -139,6 +139,16 @@ class RunMyAccounts implements AccountingSystem
 				],
 			],
 		];
+	}
+
+	/**
+	 * The account's id, as legacy filed every customer; a Firmenkurs's company
+	 * gets an `F` in front, so it can never meet an account's number
+	 * ([[16-firmenkurse]]).
+	 */
+	private function customerNumber(Invoice $invoice): string
+	{
+		return $invoice->company_id !== null ? $this->prefix.'F'.$invoice->company_id : $this->prefix.$invoice->user_id;
 	}
 
 	private function number(Invoice $invoice): string

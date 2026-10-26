@@ -146,6 +146,37 @@ const routes = [
 		meta: { title: 'Exporte' },
 	},
 	{
+		// Firmenkurse and the companies they are billed to ([[16-firmenkurse]]).
+		path: '/dashboard/firmenkurse',
+		name: 'company-courses',
+		component: () => import('@/views/CompanyCourse/Index.vue'),
+		meta: { title: 'Firmenkurse' },
+	},
+	{
+		path: '/dashboard/firmenkurs/erfassen',
+		name: 'company-course.create',
+		component: () => import('@/views/CompanyCourse/Form.vue'),
+		meta: { title: 'Firmenkurs erfassen' },
+	},
+	{
+		path: '/dashboard/firmenkurs/:uuid',
+		name: 'company-course.edit',
+		component: () => import('@/views/CompanyCourse/Form.vue'),
+		meta: { title: 'Firmenkurs bearbeiten' },
+	},
+	{
+		path: '/dashboard/firma/erfassen',
+		name: 'company.create',
+		component: () => import('@/views/Company/Form.vue'),
+		meta: { title: 'Firma erfassen' },
+	},
+	{
+		path: '/dashboard/firma/:uuid',
+		name: 'company.edit',
+		component: () => import('@/views/Company/Form.vue'),
+		meta: { title: 'Firma bearbeiten' },
+	},
+	{
 		path: '/dashboard/rabatt-codes',
 		name: 'discount-codes',
 		component: () => import('@/views/DiscountCode/Index.vue'),

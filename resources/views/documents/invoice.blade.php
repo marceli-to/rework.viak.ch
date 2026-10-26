@@ -1,5 +1,6 @@
 @php
 	$billing = $invoice->billingLines();
+	// A Firmenkurs's invoice has no participant, only the company it bills ([[16-firmenkurse]]).
 	$recipient = $invoice->user?->addressLines() ?? [];
 
 	/*
@@ -34,7 +35,7 @@
 		->values();
 @endphp
 
-<x-documents.layout :title="'Rechnung '.$invoice->number" :billing="(bool) $billing">
+<x-documents.layout :title="'Rechnung '.$invoice->number" :billing="$billing && $recipient">
 	{{--
 		The invoice — `pdf/invoice/event-invoice.blade.php` and its twin
 		`rental-invoice.blade.php`, which are the same file with a different
@@ -47,7 +48,7 @@
 		([[Invoice]]).
 	--}}
 	<div class="addresses">
-		@if ($billing)
+		@if ($billing && $recipient)
 			<div class="address">
 				<div class="address__label">Rechnungsadresse</div>
 				@foreach ($billing as $line)
@@ -64,7 +65,7 @@
 			</div>
 		@else
 			<div class="address">
-				@foreach ($recipient as $line)
+				@foreach ($billing ?: $recipient as $line)
 					{{ $line }}@if (! $loop->last)<br>@endif
 				@endforeach
 			</div>

@@ -32,7 +32,7 @@ class OpenInvoices extends Tool
 				fn ($query) => $query->overdueOn(today()),
 				fn ($query) => $query->pending(),
 			)
-			->with('user')
+			->with('user', 'company')
 			->orderBy('due_at')
 			->get();
 
@@ -41,8 +41,8 @@ class OpenInvoices extends Tool
 			'total' => $invoices->reduce(fn (string $sum, Invoice $invoice) => bcadd($sum, (string) $invoice->grand_total, 2), '0.00'),
 			'invoices' => $invoices->map(fn (Invoice $invoice) => [
 				'number' => $invoice->number,
-				'customer' => $invoice->user?->name,
-				'company' => $invoice->user?->company,
+				'customer' => $invoice->customerName(),
+				'company' => $invoice->user?->company ?? $invoice->company?->company,
 				'email' => $invoice->user?->email,
 				'date' => $invoice->date?->toDateString(),
 				'due_at' => $invoice->due_at?->toDateString(),

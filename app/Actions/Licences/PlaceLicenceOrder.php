@@ -85,7 +85,7 @@ class PlaceLicenceOrder
 		}
 
 		$invoice = $this->issue->execute(
-			user: $user,
+			customer: $user,
 			lines: $order->items->map(fn (LicenceOrderItem $item) => new InvoiceLine(
 				type: InvoiceItemType::Licence,
 				description: $item->description(),

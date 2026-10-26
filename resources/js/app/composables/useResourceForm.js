@@ -122,5 +122,5 @@ export function useResourceForm({ schema: name, load, save, remove, list, edit, 
 	window.addEventListener('beforeunload', warn);
 	onBeforeUnmount(() => window.removeEventListener('beforeunload', warn));
 
-	return { back, schema, form, meta, id, errors, saving, deleting, failed, creating, submit, destroy };
+	return { back, schema, form, meta, id, errors, saving, deleting, failed, creating, dirty, submit, destroy };
 }

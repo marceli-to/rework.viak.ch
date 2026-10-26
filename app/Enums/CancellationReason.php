@@ -44,6 +44,9 @@ enum CancellationReason: string
 	/** VIAK cancelled a licence order before anything was sent ([[CancelLicenceOrder]]). */
 	case OrderCancelled = 'order_cancelled';
 
+	/** VIAK withdrew a Firmenkurs invoice to issue it again, changed ([[CompanyCourse]]). */
+	case Withdrawn = 'withdrawn';
+
 	/**
 	 * Reads a legacy `cancel_reason` sentence. Returns null for anything
 	 * unrecognised so the port reports it rather than guessing — the two known

@@ -41,7 +41,7 @@ class ChangeInvoiceAddress
 
 		return DB::transaction(function () use ($invoice, $address): Invoice {
 			$invoice->forceFill(['invoice_address' => $address])->save();
-			$this->render->execute($invoice);
+			$invoice->company_id !== null ? $this->render->forCompany($invoice) : $this->render->execute($invoice);
 
 			return $invoice->refresh();
 		});

@@ -74,7 +74,7 @@ class RaiseInvoiceForBooking
 		}
 
 		return $this->issue->execute(
-			user: $booking->user,
+			customer: $booking->user,
 			lines: $this->lines($booking),
 			dueAt: $this->dueAt($booking),
 			invoiceAddress: $booking->invoice_address,

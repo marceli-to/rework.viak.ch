@@ -1,4 +1,4 @@
-# 16 — Firmenkurse (not yet built)
+# 16 — Firmenkurse (built 2026-10-26)
 
 A dashboard module to set up a course for one company and invoice it. Asked
 for in the meeting of 2026-10-26.
@@ -8,7 +8,7 @@ for in the meeting of 2026-10-26.
 **Scoped 2026-10-26**, nothing built. **60–63 answered the same day by
 Marcel, all four the small way**: the participants are a number, the invoice
 is free lines, one invoice per Firmenkurs, the enquiry stays a mail. So this
-is the small module: an event that is not public, and one invoice beside it.
+is the small module. **Built the same day** (*As built*, at the end).
 
 ## What there is today
 
@@ -43,6 +43,30 @@ price:
 - **The dashboard**: a *Firmenkurse* list (upcoming, past), a form for the
   event, the invoice beside it with its status.
 
+## The building answers — 2026-10-26 (Marcel)
+
+Asked after 60–63, since they decide what a Firmenkurs is made of:
+
+- **No experts on it.** So **not an `Event`**: a record of its own
+  (`company_courses`), which nothing public, no expert portal, no reminder,
+  no search and no MCP tool ever sees. The *Proposed shape* above, an event
+  that is not public, would have had to be left out of every one of those.
+- **A course from the catalogue, or a free title** for a tailored programme.
+- **The company is an address, not an account.** No `User`, no login, so the
+  invoice is not in anybody's profile and **cannot be paid by card** (the card
+  page is for the signed-in owner of the invoice): QR bill only.
+- **One `companies` row per company**, picked on the Firmenkurs or added
+  there in a lightbox. Its id is the customer number Run My Accounts files
+  the invoice under (`VIAK_F{id}`, beside `VIAK_{user id}`), so a company's
+  second Firmenkurs is the same customer in the books.
+- **An e-mail on the Firmenkurs**: *Rechnung stellen* sends the PDF there.
+- **The lines are typed on the Firmenkurs and frozen by *Rechnung stellen*.**
+  Each is a text and a net amount, exempt like a course unless ticked
+  *MWST* (8.1 %, `viak-vat-rules`). After that the Firmenkurs is locked;
+  a change means *Rechnung stornieren* on the Firmenkurs (nothing in the
+  dashboard cancels an invoice on its own today), which posts the storno to
+  the books and unlocks it for a new one.
+
 ## Questions — answered 2026-10-26 (Marcel)
 
 - ~~**60.** Do the participants exist in the app?~~ **No: a number.** The
@@ -53,3 +77,42 @@ price:
   ever asked for.
 - ~~**63.** Store the enquiry and turn it into a Firmenkurs?~~ **No, it stays
   a mail** (#24 unchanged). VIAK creates the Firmenkurs by hand.
+
+## As built — 2026-10-26
+
+- **Tables** (`2026_10_26_000003_create_company_courses`): `companies`
+  (an invoice address: company, contact, street, zip, city, country, the
+  fields of [[UserAddress]]); `company_courses` (company, catalogue course or
+  `title`, `location`, `participants`, `email`, `remarks`, `invoice_id`);
+  `company_course_dates`; `company_course_lines` (`description`, `net`,
+  `taxed`). `invoices.user_id` is nullable now and `invoices.company_id`
+  sits beside it; one of the two is set.
+- **Invoicing** goes through [[IssueInvoice]] like every other invoice: it
+  takes `User|Company`. A line is `InvoiceItemType::Course` (exempt) or,
+  ticked *MWST*, the new `InvoiceItemType::Other` (8.1 %). Run My Accounts
+  files a company as `VIAK_F{company id}` ([[RunMyAccounts::customerNumber]]).
+- **The PDF** has no [[UserDocument]] (no owner): [[RenderInvoice::forCompany]]
+  writes it to `documents/companies/{company uuid}/` and the dashboard serves
+  it from `/dokumente/firmenrechnung/{invoice}`, admins only. On the PDF the
+  company's address stands alone, without the *Kursteilnehmer:in* block.
+- **The mail** [[CompanyCourseInvoice]] (*Sie*, QR bill only, the PDF
+  attached) goes to the Firmenkurs's e-mail.
+- **Withdrawing** ([[WithdrawCompanyCourseInvoice]]) cancels with the new
+  reason `withdrawn` and reverses in the books ([[CancelInvoice]]). Only an
+  open or overdue invoice; a paid one is a refund, done by hand.
+- **The dashboard**: *Firmenkurse* in the burger panel, first. The list has
+  *Bevorstehende* (open) and *Vergangene* (shut) Firmenkurse with the invoice
+  as a badge, and *Firmen* (shut, `+` under it). The form is
+  [[CompanyCourseSchema]]: the company picked or added in a lightbox
+  ([[CompanyDialog]]), the days as a Veranstaltung's, the lines as a
+  repeater; under it *Rechnung stellen* (waits while the form has unsaved
+  changes, since it bills what is saved), then the invoice box and
+  *Rechnung stornieren*. An invoiced Firmenkurs is locked as a past
+  Veranstaltung is. The invoice also shows under *Rechnungen*, by the
+  company's name, and is found by it.
+- **Nothing public sees it**: its own tables, so no list of Veranstaltungen,
+  no search, no MCP tool, no reminder, no expert portal.
+- Tests: `tests/Feature/Admin/CompanyCourseTest.php`. Walked through in a
+  browser the same day: a company added in the lightbox, a Firmenkurs with
+  two lines saved, invoiced (CHF 2'400 exempt, CHF 150 + 12.15 VAT), the PDF
+  checked, withdrawn, unlocked.

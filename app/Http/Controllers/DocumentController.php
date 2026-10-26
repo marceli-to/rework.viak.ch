@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Invoice;
 use App\Models\UserDocument;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -28,5 +29,15 @@ class DocumentController extends Controller
 			$document->filename,
 			['Cache-Control' => 'private, no-store'],
 		);
+	}
+
+	/** A Firmenkurs's invoice ([[RenderInvoice::forCompany]]); the route lets admins only in. */
+	public function companyInvoice(Invoice $invoice): StreamedResponse
+	{
+		$path = $invoice->companyPdfPath();
+
+		abort_unless($path !== null && Storage::disk('documents')->exists($path), 404);
+
+		return Storage::disk('documents')->download($path, $invoice->filename, ['Cache-Control' => 'private, no-store']);
 	}
 }

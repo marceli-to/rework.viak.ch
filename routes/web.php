@@ -431,6 +431,11 @@ Route::get('/dokumente/{document}', [DocumentController::class, 'show'])
 	->middleware('auth')
 	->name('documents.show');
 
+// A Firmenkurs's invoice has no document row and no owner to ask: admins only ([[16-firmenkurse]]).
+Route::get('/dokumente/firmenrechnung/{invoice:uuid}', [DocumentController::class, 'companyInvoice'])
+	->middleware(['auth', 'role:admin'])
+	->name('documents.company-invoice');
+
 /*
  * Attachments — a course's materials, a file on a message ([[08-accounts]]).
  *
