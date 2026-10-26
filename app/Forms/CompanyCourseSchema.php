@@ -71,7 +71,7 @@ final class CompanyCourseSchema extends Schema
 						->message('required', 'Bitte einen Betrag erfassen.'),
 					Field::checkbox('taxed')->label('MWST '.config('invoice.vat_rate').' %'),
 				], ['description' => '', 'net' => '', 'taxed' => false])
-					->label('Rechnungspositionen')->with(['add' => 'Position hinzufügen', 'plus' => true, 'removeBelow' => true]),
+					->label('Rechnungspositionen')->with(['add' => 'Position hinzufügen', 'removeBelow' => true]),
 			])->with(['count' => 'lines', 'open' => true]),
 
 			Field::textarea('remarks')->label('Bemerkungen')->rules(['max:2000']),

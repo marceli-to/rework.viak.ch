@@ -102,7 +102,7 @@ Asked after 60–63, since they decide what a Firmenkurs is made of:
 - **Withdrawing** ([[WithdrawCompanyCourseInvoice]]) cancels with the new
   reason `withdrawn` and reverses in the books ([[CancelInvoice]]). Only an
   open or overdue invoice; a paid one is a refund, done by hand.
-- **The dashboard**: *Firmenkurse* in the burger panel, first. The list has
+- **The dashboard**: *Firmenkurse* under *Backoffice*, after *Bestellungen*. The list has
   *Bevorstehende* (open) and *Vergangene* (shut) Firmenkurse with the invoice
   as a badge. The form is [[CompanyCourseSchema]]: the company's address,
   the days as a Veranstaltung's, the lines as a repeater; under it *Rechnung stellen* (waits while the form has unsaved

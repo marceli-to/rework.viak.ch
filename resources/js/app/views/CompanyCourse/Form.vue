@@ -44,8 +44,8 @@ async function act(meta, patchMeta, call, question, done) {
 		:load="fetchCompanyCourse"
 		:save="saveCompanyCourse"
 		:remove="deleteCompanyCourse"
-		:list="{ name: 'company-courses' }"
-		:edit="(uuid) => ({ name: 'company-course.edit', params: { uuid } })"
+		:list="{ name: 'backoffice.company-courses' }"
+		:edit="(uuid) => ({ name: 'backoffice.company-course.edit', params: { uuid } })"
 		noun="Firmenkurs"
 		:titles="{ create: 'Firmenkurs erfassen', edit: 'Firmenkurs bearbeiten' }"
 		:deletion="{

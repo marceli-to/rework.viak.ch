@@ -80,11 +80,6 @@ const rows = computed(() => get(props.model, props.field.name) ?? []);
 // A plain copy: the schema arrives reactive, and `structuredClone` cannot copy
 // a proxy — it threw, silently, and *Video hinzufügen* added nothing.
 const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)));
-
-// A repeater row's *Entfernen* sits beside its checkbox (a video's *Publizieren*),
-// unless the checkbox belongs to the row's content (a Firmenkurs line's *MWST*):
-// `removeBelow` puts it on a line of its own underneath (Marcel, 2026-10-26).
-const removeBeside = computed(() => !props.field.removeBelow && (props.field.fields ?? []).some((child) => child.type === 'checkbox'));
 </script>
 
 <template>
@@ -157,30 +152,47 @@ const removeBeside = computed(() => !props.field.removeBelow && (props.field.fie
 		</button>
 	</div>
 
+	<!-- `removeBelow`: a Firmenkurs's lines (Marcel, 2026-10-26). Each row's fields over its rule,
+	     *MWST* among them, and under the rule *Entfernen* on the right; the last one shares its
+	     line with the `+` on the left, the `+` of the dashboard's other lists rather than the
+	     dashed box below, which reads as a file drop. -->
+	<div v-else-if="field.type === 'repeater' && field.removeBelow">
+		<div v-for="(row, index) in rows" :key="row.uuid ?? `neu-${index}`" class="mb-32">
+			<div class="border-b border-black pb-24">
+				<FormNode v-for="(child, position) in field.fields" :key="child.name ?? position" :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
+			</div>
+			<div class="mt-16 flex items-center justify-between">
+				<button v-if="index === rows.length - 1" type="button" :title="field.add ?? 'Hinzufügen'" class="block hover:text-teal" @click="add">
+					<IconPlus size="lg" class="block" />
+				</button>
+				<span v-else />
+				<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
+			</div>
+		</div>
+		<div v-if="!rows.length" class="flex">
+			<button type="button" :title="field.add ?? 'Hinzufügen'" class="block hover:text-teal" @click="add">
+				<IconPlus size="lg" class="block" />
+			</button>
+		</div>
+	</div>
+
 	<!-- A course's videos: each row its fields and *Entfernen* over a rule, then
 	     legacy's dashed *Video hinzufügen* across the column. -->
 	<div v-else-if="field.type === 'repeater'">
 		<div v-for="(row, index) in rows" :key="row.uuid ?? `neu-${index}`" class="mb-32 border-b border-black pb-24">
 			<template v-for="(child, position) in field.fields" :key="child.name ?? position">
-				<div v-if="child.type === 'checkbox' && removeBeside" class="flex items-center justify-between">
+				<div v-if="child.type === 'checkbox'" class="flex items-center justify-between">
 					<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
 					<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
 				</div>
 				<FormNode v-else :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
 			</template>
 			<!-- A row with no checkbox to sit beside (an invoice address) takes it on a line of its own. -->
-			<div v-if="!removeBeside" class="flex justify-end" :class="{ 'mt-16': field.removeBelow }">
+			<div v-if="!field.fields.some((child) => child.type === 'checkbox')" class="flex justify-end">
 				<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
 			</div>
 		</div>
-		<!-- `plus`: the `+` under the dashboard's other lists (*Bestellung erfassen*'s positions),
-		     where a dashed box would read as a file drop (a Firmenkurs's lines, Marcel, 2026-10-26). -->
-		<div v-if="field.plus" class="flex">
-			<button type="button" :title="field.add ?? 'Hinzufügen'" class="block hover:text-teal" @click="add">
-				<IconPlus size="lg" class="block" />
-			</button>
-		</div>
-		<button v-else type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="add">
+		<button type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="add">
 			{{ field.add ?? 'Hinzufügen' }}
 		</button>
 	</div>

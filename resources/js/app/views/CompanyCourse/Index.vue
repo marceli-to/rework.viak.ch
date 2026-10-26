@@ -57,7 +57,7 @@ onMounted(async () => {
 
 <template>
 	<section>
-		<ListHeader title="Firmenkurse" :create="{ name: 'company-course.create' }">
+		<ListHeader title="Firmenkurse" :create="{ name: 'backoffice.company-course.create' }">
 			<template #search>
 				<SearchField :model-value="search" @update:model-value="setSearch" />
 			</template>
@@ -75,7 +75,7 @@ onMounted(async () => {
 				:count="group.rows.length"
 			>
 				<template #title>{{ group.title }}</template>
-				<EditableListItem v-for="course in group.rows" :key="course.uuid" :edit="{ name: 'company-course.edit', params: { uuid: course.uuid } }" wide>
+				<EditableListItem v-for="course in group.rows" :key="course.uuid" :edit="{ name: 'backoffice.company-course.edit', params: { uuid: course.uuid } }" wide>
 					<div class="col-span-12 sm:col-span-4">
 						<strong>{{ course.company }}</strong>
 						<span class="block">{{ course.name }}</span>

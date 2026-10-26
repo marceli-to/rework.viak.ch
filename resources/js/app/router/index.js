@@ -148,19 +148,19 @@ const routes = [
 	{
 		// Firmenkurse ([[16-firmenkurse]]).
 		path: '/dashboard/firmenkurse',
-		name: 'company-courses',
+		name: 'backoffice.company-courses',
 		component: () => import('@/views/CompanyCourse/Index.vue'),
 		meta: { title: 'Firmenkurse' },
 	},
 	{
 		path: '/dashboard/firmenkurs/erfassen',
-		name: 'company-course.create',
+		name: 'backoffice.company-course.create',
 		component: () => import('@/views/CompanyCourse/Form.vue'),
 		meta: { title: 'Firmenkurs erfassen' },
 	},
 	{
 		path: '/dashboard/firmenkurs/:uuid',
-		name: 'company-course.edit',
+		name: 'backoffice.company-course.edit',
 		component: () => import('@/views/CompanyCourse/Form.vue'),
 		meta: { title: 'Firmenkurs bearbeiten' },
 	},

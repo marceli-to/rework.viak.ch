@@ -30,8 +30,9 @@ import IconProfile from '@/components/icons/Profile.vue';
  * *Software* is new in the main menu with chunk 05, after *Experten*
  * (Marcel, 2026-10-08): the licence catalogue VIAK keeps itself. Its orders,
  * and the worklist of licences still to send, are *Backoffice → Bestellungen*.
- * *Firmenkurse* is new in the panel with chunk 16, before *Backoffice*: a
- * course held for one company and its invoice ([[16-firmenkurse]]).
+ * *Firmenkurse* is new under *Backoffice* with chunk 16, after *Bestellungen*:
+ * a course held for one company and its invoice (Marcel, 2026-10-26,
+ * [[16-firmenkurse]]).
  */
 const route = useRoute();
 
@@ -43,13 +44,13 @@ const main = [
 ];
 
 const overflow = [
-	{ label: 'Firmenkurse', to: { name: 'company-courses' } },
 	{
 		label: 'Backoffice',
 		key: 'backoffice',
 		children: [
 			{ label: 'Rechnungen', to: { name: 'backoffice.invoices' } },
 			{ label: 'Bestellungen', to: { name: 'backoffice.orders' } },
+			{ label: 'Firmenkurse', to: { name: 'backoffice.company-courses' } },
 			{ label: 'Exporte', to: { name: 'backoffice.exports' } },
 		],
 	},
