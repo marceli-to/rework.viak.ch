@@ -42,7 +42,10 @@
 @endphp
 
 <header class="mb-24 min-h-48 pt-16 sm:min-h-64 sm:pt-28 lg:mb-28 lg:min-h-80" x-data="menu">
-	<div class="grid min-h-[inherit] grid-cols-12 gap-x-16 sm:border-b sm:border-black lg:gap-x-40">
+	{{-- `siteSearch` around the row, so the magnifier and its panel share it,
+	     and a click anywhere else in the page shuts the panel ([[15-search]]). --}}
+	<div class="relative grid min-h-[inherit] grid-cols-12 gap-x-16 sm:border-b sm:border-black lg:gap-x-40"
+		x-data="siteSearch(@js(\App\Support\SiteUrl::search()))" @click.outside="close()" @keydown.escape.window="close()">
 		<div class="col-span-12 sm:col-span-4">
 			<a href="{{ \App\Support\SiteUrl::home() }}"
 				title="Home | {{ config('app.name') }}"
@@ -102,7 +105,16 @@
 					{{-- Hidden while the basket is empty, as legacy hides it with
 					     `!hide` at a count of zero — which is why the live header
 					     usually shows only the account icon. --}}
-					<li class="flex items-center" x-cloak x-show="$store.basket.count > 0">
+					{{-- The site search ([[15-search]]): the panel below opens under the
+					     header's rule. Proposed 2026-10-26; the mockup's grey input does
+					     not fit beside four 24px links, an icon does. Sized as the
+					     profile icon is, by height. --}}
+					<li class="flex items-center">
+						<button type="button" class="block hover:text-teal" title="Suche" aria-label="Suche" :aria-expanded="open" :class="open && 'text-teal'" @click="toggle()">
+							<x-icon.search class="h-16 w-auto! lg:h-20" />
+						</button>
+					</li>
+					<li class="flex items-center sm:ml-16 lg:ml-32" x-cloak x-show="$store.basket.count > 0">
 						{{-- `icons/_basket.scss` sizes the **anchor**, not the svg, and
 						     it has two steps: 19×16 from `bp-sm` and **26×22 from
 						     `bp-md`** — which is our `lg`. Only the first was ported,
@@ -155,6 +167,47 @@
 				</ul>
 			</nav>
 		</div>
+		{{--
+			The search panel ([[15-search]]): white under the header's black rule,
+			its own rule at the bottom, the field in the copy column (`span-8`
+			from the fifth), the hits as the site's list rows. The field is a
+			form field as everywhere on the site, bold teal on a black rule.
+			Enter opens the marked hit, or the result page.
+		--}}
+		<div x-show="open" x-cloak
+			class="absolute inset-x-0 top-full z-[150] mt-px grid grid-cols-12 gap-x-16 border-b border-black bg-white pt-24 pb-32 max-sm:hidden lg:gap-x-40 lg:pt-32 lg:pb-48">
+			<form class="col-span-8 col-start-5" role="search" action="{{ \App\Support\SiteUrl::search() }}" @submit.prevent="go()">
+				<label for="site-search" class="mb-4 block text-md sm:text-lg lg:text-xl">Kurs oder Software suchen</label>
+				<input id="site-search" x-ref="field" name="q" type="search" autocomplete="off" spellcheck="false"
+					x-model="query" @input="type()" @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)"
+					role="combobox" aria-controls="site-search-hits" aria-autocomplete="list"
+					:aria-expanded="hits.length > 0" :aria-activedescendant="active >= 0 ? `site-search-hit-${active}` : null"
+					class="block w-full border-b border-black bg-transparent py-4 text-lg leading-[normal] font-bold text-teal outline-hidden sm:text-xl lg:text-3xl [&::-webkit-search-cancel-button]:appearance-none">
+
+				<ul id="site-search-hits" role="listbox" class="mt-16 lg:mt-24" x-show="hits.length">
+					<template x-for="(hit, index) in hits" :key="hit.url + hit.title">
+						<li :id="`site-search-hit-${index}`" role="option" :aria-selected="index === active">
+							<a :href="hit.url" class="group block border-t border-black pt-8 pb-16 sm:pt-12" @mouseenter="active = index">
+								<span class="flex items-start justify-between gap-16">
+									<span class="font-bold group-hover:text-teal" :class="index === active && 'text-teal'" x-text="hit.title"></span>
+									<span class="mt-2 inline-block shrink-0 border border-black px-6 py-2 text-md leading-[1.2] font-bold" x-text="hit.label"></span>
+								</span>
+								<span x-show="hit.lead" class="mt-4 block text-md text-gray-600 sm:text-lg lg:text-xl" x-text="hit.lead && hit.lead.length > 140 ? hit.lead.slice(0, 140) + '…' : hit.lead"></span>
+							</a>
+						</li>
+					</template>
+				</ul>
+
+				<a x-show="hits.length" :href="resultsFor(query)" class="mt-8 inline-flex flex-col items-start hover:text-teal">
+					<span>Alle Ergebnisse für «<span x-text="query.trim()"></span>»</span>
+					<x-icon.arrow-right class="mt-8" />
+				</a>
+
+				<p x-show="!loading && answered !== '' && answered === query.trim() && !hits.length" class="mt-16 text-md italic sm:mt-24 sm:text-lg lg:text-xl">
+					Nichts gefunden für «<span x-text="answered"></span>».
+				</p>
+			</form>
+		</div>
 	</div>
 
 	{{--
@@ -187,7 +240,16 @@
 				list, which is why *Warenkorb* belongs here between Kontakt and
 				Profil. It was missing (found 2026-09-22).
 			--}}
-			<ul class="mt-72">
+			{{-- The search as the list's first row, a plain form to the result
+			     page: on a phone the panel's live list would sit under the keyboard
+			     ([[15-search]]). No rule of its own; *Kurse*'s is under it. --}}
+			<form class="mt-72" role="search" action="{{ \App\Support\SiteUrl::search() }}">
+				<label for="menu-search" class="sr-only">Suche</label>
+				<input id="menu-search" name="q" type="search" autocomplete="off" placeholder="Suchen"
+					class="block min-h-48 w-full bg-transparent text-right text-3xl font-bold outline-hidden placeholder:text-black/50 [&::-webkit-search-cancel-button]:appearance-none">
+			</form>
+
+			<ul>
 				@foreach ($nav as $item)
 					<li>
 						<a href="{{ $item['href'] }}"

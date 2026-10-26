@@ -100,3 +100,31 @@ a FULLTEXT index over JSON would match keys and markup as well as words.
 Seen on the dev data: a licence and its software both appear (*V-Ray*:
 the software, then two licences), linking to the same page. Whether the
 result list groups them is for the design.
+
+## The field and the result page — proposed 2026-10-26, on a branch
+
+On `search-ui-proposal`, not master, for Marcel to judge in the browser;
+screenshots in `history/search-proposal-2026-10-26/`.
+
+**Why not the mockup's input.** The mockup's grey box sits in a header of
+14px links. Ours is the live header rebuilt 1:1: four links at 24px bold,
+already filling their columns at desktop. A field there means shrinking the
+nav. So the proposal uses the site's own pieces:
+
+- **A magnifier** beside the basket and the profile, drawn at their weight
+  and sized as the profile icon is ([[icon.search]]).
+- **It opens a panel under the header's rule**: white, its own black rule
+  below, the field in the copy column (`span-8` from the fifth), a form field
+  as everywhere on the site (bold teal on a black rule), labelled *Kurs oder
+  Software suchen*. Six hits as the site's list rows (title bold, the type as
+  a badge on the right, the lead in grey), then *Alle Ergebnisse für «…»*
+  with the site's arrow. *Nichts gefunden für «…»* when nothing is.
+  Arrows move through the hits, Enter opens the marked one or the result
+  page, Escape or a click outside shuts it ([[siteSearch]]).
+- **`/de/suche?q=…`**: the article with *Suche* in the aside and the field at
+  the top of the column; the hits in open collapsibles with counts,
+  *Software*, *Kurse*, *Vorhaben*, *Lizenzen* in that order, rows without
+  the badge since the heading says it. `noindex`.
+- **On a phone** the field is the first row of the teal menu panel
+  (*Suchen*, as a placeholder), a plain form to the result page: a live
+  list would sit under the keyboard.

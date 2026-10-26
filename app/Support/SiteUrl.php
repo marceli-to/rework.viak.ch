@@ -362,6 +362,14 @@ final class SiteUrl
 		return self::softwareIndex($locale).'/'.$slug;
 	}
 
+	/** The site search's result page, with the query if there is one ([[15-search]]). */
+	public static function search(?string $query = null, ?string $locale = null): string
+	{
+		$path = '/'.($locale ?? app()->getLocale()).'/'.self::segment('search', $locale);
+
+		return $query === null || $query === '' ? $path : $path.'?'.http_build_query(['q' => $query]);
+	}
+
 	/** Where the homepage footer's newsletter form posts — `/de/newsletter`. */
 	public static function newsletter(?string $locale = null): string
 	{

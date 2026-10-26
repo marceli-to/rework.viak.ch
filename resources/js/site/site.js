@@ -19,6 +19,7 @@ import courseFilter from './components/course-filter';
 import editor from './components/editor';
 import fileDrop from './components/file-drop';
 import menu from './components/menu';
+import siteSearch from './components/site-search';
 import portal from './stores/portal';
 import slider from './components/slider';
 import testimonialSlider from './components/testimonial-slider';
@@ -50,6 +51,7 @@ Alpine.store('confirm', confirm);
  */
 Alpine.data('courseFilter', courseFilter);
 Alpine.data('menu', menu);
+Alpine.data('siteSearch', siteSearch);
 Alpine.data('bookmark', bookmark);
 Alpine.data('basketList', basketList);
 Alpine.data('basketRecommendations', basketRecommendations);

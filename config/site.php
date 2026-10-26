@@ -54,6 +54,8 @@ return [
 			'software' => 'software',
 			// The homepage footer's newsletter form posts here; no page of its own.
 			'newsletter' => 'newsletter',
+			// The site search's result page ([[15-search]]). New, not indexed.
+			'search' => 'suche',
 			// Legacy's indexed page, which 301s to `training` (`04-content.md`).
 			'training_legacy' => 'individualschulungen',
 			'basket' => 'warenkorb',

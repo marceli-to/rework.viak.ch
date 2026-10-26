@@ -21,6 +21,7 @@ use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\PaymentController;
 use App\Http\Controllers\Site\ProjectController;
+use App\Http\Controllers\Site\SearchController;
 use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\SoftwareController;
 use App\Http\Controllers\Site\TrainingController;
@@ -150,6 +151,11 @@ Route::prefix('{locale}')
 			 * Legacy's controller existed only to hand the page its team
 			 * members, and there are none ([[09-public-site]]).
 			 */
+			// The site search's result page; the header's field asks the API ([[15-search]]).
+			Route::get($segments['search'], SearchController::class)
+				->middleware('throttle:60,1')
+				->name("{$locale}.search");
+
 			Route::view($segments['contact'], 'site.contact.index')
 				->name("{$locale}.contact");
 
