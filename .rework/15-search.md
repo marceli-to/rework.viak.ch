@@ -89,7 +89,7 @@ a FULLTEXT index over JSON would match keys and markup as well as words.
     however often the course says Lumion; *Rhino* puts the Angebot first.
 - **`GET /api/search?q=…&limit=…`** ([[SearchController]]), public,
   `throttle:120,1`: `type`, `label` (*Kurs*, *Software*, *Lizenz*,
-  *Vorhaben*), `title`, `lead`, `url`. Under two characters, an empty list.
+  *Vorhaben*), `title`, `lead`, `url`, and `total`, how many in all. Under two characters, an empty list.
 - **`php artisan search:rebuild`**, step 7 of every deploy and after the
   ports (`Deploy.md`).
 - **Tests** in `tests/Search`, their own suite: InnoDB's FULLTEXT does not
@@ -115,7 +115,8 @@ nav. So the proposal uses the site's own pieces:
 - **It opens a panel under the header's rule**: white, its own black rule
   below, laid out as Kontakt is (Marcel, 2026-10-26): *Kurs oder Software
   suchen* bold teal in the aside, the field in the copy column, a form field
-  as everywhere on the site (bold teal on a black rule). Six hits as the site's list rows (title bold, the type as
+  as everywhere on the site (bold teal on a black rule). *13 Einträge gefunden*, then six hits as the
+  site's list rows (title bold, the type as
   a badge on the right, the lead in grey), then *Alle Ergebnisse für «…» anzeigen*
   with the site's arrow. *Nichts gefunden für «…»* when nothing is.
   Arrows move through the hits, Enter opens the marked one or the result

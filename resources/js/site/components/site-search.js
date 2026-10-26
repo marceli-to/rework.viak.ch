@@ -12,6 +12,7 @@ export default (resultsUrl) => ({
 	open: false,
 	query: '',
 	hits: [],
+	total: 0,
 	active: -1,
 	loading: false,
 	timer: null,
@@ -39,6 +40,7 @@ export default (resultsUrl) => ({
 
 		if (this.query.trim().length < 2) {
 			this.hits = [];
+			this.total = 0;
 			this.answered = '';
 			return;
 		}
@@ -52,13 +54,17 @@ export default (resultsUrl) => ({
 
 		try {
 			const response = await fetch(`/api/search?limit=6&q=${encodeURIComponent(this.query.trim())}`, { headers: { Accept: 'application/json' } });
-			const { data } = await response.json();
+			const { data, total } = await response.json();
 			if (asked === this.asked) {
 				this.hits = data;
+				this.total = total;
 				this.answered = this.query.trim();
 			}
 		} catch {
-			if (asked === this.asked) this.hits = [];
+			if (asked === this.asked) {
+				this.hits = [];
+				this.total = 0;
+			}
 		} finally {
 			if (asked === this.asked) this.loading = false;
 		}
@@ -74,6 +80,11 @@ export default (resultsUrl) => ({
 	go() {
 		const hit = this.hits[this.active];
 		window.location.href = hit ? hit.url : this.resultsFor(this.query);
+	},
+
+	// *13 Einträge gefunden*, as the result page says it.
+	get found() {
+		return this.total === 1 ? '1 Eintrag gefunden' : `${this.total} Einträge gefunden`;
 	},
 
 	resultsFor(query) {

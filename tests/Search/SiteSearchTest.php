@@ -110,7 +110,10 @@ it('answers the header field as JSON, nothing under two characters', function ()
 		->assertJsonPath('data.0.title', 'Rhinoceros')
 		->assertJsonPath('data.0.label', 'Software')
 		->assertJsonPath('data.0.lead', 'Freiformen für Schmuck')
-		->assertJsonPath('data.0.url', '/de/software/rhinoceros');
+		->assertJsonPath('data.0.url', '/de/software/rhinoceros')
+		->assertJsonPath('total', 2);
+
+	$this->getJson('/api/search?q=rhin&limit=1')->assertJsonCount(1, 'data')->assertJsonPath('total', 2);
 
 	$this->getJson('/api/search?q=r')->assertOk()->assertJsonCount(0, 'data');
 });

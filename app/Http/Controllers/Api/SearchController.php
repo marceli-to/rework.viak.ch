@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 /**
  * The site search, as JSON ([[15-search]]): what the header field's
- * suggestions and the result page will draw. Public, as the pages it finds
+ * suggestions draw, with `total`, how many there are in all. Public, as the pages it finds
  * are. Two characters at least; fewer answers an empty list, not an error,
  * because a field asks as it is typed into.
  */
@@ -22,8 +22,9 @@ class SearchController extends Controller
 		$query = trim($request->string('q')->limit(100, '')->value());
 		$limit = min(max($request->integer('limit', 8), 1), 30);
 
-		$hits = mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), $limit);
+		// All of them, to say how many; the panel lists the first few ([[siteSearch]]).
+		$hits = mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), 60);
 
-		return response()->json(['data' => $hits->values()]);
+		return response()->json(['data' => $hits->take($limit)->values(), 'total' => $hits->count()]);
 	}
 }
