@@ -113,7 +113,8 @@ nav. So the proposal uses the site's own pieces:
 - **A magnifier** beside the basket and the profile, drawn at their weight
   and sized as the profile icon is ([[icon.search]]).
 - **It opens a panel under the header's rule**: white, its own black rule
-  below, the field in the copy column (`span-8` from the fifth), a form field
+  below, the field in the first eight columns, flush left with the logo
+  (Marcel, 2026-10-26), a form field
   as everywhere on the site (bold teal on a black rule), labelled *Kurs oder
   Software suchen*. Six hits as the site's list rows (title bold, the type as
   a badge on the right, the lead in grey), then *Alle Ergebnisse für «…»*
