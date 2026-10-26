@@ -186,7 +186,8 @@
 					:aria-expanded="hits.length > 0" :aria-activedescendant="active >= 0 ? `site-search-hit-${active}` : null"
 					class="block w-full border-b border-black bg-transparent py-4 text-lg leading-[normal] font-bold text-teal outline-hidden sm:text-xl lg:text-3xl [&::-webkit-search-cancel-button]:appearance-none">
 
-				<ul id="site-search-hits" role="listbox" class="mt-16 lg:mt-24" x-show="hits.length">
+				{{-- The field's rule is the first row's: no gap, no second line (Marcel, 2026-10-26). --}}
+				<ul id="site-search-hits" role="listbox" class="[&>li:first-of-type>a]:border-t-0" x-show="hits.length">
 					<template x-for="(hit, index) in hits" :key="hit.url + hit.title">
 						<li :id="`site-search-hit-${index}`" role="option" :aria-selected="index === active">
 							<a :href="hit.url" class="group block border-t border-black pt-8 pb-16 sm:pt-12" @mouseenter="active = index">
