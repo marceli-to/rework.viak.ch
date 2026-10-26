@@ -168,7 +168,14 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 				<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
 			</div>
 		</div>
-		<button type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="add">
+		<!-- `plus`: the `+` under the dashboard's other lists (*Bestellung erfassen*'s positions),
+		     where a dashed box would read as a file drop (a Firmenkurs's lines, Marcel, 2026-10-26). -->
+		<div v-if="field.plus" class="flex">
+			<button type="button" :title="field.add ?? 'Hinzufügen'" class="block hover:text-teal" @click="add">
+				<IconPlus size="lg" class="block" />
+			</button>
+		</div>
+		<button v-else type="button" class="block w-full border border-dashed border-black py-24 text-center transition-colors hover:border-teal hover:text-teal sm:text-lg lg:text-xl" @click="add">
 			{{ field.add ?? 'Hinzufügen' }}
 		</button>
 	</div>
