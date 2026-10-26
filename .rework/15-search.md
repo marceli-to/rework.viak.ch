@@ -1,4 +1,4 @@
-# 15 — Full-text search (backend built 2026-10-26)
+# 15 — Full-text search (built 2026-10-26)
 
 A search field in the header, *Kurs oder Software*, as the screenshots of
 `14-angebote.md` show it. Asked for in the meeting of 2026-10-26.
@@ -6,10 +6,9 @@ A search field in the header, *Kurs oder Software*, as the screenshots of
 ## Status
 
 **Backend built 2026-10-26** (*As built*, below): the index, the query, the
-rebuild command and a JSON endpoint. **The header field and the result page
-are not built**: they are design, and change the header on every page, so
-they wait for Marcel; after `14-angebote.md` too, because what a hit links to
-is the Angebot. Questions 56 and 57 in `Open-Questions.md`.
+rebuild command and a JSON endpoint; then the header's field and the result
+page, proposed and merged the same day (*The field and the result page*).
+Once `14-angebote.md` lands, what a hit links to may change. Questions 56 and 57 in `Open-Questions.md`.
 
 ## What there is today
 
@@ -101,9 +100,9 @@ Seen on the dev data: a licence and its software both appear (*V-Ray*:
 the software, then two licences), linking to the same page. Whether the
 result list groups them is for the design.
 
-## The field and the result page — proposed 2026-10-26, on a branch
+## The field and the result page — built 2026-10-26
 
-On `search-ui-proposal`, not master, for Marcel to judge in the browser;
+Proposed on a branch and merged the same day (Marcel);
 screenshots in `history/search-proposal-2026-10-26/`.
 
 **Why not the mockup's input.** The mockup's grey box sits in a header of
