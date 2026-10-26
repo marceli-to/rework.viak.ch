@@ -18,7 +18,7 @@
 		['Firmenschulung', '/de/firmenschulung', 'Text, Anfrageformular, Kundenmeinungen'],
 		['Über uns', '/de/ueber-uns', 'Text, Expert:innen, Team'],
 		['Kontakt', '/de/kontakt', 'Adresse, Karte, Kontaktformular'],
-		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte'],
+		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte oder Rechnung'],
 		['Profil', '/de/konto', 'Gebuchte Kurse, Dokumente, Bestellungen mit «Bezahlen»'],
 		['Dashboard', '/dashboard', 'Kurse, Veranstaltungen, Kund:innen, Software, Bestellungen, Rechnungen, Seiteninhalte'],
 	];
@@ -44,8 +44,9 @@
 		],
 		[
 			'title' => 'Software: Versand vor oder nach Zahlungseingang?',
-			'text' => 'Im Shop wird Software sofort per Kreditkarte bezahlt. Unbezahlt bleibt eine Bestellung, wenn die Zahlung abgebrochen wird oder wenn das Team sie im Dashboard erfasst. Sollen solche Bestellungen erst nach Zahlungseingang versendet werden?',
-			'decides' => 'Ob die Versandliste im Dashboard unbezahlte Bestellungen zurückhält.',
+			'go_live' => true,
+			'text' => 'Software kann jetzt per Kreditkarte oder per Rechnung bezahlt werden, die Kund:in wählt in der Kasse. Mit der Rechnung ist eine unbezahlte Bestellung der Normalfall, dazu kommen abgebrochene Kartenzahlungen und Bestellungen, die das Team im Dashboard erfasst. Werden die Lizenzen sofort versendet oder erst nach Zahlungseingang? Die Bestätigung in der Kasse und die E-Mail sagen heute «nach Zahlungseingang».',
+			'decides' => 'Ob die Versandliste im Dashboard unbezahlte Bestellungen zurückhält, und was Bestätigung und E-Mail versprechen.',
 		],
 		[
 			'title' => 'Software: Gutscheincodes und Studierendenpreise?',
