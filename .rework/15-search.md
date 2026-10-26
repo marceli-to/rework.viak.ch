@@ -113,10 +113,9 @@ nav. So the proposal uses the site's own pieces:
 - **A magnifier** beside the basket and the profile, drawn at their weight
   and sized as the profile icon is ([[icon.search]]).
 - **It opens a panel under the header's rule**: white, its own black rule
-  below, the field in the first eight columns, flush left with the logo
-  (Marcel, 2026-10-26), a form field
-  as everywhere on the site (bold teal on a black rule), labelled *Kurs oder
-  Software suchen*. Six hits as the site's list rows (title bold, the type as
+  below, laid out as Kontakt is (Marcel, 2026-10-26): *Kurs oder Software
+  suchen* bold teal in the aside, the field in the copy column, a form field
+  as everywhere on the site (bold teal on a black rule). Six hits as the site's list rows (title bold, the type as
   a badge on the right, the lead in grey), then *Alle Ergebnisse für «…»*
   with the site's arrow. *Nichts gefunden für «…»* when nothing is.
   Arrows move through the hits, Enter opens the marked one or the result

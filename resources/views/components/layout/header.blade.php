@@ -169,15 +169,17 @@
 		</div>
 		{{--
 			The search panel ([[15-search]]): white under the header's black rule,
-			its own rule at the bottom, the field in the first eight columns, flush
-			left with the logo (Marcel, 2026-10-26), the hits as the site's list rows. The field is a
+			its own rule at the bottom; Kontakt's two columns, the heading in the
+			aside and the field in the copy column, the hits as the site's list rows. The field is a
 			form field as everywhere on the site, bold teal on a black rule.
 			Enter opens the marked hit, or the result page.
 		--}}
 		<div x-show="open" x-cloak
 			class="absolute inset-x-0 top-full z-[150] mt-px grid grid-cols-12 gap-x-16 border-b border-black bg-white pt-24 pb-32 max-sm:hidden lg:gap-x-40 lg:pt-32 lg:pb-48">
+			{{-- As Kontakt has it: the heading bold teal in the aside, the field
+			     and its hits in the copy column (Marcel, 2026-10-26). --}}
+			<label for="site-search" class="col-span-4 font-bold text-teal">Kurs oder Software suchen</label>
 			<form class="col-span-8" role="search" action="{{ \App\Support\SiteUrl::search() }}" @submit.prevent="go()">
-				<label for="site-search" class="mb-4 block text-md sm:text-lg lg:text-xl">Kurs oder Software suchen</label>
 				<input id="site-search" x-ref="field" name="q" type="search" autocomplete="off" spellcheck="false"
 					x-model="query" @input="type()" @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)"
 					role="combobox" aria-controls="site-search-hits" aria-autocomplete="list"
