@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Event;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Software;
@@ -155,4 +156,28 @@ it('has no page for a product that is not on the site', function () {
 	$this->get('/de/angebote/software/versteckt')->assertNotFound();
 	$this->get('/de/angebote/software/entwurf')->assertNotFound();
 	$this->get('/de/angebote/software/verwaist')->assertNotFound();
+});
+
+it('gives a course row its next date, its deadline while ahead, and how many more dates there are', function () {
+	$blender = angebot('Blender');
+	$course = Course::factory()->create(['title' => ['de' => 'Blender Einführungskurs'], 'fee' => '899.00']);
+	$course->software()->attach($blender);
+	$next = Event::factory()->for($course)->create(['date' => '2026-12-03', 'registration_until' => '2026-11-19', 'fee' => '899.00']);
+	$next->dates()->createMany([['date' => '2026-12-03'], ['date' => '2026-12-04']]);
+	Event::factory()->for($course)->create(['date' => '2027-01-14']);
+	$late = Course::factory()->create(['title' => ['de' => 'Blender Renderingkurs']]);
+	$late->software()->attach($blender);
+	Event::factory()->for($late)->create(['date' => '2026-11-05', 'registration_until' => '2026-10-22']);
+
+	$this->travelTo('2026-10-29');
+
+	$this->get('/de/software/blender')
+		->assertOk()
+		->assertSee('2 Tage')
+		->assertSee('3. bis 4. Dezember 2026')
+		->assertSee('Anmeldung bis 19. November')
+		->assertSee('1 weiteres Datum')
+		->assertDontSee('Anmeldung bis 22. Oktober')
+		->assertSee('Anmelden')
+		->assertDontSee('Lizenzen');
 });

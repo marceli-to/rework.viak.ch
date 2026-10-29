@@ -5,22 +5,37 @@
 	$visuals = $software->visuals();
 	$information = $software->getTranslation('information', $locale, false);
 	$og = $software->openGraph();
+	$projects = $software->projects;
 @endphp
 
 {{--
-	One software ([[05-licences]]), drawn as a course page is
-	(`site/courses/show.blade.php`, Marcel 2026-10-08): the teal hero, then the
-	collapsibles. *Aktuelle Kurse* becomes *Lizenzen*, every product with its
-	licences (`card/product.blade.php`), *Alle Preise exkl. MWST* once under
-	them; *Kurse* lists the courses that teach it as the course list's cards;
-	*Detailbeschrieb*, *Weitere Informationen* (one column), *Kundenmeinungen*
-	and the browse pair are the course page's.
+	One Angebot ([[14-angebote]]), the overview the client asked for on
+	2026-10-26 and settled on 2026-10-29: **nothing is bought here**, every
+	row leads to its product's page. The mockup's content (`Rhino.html`) in
+	the site's look, which is the course page's (`site/courses/show.blade.php`):
+	the teal hero, then the collapsibles.
+
+	- **The hero** as the course page has it, with the mockup's **Vorhaben
+	  chips** under the text, each linking to its Vorhaben. Not built: the
+	  mockup's anchor links (the collapsibles are a short scroll) and its
+	  breadcrumb (the site has none).
+	- **Kurse and Lizenzen side by side** from `lg`, one collapsible each,
+	  courses first, as the client put it (*links/oben Kursübersicht,
+	  rechts/unten Lizenzübersicht*). A course row (`_course.blade.php`) links
+	  to the course page, a licence row (`_licence.blade.php`) to the licence's.
+	  Either side alone takes the full width. Under the courses the way to a
+	  Firmenschulung; courses carry no VAT, so no *exkl. MWST* there.
+	- ***Mehr über …*** is the *Detailbeschrieb*, the further images beside it
+	  with their captions (the first is the hero's). Then *Weitere
+	  Informationen*, *Kundenmeinungen*, and only then the recommendations,
+	  which before stood above the copy: the mockup ends on what the Angebot
+	  is, not on what else there is. The browse pair last.
 
 	As on a course page, the phone's header row says the list's name.
 --}}
 <x-layout.site
 	:title="$title"
-	heading="Software"
+	heading="Angebote"
 	:description="$software->getTranslation('seo_description', $locale, false) ?: null"
 	:keywords="$software->getTranslation('seo_tags', $locale, false) ?: null"
 	:image="$og ? '/storage/uploads/'.$og->file : null"
@@ -50,49 +65,86 @@
 				@endif
 			</div>
 
-			@if ($html = $software->getTranslation('short_description', $locale, false))
-				<x-ui.rich-text :html="$html" hero class="sm:col-span-8" />
-			@else
-				<div class="sm:col-span-8"></div>
-			@endif
+			<div class="sm:col-span-8">
+				@if ($html = $software->getTranslation('short_description', $locale, false))
+					<x-ui.rich-text :html="$html" hero />
+				@endif
+
+				{{-- The Vorhaben it is picked for ([[Software::projects]]). --}}
+				@if ($projects->isNotEmpty())
+					<ul @class(['flex flex-wrap gap-8', 'mt-24' => filled($html)])>
+						@foreach ($projects as $project)
+							<li>
+								<a href="{{ \App\Support\SiteUrl::project($project->getTranslation('slug', $locale)) }}"
+									class="inline-block border border-teal px-8 py-4 text-md leading-[1.2] text-teal transition-colors hover:bg-teal hover:text-white sm:text-lg">
+									{{ $project->getTranslation('title', $locale) }}
+								</a>
+							</li>
+						@endforeach
+					</ul>
+				@endif
+			</div>
 		</div>
 	</article>
 
 	<div class="mt-48 lg:mt-64">
-		{{-- None for an Angebot of courses only, Blender or After Effects ([[14-angebote]]). --}}
-		@if ($products->isNotEmpty())
-			<x-ui.collapsible title="Lizenzen">
-				@foreach ($products as $product)
-					<x-card.product :product="$product" />
-				@endforeach
+		@if ($courses->isNotEmpty() || $products->isNotEmpty())
+			<div class="lg:grid lg:grid-cols-12 lg:gap-40">
+				@if ($courses->isNotEmpty())
+					<div @class(['lg:col-span-6' => $products->isNotEmpty(), 'lg:col-span-12' => $products->isEmpty()])>
+						<x-ui.collapsible title="Kurse">
+							@foreach ($courses as $course)
+								@include('site.software._course', ['course' => $course])
+							@endforeach
 
-				{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
-				<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
-			</x-ui.collapsible>
-		@endif
+							<p class="mt-32 sm:mt-48">
+								{{ $title }} für dein ganzes Team?
+								<a href="{{ \App\Support\SiteUrl::training() }}" class="text-teal hover:text-black">Firmenschulung anfragen</a>
+							</p>
+						</x-ui.collapsible>
+					</div>
+				@endif
 
-		@if ($courses->isNotEmpty())
-			<x-ui.collapsible title="Kurse">
-				<div class="mt-16 grid grid-cols-12 gap-16 sm:mt-32 lg:gap-40">
-					@foreach ($courses as $course)
-						<x-card.course :course="$course" class="col-span-6 lg:col-span-4" />
-					@endforeach
-				</div>
-			</x-ui.collapsible>
-		@endif
+				{{-- None for an Angebot of courses only, Blender or After Effects. --}}
+				@if ($products->isNotEmpty())
+					<div @class(['lg:col-span-6' => $courses->isNotEmpty(), 'lg:col-span-12' => $courses->isEmpty()])>
+						<x-ui.collapsible title="Lizenzen">
+							@foreach ($products as $product)
+								@include('site.software._licence', ['product' => $product])
+							@endforeach
 
-		{{-- Picked in the software's form ([[Recommendations]], client 2026-10-20):
-		     plugins for it, courses, whatever makes the customer's bundle. --}}
-		@if ($recommended['courses']->isNotEmpty() || $recommended['software']->isNotEmpty())
-			<x-ui.collapsible title="Das könnte dich auch interessieren">
-				<x-recommendations :courses="$recommended['courses']" :software="$recommended['software']" class="mt-16 sm:mt-32" />
-			</x-ui.collapsible>
+							{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
+							<p class="mt-32 sm:mt-48">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
+						</x-ui.collapsible>
+					</div>
+				@endif
+			</div>
 		@endif
 
 		@if ($html = $software->getTranslation('full_description', $locale, false))
-			<x-ui.collapsible title="Detailbeschrieb">
+			<x-ui.collapsible :title="'Mehr über '.$title">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					<x-ui.rich-text :html="$html" class="sm:col-span-8" />
+
+					@if ($visuals->count() > 1)
+						<div class="flex flex-col gap-24 max-sm:mt-32 sm:col-span-4">
+							@foreach ($visuals->slice(1) as $visual)
+								<figure>
+									<x-media.image
+										:media="$visual"
+										ratio="16/9"
+										sizes="(min-width: 1132px) 340px, (min-width: 700px) 33vw, 100vw"
+										:max-width="1024"
+										:alt="$visual->alt ?: $title"
+										class="block w-full"
+									/>
+									@if ($visual->caption)
+										<figcaption class="mt-8 text-gray-600">{{ $visual->caption }}</figcaption>
+									@endif
+								</figure>
+							@endforeach
+						</div>
+					@endif
 				</div>
 			</x-ui.collapsible>
 		@endif
@@ -116,11 +168,19 @@
 			</x-ui.collapsible>
 		@endif
 
+		{{-- Picked in the software's form ([[Recommendations]], client 2026-10-20):
+		     plugins for it, courses, whatever makes the customer's bundle. --}}
+		@if ($recommended['courses']->isNotEmpty() || $recommended['software']->isNotEmpty())
+			<x-ui.collapsible title="Das könnte dich auch interessieren">
+				<x-recommendations :courses="$recommended['courses']" :software="$recommended['software']" class="mt-16 sm:mt-32" />
+			</x-ui.collapsible>
+		@endif
+
 		@if ($browse)
 			<div class="mb-64 border-t border-gray-400 pt-8 sm:border-t-2 sm:pt-16 sm:text-lg lg:text-xl">
-				<h2 class="mb-4 text-md leading-none font-bold text-gray-400 sm:text-lg lg:text-xl">Weitere Software</h2>
+				<h2 class="mb-4 text-md leading-none font-bold text-gray-400 sm:text-lg lg:text-xl">Weitere Angebote</h2>
 
-				<nav class="mt-32 flex justify-between" aria-label="Weitere Software">
+				<nav class="mt-32 flex justify-between" aria-label="Weitere Angebote">
 					<a href="{{ \App\Support\SiteUrl::software($browse['prev']->getTranslation('slug', $locale)) }}"
 						title="{{ $browse['prev']->getTranslation('title', $locale) }}"
 						class="flex flex-col items-start hover:text-teal">
@@ -138,7 +198,4 @@
 			</div>
 		@endif
 	</div>
-
-	{{-- *Die Lizenz wurde im Warenkorb abgelegt.*, once per page. --}}
-	<x-dialog.basket />
 </x-layout.site>

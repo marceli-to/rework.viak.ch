@@ -75,25 +75,30 @@ it('offers a maker and a category only where some software carries it', function
 		->and($options['manufacturer'])->not->toContain('Gemvision');
 });
 
-it('shows every product with its listed licences, and the courses that teach it', function () {
+it('lists every product and course as a row leading to its own page, and sells nothing itself', function () {
 	$rhino = shopSoftware('Rhinoceros', [
 		['title' => ['de' => 'Vollversion'], 'licence_type' => LicenceType::Perpetual, 'access' => LicenceAccess::Either, 'price' => '940.00'],
-		['title' => ['de' => 'EDU'], 'listed' => false],
+		['title' => ['de' => 'EDU'], 'listed' => false, 'price' => '90.00'],
 	]);
-	$plugin = LicenceProduct::factory()->create(['software_id' => $rhino->id, 'title' => ['de' => 'Bongo 2']]);
+	$plugin = LicenceProduct::factory()->create(['software_id' => $rhino->id, 'title' => ['de' => 'Bongo 2'], 'slug' => ['de' => 'bongo-2']]);
 	LicenceVariant::factory()->demo()->create(['licence_product_id' => $plugin->id]);
-	$course = Course::factory()->create(['publish' => true, 'title' => ['de' => 'Rhino Einstiegskurs']]);
+	$course = Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'slug' => ['de' => 'rhino-einstiegskurs'], 'fee' => '549.00']);
 	$course->software()->attach($rhino);
 
 	$this->get('/de/software/rhinoceros')
 		->assertOk()
 		->assertSee('Rhinoceros Pro')
-		->assertSee('Vollversion, Dauerlizenz, Einzelplatz oder Netzwerk')
-		->assertSee('CHF 940.00')
-		->assertDontSee('EDU')
-		->assertSee('Bongo 2')
-		->assertSee('kostenlos')
-		->assertSee('Rhino Einstiegskurs');
+		->assertSee('ab CHF 940.00')
+		->assertDontSee('CHF 90.00')
+		->assertSee('href="/de/angebote/software/bongo-2"', false)
+		->assertSee('Lizenz kaufen')
+		->assertDontSee('In den Warenkorb')
+		// No date ahead: its own fee, and the way to its page, not *Anmelden*.
+		->assertSee('Rhino Einstiegskurs')
+		->assertSee('CHF 549.00')
+		->assertSee('Daten auf Anfrage')
+		->assertSee('Zum Kurs')
+		->assertSee('href="/de/kurs/rhino-einstiegskurs"', false);
 });
 
 it('keeps a renamed software on its URL', function () {

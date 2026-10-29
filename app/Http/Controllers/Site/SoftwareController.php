@@ -36,13 +36,13 @@ class SoftwareController extends Controller
 	{
 		$software = $this->onSite()
 			->where('slug->'.app()->getLocale(), $slug)
-			->with(['categories', 'media', 'products' => $this->products()])
+			->with(['categories', 'media', 'projects', 'products' => $this->products()])
 			->firstOrFail();
 
-		// As the course list's cards have them ([[CourseController::index]]).
+		// A row each, with the dates ahead it reads its next one from ([[14-angebote]]).
 		$courses = $software->courses()
 			->published()
-			->with(['categories', 'media', 'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts')])
+			->with(['events' => fn ($query) => $query->published()->active()->upcoming()->with(['dates', 'location'])])
 			->ordered()
 			->get();
 

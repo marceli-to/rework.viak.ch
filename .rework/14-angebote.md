@@ -334,3 +334,41 @@ with `bare`, which drops the card's head. A 404 unless the product is listed
 and its software published. On the software page the product's name now
 links there; the site search's licence hits and the sitemap point there too.
 The Angebot page still sells as well until step 3 redraws it.
+
+## As built: step 3, the Angebot page, 2026-10-29
+
+`site/software/show.blade.php`, still at `/de/software/{slug}` until the URLs
+move (step 4). The mockup's content in the course page's look; the reasons
+are in the view's comment.
+
+- **The hero** as before, with the **Vorhaben chips** under the text (teal
+  outline, filled on hover), each linking to its Vorhaben. The mockup's
+  anchor links and breadcrumb are not built.
+- **Kurse | Lizenzen side by side from `lg`**, one collapsible each, courses
+  first (on a phone courses above licences, as the client wrote). Either
+  alone takes the full width (Blender).
+  - A **course row** (`_course.blade.php`): title and price, one line of
+    facts from its next bookable Veranstaltung (*2 Tage, Visualisierungs-
+    Akademie, Zürich · 16. bis 17. November 2026 · Anmeldung bis 2.
+    November · 1 weiteres Datum*), *Anmelden* to the course page. The
+    deadline only while ahead. **Without a date**: the course fee, *Daten
+    auf Anfrage*, and *Zum Kurs* instead of *Anmelden*. One row per course
+    (#51).
+  - A **licence row** (`_licence.blade.php`): product, *ab* its cheapest
+    listed licence, the features as ticks (the maker while there are none,
+    which is all 39 today, #54), *Lizenz kaufen* (outline) to the licence
+    page.
+  - Under the courses *{Angebot} für dein ganzes Team? Firmenschulung
+    anfragen*; no *exkl. MWST* there, courses carry none. Under the
+    licences *Alle Preise exkl. MWST*.
+- **Mehr über {Angebot}** is the former *Detailbeschrieb*, with the further
+  images and their captions beside it (the first image is the hero's).
+- Then *Weitere Informationen*, *Kundenmeinungen*, and **the recommendations
+  moved below them** (they stood above the copy); the browse pair says
+  *Weitere Angebote*. The phone header reads *Angebote*.
+- **Nothing is sold on the page any more**: the basket dialog left with the
+  product cards.
+
+Not built, from the mockup: an intro line over each column (*Mit Tom
+Pawlofsky…*, *Rhino 8 für Windows und Mac…*); it would need two fields on the
+software. Worth it if VIAK will write them.
