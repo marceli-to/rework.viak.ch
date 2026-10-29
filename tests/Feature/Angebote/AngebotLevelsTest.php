@@ -175,9 +175,9 @@ it('gives a course row its next date, its deadline while ahead, and how many mor
 		->assertOk()
 		->assertSee('2 Tage')
 		->assertSee('3. bis 4. Dezember 2026')
-		->assertSee('Anmeldung bis 19. November')
+		->assertSee('Anmeldung möglich bis 19.11.2026')
 		->assertSee('1 weiteres Datum')
-		->assertDontSee('Anmeldung bis 22. Oktober')
+		->assertDontSee('22.10.2026')
 		->assertSee('Anmelden')
 		->assertDontSee('Lizenzen');
 });

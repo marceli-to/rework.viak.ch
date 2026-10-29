@@ -5,7 +5,6 @@
 	$visuals = $software->visuals();
 	$information = $software->getTranslation('information', $locale, false);
 	$og = $software->openGraph();
-	$projects = $software->projects;
 @endphp
 
 {{--
@@ -15,16 +14,16 @@
 	the site's look, which is the course page's (`site/courses/show.blade.php`):
 	the teal hero, then the collapsibles.
 
-	- **The hero** as the course page has it, with the mockup's **Vorhaben
-	  chips** under the text, each linking to its Vorhaben. Not built: the
-	  mockup's anchor links (the collapsibles are a short scroll) and its
-	  breadcrumb (the site has none).
-	- **Kurse and Lizenzen side by side** from `lg`, one collapsible each,
-	  courses first, as the client put it (*links/oben Kursübersicht,
-	  rechts/unten Lizenzübersicht*). A course row (`_course.blade.php`) links
-	  to the course page, a licence row (`_licence.blade.php`) to the licence's.
-	  Either side alone takes the full width. Under the courses the way to a
-	  Firmenschulung; courses carry no VAT, so no *exkl. MWST* there.
+	- **The hero** as the course page has it. Not built: the mockup's
+	  Vorhaben chips (built, then taken out by Marcel on 2026-10-29), its
+	  anchor links (the collapsibles are a short scroll) and its breadcrumb
+	  (the site has none).
+	- **Kurse, then Lizenzen**, each a full-width collapsible whose rows are
+	  drawn as the course page's date rows (Marcel, 2026-10-29: the two
+	  columns side by side of the first version were too cramped). A course
+	  row (`_course.blade.php`) links to the course page, a licence row
+	  (`_licence.blade.php`) to the licence's. Under the courses the way to a
+	  Firmenschulung; no *exkl. MWST* line under either (Marcel).
 	- ***Mehr über …*** is the *Detailbeschrieb*, the further images beside it
 	  with their captions (the first is the hero's). Then *Weitere
 	  Informationen*, *Kundenmeinungen*, and only then the recommendations,
@@ -69,56 +68,31 @@
 				@if ($html = $software->getTranslation('short_description', $locale, false))
 					<x-ui.rich-text :html="$html" hero />
 				@endif
-
-				{{-- The Vorhaben it is picked for ([[Software::projects]]). --}}
-				@if ($projects->isNotEmpty())
-					<ul @class(['flex flex-wrap gap-8', 'mt-24' => filled($html)])>
-						@foreach ($projects as $project)
-							<li>
-								<a href="{{ \App\Support\SiteUrl::project($project->getTranslation('slug', $locale)) }}"
-									class="inline-block border border-teal px-8 py-4 text-md leading-[1.2] text-teal transition-colors hover:bg-teal hover:text-white sm:text-lg">
-									{{ $project->getTranslation('title', $locale) }}
-								</a>
-							</li>
-						@endforeach
-					</ul>
-				@endif
 			</div>
 		</div>
 	</article>
 
 	<div class="mt-48 lg:mt-64">
-		@if ($courses->isNotEmpty() || $products->isNotEmpty())
-			<div class="lg:grid lg:grid-cols-12 lg:gap-40">
-				@if ($courses->isNotEmpty())
-					<div @class(['lg:col-span-6' => $products->isNotEmpty(), 'lg:col-span-12' => $products->isEmpty()])>
-						<x-ui.collapsible title="Kurse">
-							@foreach ($courses as $course)
-								@include('site.software._course', ['course' => $course])
-							@endforeach
+		@if ($courses->isNotEmpty())
+			<x-ui.collapsible title="Kurse">
+				@foreach ($courses as $course)
+					@include('site.software._course', ['course' => $course])
+				@endforeach
 
-							<p class="mt-32 sm:mt-48">
-								{{ $title }} für dein ganzes Team?
-								<a href="{{ \App\Support\SiteUrl::training() }}" class="text-teal hover:text-black">Firmenschulung anfragen</a>
-							</p>
-						</x-ui.collapsible>
-					</div>
-				@endif
+				<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">
+					{{ $title }} für dein ganzes Team?
+					<a href="{{ \App\Support\SiteUrl::training() }}" class="text-teal hover:text-black">Firmenschulung anfragen</a>
+				</p>
+			</x-ui.collapsible>
+		@endif
 
-				{{-- None for an Angebot of courses only, Blender or After Effects. --}}
-				@if ($products->isNotEmpty())
-					<div @class(['lg:col-span-6' => $courses->isNotEmpty(), 'lg:col-span-12' => $courses->isEmpty()])>
-						<x-ui.collapsible title="Lizenzen">
-							@foreach ($products as $product)
-								@include('site.software._licence', ['product' => $product])
-							@endforeach
-
-							{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
-							<p class="mt-32 sm:mt-48">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
-						</x-ui.collapsible>
-					</div>
-				@endif
-			</div>
+		{{-- None for an Angebot of courses only, Blender or After Effects. --}}
+		@if ($products->isNotEmpty())
+			<x-ui.collapsible title="Lizenzen">
+				@foreach ($products as $product)
+					@include('site.software._licence', ['product' => $product])
+				@endforeach
+			</x-ui.collapsible>
 		@endif
 
 		@if ($html = $software->getTranslation('full_description', $locale, false))

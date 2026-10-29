@@ -33,7 +33,7 @@ class SoftwareController extends Controller
 	{
 		$software = $this->onSite()
 			->where('slug->'.app()->getLocale(), $slug)
-			->with(['categories', 'media', 'projects', 'products' => $this->products()])
+			->with(['categories', 'media', 'products' => $this->products()])
 			->firstOrFail();
 
 		// A row each, with the dates ahead it reads its next one from ([[14-angebote]]).

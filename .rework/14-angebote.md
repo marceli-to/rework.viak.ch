@@ -437,3 +437,11 @@ bis Z* beside the heading. It reverses the one grid of 2026-10-09.
 
 **Step 4 is done.** Open: #66, #67, the client's confirmation of #52 and of
 the *Beliebt* rule (#55), and #54 (copy: features, leads, *Mehr über*).
+
+**Revised the same day (Marcel):** the Vorhaben chips came out of the hero;
+**Kurse and Lizenzen are no longer side by side** but one full-width
+collapsible each, Kurse first, their rows drawn as the course page's date
+rows (`card/event.blade.php`): three `span-4` columns, the name with its
+date or maker; where, how long, *Anmeldung möglich bis* while ahead and how
+many more dates, or the features; the price and the button. And no *Alle
+Preise exkl. MWST* under the licences.
