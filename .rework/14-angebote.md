@@ -445,3 +445,12 @@ rows (`card/event.blade.php`): three `span-4` columns, the name with its
 date or maker; where, how long, *Anmeldung möglich bis* while ahead and how
 many more dates, or the features; the price and the button. And no *Alle
 Preise exkl. MWST* under the licences.
+
+**And again (Marcel):** under *Kurse* **every date is the course page's own
+row** (`card/event.blade.php`: dates and times behind the heart, place,
+expert, deadline, state, fee, *Buchen*), with only the course's name over
+it, teal and linked (`titled`). A course without a date shows its name and
+*Neues Kursdatum folgt in Kürze*, as its page does. **So a course can be
+booked from the Angebot page again**, where the client wrote that booking
+happens only on the product page (2026-10-29); the licences still lead to
+their page.

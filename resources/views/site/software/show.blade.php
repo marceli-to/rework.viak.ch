@@ -18,11 +18,13 @@
 	  Vorhaben chips (built, then taken out by Marcel on 2026-10-29), its
 	  anchor links (the collapsibles are a short scroll) and its breadcrumb
 	  (the site has none).
-	- **Kurse, then Lizenzen**, each a full-width collapsible whose rows are
-	  drawn as the course page's date rows (Marcel, 2026-10-29: the two
-	  columns side by side of the first version were too cramped). A course
-	  row (`_course.blade.php`) links to the course page, a licence row
-	  (`_licence.blade.php`) to the licence's. Under the courses the way to a
+	- **Kurse, then Lizenzen**, each a full-width collapsible (Marcel,
+	  2026-10-29: the two columns side by side of the first version were too
+	  cramped). **Under Kurse every date is the course page's own row**
+	  (`card/event.blade.php`, heart, *Buchen* and all) with the course's
+	  name over it, teal and linked (`titled`); a course without a date says
+	  *Neues Kursdatum folgt in Kürze*. A licence row (`_licence.blade.php`)
+	  is drawn in the same columns and links to the licence's page. Under the courses the way to a
 	  Firmenschulung; no *exkl. MWST* line under either (Marcel).
 	- ***Mehr über …*** is the *Detailbeschrieb*, the further images beside it
 	  with their captions (the first is the hero's). Then *Weitere
@@ -75,8 +77,24 @@
 	<div class="mt-48 lg:mt-64">
 		@if ($courses->isNotEmpty())
 			<x-ui.collapsible title="Kurse">
+				{{-- Every date as the course page draws it (`card/event.blade.php`),
+				     the course's name over it (Marcel, 2026-10-29); a course with
+				     none says what its own page says. --}}
 				@foreach ($courses as $course)
-					@include('site.software._course', ['course' => $course])
+					@forelse ($course->events as $event)
+						<x-card.event
+							:event="$event"
+							titled
+							:bookmarked="in_array($event->id, $bookmarked, true)"
+							:booked="in_array($event->id, $booked, true)"
+						/>
+					@empty
+						<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
+							<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}"
+								class="mb-8 block font-bold text-teal hover:text-black sm:mb-16">{{ $course->getTranslation('title', $locale) }}</a>
+							<p>Neues Kursdatum folgt in Kürze</p>
+						</article>
+					@endforelse
 				@endforeach
 
 				<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">
@@ -172,4 +190,7 @@
 			</div>
 		@endif
 	</div>
+	{{-- The rental question and the confirmation after *Buchen*, once per
+	     page, as on a course page. --}}
+	<x-dialog.basket />
 </x-layout.site>

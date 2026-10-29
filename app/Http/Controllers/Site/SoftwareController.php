@@ -36,10 +36,13 @@ class SoftwareController extends Controller
 			->with(['categories', 'media', 'products' => $this->products()])
 			->firstOrFail();
 
-		// A row each, with the dates ahead it reads its next one from ([[14-angebote]]).
+		// Their dates ahead, loaded as the course page loads its rows
+		// ([[CourseController::show]]), each drawn by the same card.
 		$courses = $software->courses()
 			->published()
-			->with(['events' => fn ($query) => $query->published()->active()->upcoming()->with(['dates', 'location'])])
+			->with(['events' => fn ($query) => $query->published()->active()->upcoming()
+				->with(['course', 'dates', 'location', 'experts'])
+				->withCount(['bookings as rentals_taken_count' => fn ($query) => $query->active()->where('has_rental', true)])])
 			->ordered()
 			->get();
 
@@ -51,6 +54,9 @@ class SoftwareController extends Controller
 			// page already lists under *Kurse* ([[Recommendations]]).
 			'recommended' => Recommendations::for([$software], $courses->modelKeys(), [$software->id]),
 			'testimonials' => $software->testimonialsAbout()->published()->ordered()->get(),
+			// The rows' heart and *Verwalten*, as on a course page.
+			'bookmarked' => request()->user()?->bookmarks()->pluck('events.id')->all() ?? [],
+			'booked' => request()->user()?->bookings()->active()->pluck('event_id')->all() ?? [],
 			'browse' => $this->browse($software),
 		]);
 	}

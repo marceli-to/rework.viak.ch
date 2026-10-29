@@ -77,7 +77,7 @@ it('offers a maker and a category only where some product carries it', function 
 		->and($options['manufacturer'])->not->toContain('Gemvision');
 });
 
-it('lists every product and course as a row leading to its own page, and sells nothing itself', function () {
+it('lists every product as a row leading to its own page, and a course without a date as its name', function () {
 	$rhino = shopSoftware('Rhinoceros', [
 		['title' => ['de' => 'Vollversion'], 'licence_type' => LicenceType::Perpetual, 'access' => LicenceAccess::Either, 'price' => '940.00'],
 		['title' => ['de' => 'EDU'], 'listed' => false, 'price' => '90.00'],
@@ -95,11 +95,9 @@ it('lists every product and course as a row leading to its own page, and sells n
 		->assertSee('href="/de/angebote/software/bongo-2"', false)
 		->assertSee('Lizenz kaufen')
 		->assertDontSee('In den Warenkorb')
-		// No date ahead: its own fee, and the way to its page, not *Anmelden*.
+		// No date ahead: its name, linked, and what its own page says.
 		->assertSee('Rhino Einstiegskurs')
-		->assertSee('CHF 549.00')
-		->assertSee('Daten auf Anfrage')
-		->assertSee('Zum Kurs')
+		->assertSee('Neues Kursdatum folgt in Kürze')
 		->assertSee('href="/de/angebote/kurse/rhino-einstiegskurs"', false);
 });
 

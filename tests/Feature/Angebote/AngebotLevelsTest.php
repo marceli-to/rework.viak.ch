@@ -158,26 +158,23 @@ it('has no page for a product that is not on the site', function () {
 	$this->get('/de/angebote/software/verwaist')->assertNotFound();
 });
 
-it('gives a course row its next date, its deadline while ahead, and how many more dates there are', function () {
+it('draws every date as the course page does, the course\'s name over it', function () {
 	$blender = angebot('Blender');
-	$course = Course::factory()->create(['title' => ['de' => 'Blender Einführungskurs'], 'fee' => '899.00']);
+	$course = Course::factory()->create(['title' => ['de' => 'Blender Einführungskurs'], 'slug' => ['de' => 'blender-einfuehrungskurs'], 'fee' => '899.00']);
 	$course->software()->attach($blender);
-	$next = Event::factory()->for($course)->create(['date' => '2026-12-03', 'registration_until' => '2026-11-19', 'fee' => '899.00']);
-	$next->dates()->createMany([['date' => '2026-12-03'], ['date' => '2026-12-04']]);
+	$first = Event::factory()->for($course)->create(['date' => '2026-12-03', 'registration_until' => '2026-11-19', 'fee' => '899.00']);
+	$first->dates()->createMany([['date' => '2026-12-03'], ['date' => '2026-12-04']]);
 	Event::factory()->for($course)->create(['date' => '2027-01-14']);
-	$late = Course::factory()->create(['title' => ['de' => 'Blender Renderingkurs']]);
-	$late->software()->attach($blender);
-	Event::factory()->for($late)->create(['date' => '2026-11-05', 'registration_until' => '2026-10-22']);
 
 	$this->travelTo('2026-10-29');
 
-	$this->get('/de/angebote/blender')
-		->assertOk()
-		->assertSee('2 Tage')
-		->assertSee('3. bis 4. Dezember 2026')
+	$html = $this->get('/de/angebote/blender')->assertOk()
+		->assertSee('03. Dezember 2026')
 		->assertSee('Anmeldung möglich bis 19.11.2026')
-		->assertSee('1 weiteres Datum')
-		->assertDontSee('22.10.2026')
-		->assertSee('Anmelden')
-		->assertDontSee('Lizenzen');
+		->assertSee('Buchen')
+		->assertDontSee('Lizenzen')
+		->getContent();
+
+	// Each date its own row, each under the course's name, linked.
+	expect(substr_count($html, 'href="/de/angebote/kurse/blender-einfuehrungskurs"'))->toBe(2);
 });

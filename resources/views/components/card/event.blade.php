@@ -1,4 +1,4 @@
-@props(['event', 'bookmarked' => false, 'booked' => false])
+@props(['event', 'bookmarked' => false, 'booked' => false, 'titled' => false])
 
 @php
 	$locale = app()->getLocale();
@@ -54,6 +54,14 @@
 <article {{ $attributes->class([
 	'relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl',
 ]) }}>
+	{{-- **`titled` on an Angebot's page** ([[14-angebote]], Marcel
+	     2026-10-29): the row as here, with the course's name over it, teal
+	     and linked to the course page. The only thing it adds. --}}
+	@if ($titled)
+		<a href="{{ \App\Support\SiteUrl::course($event->course->getTranslation('slug', $locale)) }}"
+			class="mb-8 block font-bold text-teal hover:text-black sm:mb-16">{{ $event->course->getTranslation('title', $locale) }}</a>
+	@endif
+
 	<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 		{{-- When and, beside it, the bookmark --}}
 		<div class="sm:col-span-4">
