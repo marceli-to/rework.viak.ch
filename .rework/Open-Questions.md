@@ -60,10 +60,10 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~35~~ | ~~What does "buying" a demo mean?~~ — **answered 2026-10-08: a free order.** No payment, no invoice is the proposal, see `05-licences.md`, *A free order* | — | — |
 | ~~36~~ | ~~Can a customer order a hidden product on the site?~~ — **answered 2026-10-08: no.** VIAK enters the order taken by mail or phone, and wants the blank line (free title and price) back | — | — |
 | ~~37~~ | ~~Updates and upgrades: edition or own product?~~ — **answered 2026-10-08: variants in the dropdown, consistently** | — | — |
-| 50 | Courses with no software (*Geheimnisse der ArchViz*): a tile linking to the course page, or an Angebot of their own? | Client | `14-angebote.md`, *Alle Angebote*. Raised 2026-10-26 |
-| 51 | Does the course page stay, and is a course with several Veranstaltungen one row per date or one row with the next date? | Client | `14-angebote.md`, the Angebot's *Kurse*. Raised 2026-10-26 |
+| ~~50~~ | ~~Courses with no software: a tile linking to the course page, or an Angebot of their own?~~ **Answered 2026-10-29: a tile to the course page**; a series may get an Angebot without licences. See `14-angebote.md` | — | — |
+| ~~51~~ | ~~Does the course page stay, and one row per date or the next date?~~ **Answered 2026-10-29: it stays, and booking happens only there**; the row links to it, one row per course with its next date. See `14-angebote.md` | — | — |
 | 52 | *Kurs ab CHF*: from every published course, or only those with a date? *auf Anfrage* when neither? | Client | `14-angebote.md`, *Beliebte Angebote*. Raised 2026-10-26 |
-| 53 | The nav: *Angebot* (review marker 8), or *Kurse* and *Software* as the 2026-10-26 screenshots have it? Does `/de/kurse` stay? | Client | `14-angebote.md`, the nav and redirects. Raised 2026-10-26 |
+| ~~53~~ | ~~The nav, and does `/de/kurse` stay?~~ **Answered 2026-10-29 (Marcel): *Angebote · Über uns · Kontakt***, Kurse and Software under it at `/de/angebote/kurse` and `/de/angebote/software`, 301s from legacy's. See `14-angebote.md`, *The nav, the URLs* | — | — |
 | 54 | Who writes *Mehr über …*, the licence features and the one-line leads? | Client | Content only; the pages draw without them. Raised 2026-10-26 |
 | 55 | *Beliebte Angebote*: featured software only, or featured courses without software too? | Client | `14-angebote.md`, the homepage. Raised 2026-10-26 |
 | 56 | Search: the catalogue only, or experts and pages too? | Client | `15-search.md`, what is indexed. Raised 2026-10-26 |
@@ -76,6 +76,8 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~63~~ | ~~Should a Firmenschulung enquiry be stored and become a Firmenkurs?~~ **Answered 2026-10-26: no, it stays a mail** | — | — |
 | 64 | The MCP server: which questions should it answer, and may anything be changed through it? | Client | `17-mcp.md`, every tool. Raised 2026-10-26 |
 | 65 | The MCP server: which AI client connects, and who at VIAK uses it? | Client | `17-mcp.md`, tokens; production data leaves the app through it. Raised 2026-10-26 |
+| 66 | Visual Facilitator, LEGO Serious Play and Urban Sketching fit none of the 5 new categories: a 6th, or which of the 5? | Client | `14-angebote.md`, *The categories*. Raised 2026-10-29 |
+| 67 | The Rhino plugins (Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold, Drakon): Angebote of their own, as the mockup has them, or licences under Rhinoceros, as imported? | Client | `14-angebote.md`, *Open*. Raised 2026-10-29 |
 | ~~38~~ | ~~"Nur zusammen mit Neulizenz": enforced or a note?~~ — **answered 2026-10-08: a note** | — | — |
 | ~~39~~ | ~~Minimum and maximum quantities beyond the Teams licences' 3?~~ — **answered 2026-10-08: none** | — | — |
 | 40 | The homepage's Firmenschulung teaser: is *Ab CHF 2'400 pro Tag, pauschal* the real price, and which clients may it name under *Zuletzt geschult*? | Client | Nothing: the price shows as the mockup has it, the client line is left out until named. Raised 2026-10-07 |

@@ -7,7 +7,9 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 
 ## Status
 
-**Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
+**Planned 2026-10-29** from the client's answer, see *The client's answer,
+2026-10-29*: two levels, the nav and URLs settled, *Kurs ab* (#52) and #66–67
+open. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
 layout*, at the end); the pages are not. The screenshots shown in the meeting are
 in `history/meeting-2026-10-26/`: `homepage.png` (*Beliebte Angebote*, markers 6
 and 7 of the 2026-09-23 review), `angebote.png` (*Alle Angebote*), `rhino-1.png`
@@ -101,7 +103,132 @@ Most of the data is in place; the change is in the pages.
 - **Redirects** for whatever URLs change, into the redirect map in `Todo.md`,
   *SEO*, and the sitemap.
 
+## The client's answer, 2026-10-29, and the plan from it
+
+**This supersedes *Proposed shape* below** wherever the two differ (the URL,
+*Anmelden* going to the booking, the course row).
+
+The client wrote back on #50–53. In short: an Angebot carries a tag
+(*Software*, *Kurs*, *Software+Kurs*); *Alle Angebote* shows every Angebot,
+*Kurse* and *Software* are the same catalogue filtered; the 5 categories
+(*Schmuck- & Produktdesign*, *Architektur & Interior Design*, *Animation &
+Interaktion*, *Gestaltung & Bearbeitung*, *AI & Neue Workflows*) on **both**
+levels; **booking and buying only ever on a product's own page**, the Angebot
+page is an overview. The small tiles of `Alle-Angebote.html` for the Angebote.
+Their *Kurse zeigt alle Angebote mit Tag Kurs* contradicts their next lines
+(*hier werden direkt die Produkte angezeigt*); read as the latter.
+
+### Two levels
+
+| Level | Example | Page |
+|---|---|---|
+| **Angebot** | Rhinoceros | Overview: courses, licences, *Mehr über*, testimonials. Nothing is bought here. |
+| **Produkt**: a course | Rhino Einstiegskurs | The course page, booked there. Exists. |
+| **Produkt**: a licence | Rhinoceros 8 | **New.** Its variants with *Anzahl* and *In den Warenkorb*, today's `x-card.product` moved over. |
+
+### Decided with Marcel, 2026-10-29
+
+- **The Angebot is `Software`** (A). No new table; the dashboard calls it
+  *Angebote*. **The tag is derived, never set**: listed licences make it
+  *Software*, published courses *Kurs*, both *Kurs & Software*.
+  `Software::onSite()` widens to "a listed licence **or** a published
+  course", which brings Blender (4 courses), SketchUp (3) and After Effects
+  (2) onto the site as *Kurs* Angebote, the mockup's *Nur Kurs*.
+- **A licence page per `LicenceProduct`** (B), *Rhinoceros 8* with its 6
+  variants, not one per variant (the client's *Rhino 8 Commercial Upgrade*):
+  six near-identical pages per tool would be thin.
+- **A course without software** (#50): a tile of its own on *Alle Angebote*,
+  tag *Kurs*, under its categories, **linking straight to the course page**.
+  Courses that belong together (Visual Facilitator 1–5, LEGO Serious Play
+  1–2) can instead get an Angebot with no licences, entered in the
+  dashboard: one tile, an overview listing the courses. A content choice,
+  no code. On dev data 8 published courses have no software.
+- **The Angebot page's rows**: *Anmelden* goes to the course page, *Lizenz
+  kaufen* to the licence page (#51: the course page stays). Proposed, one
+  row per course with its next date; the dates are on the course page.
+
+### The nav, the URLs, the way back (E)
+
+Decided by Marcel 2026-10-29.
+
+**The nav is *Angebote · Über uns · Kontakt*.** *Kurse* and *Software* are
+pages under Angebote, not nav items (review marker 8 asked the same in
+September). *Angebote* lights on every catalogue page: the three lists, an
+Angebot, a course, a licence.
+
+**A switch *Alle Angebote · Kurse · Software*** on top of the three list
+pages is the way into Kurse and Software, so it has to read as navigation,
+not as a quiet filter. The phone menu may indent Kurse and Software under
+Angebote; the desktop bar does not show them.
+
+**The URLs carry the hierarchy, with 301s from legacy's.** Marcel preferred
+the move to keeping `/de/kurse` flat, provided it does not cost much ranking.
+It does not: a 301 passes the full signal (Google, since 2016); the cost is a
+few weeks of fluctuation while the index swaps over. What does lose rankings
+is a redirect done badly, hence the rules below.
+
+| Page | URL | From |
+|---|---|---|
+| Alle Angebote | `/de/angebote` | new |
+| One Angebot | `/de/angebote/{slug}` | `/de/software/{slug}` (prototype only, never live) |
+| Kurse | `/de/angebote/kurse` | **301** from `/de/kurse` |
+| One course | `/de/angebote/kurse/{slug}` | **301** from `/de/kurs/{slug}` and `/de/kurs/{slug}/{uuid}` |
+| Software | `/de/angebote/software` | `/de/software` (prototype only) |
+| One licence | `/de/angebote/software/{slug}` | new |
+
+- **One hop.** `/de/kurs/{slug}/{uuid}` goes straight to the new URL, not
+  through `/de/kurs/{slug}`; `viak.ch` → visualisierungs-akademie.ch should
+  not add a second hop on top.
+- **Each course to its own page**, never all to the list.
+- **Internal links, sitemap and canonicals** name the new URLs only.
+- **The redirects stay for good.** Into `Todo.md`'s redirect map and
+  `port:check-urls`, and the cutover in `Deploy.md`.
+- **`kurse` and `software` are reserved** as Angebot slugs, so no Angebot
+  can shadow a list. A check in `Software::freeSlug()`.
+- Legacy's `kurs` / `kurse` split ends under Angebote: list and detail both
+  `kurse`, as Software has it. The segments come from `config/site.php`.
+
+**No breadcrumbs.** The mockups have them; the site has none anywhere, and
+the Vorhaben page left its own out for that reason. What they would have said
+is said by the nav's highlight and the switch. **A product page links to its
+Angebot** instead (*Alles zu Rhinoceros*, wording to settle), near the title:
+the client's path runs Angebot → product, and without the link the way back
+is the browser's. A course under two Angebote (*Visualisieren mit SketchUp*:
+SketchUp and V-Ray) names both; a course without one names none.
+
+### The categories
+
+The client's 5 replace the 3 there are (*3D-Software* 18 courses,
+*Bildgestaltung & Handwerk* 7, *Management & Kommunikation* 8), on courses,
+software and, new, licence products; they drive the filters on Kurse and
+Software. A migration maps what it can; the rest is listed for VIAK to set.
+**Visual Facilitator, LEGO Serious Play and Urban Sketching fit none of the
+5** (#66).
+
+### Open
+
+- **F, *Kurs ab CHF*** (#52): Marcel is thinking about it. On dev data, with
+  the course-only Angebote, 14 Angebote have courses: by bookable date 8 show
+  a price and 6 read *auf Anfrage*; by course fee all 14 do, but Rhino reads
+  549 where the cheapest bookable is 949. Proposed: by date, falling back to
+  the course fee worded *Daten auf Anfrage*.
+- **#66** the categories of the courses that fit none, **#67** the Rhino
+  plugins (Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold, Drakon) as
+  Angebote of their own, as the mockup has them, or under Rhinoceros where
+  the import put them. Both to the client.
+
+### Order of the build
+
+1. Categories, the widened `onSite()`, the derived tag.
+2. The licence page, so buying keeps working once the Angebot page stops
+   selling.
+3. The Angebot page after `Rhino.html`.
+4. `/de/angebote`, Kurse and Software under it with the switch, the nav, the
+   redirects, the homepage's *Beliebte Angebote*, sitemap and search index.
+
 ## Proposed shape
+
+*As of 2026-10-26; see the section above for what changed.*
 
 - The Angebot keeps the software's URL, `/de/software/{slug}`, as the
   breadcrumb in the screenshot does. Nothing to redirect for the software

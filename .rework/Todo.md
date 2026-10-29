@@ -271,6 +271,18 @@ a handful of fixed pages. Not thousands.
 Everything else (`/de/kurse`, `/de/kontakt`, `/de/experten`,
 `/de/individualschulungen`) is preserved as-is and needs nothing.
 
+**Planned 2026-10-29, not built** (`14-angebote.md`, *The nav, the URLs*):
+the courses move under Angebote. Each a single 301, straight to the target:
+
+| From | To |
+|---|---|
+| `/de/kurse` | `/de/angebote/kurse` |
+| `/de/kurs/{slug}` | `/de/angebote/kurse/{slug}` |
+| `/de/kurs/{slug}/{uuid}` | `/de/angebote/kurse/{slug}`, not through `/de/kurs/{slug}` |
+
+`port:check-urls` must then follow the 41 course URLs to the new ones in one
+hop.
+
 The uuid form must keep resolving after cutover, so the redirect reads the uuid
 and looks up the current slug rather than pattern-matching. Note the legacy quirk
 it retires: the uuid resolves and the slug is *ignored*, so
