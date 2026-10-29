@@ -271,7 +271,7 @@ a handful of fixed pages. Not thousands.
 Everything else (`/de/kurse`, `/de/kontakt`, `/de/experten`,
 `/de/individualschulungen`) is preserved as-is and needs nothing.
 
-**Planned 2026-10-29, not built** (`14-angebote.md`, *The nav, the URLs*):
+**Built 2026-10-29** (`14-angebote.md`, *The nav, the URLs*):
 the courses move under Angebote. Each a single 301, straight to the target:
 
 | From | To |
@@ -280,8 +280,11 @@ the courses move under Angebote. Each a single 301, straight to the target:
 | `/de/kurs/{slug}` | `/de/angebote/kurse/{slug}` |
 | `/de/kurs/{slug}/{uuid}` | `/de/angebote/kurse/{slug}`, not through `/de/kurs/{slug}` |
 
-`port:check-urls` must then follow the 41 course URLs to the new ones in one
-hop.
+`port:check-urls` now **fails a URL that needs more than one redirect** (a
+portal page may add the login's own). On the dev copy every course lands in
+one hop; the only failures are Herd's `robots.txt` and `favicon.ico`. The
+prototype's `/de/software` and `/de/software/{slug}` 301 too, to
+`/de/angebote/software` and `/de/angebote/{slug}`.
 
 The uuid form must keep resolving after cutover, so the redirect reads the uuid
 and looks up the current slug rather than pattern-matching. Note the legacy quirk

@@ -9,6 +9,7 @@ use App\Models\Concerns\HasTestimonials;
 use App\Models\Concerns\HasUuid;
 use App\Models\Concerns\IsTaxonomy;
 use App\Support\Search\IndexedForSearch;
+use App\Support\SiteUrl;
 use App\Support\Slug;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -181,16 +182,26 @@ class Software extends Model
 	}
 
 	/**
-	 * The title's slug, numbered if another software has it already.
+	 * The title's slug, numbered if another software has it already, or if
+	 * it is one of the lists the Angebot sits beside under `/de/angebote`
+	 * (`kurse`, `software`): a software called *Software* gets `software-2`
+	 * ([[14-angebote]]).
 	 *
 	 * @return array<string, string>
 	 */
 	public static function freeSlug(string $title): array
 	{
 		$base = Slug::forTitles($title !== '' ? $title : 'software');
+		$reserved = collect(config('site.locales'))
+			->flatMap(fn (string $locale) => [SiteUrl::segment('courses', $locale), SiteUrl::segment('software', $locale)])
+			->all();
 
 		for ($n = 1; ; $n++) {
 			$slug = array_map(fn (string $slug) => $n === 1 ? $slug : "{$slug}-{$n}", $base);
+
+			if (in_array($slug['de'], $reserved, true)) {
+				continue;
+			}
 
 			if (! static::withTrashed()->where('slug->de', $slug['de'])->exists()) {
 				return $slug;

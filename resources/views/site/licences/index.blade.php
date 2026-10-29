@@ -1,14 +1,18 @@
 <x-layout.site title="Software">
+	<x-offers.switch current="licences" />
+
 	@php
 		$facets = $filter->facets();
 		$matching = $filter->matching();
 	@endphp
 
 	{{--
-		The software list, the shop ([[05-licences]]): the course list's page
-		(`site/courses/index.blade.php`) with software cards in it, the same
-		grid, the same panel and the same `courseFilter` behind it (Marcel,
-		2026-10-08). The filter's attributes are [[SoftwareFilter]]'s.
+		*Software*, the shop ([[05-licences]], [[14-angebote]]): the course
+		list's page (`site/courses/index.blade.php`) with a card per licence
+		product, the same grid, the same panel and the same `courseFilter`
+		behind it. The filter's attributes are [[LicenceFilter]]'s. Until
+		2026-10-29 it listed software; the client's two levels put the shop at
+		the product level, and the software became the Angebot.
 	--}}
 	<div
 		class="grid grid-cols-12 gap-16 lg:gap-40"
@@ -16,13 +20,13 @@
 	>
 		<div class="col-span-12 sm:col-span-8">
 			<div @class(['hidden' => count($matching) > 0]) :class="{ hidden: count > 0 }">
-				Leider keine Software gefunden.
+				Leider keine Lizenzen gefunden.
 			</div>
 
 			<div class="grid grid-cols-12 gap-16 lg:gap-40">
-				@foreach ($software as $item)
-					<x-card.software
-						:software="$item"
+				@foreach ($products as $item)
+					<x-card.licence
+						:product="$item"
 						:eager="$loop->index < 2"
 						data-facets="{{ json_encode($facets[$item->uuid]) }}"
 						::class="{ hidden: !matches($el) }"
@@ -36,7 +40,7 @@
 		</div>
 
 		<div class="col-span-12 sm:col-span-4">
-			<x-course.filter :filter="$filter" :matching="count($matching)" :selects="\App\Support\SoftwareFilter::SELECTS" />
+			<x-course.filter :filter="$filter" :matching="count($matching)" :selects="\App\Support\LicenceFilter::SELECTS" />
 		</div>
 	</div>
 </x-layout.site>

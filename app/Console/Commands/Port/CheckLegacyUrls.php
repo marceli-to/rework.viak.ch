@@ -21,7 +21,8 @@ use Throwable;
  * link as old invoice mails carry it. Then asks the rework for each, follows
  * up to five redirects, and says where it lands.
  *
- * **A URL legacy answers must land on a 200 here**, by 301 or directly. A page
+ * **A URL legacy answers must land on a 200 here**, by one 301 or directly
+ * (a chain fails since the courses moved under `/de/angebote`, 2026-10-29). A page
  * behind a login landing on the login page counts. Two groups are reported
  * and not failed: courses legacy does not publish (its `show` serves any
  * course, published or not; the rework 404s them, and nothing links to them)
@@ -56,24 +57,27 @@ class CheckLegacyUrls extends Command
 		$rows = [];
 
 		foreach ($this->urls() as [$group, $path, $mustLand]) {
-			[$status, $landed] = $this->follow($base, $path);
-			$ok = $status === 200;
+			[$status, $landed, $hops] = $this->follow($base, $path);
+			// One redirect at most: a chain costs ranking where a single 301
+			// does not (`14-angebote.md`, *The nav, the URLs*). The login's
+			// own redirect comes on top for a portal page, and is not indexed.
+			$ok = $status === 200 && $hops <= ($landed === '/login' ? 2 : 1);
 
 			if (! $ok && $mustLand) {
 				$failed++;
 			}
 
 			if ($this->option('all') || ! $ok) {
-				$rows[] = [$group, $path, $status ?: 'error', $landed === $path ? '' : $landed, $ok ? 'ok' : ($mustLand ? 'FAIL' : 'expected')];
+				$rows[] = [$group, $path, $status ?: 'error', $hops ?: '', $landed === $path ? '' : $landed, $ok ? 'ok' : ($mustLand ? 'FAIL' : 'expected')];
 			}
 		}
 
 		if ($rows !== []) {
-			$this->table(['group', 'legacy URL', 'status', 'lands on', ''], $rows);
+			$this->table(['group', 'legacy URL', 'status', 'hops', 'lands on', ''], $rows);
 		}
 
 		if ($failed > 0) {
-			$this->error("{$failed} legacy URL(s) do not land on a page.");
+			$this->error("{$failed} legacy URL(s) do not land on a page in one hop.");
 
 			return self::FAILURE;
 		}
@@ -120,7 +124,7 @@ class CheckLegacyUrls extends Command
 		return $urls;
 	}
 
-	/** @return array{0: int, 1: string} the final status and path */
+	/** @return array{0: int, 1: string, 2: int} the final status and path, and how many redirects it took */
 	private function follow(string $base, string $path): array
 	{
 		$current = $path;
@@ -129,11 +133,11 @@ class CheckLegacyUrls extends Command
 			try {
 				$response = Http::withoutRedirecting()->withoutVerifying()->timeout(20)->get($base.$current);
 			} catch (Throwable) {
-				return [0, $current];
+				return [0, $current, $hop];
 			}
 
 			if (! $response->redirect()) {
-				return [$response->status(), $current];
+				return [$response->status(), $current, $hop];
 			}
 
 			$location = (string) $response->header('Location');
@@ -144,6 +148,6 @@ class CheckLegacyUrls extends Command
 			}
 		}
 
-		return [310, $current];
+		return [310, $current, 5];
 	}
 }

@@ -37,7 +37,7 @@ function coursePage(?Course $course = null): TestResponse
 {
 	$course ??= detailCourse();
 
-	return test()->get('/de/kurs/'.$course->getTranslation('slug', 'de'));
+	return test()->get('/de/angebote/kurse/'.$course->getTranslation('slug', 'de'));
 }
 
 it('titles the tab with the course and the header row with Kurse', function () {
@@ -171,7 +171,7 @@ it('gives a signed-in visitor the bookmark toggle, with its current state', func
 	$user->bookmarks()->attach($event);
 
 	$this->actingAs($user)
-		->get('/de/kurs/'.$course->getTranslation('slug', 'de'))
+		->get('/de/angebote/kurse/'.$course->getTranslation('slug', 'de'))
 		->assertOk()
 		->assertSee('saved: true })', false);
 });

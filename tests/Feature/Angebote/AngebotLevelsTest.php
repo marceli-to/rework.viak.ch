@@ -55,7 +55,7 @@ it('puts a software on the site with a licence or a course, and tags it by which
 	$listed = Software::query()->onSite()->withOffer()->get()->mapWithKeys(fn (Software $software) => [$software->id => $software->offer()]);
 	expect($listed->all())->toBe([$both->id => 'Kurs & Software', $licence->id => 'Software', $course->id => 'Kurs']);
 
-	$this->get('/de/software/blender')->assertOk()->assertDontSee('Lizenzen');
+	$this->get('/de/angebote/blender')->assertOk()->assertDontSee('Lizenzen');
 });
 
 it('keeps a licence product\'s categories', function () {
@@ -136,10 +136,10 @@ it('sells a licence product on its own page, with the way back to its Angebot', 
 		->assertSee('Kauflizenz, unbefristet')
 		->assertSee('In den Warenkorb')
 		->assertSee('Alles zu Rhinoceros')
-		->assertSee('href="/de/software/rhinoceros"', false);
+		->assertSee('href="/de/angebote/rhinoceros"', false);
 
 	// The Angebot's card names it and links here.
-	$this->get('/de/software/rhinoceros')->assertSee('href="/de/angebote/software/rhinoceros-8"', false);
+	$this->get('/de/angebote/rhinoceros')->assertSee('href="/de/angebote/software/rhinoceros-8"', false);
 
 	expect($this->get('/sitemap.xml')->getContent())->toContain('/de/angebote/software/rhinoceros-8');
 });
@@ -171,7 +171,7 @@ it('gives a course row its next date, its deadline while ahead, and how many mor
 
 	$this->travelTo('2026-10-29');
 
-	$this->get('/de/software/blender')
+	$this->get('/de/angebote/blender')
 		->assertOk()
 		->assertSee('2 Tage')
 		->assertSee('3. bis 4. Dezember 2026')

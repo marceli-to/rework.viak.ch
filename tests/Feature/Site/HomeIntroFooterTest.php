@@ -55,7 +55,7 @@ it('has legacy’s footer, on the homepage only', function () {
 	$this->get('/de')
 		->assertSeeInOrder(['Newsletter', 'Regelmässig über neue Kurse und Angebote informiert werden:', 'Abonnieren', 'Kontakt', 'Limmatstrasse 291', 'hallo@visualisierungs-akademie.ch', 'Instagram', 'Facebook']);
 
-	$this->get('/de/kurse')->assertDontSee('Regelmässig über neue Kurse');
+	$this->get('/de/angebote/kurse')->assertDontSee('Regelmässig über neue Kurse');
 });
 
 it('takes a signup and only logs it, nothing goes to Mailchimp', function () {

@@ -75,6 +75,16 @@
 				@if ($subtitle)
 					<h2>{{ $subtitle }}</h2>
 				@endif
+
+				{{-- The way back to its Angebot, where the site has no
+				     breadcrumb ([[14-angebote]], Marcel 2026-10-29); one per
+				     Angebot (*Visualisieren mit SketchUp*: SketchUp and V-Ray),
+				     none for a course without one. As on a licence's page. --}}
+				@foreach ($angebote as $angebot)
+					<x-ui.back-link :href="\App\Support\SiteUrl::software($angebot->getTranslation('slug', $locale))"
+						:label="'Alles zu '.$angebot->getTranslation('title', $locale)" direction="right"
+						@class(['text-black', 'mt-16' => $loop->first, 'mt-8! sm:mt-8! lg:mt-8!' => ! $loop->first]) />
+				@endforeach
 			</div>
 
 			{{-- `hero` is the teal block's own link treatment — a heavier

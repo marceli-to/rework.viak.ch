@@ -53,7 +53,7 @@ it('301s legacy’s indexed url to it, and lists it in the sitemap', function ()
 });
 
 it('stays out of the nav, and Kontakt and the Kurse filter link to it', function () {
-	$html = $this->get('/de/kurse')->assertSee('href="/de/firmenschulung"', false)->getContent();
+	$html = $this->get('/de/angebote/kurse')->assertSee('href="/de/firmenschulung"', false)->getContent();
 	$nav = Str::between($html, 'aria-label="Hauptnavigation"', '</nav>');
 
 	expect($nav)->toContain('Kontakt')->not->toContain('/de/firmenschulung');

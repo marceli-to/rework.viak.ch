@@ -103,7 +103,7 @@ it('shows the expert’s page with the bio, and the courses linked', function ()
 		->assertSee('>Experte</h1>', false)
 		->assertSee('Der Macher')
 		->assertSee('<strong>staubigen</strong>', false)
-		->assertSee('href="/de/kurs/sketchup-kurs"', false);
+		->assertSee('href="/de/angebote/kurse/sketchup-kurs"', false);
 });
 
 it('leaves the course list off an expert with nothing coming up', function () {

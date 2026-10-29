@@ -1,4 +1,7 @@
 <x-layout.site title="Kurse">
+	{{-- The three views of the catalogue ([[14-angebote]]). --}}
+	<x-offers.switch current="courses" />
+
 	@php
 		$facets = $filter->facets();
 		$matching = $filter->matching();

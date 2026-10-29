@@ -46,12 +46,12 @@ it('makes the slug once, from the title, through any door', function () {
 
 	$uuid = $this->actingAs($this->admin)->postJson('/api/admin/software', softwarePayload(['title' => 'V-Ray']))
 		->assertCreated()
-		->assertJsonPath('data.url', '/de/software/v-ray')
+		->assertJsonPath('data.url', '/de/angebote/v-ray')
 		->json('data.uuid');
 
 	$this->putJson("/api/admin/software/{$uuid}", softwarePayload(['title' => 'V-Ray 7']))
 		->assertJsonPath('data.title', 'V-Ray 7')
-		->assertJsonPath('data.url', '/de/software/v-ray');
+		->assertJsonPath('data.url', '/de/angebote/v-ray');
 });
 
 it('saves the copy, the categories and the SEO, German only', function () {

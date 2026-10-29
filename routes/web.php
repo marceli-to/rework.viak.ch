@@ -20,6 +20,7 @@ use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\LicenceController;
 use App\Http\Controllers\Site\NewsletterController;
+use App\Http\Controllers\Site\OfferController;
 use App\Http\Controllers\Site\PaymentController;
 use App\Http\Controllers\Site\ProjectController;
 use App\Http\Controllers\Site\SearchController;
@@ -88,39 +89,57 @@ Route::prefix('{locale}')
 				->name("{$locale}.projects.show");
 
 			/*
-			 * The software list, the shop, and one software's page, drawn as
-			 * the course pages are ([[05-licences]]).
+			 * The catalogue, under `/de/angebote` ([[14-angebote]], Marcel
+			 * 2026-10-29): *Alle Angebote*, then its two filtered views, Kurse
+			 * and Software, with a product's page under each, then one
+			 * Angebot. **The Angebot's `{slug}` comes last** and may not be
+			 * `kurse` or `software` ([[Software::freeSlug]] skips both), so it
+			 * never shadows a list.
 			 */
-			Route::get($segments['software'], [SoftwareController::class, 'index'])
-				->name("{$locale}.software.index");
+			Route::get($segments['offers'], [OfferController::class, 'index'])
+				->name("{$locale}.offers.index");
 
-			Route::get($segments['software'].'/{slug}', [SoftwareController::class, 'show'])
+			Route::get($segments['offers'].'/'.$segments['courses'], [CourseController::class, 'index'])
+				->name("{$locale}.courses.index");
+
+			Route::get($segments['offers'].'/'.$segments['courses'].'/{slug}', [CourseController::class, 'show'])
+				->name("{$locale}.courses.show");
+
+			Route::get($segments['offers'].'/'.$segments['software'], [LicenceController::class, 'index'])
+				->name("{$locale}.licences.index");
+
+			Route::get($segments['offers'].'/'.$segments['software'].'/{slug}', [LicenceController::class, 'show'])
+				->name("{$locale}.licences.show");
+
+			Route::get($segments['offers'].'/{slug}', [SoftwareController::class, 'show'])
+				->where('slug', '(?!(?:'.$segments['courses'].'|'.$segments['software'].')$)[^/]+')
 				->name("{$locale}.software.show");
 
 			/*
-			 * One licence product, where it is bought ([[14-angebote]]): the
-			 * product level under the Angebot. Already on its final URL; the
-			 * Angebot and the lists follow when the nav changes.
+			 * **Legacy's course URLs, 301 in one hop** to where they live now
+			 * (`Todo.md`, *The redirect map*). `/de/kurse` keeps its query
+			 * string, so a shared filter still filters. The uuid form resolves
+			 * the course by its uuid, as legacy did, the slug in it ignored:
+			 * `01-schema.md` carries legacy uuids across, which is what makes
+			 * the lookup possible.
 			 */
-			Route::get($segments['offers'].'/'.$segments['software'].'/{slug}', [LicenceController::class, 'show'])
-				->name("{$locale}.licences.show");
-			Route::get($segments['courses'], [CourseController::class, 'index'])
-				->name("{$locale}.courses.index");
+			Route::get($segments['courses'], [CourseController::class, 'redirectList'])
+				->name("{$locale}.courses.legacy-index");
 
-			Route::get($segments['course'].'/{slug}', [CourseController::class, 'show'])
-				->name("{$locale}.courses.show");
+			Route::get($segments['course'].'/{slug}', [CourseController::class, 'redirectSlug'])
+				->name("{$locale}.courses.legacy-slug");
 
-			/*
-			 * The legacy detail URL carried a slug *and* a uuid, and the uuid is
-			 * what resolved — so `/de/kurs/anything/{uuid}` renders the course
-			 * today. 301 to the slug form, which passes essentially full
-			 * ranking and retires the wart. `01-schema.md` carries legacy uuids
-			 * across rather than regenerating them, which is what makes this
-			 * lookup possible at all.
-			 */
 			Route::get($segments['course'].'/{slug}/{uuid}', [CourseController::class, 'redirectLegacy'])
 				->whereUuid('uuid')
 				->name("{$locale}.courses.legacy");
+
+			// The prototype's software URLs before the move; never live, kept
+			// so a link from a review mail still lands.
+			Route::get($segments['software'], [LicenceController::class, 'redirectList'])
+				->name("{$locale}.software.legacy-index");
+
+			Route::get($segments['software'].'/{slug}', [SoftwareController::class, 'redirectLegacy'])
+				->name("{$locale}.software.legacy");
 
 			/*
 			 * *Über uns* — the Über uns text, the experts and the team, merged

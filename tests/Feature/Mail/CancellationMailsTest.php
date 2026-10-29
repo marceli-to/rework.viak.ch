@@ -99,6 +99,6 @@ it('writes legacy text', function () {
 	expect($html)->toContain('Annullationsbestätigung – Rhino Einstiegskurs')
 		->toContain('Diese belaufen sich auf CHF 445.– (50% der Kurskosten).')
 		->toContain('Die entsprechende Rechnung liegt diesem Mail bei.')
-		->and((new BookingCancelledCustomer($booking))->render())->toContain('/de/kurse')
+		->and((new BookingCancelledCustomer($booking))->render())->toContain('/de/angebote/kurse')
 		->and((new BookingCancelledInfoAdmin($booking->event, null))->render())->toContain('hat sich jemand abgemeldet');
 });

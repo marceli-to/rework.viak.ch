@@ -24,9 +24,14 @@
 	 * `page.expert` exactly.
 	 */
 	$nav = [
-		['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses(), 'match' => "{$locale}.courses.*"],
-		// The software list, the shop, and each software's page ([[05-licences]]).
-		['label' => 'Software', 'href' => \App\Support\SiteUrl::softwareIndex(), 'match' => "{$locale}.software.*"],
+		// The catalogue ([[14-angebote]], Marcel 2026-10-29): Kurse and Software
+		// are views under it, reached through its switch, so the item lights on
+		// every list, Angebot, course and licence. On a phone the two are rows
+		// of their own under it (`children`).
+		['label' => 'Angebote', 'href' => \App\Support\SiteUrl::offers(), 'match' => ["{$locale}.offers.*", "{$locale}.courses.*", "{$locale}.licences.*", "{$locale}.software.*"], 'children' => [
+			['label' => 'Kurse', 'href' => \App\Support\SiteUrl::courses()],
+			['label' => 'Software', 'href' => \App\Support\SiteUrl::softwareIndex()],
+		]],
 		// *Über uns* took Experten's place (2026-10-06), and an expert's own page
 		// still lights it: the experts are on *Über uns* now.
 		['label' => 'Über uns', 'href' => \App\Support\SiteUrl::about(), 'match' => ["{$locale}.about", "{$locale}.experts.*"]],
@@ -85,12 +90,12 @@
 				     three links fill a `span-6` — on production Kurse begins at the
 				     column's left edge and Kontakt ends exactly at its right.
 
-				     **Four do not fit in it** (Software joined, 2026-10-06): the list
-				     overflows a span-6 and *Über uns* breaks onto two lines. So the links
-				     take `span-10` (`span-9` from lg), the icons, which need little, the
-				     rest, and each link stays on one line. `gap-x-6` is only a floor:
-				     `justify-between` spreads them, 25px apart at 640, the tightest. --}}
-				<ul class="col-span-10 flex justify-between gap-x-6 text-3xl font-bold whitespace-nowrap sm:text-lg lg:col-span-9 lg:text-2xl">
+				     **Three again since 2026-10-29** (*Angebote · Über uns · Kontakt*,
+				     [[14-angebote]]), so back in legacy's `span-6`. From 2026-10-06 four
+				     (Kurse, Software, Über uns, Kontakt) took `span-10`, `span-9` from
+				     lg, because four overflowed it. `gap-x-6` is only a floor:
+				     `justify-between` spreads them. --}}
+				<ul class="col-span-6 flex justify-between gap-x-6 text-3xl font-bold whitespace-nowrap sm:text-lg lg:text-2xl">
 					@foreach ($nav as $item)
 						<li class="flex items-center">
 							<a href="{{ $item['href'] }}"
@@ -101,7 +106,7 @@
 					@endforeach
 				</ul>
 
-				<ul class="col-span-2 flex justify-end lg:col-span-3">
+				<ul class="col-span-6 flex justify-end">
 					{{-- Hidden while the basket is empty, as legacy hides it with
 					     `!hide` at a count of zero — which is why the live header
 					     usually shows only the account icon. --}}
@@ -262,6 +267,17 @@
 							{{ $item['label'] }}
 						</a>
 					</li>
+					{{-- Kurse and Software under Angebote: a phone has the room
+					     and saves the click through the switch. A size down and
+					     regular, so they read as part of the row above. --}}
+					@foreach ($item['children'] ?? [] as $child)
+						<li>
+							<a href="{{ $child['href'] }}"
+								class="flex min-h-40 items-center justify-end text-2xl hover:text-white">
+								{{ $child['label'] }}
+							</a>
+						</li>
+					@endforeach
 				@endforeach
 
 				{{-- The whole item is hidden at a count of zero — legacy's

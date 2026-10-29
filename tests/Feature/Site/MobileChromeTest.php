@@ -47,7 +47,7 @@ it('adds Profil to the mobile menu', function () {
 it('gives the filter a single fixed control that swaps funnel for cross', function () {
 	Course::factory()->create(['slug' => ['de' => 'x'], 'publish' => true]);
 
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 
 	preg_match('#<button[^>]*aria-label="Filter"[^>]*>[\s\S]*?</button>#', $html, $control);
 
@@ -88,7 +88,7 @@ it('sets the menu footer offsets from the icons rather than from the footer', fu
 it('makes the filter a full-screen panel on a phone and a column above it', function () {
 	Course::factory()->create(['slug' => ['de' => 'y'], 'publish' => true]);
 
-	$this->get('/de/kurse')
+	$this->get('/de/angebote/kurse')
 		->assertSee('fixed inset-0 z-[100] h-full w-full overflow-y-auto bg-white px-16 pt-88 pb-48 sm:static', false);
 });
 
@@ -100,7 +100,7 @@ it('makes the filter a full-screen panel on a phone and a column above it', func
 it('hides the filter panel with a class rather than a media query in script', function () {
 	Course::factory()->create(['slug' => ['de' => 'z'], 'publish' => true]);
 
-	$this->get('/de/kurse')
+	$this->get('/de/angebote/kurse')
 		->assertSee("open ? '' : 'max-sm:hidden'", false)
 		->assertDontSee('matchMedia', false);
 });

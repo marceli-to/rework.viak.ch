@@ -152,7 +152,11 @@ class CourseFilter
 	public function options(): array
 	{
 		return [
-			'category' => $this->labels($this->courses->flatMap->categories),
+			// In the client's order, as *Alle Angebote* and the Software list
+			// have them ([[14-angebote]]); the other terms A to Z.
+			'category' => $this->courses->flatMap->categories->unique('id')->sortBy('order')
+				->mapWithKeys(fn ($category) => [$category->uuid => $category->getTranslation('title', app()->getLocale())])
+				->all(),
 			'location' => ['online' => 'online', 'offline' => 'vor Ort'],
 			'software' => $this->labels($this->courses->flatMap->software),
 			'level' => $this->labels($this->courses->flatMap->levels),

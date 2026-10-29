@@ -9,22 +9,22 @@ use App\Enums\LicenceType;
 use App\Enums\Platform;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
-use App\Models\Software;
 use Illuminate\Support\Collection;
 
 /**
- * The software list's filter ([[05-licences]]), the course list's twin
- * ([[CourseFilter]]): the same shape, so the same panel and the same
- * `course-filter.js` serve it. Every software on the list is rendered; the
- * query string decides which are hidden on the first paint, and the browser
- * applies the same rule to the same values after that.
+ * The licence list's filter ([[05-licences]], [[14-angebote]]), the course
+ * list's twin ([[CourseFilter]]): the same shape, so the same panel and the
+ * same `course-filter.js` serve it. Every product on the list is rendered;
+ * the query string decides which are hidden on the first paint, and the
+ * browser applies the same rule to the same values after that.
  *
- * **A software matches when one of its licences does**: the categories are
- * the software's own, the rest are read off the listed licences of its
- * published products. A licence for *Einzelplatz oder Netzwerk* counts as
- * both.
+ * **A product matches when one of its listed licences does**; the
+ * categories and the maker are the product's own. A licence for *Einzelplatz
+ * oder Netzwerk* counts as both. Until 2026-10-29 this was the software
+ * list's, read across a software's products; the list moved to the product
+ * level with the client's two levels.
  */
-class SoftwareFilter
+class LicenceFilter
 {
 	/** In the order the panel draws them: the categories as links, the rest as selects. */
 	public const ATTRIBUTES = ['category', 'manufacturer', 'licence_type', 'platform', 'access'];
@@ -36,19 +36,19 @@ class SoftwareFilter
 	private ?array $facets = null;
 
 	/**
-	 * @param  Collection<int, Software>  $software
+	 * @param  Collection<int, LicenceProduct>  $products
 	 * @param  array<string, string|null>  $selected
 	 */
 	private function __construct(
-		private readonly Collection $software,
+		private readonly Collection $products,
 		private readonly array $selected,
 	) {}
 
 	/**
-	 * @param  Collection<int, Software>  $software  with `categories` and `products.manufacturer`, `products.variants` loaded
+	 * @param  Collection<int, LicenceProduct>  $products  listed, with `categories`, `manufacturer` and `variants` loaded
 	 * @param  array<string, mixed>  $query
 	 */
-	public static function for(Collection $software, array $query): self
+	public static function for(Collection $products, array $query): self
 	{
 		$selected = [];
 
@@ -57,7 +57,7 @@ class SoftwareFilter
 			$selected[$attribute] = $value !== '' ? $value : null;
 		}
 
-		return new self($software, $selected);
+		return new self($products, $selected);
 	}
 
 	/** @return array<string, string|null> */
@@ -73,19 +73,19 @@ class SoftwareFilter
 	}
 
 	/**
-	 * What each software can be filtered by, keyed by its uuid.
+	 * What each product can be filtered by, keyed by its uuid.
 	 *
 	 * @return array<string, array<string, string[]>>
 	 */
 	public function facets(): array
 	{
-		return $this->facets ??= $this->software
-			->mapWithKeys(function (Software $software): array {
-				$licences = self::licences($software);
+		return $this->facets ??= $this->products
+			->mapWithKeys(function (LicenceProduct $product): array {
+				$licences = self::licences($product);
 
-				return [$software->uuid => [
-					'category' => $software->categories->pluck('uuid')->all(),
-					'manufacturer' => $software->products->filter->isListed()->pluck('manufacturer.uuid')->filter()->unique()->values()->all(),
+				return [$product->uuid => [
+					'category' => $product->categories->pluck('uuid')->all(),
+					'manufacturer' => array_values(array_filter([$product->manufacturer?->uuid])),
 					'licence_type' => $licences->map(fn (LicenceVariant $variant) => $variant->licence_type?->value)->filter()->unique()->values()->all(),
 					'platform' => $licences->flatMap(fn (LicenceVariant $variant) => $variant->platforms?->map->value ?? [])->unique()->values()->all(),
 					'access' => $licences->flatMap(fn (LicenceVariant $variant) => match ($variant->access) {
@@ -107,8 +107,8 @@ class SoftwareFilter
 	{
 		$facets = $this->facets();
 
-		return $this->software
-			->filter(fn (Software $software) => $this->matches($facets[$software->uuid]))
+		return $this->products
+			->filter(fn (LicenceProduct $product) => $this->matches($facets[$product->uuid]))
 			->pluck('uuid')
 			->all();
 	}
@@ -126,7 +126,7 @@ class SoftwareFilter
 	}
 
 	/**
-	 * What the panel offers, as value => label: **only what some software on
+	 * What the panel offers, as value => label: **only what some product on
 	 * the page carries**, as the course filter has it, so every option leads
 	 * somewhere.
 	 *
@@ -139,10 +139,10 @@ class SoftwareFilter
 		$present = fn (string $attribute) => $facets->pluck($attribute)->flatten()->unique()->all();
 
 		return [
-			'category' => $this->software->flatMap->categories->unique('id')
+			'category' => $this->products->flatMap->categories->unique('id')->sortBy('order')
 				->mapWithKeys(fn ($category) => [$category->uuid => $category->getTranslation('title', $locale)])
-				->sort()->all(),
-			'manufacturer' => $this->software->flatMap->products->filter->isListed()->pluck('manufacturer')->filter()->unique('id')
+				->all(),
+			'manufacturer' => $this->products->pluck('manufacturer')->filter()->unique('id')
 				->mapWithKeys(fn ($maker) => [$maker->uuid => $maker->getTranslation('title', $locale)])
 				->sort()->all(),
 			'licence_type' => collect(LicenceType::cases())->filter(fn (LicenceType $type) => in_array($type->value, $present('licence_type'), true))
@@ -156,16 +156,12 @@ class SoftwareFilter
 	}
 
 	/**
-	 * The licences a visitor can order: listed, of a published product. A
-	 * product with none listed (MatrixGold) is not on the site, nor its maker.
+	 * The licences a visitor can order: the listed ones.
 	 *
 	 * @return Collection<int, LicenceVariant>
 	 */
-	public static function licences(Software $software): Collection
+	public static function licences(LicenceProduct $product): Collection
 	{
-		return $software->products
-			->filter(fn (LicenceProduct $product) => $product->publish)
-			->flatMap(fn (LicenceProduct $product) => $product->variants->filter(fn (LicenceVariant $variant) => $variant->listed))
-			->values();
+		return $product->variants->filter(fn (LicenceVariant $variant) => $variant->listed)->values();
 	}
 }

@@ -19,8 +19,10 @@ it('serves the German home page under its prefix', function () {
 	$this->get('/de')->assertOk();
 });
 
-it('keeps the course list where it has always been', function () {
-	$this->get('/de/kurse')->assertOk();
+it('moves the course list under Angebote, its filter kept', function () {
+	$this->get('/de/angebote/kurse')->assertOk();
+	$this->get('/de/kurse')->assertRedirect('/de/angebote/kurse')->assertStatus(301);
+	$this->get('/de/kurse?category=abc')->assertRedirect('/de/angebote/kurse?category=abc');
 });
 
 /** Unprefixed URLs never existed: production returns 404 for `/kurse`. */
@@ -28,28 +30,29 @@ it('does not answer without the locale prefix', function () {
 	$this->get('/kurse')->assertNotFound();
 });
 
-it('serves a course by its slug, at the singular segment', function () {
+it('serves a course by its slug under Angebote, and 301s legacy\'s singular segment there', function () {
 	$course = Course::factory()->create([
 		'title' => ['de' => 'Rhino Einstiegskurs'],
 		'slug' => ['de' => 'rhino-einstiegskurs'],
 		'publish' => true,
 	]);
 
-	$this->get('/de/kurs/rhino-einstiegskurs')->assertOk();
+	$this->get('/de/angebote/kurse/rhino-einstiegskurs')->assertOk();
+	$this->get('/de/kurs/rhino-einstiegskurs')->assertRedirect('/de/angebote/kurse/rhino-einstiegskurs')->assertStatus(301);
 });
 
 /**
  * The legacy detail URL carried a slug *and* a uuid, and the uuid is what
  * resolved. A 301 keeps three years of ranking.
  */
-it('redirects the legacy uuid URL to the slug form', function () {
+it('redirects the legacy uuid URL to the slug form in one hop', function () {
 	$course = Course::factory()->create([
 		'slug' => ['de' => 'rhino-einstiegskurs'],
 		'publish' => true,
 	]);
 
 	$this->get("/de/kurs/rhino-einstiegskurs/{$course->uuid}")
-		->assertRedirect('/de/kurs/rhino-einstiegskurs')
+		->assertRedirect('/de/angebote/kurse/rhino-einstiegskurs')
 		->assertStatus(301);
 });
 
@@ -61,7 +64,7 @@ it('redirects even when the legacy slug was wrong', function () {
 	]);
 
 	$this->get("/de/kurs/irgendwas/{$course->uuid}")
-		->assertRedirect('/de/kurs/rhino-einstiegskurs')
+		->assertRedirect('/de/angebote/kurse/rhino-einstiegskurs')
 		->assertStatus(301);
 });
 

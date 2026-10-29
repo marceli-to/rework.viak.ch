@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Software;
 use App\Support\CourseFilter;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
@@ -87,6 +88,10 @@ class CourseController extends Controller
 		return view('site.courses.show', [
 			'course' => $course,
 			'browse' => $this->browse($course),
+			// *Alles zu …*, the way back to the Angebote it belongs to ([[14-angebote]]).
+			'angebote' => Software::query()->onSite()->whereKey($course->software->modelKeys())->get()
+				->sortBy(fn (Software $software) => $software->getTranslation('title', app()->getLocale()), SORT_NATURAL | SORT_FLAG_CASE)
+				->values(),
 			// *Kundenmeinungen*: the published testimonials about this course
 			// ([[Course::testimonialsAbout]]).
 			'testimonials' => $course->testimonialsAbout()->published()->ordered()->get(),
@@ -152,6 +157,23 @@ class CourseController extends Controller
 	 * About 60 URLs across the site depend on this, so it is small; it is also
 	 * the difference between keeping three years of ranking and starting again.
 	 */
+	/**
+	 * Legacy's `/de/kurse`, 301 to `/de/angebote/kurse` with its query
+	 * string, so a filtered link stays filtered ([[14-angebote]]).
+	 */
+	public function redirectList(Request $request): RedirectResponse
+	{
+		$query = $request->getQueryString();
+
+		return redirect(SiteUrl::courses().($query ? "?{$query}" : ''), 301);
+	}
+
+	/** `/de/kurs/{slug}`, 301 to `/de/angebote/kurse/{slug}`: no lookup, one hop. */
+	public function redirectSlug(string $slug): RedirectResponse
+	{
+		return redirect(SiteUrl::course($slug), 301);
+	}
+
 	public function redirectLegacy(string $slug, string $uuid): RedirectResponse
 	{
 		$course = Course::query()->published()->where('uuid', $uuid)->firstOrFail();

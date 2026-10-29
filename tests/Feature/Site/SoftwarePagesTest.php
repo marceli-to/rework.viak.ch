@@ -29,21 +29,21 @@ function shopSoftware(string $title, array $variants = [[]], bool $publish = tru
 	return $software;
 }
 
-it('lists only software with a licence to order', function () {
+it('lists only the licence products a visitor can order', function () {
 	shopSoftware('Rhinoceros');
 	shopSoftware('Versteckt', [['listed' => false]]);
 	shopSoftware('Entwurf', publish: false);
 	Software::create(['title' => ['de' => 'SketchUp'], 'publish' => true]);
 
-	$this->get('/de/software')
+	$this->get('/de/angebote/software')
 		->assertOk()
 		->assertSee('Rhinoceros')
 		->assertDontSee('Versteckt')
 		->assertDontSee('Entwurf')
 		->assertDontSee('SketchUp');
 
-	$this->get('/de/software/versteckt')->assertNotFound();
-	$this->get('/de/software/sketchup')->assertNotFound();
+	$this->get('/de/angebote/versteckt')->assertNotFound();
+	$this->get('/de/angebote/sketchup')->assertNotFound();
 });
 
 it('filters by what the licences say, a both-ways licence counting as both', function () {
@@ -51,25 +51,27 @@ it('filters by what the licences say, a both-ways licence counting as both', fun
 	$either = shopSoftware('Rhinoceros', [['access' => LicenceAccess::Either, 'licence_type' => LicenceType::Perpetual, 'platforms' => ['windows']]]);
 	$single = shopSoftware('Enscape', [['access' => LicenceAccess::Named]]);
 
-	$page = $this->get('/de/software?access=floating')->assertOk();
+	$page = $this->get('/de/angebote/software?access=floating')->assertOk();
 	$facets = $page->viewData('filter')->facets();
+
+	[$network, $either] = [$network->products()->first(), $either->products()->first()];
 
 	expect($facets[$either->uuid]['access'])->toBe(['named', 'floating'])
 		->and($facets[$either->uuid]['platform'])->toBe(['windows'])
 		->and($page->viewData('filter')->matching())->toEqualCanonicalizing([$network->uuid, $either->uuid]);
 
-	expect($this->get('/de/software?licence_type=perpetual')->viewData('filter')->matching())->toBe([$either->uuid]);
+	expect($this->get('/de/angebote/software?licence_type=perpetual')->viewData('filter')->matching())->toBe([$either->uuid]);
 });
 
-it('offers a maker and a category only where some software carries it', function () {
+it('offers a maker and a category only where some product carries it', function () {
 	$rhino = shopSoftware('Rhinoceros');
 	$category = Category::create(['title' => ['de' => 'Architektur'], 'order' => 1, 'publish' => true]);
 	Category::create(['title' => ['de' => 'Animation'], 'order' => 2, 'publish' => true]);
-	$rhino->categories()->attach($category);
+	$rhino->products()->first()->categories()->attach($category);
 	$hidden = LicenceProduct::factory()->create(['software_id' => $rhino->id, 'manufacturer_id' => Manufacturer::create(['title' => ['de' => 'Gemvision']])->id]);
 	LicenceVariant::factory()->hidden()->create(['licence_product_id' => $hidden->id]);
 
-	$options = $this->get('/de/software')->viewData('filter')->options();
+	$options = $this->get('/de/angebote/software')->viewData('filter')->options();
 
 	expect($options['category'])->toBe([$category->uuid => 'Architektur'])
 		->and($options['manufacturer'])->not->toContain('Gemvision');
@@ -85,7 +87,7 @@ it('lists every product and course as a row leading to its own page, and sells n
 	$course = Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'slug' => ['de' => 'rhino-einstiegskurs'], 'fee' => '549.00']);
 	$course->software()->attach($rhino);
 
-	$this->get('/de/software/rhinoceros')
+	$this->get('/de/angebote/rhinoceros')
 		->assertOk()
 		->assertSee('Rhinoceros Pro')
 		->assertSee('ab CHF 940.00')
@@ -98,12 +100,12 @@ it('lists every product and course as a row leading to its own page, and sells n
 		->assertSee('CHF 549.00')
 		->assertSee('Daten auf Anfrage')
 		->assertSee('Zum Kurs')
-		->assertSee('href="/de/kurs/rhino-einstiegskurs"', false);
+		->assertSee('href="/de/angebote/kurse/rhino-einstiegskurs"', false);
 });
 
 it('keeps a renamed software on its URL', function () {
 	$software = shopSoftware('V-Ray');
 	$software->update(['title' => ['de' => 'V-Ray 7']]);
 
-	$this->get('/de/software/v-ray')->assertOk()->assertSee('V-Ray 7');
+	$this->get('/de/angebote/v-ray')->assertOk()->assertSee('V-Ray 7');
 });

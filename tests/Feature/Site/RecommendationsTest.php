@@ -59,7 +59,7 @@ it('shows the picks under the software page, without the courses it already list
 	$listed->software()->attach($this->rhino);
 	Recommendations::sync($this->rhino, [$listed->uuid, $this->course->uuid], [$this->vray->uuid]);
 
-	$page = $this->get('/de/software/rhinoceros')->assertOk()
+	$page = $this->get('/de/angebote/rhinoceros')->assertOk()
 		->assertSee('Das könnte dich auch interessieren')
 		->assertSeeInOrder(['Das könnte dich auch interessieren', 'Rhino Einstiegskurs', 'V-Ray']);
 
@@ -68,10 +68,10 @@ it('shows the picks under the software page, without the courses it already list
 });
 
 it('shows nothing where nothing was picked, or nothing published', function () {
-	$this->get('/de/software/rhinoceros')->assertOk()->assertDontSee('Das könnte dich auch interessieren');
+	$this->get('/de/angebote/rhinoceros')->assertOk()->assertDontSee('Das könnte dich auch interessieren');
 
 	Recommendations::sync($this->rhino, [Course::factory()->unpublished()->create()->uuid], []);
-	$this->get('/de/software/rhinoceros')->assertOk()->assertDontSee('Das könnte dich auch interessieren');
+	$this->get('/de/angebote/rhinoceros')->assertOk()->assertDontSee('Das könnte dich auch interessieren');
 });
 
 it('recommends in the basket what was picked for its contents, leaving out what is in it', function () {

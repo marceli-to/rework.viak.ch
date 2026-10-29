@@ -372,3 +372,45 @@ are in the view's comment.
 Not built, from the mockup: an intro line over each column (*Mit Tom
 Pawlofsky…*, *Rhino 8 für Windows und Mac…*); it would need two fields on the
 software. Worth it if VIAK will write them.
+
+## As built: step 4, the catalogue under Angebote, 2026-10-29
+
+**The URLs** are the table in *The nav, the URLs*, built: [[SiteUrl]] makes
+them all (`offers()`, `courses()`, `course()`, `software()` for an Angebot,
+`softwareIndex()` and `licence()`), so mails, search, sitemap and cards
+moved with it. **The 301s are one hop each**: `/de/kurse` (query kept),
+`/de/kurs/{slug}`, `/de/kurs/{slug}/{uuid}`, and the prototype's
+`/de/software` and `/de/software/{slug}`. `port:check-urls` now fails a
+chain. An Angebot's route comes last and refuses `kurse` and `software`;
+[[Software::freeSlug]] skips both (a software called *Software* gets
+`software-2`).
+
+**The menu** is *Angebote · Über uns · Kontakt*, back in legacy's `span-6`
+now that it is three links again. *Angebote* lights on every catalogue page.
+On a phone Kurse and Software are rows of their own under it, a size down
+and regular.
+
+**The switch** (`components/offers/switch.blade.php`): *Alle Angebote ·
+Kurse · Software* in the menu's bold a size down, the open one teal, on top
+of all three views.
+
+**Alle Angebote** (`/de/angebote`, [[OfferController]]): the top drawn as a
+Vorhaben's, a short intro, the switch, then one collapsible per published
+category in its order, the count as a badge, small tiles four across from
+`lg` (`card/offer.blade.php`: title, tag, arrow; no picture). A tile is an
+Angebot or a course no Angebot holds, under every category it has; what has
+none goes under **Weitere**, last (on dev: Visual Facilitator 1–5, LEGO
+1–2, Urban Sketching, #66). No *in Vorbereitung* tiles.
+
+**Software** (`/de/angebote/software`) lists **licence products**, not
+software: `card/licence.blade.php` (the software card one level down, the
+software's picture, the overlay naming maker, Angebot and *ab* price), A to
+Z, with the old filter moved to products ([[LicenceFilter]], was
+`SoftwareFilter`). **Kurse** is unchanged but for the switch; its category
+filter follows the client's order now, as the Software one does.
+
+**A course page links to its Angebote** under the title (*Alles zu
+Rhinoceros*, one per Angebot, none without), as the licence page does.
+
+Still to come in step 4: the homepage's *Beliebte Angebote* as paired tiles
+with *Kurs ab* (the hybrid of #52) and the link to *Alle Angebote*.

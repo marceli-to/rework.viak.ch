@@ -24,20 +24,33 @@ final class SiteUrl
 		return config("site.segments.{$locale}.{$key}", $key);
 	}
 
-	/** The course list — `/de/kurse`. */
-	public static function courses(?string $locale = null): string
+	/**
+	 * *Alle Angebote*, `/de/angebote` ([[14-angebote]]): the catalogue, and
+	 * the root every list and product page sits under since 2026-10-29.
+	 */
+	public static function offers(?string $locale = null): string
 	{
 		$locale ??= app()->getLocale();
 
-		return '/'.$locale.'/'.self::segment('courses', $locale);
+		return '/'.$locale.'/'.self::segment('offers', $locale);
 	}
 
-	/** One course — `/de/kurs/{slug}`. */
+	/**
+	 * The course list, `/de/angebote/kurse`. Legacy's `/de/kurse` 301s here
+	 * ([[CourseController::redirectList]]).
+	 */
+	public static function courses(?string $locale = null): string
+	{
+		return self::offers($locale).'/'.self::segment('courses', $locale);
+	}
+
+	/**
+	 * One course, `/de/angebote/kurse/{slug}`: list and detail share `kurse`
+	 * now, where legacy split it into `kurse` and `kurs`.
+	 */
 	public static function course(string $slug, ?string $locale = null): string
 	{
-		$locale ??= app()->getLocale();
-
-		return '/'.$locale.'/'.self::segment('course', $locale).'/'.$slug;
+		return self::courses($locale).'/'.$slug;
 	}
 
 	/**
@@ -348,18 +361,19 @@ final class SiteUrl
 		return '/'.$locale.'/'.self::segment('project', $locale).'/'.$slug;
 	}
 
-	/** The software list, the shop — `/de/software` ([[05-licences]]). */
+	/** The licence list, the shop: `/de/angebote/software` ([[14-angebote]]). */
 	public static function softwareIndex(?string $locale = null): string
 	{
-		$locale ??= app()->getLocale();
-
-		return '/'.$locale.'/'.self::segment('software', $locale);
+		return self::offers($locale).'/'.self::segment('software', $locale);
 	}
 
-	/** One software, its products and courses — `/de/software/{slug}`. */
+	/**
+	 * One Angebot, `/de/angebote/{slug}`: a software with its courses and
+	 * licences ([[14-angebote]]).
+	 */
 	public static function software(string $slug, ?string $locale = null): string
 	{
-		return self::softwareIndex($locale).'/'.$slug;
+		return self::offers($locale).'/'.$slug;
 	}
 
 	/**
@@ -369,9 +383,7 @@ final class SiteUrl
 	 */
 	public static function licence(string $slug, ?string $locale = null): string
 	{
-		$locale ??= app()->getLocale();
-
-		return '/'.$locale.'/'.self::segment('offers', $locale).'/'.self::segment('software', $locale).'/'.$slug;
+		return self::softwareIndex($locale).'/'.$slug;
 	}
 
 	/** The site search's result page, with the query if there is one ([[15-search]]). */

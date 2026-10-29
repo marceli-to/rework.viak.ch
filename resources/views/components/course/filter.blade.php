@@ -3,7 +3,7 @@
 	'matching' => 0,
 	// The selects under the category links, attribute => what it says unchosen.
 	// The course list's six by default; the software list passes its four
-	// ([[SoftwareFilter]]), the same panel otherwise.
+	// ([[LicenceFilter]]), the same panel otherwise.
 	'selects' => ['location' => 'Ort', 'software' => 'Software', 'level' => 'Level', 'language' => 'Sprache', 'expert' => 'Experte', 'tag' => 'Tags'],
 ])
 

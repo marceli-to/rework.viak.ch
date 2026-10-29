@@ -96,7 +96,8 @@ Still open: which PHP production runs (#11).
    actions*).
 6. **`php artisan port:check-urls --base=https://<the new server>`**, before
    the DNS moves. Every URL legacy answers, followed on the rework. It fails
-   when one does not land on a page ([[CheckLegacyUrls]], `Todo.md`, *The
+   when one does not land on a page, or needs more than one redirect to get
+   there (the courses live under `/de/angebote` since 2026-10-29) ([[CheckLegacyUrls]], `Todo.md`, *The
    redirect map*). Under Herd, `/robots.txt` and `/favicon.ico` fail falsely.
 7. The new GTM container version, published together with the DNS switch
    (`11-tracking.md`, step 5).

@@ -8,28 +8,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Software;
 use App\Support\Recommendations;
-use App\Support\SoftwareFilter;
+use App\Support\SiteUrl;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * The software pages, the shop ([[05-licences]]): drawn as the course pages
- * are, the list with its filter and one page per software (Marcel,
- * 2026-10-08). Only a software with something to order is shown
- * ([[Software::scopeOnSite]]).
+ * One Angebot's page ([[14-angebote]]): a software with its courses and
+ * licences, `/de/angebote/{slug}`. The software list it once had became the
+ * licence list ([[LicenceController::index]]) on 2026-10-29, when the shop
+ * moved to the product level. An Angebot is a software with a listed licence
+ * or a published course ([[Software::scopeOnSite]]).
  */
 class SoftwareController extends Controller
 {
-	/** The whole list rendered, the query string deciding what is hidden, as the course list does ([[CourseController]]). */
-	public function index(): View
+	/** The prototype's `/de/software/{slug}`, 301 to the Angebot's URL. */
+	public function redirectLegacy(string $slug): RedirectResponse
 	{
-		$software = $this->listed()->load(['categories', 'media']);
-
-		return view('site.software.index', [
-			'software' => $software,
-			'filter' => SoftwareFilter::for($software, request()->query()),
-		]);
+		return redirect(SiteUrl::software($slug), 301);
 	}
 
 	public function show(string $slug): View

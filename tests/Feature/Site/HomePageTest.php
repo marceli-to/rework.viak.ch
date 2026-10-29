@@ -34,7 +34,7 @@ it('lists the next six bookable dates in order, each to its course', function ()
 	$html = $this->get('/de')
 		->assertSee('Nächste Kurstermine')
 		->assertSeeInOrder(['Nächste Kurstermine', 'Alle Kurse und Termine', 'Kurs 1', 'Kurs 2', 'Kurs 3', 'Kurs 4', 'Kurs 5', 'Kurs 6'])
-		->assertSee('href="/de/kurs/kurs-1"', false)
+		->assertSee('href="/de/angebote/kurse/kurs-1"', false)
 		->getContent();
 
 	expect($html)->not->toContain('Kurs 7');

@@ -101,14 +101,14 @@ beforeEach(function () {
 });
 
 it('renders every published course even when the query string filters', function () {
-	$html = $this->get("/de/kurse?software={$this->rhino->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?software={$this->rhino->uuid}")->getContent();
 
 	// Three courses, one filter: legacy would have sent one card.
 	expect(substr_count($html, '<article'))->toBe(3);
 });
 
 it('hides the courses the query string does not match, and only those', function () {
-	$html = $this->get("/de/kurse?software={$this->rhino->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?software={$this->rhino->uuid}")->getContent();
 
 	preg_match_all('#<article[^>]*>#', $html, $articles);
 
@@ -120,7 +120,7 @@ it('hides the courses the query string does not match, and only those', function
 });
 
 it('hides nothing when no filter is set', function () {
-	expect($this->get('/de/kurse')->getContent())->not->toContain('col-span-6 hidden');
+	expect($this->get('/de/angebote/kurse')->getContent())->not->toContain('col-span-6 hidden');
 });
 
 /**
@@ -128,7 +128,7 @@ it('hides nothing when no filter is set', function () {
  * gets two columns as well. An earlier pass read it as one column below `sm`.
  */
 it('puts two cards in a row at every width', function () {
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 
 	expect($html)
 		->toContain('col-span-6')
@@ -141,7 +141,7 @@ it('puts two cards in a row at every width', function () {
  * `grid-column-gap` rather than `grid-gap`.
  */
 it('grows the grid gap on both axes at the wide breakpoint', function () {
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 	$main = mb_substr($html, mb_strpos($html, '<main'));
 
 	expect(substr_count($main, 'grid grid-cols-12 gap-16 lg:gap-40'))->toBe(2)
@@ -149,7 +149,7 @@ it('grows the grid gap on both axes at the wide breakpoint', function () {
 });
 
 it('gives each card every attribute it can be filtered by', function () {
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 	$facets = facets($html);
 
 	expect($facets)->toHaveCount(3);
@@ -170,26 +170,26 @@ it('gives each card every attribute it can be filtered by', function () {
 });
 
 it('seeds Alpine with what the server filtered by, so the first paint agrees', function () {
-	expect(seed($this->get("/de/kurse?level={$this->beginner->uuid}")->getContent()))
+	expect(seed($this->get("/de/angebote/kurse?level={$this->beginner->uuid}")->getContent()))
 		->toMatchArray(['level' => $this->beginner->uuid, 'software' => '', 'category' => '']);
 
 	// Unset is the empty string, never null — six of the seven are selects.
-	expect(array_values(seed($this->get('/de/kurse')->getContent())))->each->toBe('');
+	expect(array_values(seed($this->get('/de/angebote/kurse')->getContent())))->each->toBe('');
 });
 
 it('shows the empty state only when nothing matches', function () {
 	$unused = Software::create(['title' => ['de' => 'Cinema 4D'], 'publish' => true]);
 
 	// Rendered but hidden while there are results, so Alpine has it to reveal.
-	expect(staticClass($this->get('/de/kurse')->getContent(), ':class="{ hidden: count > 0 }"'))->toBe('hidden');
+	expect(staticClass($this->get('/de/angebote/kurse')->getContent(), ':class="{ hidden: count > 0 }"'))->toBe('hidden');
 
-	expect(staticClass($this->get("/de/kurse?software={$unused->uuid}")->getContent(), ':class="{ hidden: count > 0 }"'))->toBe('');
+	expect(staticClass($this->get("/de/angebote/kurse?software={$unused->uuid}")->getContent(), ':class="{ hidden: count > 0 }"'))->toBe('');
 });
 
 it('counts the matches on the phone panel’s Anzeigen button, as legacy does', function () {
 	// One text node, or the flex container eats the space before the bracket.
-	$this->get('/de/kurse')->assertSee('>Anzeigen (3)</span>', false);
-	$this->get("/de/kurse?software={$this->rhino->uuid}")->assertSee('>Anzeigen (1)</span>', false);
+	$this->get('/de/angebote/kurse')->assertSee('>Anzeigen (3)</span>', false);
+	$this->get("/de/angebote/kurse?software={$this->rhino->uuid}")->assertSee('>Anzeigen (1)</span>', false);
 });
 
 /**
@@ -197,7 +197,7 @@ it('counts the matches on the phone panel’s Anzeigen button, as legacy does', 
  * six as selects, with 40px of air before Ort.
  */
 it('draws the categories as links and the other six attributes as selects', function () {
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 
 	expect(substr_count($html, "toggle('category'"))->toBe(2)
 		->and(substr_count($html, '<select'))->toBe(6);
@@ -217,7 +217,7 @@ it('offers only the terms a course on the page actually carries', function () {
 	$orphan = Tag::create(['title' => ['de' => 'Nie verwendet'], 'publish' => true]);
 	Software::create(['title' => ['de' => 'Auch nie'], 'publish' => true]);
 
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 
 	expect($html)
 		->toContain('>Rendering</option>')
@@ -229,7 +229,7 @@ it('offers only the terms a course on the page actually carries', function () {
 it('lists the experts teaching an upcoming event', function () {
 	$idle = User::factory()->create(['first_name' => 'Grace', 'last_name' => 'Hopper']);
 
-	expect($this->get('/de/kurse')->getContent())
+	expect($this->get('/de/angebote/kurse')->getContent())
 		->toContain('>Ada Lovelace</option>')
 		->not->toContain('>Grace Hopper</option>')
 		->and($idle->exists)->toBeTrue();
@@ -240,21 +240,21 @@ it('lists the experts teaching an upcoming event', function () {
  * it selects; a select cannot be, so the six of them submit the form instead.
  */
 it('makes each category a link that selects it, and the active one a link that clears it', function () {
-	$html = $this->get("/de/kurse?category={$this->threeD->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?category={$this->threeD->uuid}")->getContent();
 
 	expect($html)
 		// The other category is not selected, so its link selects it.
-		->toContain('href="'.url('/de/kurse').'?category='.$this->image->uuid.'"')
+		->toContain('href="'.url('/de/angebote/kurse').'?category='.$this->image->uuid.'"')
 		// This one is, so its own link clears it — with no bare `?` left over.
-		->toContain('href="'.url('/de/kurse').'"')
+		->toContain('href="'.url('/de/angebote/kurse').'"')
 		->toContain("toggle('category', '{$this->threeD->uuid}')");
 });
 
 it('lets the selects be submitted without JavaScript, keeping the category', function () {
-	$html = $this->get("/de/kurse?category={$this->threeD->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?category={$this->threeD->uuid}")->getContent();
 
 	expect($html)
-		->toContain('<form method="get" action="'.url('/de/kurse').'"')
+		->toContain('<form method="get" action="'.url('/de/angebote/kurse').'"')
 		->toContain('<button type="submit" class="sr-only">')
 		// Category is chosen by link, so a submit would otherwise drop it.
 		->toContain('<input type="hidden" name="category" value="'.$this->threeD->uuid.'"');
@@ -262,16 +262,16 @@ it('lets the selects be submitted without JavaScript, keeping the category', fun
 
 it('combines the attributes rather than replacing one with another', function () {
 	// Rhino is on the 3D course; Blender is on the other 3D course.
-	$this->get("/de/kurse?category={$this->threeD->uuid}&software={$this->rhino->uuid}")
+	$this->get("/de/angebote/kurse?category={$this->threeD->uuid}&software={$this->rhino->uuid}")
 		->assertSee('>Anzeigen (1)</span>', false);
 
 	// A pairing no course carries. Legacy drops the count rather than showing
 	// a zero, so the label stands alone.
-	$this->get("/de/kurse?category={$this->image->uuid}&software={$this->rhino->uuid}")
+	$this->get("/de/angebote/kurse?category={$this->image->uuid}&software={$this->rhino->uuid}")
 		->assertSee('>Anzeigen</span>', false);
 
 	// And a link built from one of them carries the other along.
-	expect($this->get("/de/kurse?software={$this->rhino->uuid}")->getContent())
+	expect($this->get("/de/angebote/kurse?software={$this->rhino->uuid}")->getContent())
 		->toContain('software='.$this->rhino->uuid.'&amp;category='.$this->threeD->uuid);
 });
 
@@ -282,7 +282,7 @@ it('combines the attributes rather than replacing one with another', function ()
  * the grey lands nowhere and the live page shows black.
  */
 it('marks the active category bold and black, in the markup and in the binding', function () {
-	$html = $this->get("/de/kurse?category={$this->threeD->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?category={$this->threeD->uuid}")->getContent();
 
 	expect($html)
 		->toContain('class="block w-full text-lg hover:text-teal font-bold"')
@@ -292,7 +292,7 @@ it('marks the active category bold and black, in the markup and in the binding',
 
 /** `.filter__item.is-active select` — a chosen value goes bold the same way. */
 it('marks a chosen select bold, and leaves the untouched ones regular', function () {
-	$html = $this->get("/de/kurse?level={$this->beginner->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?level={$this->beginner->uuid}")->getContent();
 
 	$classOf = function (string $html, string $name) {
 		preg_match('#<select[^>]*name="'.$name.'"[\s\S]*?class="([^"]*)"#', $html, $matched);
@@ -307,18 +307,18 @@ it('marks a chosen select bold, and leaves the untouched ones regular', function
 
 /** Legacy kills the focus ring on every form control (`outline: none !important`). */
 it('takes the focus ring off the selects', function () {
-	expect($this->get('/de/kurse')->getContent())->toContain('text-black outline-hidden');
+	expect($this->get('/de/angebote/kurse')->getContent())->toContain('text-black outline-hidden');
 });
 
 it('preselects the option the query string names', function () {
-	$html = $this->get("/de/kurse?level={$this->beginner->uuid}")->getContent();
+	$html = $this->get("/de/angebote/kurse?level={$this->beginner->uuid}")->getContent();
 
 	expect($html)->toContain('<option value="'.$this->beginner->uuid.'" selected>Einsteiger</option>');
 });
 
 /** Legacy renders it unconditionally, and the live page shows it on a bare list. */
 it('shows the reset control even with nothing chosen', function () {
-	foreach (['/de/kurse', "/de/kurse?tag={$this->rendering->uuid}"] as $url) {
+	foreach (['/de/angebote/kurse', "/de/angebote/kurse?tag={$this->rendering->uuid}"] as $url) {
 		expect($this->get($url)->getContent())
 			->toContain('hover:text-black w-full"')
 			->not->toContain(':class="{ hidden: !active }"');
@@ -326,14 +326,14 @@ it('shows the reset control even with nothing chosen', function () {
 
 	// With nothing chosen it points at the unfiltered page, so it is inert
 	// rather than absent.
-	expect($this->get('/de/kurse')->getContent())
-		->toContain('href="'.url('/de/kurse').'" 	class="flex min-h-28');
+	expect($this->get('/de/angebote/kurse')->getContent())
+		->toContain('href="'.url('/de/angebote/kurse').'" 	class="flex min-h-28');
 });
 
 it('still leaves unpublished courses out entirely', function () {
 	Course::factory()->unpublished()->create(['slug' => ['de' => 'entwurf']]);
 
-	expect(substr_count($this->get('/de/kurse')->getContent(), '<article'))->toBe(3);
+	expect(substr_count($this->get('/de/angebote/kurse')->getContent(), '<article'))->toBe(3);
 });
 
 /**
@@ -347,7 +347,7 @@ it('still leaves unpublished courses out entirely', function () {
  * below. What is left here is the filter's own measurement.
  */
 it('gives the filter’s select rows legacy’s inherited height', function () {
-	$html = $this->get('/de/kurse')->getContent();
+	$html = $this->get('/de/angebote/kurse')->getContent();
 
 	// `min-height: inherit` on legacy's select wrapper.
 	expect($html)->toContain('relative flex min-h-40 w-full items-center py-8');
