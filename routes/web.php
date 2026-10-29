@@ -18,6 +18,7 @@ use App\Http\Controllers\Site\ExpertController;
 use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InviteController;
+use App\Http\Controllers\Site\LicenceController;
 use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\PaymentController;
 use App\Http\Controllers\Site\ProjectController;
@@ -96,6 +97,13 @@ Route::prefix('{locale}')
 			Route::get($segments['software'].'/{slug}', [SoftwareController::class, 'show'])
 				->name("{$locale}.software.show");
 
+			/*
+			 * One licence product, where it is bought ([[14-angebote]]): the
+			 * product level under the Angebot. Already on its final URL; the
+			 * Angebot and the lists follow when the nav changes.
+			 */
+			Route::get($segments['offers'].'/'.$segments['software'].'/{slug}', [LicenceController::class, 'show'])
+				->name("{$locale}.licences.show");
 			Route::get($segments['courses'], [CourseController::class, 'index'])
 				->name("{$locale}.courses.index");
 

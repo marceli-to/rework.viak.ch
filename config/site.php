@@ -52,6 +52,10 @@ return [
 			// The software list and one software's page, `/de/software/{slug}`
 			// ([[05-licences]]). New; 3d-software.ch's URLs are a cutover question.
 			'software' => 'software',
+			// The catalogue, `/de/angebote` ([[14-angebote]], 2026-10-29): Kurse
+			// and Software are pages under it. So far only one licence's page,
+			// `/de/angebote/software/{slug}`; the rest moves with the nav.
+			'offers' => 'angebote',
 			// The homepage footer's newsletter form posts here; no page of its own.
 			'newsletter' => 'newsletter',
 			// The site search's result page ([[15-search]]). New, not indexed.

@@ -1,4 +1,4 @@
-@props(['product'])
+@props(['product', 'bare' => false])
 
 @php
 	$locale = app()->getLocale();
@@ -45,17 +45,27 @@
 	([[PriceBasketRequest]]): a plugin needs its host, and a licence with a
 	minimum takes no fewer.
 --}}
-<article {{ $attributes->class(['relative mt-48 border-t border-black pt-8 leading-[1.5] first:mt-16 sm:mt-64 sm:pt-16 sm:first:mt-32 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
-	<div class="flex flex-wrap items-baseline justify-between gap-x-16">
-		<h3 class="font-bold text-teal">{{ $product->getTranslation('title', $locale) }}</h3>
-		@if ($product->manufacturer)
-			<div>von {{ $product->manufacturer->getTranslation('title', $locale) }}</div>
-		@endif
-	</div>
+<article {{ $attributes->class([
+	'relative leading-[1.5] sm:text-lg sm:leading-[1.4] lg:text-xl',
+	'mt-48 border-t border-black pt-8 first:mt-16 sm:mt-64 sm:pt-16 sm:first:mt-32' => ! $bare,
+]) }}>
+	{{-- **`bare` on the product's own page** ([[14-angebote]]): its name,
+	     maker and description are the page's hero there, so the card starts
+	     with the licences. Elsewhere the name links to that page. --}}
+	@unless ($bare)
+		<div class="flex flex-wrap items-baseline justify-between gap-x-16">
+			<h3 class="font-bold text-teal">
+				<a href="{{ \App\Support\SiteUrl::licence($product->getTranslation('slug', $locale)) }}" class="hover:text-black">{{ $product->getTranslation('title', $locale) }}</a>
+			</h3>
+			@if ($product->manufacturer)
+				<div>von {{ $product->manufacturer->getTranslation('title', $locale) }}</div>
+			@endif
+		</div>
 
-	@if ($html = $product->getTranslation('description', $locale, false))
-		<x-ui.rich-text :html="$html" class="mt-16" />
-	@endif
+		@if ($html = $product->getTranslation('description', $locale, false))
+			<x-ui.rich-text :html="$html" class="mt-16" />
+		@endif
+	@endunless
 
 	@if ($product->three_years_on_request)
 		<div class="mt-16"><em class="italic">3-Jahreslizenz auf Anfrage erhältlich</em></div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Forms;
 
+use App\Models\Category;
 use App\Models\Manufacturer;
 use App\Models\Software;
 
@@ -35,6 +36,9 @@ final class LicenceProductSchema extends Schema
 			// The ticks on the Angebot's licence row ([[14-angebote]]), one per line.
 			Field::textarea('features')->label('Eigenschaften')->rules(['max:1000'])
 				->with(['hint' => 'Eine pro Zeile, kurz: «Kauflizenz, unbefristet», «Windows und Mac». Drei passen in eine Zeile.']),
+			// The client's five, on the product as on the Angebot ([[14-angebote]]):
+			// the Software list's filter reads them.
+			Field::checkboxes('categories', Category::class)->label('Kategorien'),
 			// Maxwell V5 and the RealFlow Plugin: one price, the host chosen on the order.
 			// Picked from the Software list, so a program has one spelling (Marcel, 2026-10-09).
 			// In a collapsible, shut: two products of 39 have any (Marcel, 2026-10-09).
@@ -55,7 +59,7 @@ final class LicenceProductSchema extends Schema
 	public function defaults(): array
 	{
 		return [
-			'software' => '', 'manufacturer' => '', 'title' => '', 'description' => '', 'features' => '', 'hosts' => [],
+			'software' => '', 'manufacturer' => '', 'title' => '', 'description' => '', 'features' => '', 'categories' => [], 'hosts' => [],
 			'three_years_on_request' => false, 'publish' => true,
 		];
 	}

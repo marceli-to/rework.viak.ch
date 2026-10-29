@@ -85,7 +85,7 @@ class SearchDocument
 
 		$variants = $product->variants->filter(fn (LicenceVariant $variant) => $variant->listed);
 
-		return self::document('licence', $product, $locale, SiteUrl::software($software->getTranslation('slug', $locale), $locale),
+		return self::document('licence', $product, $locale, SiteUrl::licence($product->getTranslation('slug', $locale), $locale),
 			fields: ['description'],
 			extra: [
 				$software->getTranslation('title', $locale, false),

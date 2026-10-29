@@ -43,7 +43,10 @@
 					@if ($makers->isNotEmpty())
 						<li>{{ $makers->map(fn ($maker) => $maker->getTranslation('title', $locale))->join(', ') }}</li>
 					@endif
-					<li>{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+					{{-- None on an Angebot of courses only ([[14-angebote]]). --}}
+					@if ($products->isNotEmpty())
+						<li>{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+					@endif
 					@if ($from)
 						<li>ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
 					@endif
@@ -61,7 +64,9 @@
 						@if ($makers->isNotEmpty())
 							<li class="py-4">{{ $makers->map(fn ($maker) => $maker->getTranslation('title', $locale))->join(', ') }}</li>
 						@endif
-						<li class="py-4">{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+						@if ($products->isNotEmpty())
+							<li class="py-4">{{ $products->count() }} {{ $products->count() === 1 ? 'Produkt' : 'Produkte' }}</li>
+						@endif
 						@if ($from)
 							<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>
 						@endif

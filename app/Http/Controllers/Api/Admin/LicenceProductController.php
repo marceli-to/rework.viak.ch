@@ -25,7 +25,7 @@ class LicenceProductController extends Controller
 	public function index(): AnonymousResourceCollection
 	{
 		return LicenceProductFormResource::collection(
-			LicenceProduct::query()->with(['software', 'manufacturer', 'variants'])->ordered()->get()
+			LicenceProduct::query()->with(['software', 'manufacturer', 'variants', 'hosts', 'categories'])->ordered()->get()
 		);
 	}
 
@@ -45,6 +45,7 @@ class LicenceProductController extends Controller
 			'order' => (int) LicenceProduct::query()->where('software_id', $attributes['software_id'])->max('order') + 1,
 		]);
 		$product->hosts()->sync($request->hostIds());
+		$product->categories()->sync($request->categoryIds());
 
 		return (new LicenceProductFormResource($this->loaded($product)))->response()->setStatusCode(201);
 	}
@@ -53,6 +54,7 @@ class LicenceProductController extends Controller
 	{
 		$product->update($request->productAttributes());
 		$product->hosts()->sync($request->hostIds());
+		$product->categories()->sync($request->categoryIds());
 
 		return new LicenceProductFormResource($this->loaded($product));
 	}
@@ -69,6 +71,6 @@ class LicenceProductController extends Controller
 
 	private function loaded(LicenceProduct $product): LicenceProduct
 	{
-		return $product->refresh()->load(['software', 'manufacturer', 'variants', 'hosts']);
+		return $product->refresh()->load(['software', 'manufacturer', 'variants', 'hosts', 'categories']);
 	}
 }

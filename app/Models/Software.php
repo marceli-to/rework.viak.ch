@@ -137,15 +137,47 @@ class Software extends Model
 	}
 
 	/**
-	 * On the site: published, with at least one product published and one of
-	 * its licences listed. The menu item is the shop, so a software only
-	 * courses use (SketchUp, Godot) has no page.
+	 * On the site, as an Angebot ([[14-angebote]]): published, with a listed
+	 * licence **or** a published course. Until 2026-10-29 only the first: the
+	 * menu item was the shop, so a software only courses use (Blender,
+	 * SketchUp, After Effects) had no page. Now it is an Angebot tagged *Kurs*.
 	 */
 	public function scopeOnSite(Builder $query): Builder
 	{
-		return $query->published()->whereHas('products', fn (Builder $products) => $products
-			->published()
-			->whereHas('variants', fn (Builder $variants) => $variants->where('listed', true)));
+		return $query->published()->where(fn (Builder $either) => $either
+			->whereHas('products', fn (Builder $products) => $products->listed())
+			->orWhereHas('courses', fn (Builder $courses) => $courses->published()));
+	}
+
+	/**
+	 * What the Angebot holds, the tag on its tile ([[14-angebote]]): *Kurs &
+	 * Software*, *Software* or *Kurs*. **Derived, never set**, so it cannot
+	 * go stale: a listed licence makes it Software, a published course Kurs.
+	 * Null for a software with neither, which is not on the site.
+	 *
+	 * Reads `has_licences` / `has_courses` when [[Software::scopeWithOffer]]
+	 * loaded them, so a list asks once; otherwise it asks itself.
+	 */
+	public function offer(): ?string
+	{
+		$licences = (bool) ($this->attributes['has_licences'] ?? $this->products()->listed()->exists());
+		$courses = (bool) ($this->attributes['has_courses'] ?? $this->courses()->published()->exists());
+
+		return match (true) {
+			$licences && $courses => 'Kurs & Software',
+			$licences => 'Software',
+			$courses => 'Kurs',
+			default => null,
+		};
+	}
+
+	/** What [[Software::offer]] reads, for a whole list in one query. */
+	public function scopeWithOffer(Builder $query): Builder
+	{
+		return $query->withExists([
+			'products as has_licences' => fn (Builder $products) => $products->listed(),
+			'courses as has_courses' => fn (Builder $courses) => $courses->published(),
+		]);
 	}
 
 	/**

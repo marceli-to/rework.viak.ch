@@ -362,6 +362,18 @@ final class SiteUrl
 		return self::softwareIndex($locale).'/'.$slug;
 	}
 
+	/**
+	 * One licence product, where it is bought ([[14-angebote]]):
+	 * `/de/angebote/software/{slug}`, under the catalogue as the client's two
+	 * levels have it (2026-10-29).
+	 */
+	public static function licence(string $slug, ?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return '/'.$locale.'/'.self::segment('offers', $locale).'/'.self::segment('software', $locale).'/'.$slug;
+	}
+
 	/** The site search's result page, with the query if there is one ([[15-search]]). */
 	public static function search(?string $query = null, ?string $locale = null): string
 	{

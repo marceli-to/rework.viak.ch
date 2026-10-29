@@ -27,9 +27,10 @@ beforeEach(function () {
 	Project::factory()->create(['slug' => ['de' => 'raeume-visualisieren']]);
 	Project::factory()->create(['slug' => ['de' => 'vorhaben-entwurf'], 'publish' => false]);
 
-	// A software with a licence to order has a page; one only courses use has none.
+	// A software with a licence to order has a page, and so does the licence;
+	// one with neither a licence nor a course has none.
 	$rhino = Software::create(['title' => ['de' => 'Rhinoceros'], 'publish' => true]);
-	LicenceVariant::factory()->create(['licence_product_id' => LicenceProduct::factory()->create(['software_id' => $rhino->id])->id]);
+	LicenceVariant::factory()->create(['licence_product_id' => LicenceProduct::factory()->create(['software_id' => $rhino->id, 'slug' => ['de' => 'rhinoceros-8']])->id]);
 	Software::create(['title' => ['de' => 'SketchUp'], 'publish' => true]);
 
 	$this->expert = User::factory()->expert()->create(['first_name' => 'Remo', 'last_name' => 'Kast']);
@@ -48,6 +49,7 @@ it('names the fixed pages, the published Vorhaben, courses and software and the 
 		"{$host}/de/kurs/rhino-einstiegskurs",
 		"{$host}/de/software",
 		"{$host}/de/software/rhinoceros",
+		"{$host}/de/angebote/software/rhinoceros-8",
 		"{$host}/de/ueber-uns",
 		"{$host}/de/experte/remo-kast/{$this->expert->uuid}",
 		"{$host}/de/kontakt",

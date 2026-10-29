@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Admin;
 
 use App\Forms\LicenceProductSchema;
+use App\Models\Category;
 use App\Models\LicenceProduct;
 use App\Models\Manufacturer;
 use App\Models\Software;
@@ -51,6 +52,12 @@ class SaveLicenceProductRequest extends FormRequest
 			'three_years_on_request' => (bool) ($data['three_years_on_request'] ?? false),
 			'publish' => (bool) ($data['publish'] ?? false),
 		];
+	}
+
+	/** @return array<int, int> the ticked categories' ids */
+	public function categoryIds(): array
+	{
+		return Category::query()->whereIn('uuid', $this->validated('categories', []))->pluck('id')->all();
 	}
 
 	/** @return array<int, int> the ticked hosts' ids */

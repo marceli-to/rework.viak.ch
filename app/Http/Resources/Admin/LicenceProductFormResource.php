@@ -27,6 +27,7 @@ class LicenceProductFormResource extends JsonResource
 			'title' => $this->getTranslation('title', 'de', false) ?: '',
 			'description' => $this->getTranslation('description', 'de', false) ?: '',
 			'features' => $this->getTranslation('features', 'de', false) ?: '',
+			'categories' => $this->categories->pluck('uuid')->all(),
 			'hosts' => $this->hosts->pluck('uuid')->all(),
 			'three_years_on_request' => $this->three_years_on_request,
 			'publish' => $this->publish,

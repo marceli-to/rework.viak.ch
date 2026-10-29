@@ -8,7 +8,7 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 ## Status
 
 **Planned 2026-10-29** from the client's answer, see *The client's answer,
-2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
+2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open. **Steps 1 and 2 built the same day** (*As built*, at the end). **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
 layout*, at the end); the pages are not. The screenshots shown in the meeting are
 in `history/meeting-2026-10-26/`: `homepage.png` (*Beliebte Angebote*, markers 6
 and 7 of the 2026-09-23 review), `angebote.png` (*Alle Angebote*), `rhino-1.png`
@@ -297,3 +297,40 @@ public site changed.
   *auf Anfrage*; by course fee, it shows prices for courses nobody can book.
 
 The textarea in the dashboard learned the `hint` line the text field has.
+
+## As built: steps 1 and 2, 2026-10-29
+
+**Step 1, the data under the two levels.**
+
+- **An Angebot is a software with a listed licence or a published course**
+  ([[Software::scopeOnSite]], widened). On dev data 25 Angebote, up from 17:
+  Blender, SketchUp, Photoshop, After Effects, DaVinci, pCon, Premiere and
+  Godot came on as *Kurs*. Their page has no *Lizenzen* collapsible and
+  their card no *0 Produkte*. **The tag is [[Software::offer]]**, derived;
+  `withOffer()` loads it for a list in one query.
+- **Licence products have categories** (`licence_product_category`, the
+  *Kategorien* checkboxes in the product form).
+- **`catalogue:categories`** ([[SeedCategories]]) puts the client's five in
+  place of legacy's three and seeds a first assignment from
+  `database/data/categories.json`: each software as the 2026-09-23 mockup's
+  *Alle Angebote* sorts it (the tools it does not show by their kind: Photoshop,
+  DaVinci, MyArchitectAI, Archicad, 3ds Max, Maya, ChatGPT, Perplexity,
+  Midjourney; Substance 3D left out), a product its software's unless the
+  file names it (the Rhino plugins), a course all its software's. Only the
+  three named under `retire` go, so a category VIAK adds (#66) survives a
+  rerun, and so does whatever already has one. **A cutover step** after the
+  ports (`Deploy.md`), because `port:courses` brings the three back.
+  On dev data it reports exactly the 8 courses of #66.
+- The *Gestaltung & Bearbeitung* of the client's list, not the mockup's
+  *Bildgestaltung*.
+
+**Step 2, the licence page**, `/de/angebote/software/{slug}`
+([[LicenceController]], `site/licences/show.blade.php`): on its final URL
+already, under the segment `offers` (`angebote`). Drawn as the software page:
+the software's picture (a product has none), title, *von* maker, *Alles zu
+Rhinoceros* (a back-link pointing right) to the Angebot, description and
+features as ticks on the right, then *Lizenzen*: `card/product.blade.php`
+with `bare`, which drops the card's head. A 404 unless the product is listed
+and its software published. On the software page the product's name now
+links there; the site search's licence hits and the sitemap point there too.
+The Angebot page still sells as well until step 3 redraws it.

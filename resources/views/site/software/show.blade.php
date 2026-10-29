@@ -59,14 +59,17 @@
 	</article>
 
 	<div class="mt-48 lg:mt-64">
-		<x-ui.collapsible title="Lizenzen">
-			@foreach ($products as $product)
-				<x-card.product :product="$product" />
-			@endforeach
+		{{-- None for an Angebot of courses only, Blender or After Effects ([[14-angebote]]). --}}
+		@if ($products->isNotEmpty())
+			<x-ui.collapsible title="Lizenzen">
+				@foreach ($products as $product)
+					<x-card.product :product="$product" />
+				@endforeach
 
-			{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
-			<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
-		</x-ui.collapsible>
+				{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
+				<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
+			</x-ui.collapsible>
+		@endif
 
 		@if ($courses->isNotEmpty())
 			<x-ui.collapsible title="Kurse">

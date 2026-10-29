@@ -74,6 +74,16 @@ class LicenceProduct extends Model
 			->all();
 	}
 
+	/**
+	 * Its own categories, the client's five ([[14-angebote]]): a plugin sold
+	 * under Rhinoceros need not share Rhino's. Seeded from its software by
+	 * `catalogue:categories`, then the dashboard's.
+	 */
+	public function categories(): BelongsToMany
+	{
+		return $this->belongsToMany(Category::class, 'licence_product_category');
+	}
+
 	public function manufacturer(): BelongsTo
 	{
 		return $this->belongsTo(Manufacturer::class);
@@ -140,6 +150,12 @@ class LicenceProduct extends Model
 	public function scopePublished(Builder $query): Builder
 	{
 		return $query->where('publish', true);
+	}
+
+	/** What [[LicenceProduct::isListed]] says of one, as a query. */
+	public function scopeListed(Builder $query): Builder
+	{
+		return $query->published()->whereHas('variants', fn (Builder $variants) => $variants->where('listed', true));
 	}
 
 	public function scopeOrdered(Builder $query): Builder

@@ -74,6 +74,12 @@ Still open: which PHP production runs (#11).
    anything.** `port:courses` clears and rebuilds `events`, `courses` and
    `software` with new ids: software pages, recommendations, testimonials and
    media attached since would point at nothing, and nothing would say so.
+   **Then `php artisan catalogue:categories`** (`--dry-run` first):
+   `port:courses` brings legacy's three categories back, and this puts the
+   client's five in their place with a first assignment to software, licence
+   products and courses (`database/data/categories.json`, `14-angebote.md`).
+   It lists what is on the site with no category; VIAK sets those in the
+   dashboard. Rerunnable: what has a category is left alone.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
    And step 7 (`search:rebuild`): the ports insert without Eloquent's

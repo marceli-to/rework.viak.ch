@@ -1,0 +1,56 @@
+{
+	"categories": [
+		"Schmuck- & Produktdesign",
+		"Architektur & Interior Design",
+		"Animation & Interaktion",
+		"Gestaltung & Bearbeitung",
+		"AI & Neue Workflows"
+	],
+	"retire": [
+		"3D-Software",
+		"Bildgestaltung & Handwerk",
+		"Management & Kommunikation"
+	],
+	"software": {
+		"Rhinoceros": ["Schmuck- & Produktdesign", "Architektur & Interior Design"],
+		"V-Ray": ["Schmuck- & Produktdesign", "Architektur & Interior Design"],
+		"formZ": ["Schmuck- & Produktdesign"],
+		"KeyShot": ["Schmuck- & Produktdesign"],
+		"Maxwell Render": ["Schmuck- & Produktdesign"],
+		"HDR Light Studio": ["Schmuck- & Produktdesign"],
+		"Drakon": ["Schmuck- & Produktdesign"],
+		"Veras": ["Schmuck- & Produktdesign", "Architektur & Interior Design", "Gestaltung & Bearbeitung", "AI & Neue Workflows"],
+		"Blender": ["Schmuck- & Produktdesign", "Architektur & Interior Design", "Animation & Interaktion"],
+		"Twinmotion": ["Architektur & Interior Design", "Animation & Interaktion"],
+		"CINEMA 4D": ["Architektur & Interior Design", "Animation & Interaktion"],
+		"Enscape": ["Architektur & Interior Design", "Animation & Interaktion"],
+		"Corona Renderer": ["Architektur & Interior Design"],
+		"Lumion": ["Architektur & Interior Design"],
+		"SketchUp Pro": ["Architektur & Interior Design"],
+		"pCon.planner": ["Architektur & Interior Design"],
+		"Adobe After Effects": ["Animation & Interaktion", "Gestaltung & Bearbeitung"],
+		"Unreal Engine": ["Animation & Interaktion"],
+		"ZBrush": ["Animation & Interaktion"],
+		"Anima": ["Animation & Interaktion"],
+		"RealFlow": ["Animation & Interaktion"],
+		"Godot": ["Animation & Interaktion"],
+		"Adobe Premiere Pro": ["Gestaltung & Bearbeitung"],
+		"Adobe Photoshop": ["Gestaltung & Bearbeitung"],
+		"DaVinci Resolve": ["Gestaltung & Bearbeitung"],
+		"MyArchitectAI": ["Architektur & Interior Design", "AI & Neue Workflows"],
+		"Archicad": ["Architektur & Interior Design"],
+		"3ds Max": ["Architektur & Interior Design", "Animation & Interaktion"],
+		"Maya": ["Animation & Interaktion"],
+		"ChatGPT": ["AI & Neue Workflows"],
+		"Perplexity": ["AI & Neue Workflows"],
+		"Midjourney": ["AI & Neue Workflows"]
+	},
+	"products": {
+		"Bongo 2": ["Schmuck- & Produktdesign", "Animation & Interaktion"],
+		"VisualARQ 3": ["Architektur & Interior Design"],
+		"Lands Design 6": ["Architektur & Interior Design"],
+		"Karamba3D PRO": ["Architektur & Interior Design"],
+		"MatrixGold": ["Schmuck- & Produktdesign"],
+		"Drakon": ["Schmuck- & Produktdesign"]
+	}
+}
