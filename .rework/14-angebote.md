@@ -8,8 +8,7 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 ## Status
 
 **Planned 2026-10-29** from the client's answer, see *The client's answer,
-2026-10-29*: two levels, the nav and URLs settled, *Kurs ab* (#52) and #66–67
-open. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
+2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
 layout*, at the end); the pages are not. The screenshots shown in the meeting are
 in `history/meeting-2026-10-26/`: `homepage.png` (*Beliebte Angebote*, markers 6
 and 7 of the 2026-09-23 review), `angebote.png` (*Alle Angebote*), `rhino-1.png`
@@ -205,13 +204,23 @@ Software. A migration maps what it can; the rest is listed for VIAK to set.
 **Visual Facilitator, LEGO Serious Play and Urban Sketching fit none of the
 5** (#66).
 
+### *Kurs ab CHF* (F, #52)
+
+**Decided by Marcel 2026-10-29: the hybrid.** The lowest fee of a bookable
+Veranstaltung, as [[Software::courseFromPrice]] has it; **when no course has
+a date, the lowest course fee, worded *Kurs ab CHF 499, Daten auf Anfrage***.
+*Kurs auf Anfrage* alone only when there is no course with a fee at all.
+
+Why: on dev data, with the course-only Angebote, 14 Angebote have courses.
+By bookable date alone 6 read *auf Anfrage*, and a tile jumps whenever a date
+fills or passes. By course fee alone all 14 show a price, but Rhino reads 549
+where the cheapest bookable course is 949. The hybrid never names a price
+nobody can book as if it were bookable. A change to `courseFromPrice()` (or
+a second method beside it), to the client for confirmation since it is a
+price promise.
+
 ### Open
 
-- **F, *Kurs ab CHF*** (#52): Marcel is thinking about it. On dev data, with
-  the course-only Angebote, 14 Angebote have courses: by bookable date 8 show
-  a price and 6 read *auf Anfrage*; by course fee all 14 do, but Rhino reads
-  549 where the cheapest bookable is 949. Proposed: by date, falling back to
-  the course fee worded *Daten auf Anfrage*.
 - **#66** the categories of the courses that fit none, **#67** the Rhino
   plugins (Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold, Drakon) as
   Angebote of their own, as the mockup has them, or under Rhinoceros where

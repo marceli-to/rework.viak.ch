@@ -62,7 +62,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~37~~ | ~~Updates and upgrades: edition or own product?~~ — **answered 2026-10-08: variants in the dropdown, consistently** | — | — |
 | ~~50~~ | ~~Courses with no software: a tile linking to the course page, or an Angebot of their own?~~ **Answered 2026-10-29: a tile to the course page**; a series may get an Angebot without licences. See `14-angebote.md` | — | — |
 | ~~51~~ | ~~Does the course page stay, and one row per date or the next date?~~ **Answered 2026-10-29: it stays, and booking happens only there**; the row links to it, one row per course with its next date. See `14-angebote.md` | — | — |
-| 52 | *Kurs ab CHF*: from every published course, or only those with a date? *auf Anfrage* when neither? | Client | `14-angebote.md`, *Beliebte Angebote*. Raised 2026-10-26 |
+| 52 | *Kurs ab CHF*: **Marcel chose 2026-10-29** the bookable date, falling back to the course fee as *Daten auf Anfrage*. The client to confirm | Client | `14-angebote.md`, *Kurs ab CHF*. Raised 2026-10-26 |
 | ~~53~~ | ~~The nav, and does `/de/kurse` stay?~~ **Answered 2026-10-29 (Marcel): *Angebote · Über uns · Kontakt***, Kurse and Software under it at `/de/angebote/kurse` and `/de/angebote/software`, 301s from legacy's. See `14-angebote.md`, *The nav, the URLs* | — | — |
 | 54 | Who writes *Mehr über …*, the licence features and the one-line leads? | Client | Content only; the pages draw without them. Raised 2026-10-26 |
 | 55 | *Beliebte Angebote*: featured software only, or featured courses without software too? | Client | `14-angebote.md`, the homepage. Raised 2026-10-26 |
