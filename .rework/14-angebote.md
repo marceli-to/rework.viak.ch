@@ -398,8 +398,8 @@ drawn as the filter's category rows** under a heading *Angebot* as
 **Alle Angebote has none**: its intro links *Kurse* and *Software* instead.
 
 **Alle Angebote** (`/de/angebote`, [[OfferController]]): the top drawn as a
-Vorhaben's, a short intro linking Kurse and Software, then one collapsible per published
-category in its order, the count as a badge, small tiles four across from
+Vorhaben's, a short intro linking Kurse and Software, then per published
+category in its order a teal heading (no collapsible, no count: Marcel), small tiles four across from
 `lg` (`card/offer.blade.php`: title, tag, arrow; no picture). A tile is an
 Angebot or a course no Angebot holds, under every category it has; what has
 none goes under **Weitere**, last (on dev: Visual Facilitator 1–5, LEGO
