@@ -27,12 +27,10 @@
 	--cc-toggle-on-bg: var(--color-teal);
 	--cc-toggle-off-bg: var(--color-gray-400);
 	--cc-toggle-readonly-bg: var(--color-gray-200);
-	--cc-cookie-category-block-bg: var(--color-gray-200);
+	--cc-cookie-category-block-bg: #fff;
 	--cc-cookie-category-block-border: var(--color-gray-200);
-	--cc-cookie-category-block-hover-bg: var(--color-gray-200);
+	--cc-cookie-category-block-hover-bg: #fff;
 	--cc-cookie-category-block-hover-border: var(--color-gray-200);
-	--cc-cookie-category-expanded-block-bg: transparent;
-	--cc-cookie-category-expanded-block-hover-bg: var(--color-gray-200);
 	--cc-section-category-border: var(--color-gray-200);
 	--cc-separator-border-color: var(--color-gray-200);
 	--cc-modal-border-radius: 0;
@@ -236,18 +234,25 @@
 }
 
 /*
- * The box: a title the size of the site's section headings, and the close
- * cross and the category chevrons drawn in black on nothing, rather than
- * white on a teal square and on a grey dot that vanished into the grey row.
+ * The box, after SRF's (Marcel, 2026-10-29; [[11-tracking]]): as tall as its
+ * content, no rule under the title, each category a white card with its text
+ * always open and the toggle on the right, and the three choices the same size
+ * in one row under a rule, *Nur notwendige* as easy as *Alle akzeptieren*.
+ * The close cross is black on nothing, not white on a teal square.
  */
-#cc-main .pm__title {
-	font-size: 20px;
+#cc-main .pm--box {
+	height: auto;
+	max-height: calc(100% - 2em);
+	max-width: 640px;
 }
 
-@media (min-width: 1024px) {
-	#cc-main .pm__title {
-		font-size: 24px;
-	}
+#cc-main .pm__header {
+	border-bottom: none;
+	padding: 24px 24px 8px;
+}
+
+#cc-main .pm__title {
+	font-size: 20px;
 }
 
 #cc-main .pm__close-btn,
@@ -256,8 +261,7 @@
 	border-color: transparent;
 }
 
-#cc-main .pm__close-btn svg,
-#cc-main .pm__section--expandable .pm__section-arrow svg {
+#cc-main .pm__close-btn svg {
 	stroke: var(--color-black);
 }
 
@@ -265,6 +269,86 @@
 	stroke: var(--color-teal);
 }
 
-#cc-main .pm__section--expandable .pm__section-arrow {
-	background: none;
+#cc-main .pm__body {
+	padding: 0 24px 16px;
+}
+
+#cc-main .pm__section-desc {
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+#cc-main .pm__section-desc-wrapper {
+	color: var(--color-black);
+	font-size: inherit;
+}
+
+#cc-main .pm__section-toggles {
+	margin-top: 16px;
+}
+
+#cc-main .pm__section--toggle {
+	border: 1px solid var(--color-gray-200);
+	margin-bottom: 8px;
+	padding: 16px 88px 16px 16px;
+	position: relative;
+}
+
+#cc-main .pm__section--toggle .pm__section-title-wrapper {
+	position: static;
+}
+
+#cc-main .pm__section--toggle .pm__section-title {
+	border: none;
+	font-size: 16px;
+	font-weight: 700;
+	min-height: 0;
+	padding: 0;
+}
+
+#cc-main .pm__section--toggle .pm__section-desc-wrapper {
+	border: none;
+	display: flex;
+	margin-top: 4px !important;
+}
+
+#cc-main .pm__section--toggle .pm__section-desc {
+	padding: 0;
+}
+
+#cc-main .pm__section--toggle .section__toggle-wrapper {
+	right: 16px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+#cc-main .pm__footer {
+	display: grid;
+	gap: 8px;
+	grid-template-columns: 1fr;
+	padding: 16px 24px 24px;
+}
+
+/* The library restates its phone footer with `!important`, hence these. */
+#cc-main .pm__btn-group {
+	display: contents !important;
+}
+
+#cc-main .pm__footer .pm__btn {
+	margin: 0 !important;
+	min-height: 40px;
+	min-width: 0;
+	padding-inline: 16px;
+}
+
+@media (min-width: 640px) {
+	#cc-main .pm__footer {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (min-width: 1024px) {
+	#cc-main .pm__title {
+		font-size: 24px;
+	}
 }

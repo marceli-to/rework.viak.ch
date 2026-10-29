@@ -40,17 +40,41 @@ function update() {
 	window.dataLayer?.push({ event: 'consent_update' });
 }
 
+/**
+ * The box shows each category's text at once, as SRF's does
+ * ([[11-tracking]], 2026-10-29): two sentences are no reason for a click. The
+ * library builds every category as a collapsible, so its title button turns
+ * back into a heading and the chevron goes; the toggle stays where it is.
+ */
+function openCategories(modal) {
+	modal.querySelectorAll('.pm__section--expandable').forEach((section) => {
+		const button = section.querySelector('button.pm__section-title');
+		const heading = document.createElement('div');
+
+		heading.className = 'pm__section-title';
+		heading.setAttribute('role', 'heading');
+		heading.setAttribute('aria-level', '3');
+		heading.textContent = button.textContent;
+		button.replaceWith(heading);
+
+		section.querySelector('.pm__section-arrow')?.remove();
+		section.querySelector('.pm__section-desc-wrapper')?.removeAttribute('aria-hidden');
+		section.classList.remove('pm__section--expandable');
+	});
+}
+
 export default function cookieConsent() {
 	return CookieConsent.run({
 		cookie: { name: 'viak_cookie_consent' },
 
 		guiOptions: {
 			consentModal: { layout: 'bar inline', position: 'bottom center', equalWeightButtons: false, flipButtons: true },
-			preferencesModal: { layout: 'box', position: 'right', equalWeightButtons: false, flipButtons: false },
+			preferencesModal: { layout: 'box', equalWeightButtons: true, flipButtons: false },
 		},
 
 		onConsent: update,
 		onChange: update,
+		onModalReady: ({ modalName, modal }) => modalName === 'preferencesModal' && openCategories(modal),
 
 		categories: {
 			necessary: { readOnly: true, enabled: true },
@@ -70,34 +94,29 @@ export default function cookieConsent() {
 						showPreferencesBtn: 'Einstellungen',
 					},
 					preferencesModal: {
-						title: 'Cookie Einstellungen',
+						title: 'Cookie-Einstellungen',
 						acceptAllBtn: 'Alle akzeptieren',
-						acceptNecessaryBtn: 'Alle ablehnen',
-						savePreferencesBtn: 'Einstellungen speichern',
+						acceptNecessaryBtn: 'Nur notwendige',
+						savePreferencesBtn: 'Auswahl speichern',
 						closeIconLabel: 'Schliessen',
 						sections: [
 							{
-								title: 'Verwendung von Cookies',
-								description: `Wir verwenden Cookies, um die grundlegenden Funktionen der Website sicherzustellen und dein Online-Erlebnis zu verbessern. Du kannst für jede Kategorie wählen, ob du dich jederzeit an- oder abmelden möchtest. Weitere Einzelheiten zu Cookies und anderen sensiblen Daten findest du in der vollständigen <a href="${privacy}" class="cc__link">Datenschutzerklärung</a>.`,
+								description: `Du bestimmst, wofür wir Cookies setzen dürfen. Notwendige sind immer aktiv, alle anderen nur mit deiner Zustimmung. Ändern kannst du deine Wahl jederzeit in der <a href="${privacy}" class="cc__link">Datenschutzerklärung</a>.`,
 							},
 							{
-								title: 'Notwendige Cookies',
-								description: 'Cookies sind unverzichtbar, damit unsere Webseite einwandfrei funktioniert. Sie ermöglichen grundlegende Funktionen wie Seitennavigation und Zugriff auf sichere Bereiche der Webseite. Diese Cookies sammeln keine Informationen über dich, die für Marketingzwecke verwendet werden könnten oder merken, wo du im Internet gewesen bist. Ohne diese Cookies kann unsere Webseite nicht effizient funktionieren. Deine Zustimmung zu diesen Cookies ist nicht erforderlich, da sie essentiell für die Bereitstellung der von dir angeforderten Dienste sind.',
+								title: 'Notwendig',
+								description: 'Damit die Website funktioniert: Anmeldung, Warenkorb und Buchung, der Schutz der Formulare und das Speichern dieser Auswahl. Diese Cookies verfolgen dich nicht.',
 								linkedCategory: 'necessary',
 							},
 							{
-								title: 'Performance und Analyse Cookies',
-								description: 'Performance- und Analyse-Cookies helfen uns, die Nutzung unserer Website zu verstehen und zu messen. Sie sammeln Informationen darüber, wie Besucher unsere Seite nutzen, welche Seiten am häufigsten besucht werden oder ob sie Fehlermeldungen von Webseiten erhalten. Diese Cookies sammeln keine Informationen, die einen Besucher direkt identifizieren. Alle Informationen, die durch diese Cookies gesammelt werden, sind aggregiert und daher anonym. Sie werden nur verwendet, um die Funktionsweise unserer Website zu verbessern. Durch die Zustimmung zu diesen Cookies trägst du zu einer optimierten Nutzungserfahrung bei.',
+								title: 'Analyse',
+								description: 'Mit Google Analytics sehen wir, welche Seiten besucht werden und wo etwas nicht funktioniert. Google kann diese Daten auch in den USA bearbeiten.',
 								linkedCategory: 'analytics',
 							},
 							{
-								title: 'Marketing Cookies',
-								description: 'Marketing-Cookies helfen uns zu messen, welche Werbung (zum Beispiel bei Google oder Meta) zu einer Buchung führt, und dir passende Angebote zu zeigen. Sie werden nur gesetzt, wenn du zustimmst.',
+								title: 'Marketing',
+								description: 'Mit Google Ads und Meta messen wir, welche Werbung zu einer Buchung führt, und zeigen dir passende Angebote. Google und Meta können diese Daten auch in den USA bearbeiten.',
 								linkedCategory: 'marketing',
-							},
-							{
-								title: 'Weitere Informationen',
-								description: 'Für Fragen zu unserer Cookie-Richtlinie und deinen Wahlmöglichkeiten stehen wir dir gerne zur Verfügung. <a class="cc__link" href="/de/kontakt">Kontakt</a>.',
 							},
 						],
 					},
