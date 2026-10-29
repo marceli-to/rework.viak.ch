@@ -40,29 +40,6 @@ function update() {
 	window.dataLayer?.push({ event: 'consent_update' });
 }
 
-/**
- * The box shows each category's text at once, as SRF's does
- * ([[11-tracking]], 2026-10-29): two sentences are no reason for a click. The
- * library builds every category as a collapsible, so its title button turns
- * back into a heading and the chevron goes; the toggle stays where it is.
- */
-function openCategories(modal) {
-	modal.querySelectorAll('.pm__section--expandable').forEach((section) => {
-		const button = section.querySelector('button.pm__section-title');
-		const heading = document.createElement('div');
-
-		heading.className = 'pm__section-title';
-		heading.setAttribute('role', 'heading');
-		heading.setAttribute('aria-level', '3');
-		heading.textContent = button.textContent;
-		button.replaceWith(heading);
-
-		section.querySelector('.pm__section-arrow')?.remove();
-		section.querySelector('.pm__section-desc-wrapper')?.removeAttribute('aria-hidden');
-		section.classList.remove('pm__section--expandable');
-	});
-}
-
 export default function cookieConsent() {
 	return CookieConsent.run({
 		cookie: { name: 'viak_cookie_consent' },
@@ -74,7 +51,6 @@ export default function cookieConsent() {
 
 		onConsent: update,
 		onChange: update,
-		onModalReady: ({ modalName, modal }) => modalName === 'preferencesModal' && openCategories(modal),
 
 		categories: {
 			necessary: { readOnly: true, enabled: true },

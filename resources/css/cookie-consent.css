@@ -235,10 +235,11 @@
 
 /*
  * The box, after SRF's (Marcel, 2026-10-29; [[11-tracking]]): as tall as its
- * content, no rule under the title, each category a white card with its text
- * always open and the toggle on the right, and the three choices the same size
- * in one row under a rule, *Nur notwendige* as easy as *Alle akzeptieren*.
- * The close cross is black on nothing, not white on a teal square.
+ * content, no rule under the title, each category a white card with the
+ * chevron and the toggle on the right (the library's collapsible, opening on
+ * the title), and the three choices the same size in one row under a rule,
+ * *Nur notwendige* as easy as *Alle akzeptieren*. The close cross and the
+ * chevrons are black on nothing, not white on a teal square and a grey dot.
  */
 #cc-main .pm--box {
 	height: auto;
@@ -290,36 +291,38 @@
 #cc-main .pm__section--toggle {
 	border: 1px solid var(--color-gray-200);
 	margin-bottom: 8px;
-	padding: 16px 88px 16px 16px;
-	position: relative;
 }
 
-#cc-main .pm__section--toggle .pm__section-title-wrapper {
-	position: static;
-}
-
-#cc-main .pm__section--toggle .pm__section-title {
+#cc-main .pm__section--toggle .pm__section-title,
+#cc-main .pm__section--expandable .pm__section-title {
 	border: none;
 	font-size: 16px;
 	font-weight: 700;
 	min-height: 0;
-	padding: 0;
+	padding: 16px 120px 16px 16px;
+	text-align: left;
 }
 
-#cc-main .pm__section--toggle .pm__section-desc-wrapper {
-	border: none;
-	display: flex;
-	margin-top: 4px !important;
+#cc-main .pm__section--expandable .pm__section-arrow {
+	background: none;
+	left: auto;
+	right: 80px;
 }
 
-#cc-main .pm__section--toggle .pm__section-desc {
-	padding: 0;
+#cc-main .pm__section--expandable .pm__section-arrow svg {
+	stroke: var(--color-black);
 }
 
 #cc-main .pm__section--toggle .section__toggle-wrapper {
 	right: 16px;
-	top: 50%;
-	transform: translateY(-50%);
+}
+
+#cc-main .pm__section--toggle .pm__section-desc-wrapper {
+	border: none;
+}
+
+#cc-main .pm__section--toggle .pm__section-desc {
+	padding: 0 16px 16px;
 }
 
 #cc-main .pm__footer {

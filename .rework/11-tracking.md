@@ -143,16 +143,17 @@ runs the ads then wires networks to those events in GTM without touching code.
   text and the centred footer row went. In the box: a 20/24px title, and the
   close cross and category chevrons black on no background.
 - **The box redesigned after SRF's, 2026-10-29** (Marcel's call, from
-  srf.ch's consent screens): each category a white card with a short text
-  that is always open (names Google Analytics, Google Ads and Meta, and that
-  data may go to the USA) and its toggle on the right; no chevrons, since two
-  sentences are no reason for a click; *Weitere Informationen* dropped, the
-  privacy link once in the intro; three equal buttons under a rule, *Alle
-  akzeptieren*, *Nur notwendige* (was *Alle ablehnen*; the necessary ones are
-  never off), *Auswahl speichern*. SRF's first layer was **not** taken: it is
-  a centred modal that blocks the page and offers no refusal without a second
-  click, so the bar with *Ablehnen* stays. Its *Zwecke/Services* tabs were not
-  taken either: they suit dozens of services, not three.
+  srf.ch's consent screens): each category a white card, the library's
+  collapsible kept (Marcel: no workaround to hold the text open), with the
+  chevron moved beside the toggle on the right; short texts that name Google
+  Analytics, Google Ads and Meta and that data may go to the USA;
+  *Weitere Informationen* dropped, the privacy link once in the intro; three
+  equal buttons under a rule, *Alle akzeptieren*, *Nur notwendige* (was *Alle
+  ablehnen*; the necessary ones are never off), *Auswahl speichern*. SRF's
+  first layer was **not** taken: it is a centred modal that blocks the page
+  and offers no refusal without a second click, so the bar with *Ablehnen*
+  stays. Its *Zwecke/Services* tabs were not taken either: they suit dozens of
+  services, not three.
 - **Shown in every environment**, so the client sees it on the prototype; only
   GTM is production-only. Confirmed 2026-10-21 (Marcel).
 - **The copy says *du***, as the site does (Marcel, 2026-10-21); legacy's
