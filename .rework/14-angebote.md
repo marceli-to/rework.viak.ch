@@ -392,7 +392,8 @@ and regular.
 
 **The switch** (`components/offers/switch.blade.php`): *Alle Angebote ·
 Kurse · Software* **on Kurse and Software, at the top of the filter column,
-drawn as the filter's category rows**, the open one bold (Marcel,
+drawn as the filter's category rows** under a heading *Angebot* as
+*Filter* has one, the rows *Alle · Kurse · Software*, the open one bold (Marcel,
 2026-10-29, after a first version as a bold row over all three pages).
 **Alle Angebote has none**: its intro links *Kurse* and *Software* instead.
 

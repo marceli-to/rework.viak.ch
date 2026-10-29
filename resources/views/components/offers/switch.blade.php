@@ -1,7 +1,7 @@
 @props(['current'])
 
 {{--
-	*Alle Angebote · Kurse · Software* ([[14-angebote]]): the three views of
+	*Angebot: Alle · Kurse · Software* ([[14-angebote]]): the three views of
 	the catalogue, on Kurse and Software **at the top of the filter column,
 	drawn as the filter's category rows** (Marcel, 2026-10-29): a grey rule
 	under each, 40px high, the open one bold, as a chosen category is. It
@@ -13,13 +13,17 @@
 --}}
 @php
 	$views = [
-		'offers' => ['Alle Angebote', \App\Support\SiteUrl::offers()],
+		'offers' => ['Alle', \App\Support\SiteUrl::offers()],
 		'courses' => ['Kurse', \App\Support\SiteUrl::courses()],
 		'licences' => ['Software', \App\Support\SiteUrl::softwareIndex()],
 	];
 @endphp
 
 <nav {{ $attributes->class(['mb-40']) }} aria-label="Angebote">
+	{{-- Headed as the filter is, *Angebot* over *Alle · Kurse · Software*
+	     (Marcel, 2026-10-29). --}}
+	<h2 class="mb-32 text-lg font-bold">Angebot</h2>
+
 	<ul class="border-t border-gray-400">
 		@foreach ($views as $key => [$label, $href])
 			<li class="flex min-h-40 items-center border-b border-gray-400">
