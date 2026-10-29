@@ -174,6 +174,7 @@ it('draws every date as the course page does, the course\'s name over it', funct
 		->assertSee('Details')
 		->assertDontSee('Buchen')
 		->assertDontSee('Zur Merkliste')
+		->assertDontSee('Kurs offen, wird bestätigt')
 		->assertDontSee('Lizenzen')
 		->getContent();
 

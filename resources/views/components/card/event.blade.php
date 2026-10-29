@@ -191,9 +191,12 @@
 					</div>
 				@endif
 
+				{{-- *Kurs offen* only on the course page: an Angebot's overview
+				     says it when the course is sure, and is quiet otherwise
+				     (`titled`, Marcel 2026-10-29). --}}
 				@if ($event->state === \App\Enums\EventState::Confirmed)
 					<div class="text-success"><em class="italic">Kurs findet statt</em></div>
-				@else
+				@elseif (! $titled)
 					<div class="text-warning"><em class="italic">Kurs offen, wird bestätigt</em></div>
 				@endif
 			</div>
