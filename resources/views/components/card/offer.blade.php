@@ -13,6 +13,6 @@
 
 	<div class="flex items-center justify-between gap-8 text-md text-gray-600 transition-colors group-hover:text-teal lg:text-lg">
 		{{ $tile['kind'] }}
-		<x-icon.arrow-right class="shrink-0" />
+		<x-icon.arrow-right-small class="shrink-0" />
 	</div>
 </a>
