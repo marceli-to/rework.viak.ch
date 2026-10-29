@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Event;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Software;
@@ -108,4 +109,27 @@ it('keeps the lists\' names out of an Angebot\'s slug, and the prototype\'s URLs
 	$this->get('/de/software')->assertRedirect('/de/angebote/software')->assertStatus(301);
 	$this->get('/de/software?access=named')->assertRedirect('/de/angebote/software?access=named');
 	$this->get('/de/software/rhinoceros')->assertRedirect('/de/angebote/rhinoceros')->assertStatus(301);
+});
+
+it('says Kurs ab the bookable price, else the course fee with Daten auf Anfrage, and Lizenz ab or the note', function () {
+	$this->travelTo('2026-10-29');
+	$twinmotion = navAngebot('Twinmotion', licence: true, course: true);
+	$twinmotion->courses()->first()->update(['fee' => '499.00']);
+
+	expect($twinmotion->courseFrom())->toBe(['price' => '499.00', 'dated' => false]);
+
+	Event::factory()->for($twinmotion->courses()->first())->create(['date' => '2026-12-01', 'fee' => '590.00']);
+	expect($twinmotion->courseFrom())->toBe(['price' => '590.00', 'dated' => true]);
+
+	$keyshot = navAngebot('KeyShot', licence: true);
+	expect($keyshot->courseFrom())->toBeNull();
+
+	$after = navAngebot('After Effects', course: true);
+	$after->update(['featured' => true, 'licence_note' => ['de' => 'Lizenz direkt bei Adobe']]);
+	$after->courses()->first()->update(['fee' => '989.00']);
+
+	$this->get('/de')
+		->assertSee('Lizenz direkt bei Adobe')
+		->assertSee('Kurs ab CHF 989.00')
+		->assertSee('Daten auf Anfrage');
 });

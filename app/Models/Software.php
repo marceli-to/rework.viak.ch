@@ -98,8 +98,7 @@ class Software extends Model
 	 * software. Null, *Kurs auf Anfrage*, when there is none. A free one
 	 * (`free_of_charge`, a 0 fee) does not count: *ab CHF 0* would be wrong.
 	 *
-	 * Whether a course with no date counts too is #52; if it does, this is
-	 * the course's own fee as well.
+	 * The homepage's tile falls back to the course fee ([[Software::courseFrom]]).
 	 */
 	public function courseFromPrice(): ?string
 	{
@@ -114,6 +113,54 @@ class Software extends Model
 			->filter(fn (string $fee) => bccomp($fee, '0', 2) > 0)
 			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
 			->first();
+	}
+
+	/**
+	 * *Kurs ab CHF …* as the homepage's tile says it ([[14-angebote]], #52,
+	 * Marcel 2026-10-29): **the bookable price first**
+	 * ([[Software::courseFromPrice]]); without one, **the lowest fee of its
+	 * published courses**, flagged undated so the tile adds *Daten auf
+	 * Anfrage* and promises no date. Null when no course has a fee: *Kurs auf
+	 * Anfrage*, or nothing on an Angebot without courses.
+	 *
+	 * @return array{price: string, dated: bool}|null
+	 */
+	public function courseFrom(): ?array
+	{
+		if (($price = $this->courseFromPrice()) !== null) {
+			return ['price' => $price, 'dated' => true];
+		}
+
+		$fee = $this->courses()->published()->pluck('fee')
+			->map(fn ($fee) => (string) $fee)
+			->filter(fn (string $fee) => is_numeric($fee) && bccomp($fee, '0', 2) > 0)
+			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
+			->first();
+
+		return $fee !== null ? ['price' => $fee, 'dated' => false] : null;
+	}
+
+	/** *Lizenz ab CHF …*: the cheapest listed licence of its products ([[LicenceProduct::fromPrice]]). */
+	public function licenceFrom(): ?string
+	{
+		return $this->products
+			->filter->isListed()
+			->map->fromPrice()
+			->filter()
+			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
+			->first();
+	}
+
+	/**
+	 * *Beliebte Angebote* ([[14-angebote]]): flagged *Beliebt* itself, **or
+	 * one of its published courses is**, so the flags VIAK set on courses
+	 * keep counting now that the homepage shows Angebote, not courses.
+	 */
+	public function scopePopular(Builder $query): Builder
+	{
+		return $query->where(fn (Builder $either) => $either
+			->where('featured', true)
+			->orWhereHas('courses', fn (Builder $courses) => $courses->published()->featured()));
 	}
 
 	/** The courses' categories: the software list filters by them too. */

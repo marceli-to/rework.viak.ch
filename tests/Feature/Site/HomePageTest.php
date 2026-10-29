@@ -81,22 +81,27 @@ it('lists the courses flagged Beliebt, published only, in the catalogue’s orde
 		->assertDontSee('Entwurf');
 });
 
-it('lists the software flagged Beliebt after the courses, only what the shop sells', function () {
+it('shows an Angebot flagged Beliebt, or holding a flagged course, as a paired tile before the courses no Angebot holds', function () {
 	$sold = function (string $title, bool $featured = true, bool $listed = true): Software {
 		$software = Software::create(['title' => ['de' => $title], 'publish' => true, 'featured' => $featured]);
 		$product = LicenceProduct::factory()->create(['software_id' => $software->id]);
-		LicenceVariant::factory()->create(['licence_product_id' => $product->id, 'listed' => $listed]);
+		LicenceVariant::factory()->create(['licence_product_id' => $product->id, 'listed' => $listed, 'price' => '370.00']);
 
 		return $software;
 	};
 
-	Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'featured' => true]);
+	$rhino = $sold('Rhinoceros', featured: false);
+	Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'featured' => true, 'fee' => '949.00'])->software()->attach($rhino);
 	$sold('Twinmotion');
 	$sold('Lumion', featured: false);
 	$sold('Veras', listed: false);
+	Course::factory()->create(['title' => ['de' => 'Urban Sketching'], 'featured' => true]);
 
 	$this->get('/de')
-		->assertSeeInOrder(['Beliebte Angebote', 'Kurs', 'Rhino Einstiegskurs', 'Software', 'Twinmotion'])
+		->assertSee('href="/de/angebote"', false)
+		->assertSee('Alle Angebote von A bis Z')
+		->assertSeeInOrder(['Beliebte Angebote', 'Rhinoceros', 'Kurs ab CHF 949.00', 'Lizenz ab CHF 370.00', 'Twinmotion', 'Urban Sketching'])
+		->assertDontSee('>Rhino Einstiegskurs<', false)
 		->assertDontSee('Lumion')
 		->assertDontSee('Veras');
 });

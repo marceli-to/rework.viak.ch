@@ -52,28 +52,30 @@ class HomeController extends Controller
 				->limit(self::EVENTS)
 				->get(),
 			/*
-			 * *Beliebte Angebote* (markers 5 to 7): the courses flagged in
-			 * their form, in the catalogue's order, loaded as the Kurse page
-			 * loads its cards; then the software flagged in its own, as the
-			 * Software page loads them ([[Site\SoftwareController]]).
+			 * *Beliebte Angebote* (markers 5 to 7, [[14-angebote]]): the
+			 * Angebote flagged or holding a flagged course, in their order;
+			 * then a flagged course no Angebot holds, as the Kurse page loads
+			 * its cards.
 			 */
+			'popular' => Software::query()
+				->onSite()
+				->popular()
+				->with([
+					'categories',
+					'media',
+					'courses.media',
+					'products' => fn ($query) => $query->published()->ordered()->with('variants'),
+				])
+				->ordered()
+				->get(),
 			'featured' => Course::query()
 				->published()
 				->featured()
+				->whereDoesntHave('software', fn ($query) => $query->onSite())
 				->with([
 					'categories',
 					'media',
 					'events' => fn ($query) => $query->published()->active()->upcoming()->with('experts'),
-				])
-				->ordered()
-				->get(),
-			'featuredSoftware' => Software::query()
-				->onSite()
-				->featured()
-				->with([
-					'categories',
-					'media',
-					'products' => fn ($query) => $query->published()->ordered()->with(['manufacturer', 'variants']),
 				])
 				->ordered()
 				->get(),

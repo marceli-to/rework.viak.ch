@@ -16,7 +16,7 @@
 
 	@include('site.landing._training')
 
-	@if ($featured->isNotEmpty() || $featuredSoftware->isNotEmpty())
+	@if ($popular->isNotEmpty() || $featured->isNotEmpty())
 		@include('site.landing._featured')
 	@endif
 

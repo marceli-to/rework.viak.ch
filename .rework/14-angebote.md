@@ -1,4 +1,4 @@
-# 14 — Angebote: Kurs and Software as one (not yet built)
+# 14 — Angebote: Kurs and Software as one
 
 One page per tool, with the courses and the licences for it side by side. What
 the client asked for in the meeting of 2026-10-26, the biggest of the five
@@ -8,7 +8,7 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 ## Status
 
 **Planned 2026-10-29** from the client's answer, see *The client's answer,
-2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open. **Steps 1 and 2 built the same day** (*As built*, at the end). **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
+2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open. **Steps 1 to 4 built the same day** (*As built*, at the end): the plan is done. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
 layout*, at the end); the pages are not. The screenshots shown in the meeting are
 in `history/meeting-2026-10-26/`: `homepage.png` (*Beliebte Angebote*, markers 6
 and 7 of the 2026-09-23 review), `angebote.png` (*Alle Angebote*), `rhino-1.png`
@@ -412,5 +412,25 @@ filter follows the client's order now, as the Software one does.
 **A course page links to its Angebote** under the title (*Alles zu
 Rhinoceros*, one per Angebot, none without), as the licence page does.
 
-Still to come in step 4: the homepage's *Beliebte Angebote* as paired tiles
-with *Kurs ab* (the hybrid of #52) and the link to *Alle Angebote*.
+**The homepage's *Beliebte Angebote*** (`landing/_featured.blade.php`,
+`card/angebot.blade.php`): the mockup's paired tiles in the course card's
+frame (category, title, square picture, the lead, then *Kurs ab* and
+*Lizenz ab* under a grey rule at the tile's foot), and *Alle Angebote von A
+bis Z* beside the heading. It reverses the one grid of 2026-10-09.
+
+- **Which Angebote** ([[Software::scopePopular]], #55, my proposal): flagged
+  *Beliebt*, **or holding a flagged course**, so the course flags VIAK set
+  keep counting. On dev data exactly six, as in the mockup: Rhinoceros,
+  SketchUp, Photoshop, After Effects, Twinmotion, Enscape. A flagged course
+  no Angebot holds keeps its course card after them.
+- **Kurs ab** is the hybrid of #52 ([[Software::courseFrom]]): the bookable
+  price, else the lowest course fee with *, Daten auf Anfrage*, else *Kurs
+  auf Anfrage*; nothing on an Angebot without courses. **Lizenz ab**
+  ([[Software::licenceFrom]]) the cheapest listed licence, else the
+  *Lizenz-Hinweis*, else nothing. **Rhino reads *Lizenz ab CHF 280.00*:
+  that is Bongo, a plugin under it** (#67 would change it).
+- An Angebot without a picture of its own takes its first course's (on dev,
+  SketchUp, Photoshop, After Effects).
+
+**Step 4 is done.** Open: #66, #67, the client's confirmation of #52 and of
+the *Beliebt* rule (#55), and #54 (copy: features, leads, *Mehr über*).
