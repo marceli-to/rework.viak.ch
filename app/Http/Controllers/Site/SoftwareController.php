@@ -54,9 +54,6 @@ class SoftwareController extends Controller
 			// page already lists under *Kurse* ([[Recommendations]]).
 			'recommended' => Recommendations::for([$software], $courses->modelKeys(), [$software->id]),
 			'testimonials' => $software->testimonialsAbout()->published()->ordered()->get(),
-			// The rows' heart and *Verwalten*, as on a course page.
-			'bookmarked' => request()->user()?->bookmarks()->pluck('events.id')->all() ?? [],
-			'booked' => request()->user()?->bookings()->active()->pluck('event_id')->all() ?? [],
 			'browse' => $this->browse($software),
 		]);
 	}

@@ -21,8 +21,9 @@
 	- **Kurse, then Lizenzen**, each a full-width collapsible (Marcel,
 	  2026-10-29: the two columns side by side of the first version were too
 	  cramped). **Under Kurse every date is the course page's own row**
-	  (`card/event.blade.php`, heart, *Buchen* and all) with the course's
-	  name over it, teal and linked (`titled`); a course without a date says
+	  (`card/event.blade.php`) with the course's name over it, teal and
+	  linked, no heart, and *Details* to the course page for *Buchen*
+	  (`titled`): nothing is booked here; a course without a date says
 	  *Neues Kursdatum folgt in Kürze*. A licence row (`_licence.blade.php`)
 	  is drawn in the same columns and links to the licence's page. Under the courses the way to a
 	  Firmenschulung; no *exkl. MWST* line under either (Marcel).
@@ -82,12 +83,7 @@
 				     none says what its own page says. --}}
 				@foreach ($courses as $course)
 					@forelse ($course->events as $event)
-						<x-card.event
-							:event="$event"
-							titled
-							:bookmarked="in_array($event->id, $bookmarked, true)"
-							:booked="in_array($event->id, $booked, true)"
-						/>
+						<x-card.event :event="$event" titled />
 					@empty
 						<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 							<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}"
@@ -190,7 +186,4 @@
 			</div>
 		@endif
 	</div>
-	{{-- The rental question and the confirmation after *Buchen*, once per
-	     page, as on a course page. --}}
-	<x-dialog.basket />
 </x-layout.site>

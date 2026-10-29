@@ -56,7 +56,8 @@
 ]) }}>
 	{{-- **`titled` on an Angebot's page** ([[14-angebote]], Marcel
 	     2026-10-29): the row as here, with the course's name over it, teal
-	     and linked to the course page. The only thing it adds. --}}
+	     and linked to the course page; no heart, and *Details* to the course
+	     page where *Buchen* stands, so nothing is booked from the overview. --}}
 	@if ($titled)
 		<a href="{{ \App\Support\SiteUrl::course($event->course->getTranslation('slug', $locale)) }}"
 			class="mb-8 block font-bold text-teal hover:text-black sm:mb-16">{{ $event->course->getTranslation('title', $locale) }}</a>
@@ -66,6 +67,8 @@
 		{{-- When and, beside it, the bookmark --}}
 		<div class="sm:col-span-4">
 			<div class="sm:flex">
+				{{-- No heart on an Angebot's page: it leads to the course, it does not keep or book ([[14-angebote]]). --}}
+				@unless ($titled)
 				<div class="absolute top-12 right-0 sm:static sm:pr-16 sm:pt-4">
 					@auth
 						{{-- `Bookmark.vue`, as Alpine. Legacy toasts on both
@@ -93,6 +96,7 @@
 						</a>
 					@endguest
 				</div>
+				@endunless
 
 				{{--
 					**One block for all the days, broken with `<br>`** — legacy's
@@ -202,7 +206,12 @@
 			<div class="max-sm:hidden sm:mr-32 lg:mr-48">{{ $fee }}</div>
 
 			<div class="mt-24 sm:mt-0">
-				@if ($booked)
+				{{-- *Details* on an Angebot's page, the *Buchen* button leading to
+				     the course page, where it is booked (the client 2026-10-29,
+				     Marcel the same day). --}}
+				@if ($titled)
+					<x-ui.button :href="\App\Support\SiteUrl::course($event->course->getTranslation('slug', $locale))">Details</x-ui.button>
+				@elseif ($booked)
 					{{-- The seat's own screen in the portal, which is where
 					     *Verwalten* has always meant to go — it pointed at
 					     `/dashboard` while there was nothing better

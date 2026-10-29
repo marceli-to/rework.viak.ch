@@ -171,10 +171,12 @@ it('draws every date as the course page does, the course\'s name over it', funct
 	$html = $this->get('/de/angebote/blender')->assertOk()
 		->assertSee('03. Dezember 2026')
 		->assertSee('Anmeldung möglich bis 19.11.2026')
-		->assertSee('Buchen')
+		->assertSee('Details')
+		->assertDontSee('Buchen')
+		->assertDontSee('Zur Merkliste')
 		->assertDontSee('Lizenzen')
 		->getContent();
 
-	// Each date its own row, each under the course's name, linked.
-	expect(substr_count($html, 'href="/de/angebote/kurse/blender-einfuehrungskurs"'))->toBe(2);
+	// Each date its own row, its name and *Details* both leading to the course.
+	expect(substr_count($html, 'href="/de/angebote/kurse/blender-einfuehrungskurs"'))->toBe(4);
 });

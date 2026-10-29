@@ -450,7 +450,6 @@ Preise exkl. MWST* under the licences.
 row** (`card/event.blade.php`: dates and times behind the heart, place,
 expert, deadline, state, fee, *Buchen*), with only the course's name over
 it, teal and linked (`titled`). A course without a date shows its name and
-*Neues Kursdatum folgt in Kürze*, as its page does. **So a course can be
-booked from the Angebot page again**, where the client wrote that booking
-happens only on the product page (2026-10-29); the licences still lead to
-their page.
+*Neues Kursdatum folgt in Kürze*, as its page does. **Nothing is booked
+there**: the row has no heart, and *Details* (the same button) leads to the
+course page where *Buchen* stands, as the client wrote.
