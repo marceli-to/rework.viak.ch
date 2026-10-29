@@ -170,7 +170,7 @@ it('draws every date as the course page does, the course\'s name over it', funct
 
 	$html = $this->get('/de/angebote/blender')->assertOk()
 		->assertSee('03. Dezember 2026')
-		->assertSee('Anmeldung möglich bis 19.11.2026')
+		->assertDontSee('Anmeldung möglich bis')
 		->assertSee('Details')
 		->assertDontSee('Buchen')
 		->assertDontSee('Zur Merkliste')

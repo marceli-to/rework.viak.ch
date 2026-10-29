@@ -183,7 +183,8 @@
 			     in their own column and there is nothing above them to be
 			     spaced from. --}}
 			<div class="max-sm:mt-16">
-				@if ($event->registration_until && ! $booked && ! $full)
+				{{-- Not on an Angebot's overview (`titled`, Marcel 2026-10-29). --}}
+				@if ($event->registration_until && ! $booked && ! $full && ! $titled)
 					<div>
 						<em class="italic">
 							Anmeldung möglich bis {{ $event->registration_until->format('d.m.Y') }}

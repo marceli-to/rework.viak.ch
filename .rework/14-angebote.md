@@ -451,6 +451,6 @@ row** (`card/event.blade.php`: dates and times behind the heart, place,
 expert, deadline, state, fee, *Buchen*), with only the course's name over
 it, teal and linked (`titled`). A course without a date shows its name and
 *Neues Kursdatum folgt in Kürze*, as its page does. **Nothing is booked
-there**: the row has no heart, no *Kurs offen, wird bestätigt* (*Kurs
-findet statt* stays), and *Details* (the same button) leads to the
+there**: the row has no heart, no *Anmeldung möglich bis*, no *Kurs
+offen, wird bestätigt* (*Kurs findet statt* stays), and *Details* (the same button) leads to the
 course page where *Buchen* stands, as the client wrote.
