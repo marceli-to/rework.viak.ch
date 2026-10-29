@@ -1,6 +1,4 @@
 <x-layout.site title="Software">
-	<x-offers.switch current="licences" />
-
 	@php
 		$facets = $filter->facets();
 		$matching = $filter->matching();
@@ -40,7 +38,7 @@
 		</div>
 
 		<div class="col-span-12 sm:col-span-4">
-			<x-course.filter :filter="$filter" :matching="count($matching)" :selects="\App\Support\LicenceFilter::SELECTS" />
+			<x-course.filter :filter="$filter" :matching="count($matching)" view="licences" :selects="\App\Support\LicenceFilter::SELECTS" />
 		</div>
 	</div>
 </x-layout.site>

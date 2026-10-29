@@ -1,4 +1,6 @@
 @props([
+	// Kurse or Software: the switch to the other views above the filter ([[14-angebote]]).
+	'view' => null,
 	'filter',
 	'matching' => 0,
 	// The selects under the category links, attribute => what it says unchosen.
@@ -80,6 +82,10 @@
 	{{-- This carried a `leading-[1.3]` until the type scale stopped pairing a
 	     line height with every size (2026-09-22). It inherits the body's 1.3
 	     now, which is what legacy does — see `resources/css/README.md`. --}}
+	@if ($view)
+		<x-offers.switch :current="$view" />
+	@endif
+
 	<h2 class="mb-32 text-lg font-bold">Filter</h2>
 
 	<form method="get" action="{{ request()->url() }}" @submit.prevent="apply()">

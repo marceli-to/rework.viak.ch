@@ -1,11 +1,15 @@
 @props(['current'])
 
 {{--
-	*Alle Angebote · Kurse · Software* ([[14-angebote]], Marcel 2026-10-29):
-	the three views of the catalogue, on top of each. **The only way into
-	Kurse and Software from the menu**, which says *Angebote* alone, so it is
-	drawn as navigation, the menu's bold type a size down, and not as a quiet
-	filter. The open one teal, as the menu marks its page.
+	*Alle Angebote · Kurse · Software* ([[14-angebote]]): the three views of
+	the catalogue, on Kurse and Software **at the top of the filter column,
+	drawn as the filter's category rows** (Marcel, 2026-10-29): a grey rule
+	under each, 40px high, the open one bold, as a chosen category is. It
+	first stood as a bold row over the page; *Alle Angebote* has none and
+	links the two in its text instead.
+
+	Inside the filter's panel, so on a phone it shows with the filter; the
+	phone menu has Kurse and Software rows of their own.
 --}}
 @php
 	$views = [
@@ -15,13 +19,13 @@
 	];
 @endphp
 
-<nav {{ $attributes->class(['mb-32 lg:mb-48']) }} aria-label="Angebote">
-	<ul class="flex flex-wrap gap-x-24 gap-y-8 text-lg font-bold sm:text-xl lg:gap-x-48 lg:text-2xl">
+<nav {{ $attributes->class(['mb-40']) }} aria-label="Angebote">
+	<ul class="border-t border-gray-400">
 		@foreach ($views as $key => [$label, $href])
-			<li>
+			<li class="flex min-h-40 items-center border-b border-gray-400">
 				<a href="{{ $href }}"
 					@if ($key === $current) aria-current="page" @endif
-					@class(['transition-colors', 'text-teal' => $key === $current, 'hover:text-teal' => $key !== $current])>
+					@class(['block w-full text-lg hover:text-teal', 'font-bold' => $key === $current])>
 					{{ $label }}
 				</a>
 			</li>

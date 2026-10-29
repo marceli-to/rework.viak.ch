@@ -61,13 +61,18 @@ it('sorts every Angebot and every course without one into its categories, the re
 	expect(collect($sections)->flatMap->tiles->pluck('title'))->not->toContain('Rhinoceros Einstiegskurs');
 });
 
-it('puts the switch on all three views, marking the one that is open', function () {
-	foreach (['/de/angebote' => 'Alle Angebote', '/de/angebote/kurse' => 'Kurse', '/de/angebote/software' => 'Software'] as $url => $current) {
+it('puts the switch above the filter on Kurse and Software, and links them in Alle Angebote\'s text instead', function () {
+	foreach (['/de/angebote/kurse' => 'Kurse', '/de/angebote/software' => 'Software'] as $url => $current) {
 		$html = $this->get($url)->assertOk()->getContent();
+		$column = mb_substr($html, mb_strpos($html, 'aria-label="Angebote"'));
 
-		expect($html)->toContain('aria-label="Angebote"')
-			->and($html)->toMatch('#aria-current="page"\s+class="[^"]*text-teal[^"]*">\s*'.preg_quote($current, '#').'\s*</a>#');
+		expect($column)->toMatch('#aria-current="page"\s+class="block w-full text-lg hover:text-teal font-bold">\s*'.$current.'\s*</a>#')
+			->and(mb_strpos($column, '>Filter</h2>'))->toBeGreaterThan(0);
 	}
+
+	$this->get('/de/angebote')->assertOk()
+		->assertDontSee('aria-label="Angebote"', false)
+		->assertSee('<a href="/de/angebote/kurse">Kurse</a> und <a href="/de/angebote/software">Software</a>', false);
 });
 
 it('says Angebote in the menu, lit on every catalogue page, with Kurse and Software under it on a phone', function () {

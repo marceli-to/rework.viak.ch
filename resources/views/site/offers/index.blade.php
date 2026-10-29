@@ -1,8 +1,8 @@
 {{--
 	*Alle Angebote* ([[14-angebote]], [[OfferController]]). The mockup's
 	content (`Alle-Angebote.html`) in the site's look: the top drawn as a
-	Vorhaben's (the title teal in the aside, the copy in the column), then
-	the switch to the other two views, then one collapsible per category, its
+	Vorhaben's (the title teal in the aside, the copy in the column, Kurse
+	and Software linked in it), then one collapsible per category, its
 	count beside the title as the portals have it, the tiles four across from
 	`lg`. The mockup's greyed *in Vorbereitung* tiles are not built: a tile
 	exists only for what is published.
@@ -14,11 +14,11 @@
 		</aside>
 
 		<div class="sm:col-span-8">
-			<p>Jedes Werkzeug hat bei uns eine eigene Seite: Kurs und Software auf einen Blick, wo es beides gibt, sonst das, was wir anbieten. Sortiert nach Bereichen, alles an einem Ort.</p>
+			{{-- Kurse and Software are linked here rather than switched to
+			     (Marcel, 2026-10-29); their own pages carry the switch. --}}
+			<p class="[&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:no-underline">Jedes Werkzeug hat bei uns eine eigene Seite: <a href="{{ \App\Support\SiteUrl::courses() }}">Kurse</a> und <a href="{{ \App\Support\SiteUrl::softwareIndex() }}">Software</a> auf einen Blick, wo es beides gibt, sonst das, was wir anbieten. Sortiert nach Bereichen, alles an einem Ort.</p>
 		</div>
 	</article>
-
-	<x-offers.switch current="offers" />
 
 	@foreach ($sections as $section)
 		<x-ui.collapsible :title="$section['title']" :count="$section['tiles']->count()" :last="$loop->last">

@@ -391,11 +391,13 @@ On a phone Kurse and Software are rows of their own under it, a size down
 and regular.
 
 **The switch** (`components/offers/switch.blade.php`): *Alle Angebote ·
-Kurse · Software* in the menu's bold a size down, the open one teal, on top
-of all three views.
+Kurse · Software* **on Kurse and Software, at the top of the filter column,
+drawn as the filter's category rows**, the open one bold (Marcel,
+2026-10-29, after a first version as a bold row over all three pages).
+**Alle Angebote has none**: its intro links *Kurse* and *Software* instead.
 
 **Alle Angebote** (`/de/angebote`, [[OfferController]]): the top drawn as a
-Vorhaben's, a short intro, the switch, then one collapsible per published
+Vorhaben's, a short intro linking Kurse and Software, then one collapsible per published
 category in its order, the count as a badge, small tiles four across from
 `lg` (`card/offer.blade.php`: title, tag, arrow; no picture). A tile is an
 Angebot or a course no Angebot holds, under every category it has; what has

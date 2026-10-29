@@ -1,7 +1,4 @@
 <x-layout.site title="Kurse">
-	{{-- The three views of the catalogue ([[14-angebote]]). --}}
-	<x-offers.switch current="courses" />
-
 	@php
 		$facets = $filter->facets();
 		$matching = $filter->matching();
@@ -65,7 +62,7 @@
 		</div>
 
 		<div class="col-span-12 sm:col-span-4">
-			<x-course.filter :filter="$filter" :matching="count($matching)" />
+			<x-course.filter :filter="$filter" :matching="count($matching)" view="courses" />
 		</div>
 	</div>
 </x-layout.site>
