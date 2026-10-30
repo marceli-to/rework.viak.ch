@@ -14,7 +14,8 @@ use Illuminate\Support\Str;
 /**
  * The homepage's legacy parts ([[HomeController]]): the intro with its slider
  * (legacy's home hero, on `Page::for('home')`) and the footer with the
- * newsletter form, which reaches no Mailchimp list (#13).
+ * newsletter form, which subscribes to Mailchimp in production only (#13,
+ * `Accounts/NewsletterTest.php`).
  */
 beforeEach(function () {
 	RateLimiter::clear('newsletter:127.0.0.1');
@@ -58,14 +59,14 @@ it('has legacy’s footer, on the homepage only', function () {
 	$this->get('/de/angebote/kurse')->assertDontSee('Regelmässig über neue Kurse');
 });
 
-it('takes a signup and only logs it, nothing goes to Mailchimp', function () {
+it('takes a signup, and outside production only logs it', function () {
 	Log::spy();
 
 	$this->post('/de/newsletter', ['firstname' => 'Anna', 'name' => 'Muster', 'email' => 'anna@example.test'])
 		->assertRedirect('/de#newsletter')
 		->assertSessionHas('newsletter', 'sent');
 
-	Log::shouldHaveReceived('info')->once()->withArgs(fn ($message, $context) => str_contains($message, 'not sent to Mailchimp') && $context['email'] === 'anna@example.test');
+	Log::shouldHaveReceived('info')->once()->withArgs(fn ($message) => str_contains($message, 'not sent to Mailchimp') && str_contains($message, 'anna@example.test'));
 
 	$this->followingRedirects()->post('/de/newsletter', ['firstname' => 'Ben', 'name' => 'Muster', 'email' => 'ben@example.test'])
 		->assertSee('Wir haben Deine Anmeldung erhalten, vielen Dank.');

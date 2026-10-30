@@ -71,7 +71,7 @@ class RegisterUser implements CreatesNewUsers
 			'accept_tos.accepted' => 'Bitte akzeptieren Sie die AGB.',
 		])->validate();
 
-		return DB::transaction(function () use ($input): User {
+		$user = DB::transaction(function () use ($input): User {
 			$user = User::create([
 				'gender' => Gender::from($input['gender']),
 				'first_name' => $input['first_name'],
@@ -94,6 +94,10 @@ class RegisterUser implements CreatesNewUsers
 
 			return $user;
 		});
+
+		app(SyncNewsletter::class)->execute($user);
+
+		return $user;
 	}
 
 	/** @return array<string, string> the country list the form offers, code => name */

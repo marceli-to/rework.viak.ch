@@ -6,6 +6,9 @@ use App\Support\Accounting\AccountingSystem;
 use App\Support\Accounting\FakeAccountingSystem;
 use App\Support\Accounting\RunMyAccounts;
 use App\Support\Mcp\McpAccess;
+use App\Support\Newsletter\FakeNewsletterList;
+use App\Support\Newsletter\Mailchimp;
+use App\Support\Newsletter\NewsletterList;
 use App\Support\Payments\FakePaymentGateway;
 use App\Support\Payments\PaymentGateway;
 use App\Support\Payments\StripeGateway;
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
 	{
 		$this->registerAccountingSystem();
 		$this->registerPaymentGateway();
+		$this->registerNewsletterList();
 		$this->registerTelescopeLocally();
 	}
 
@@ -68,6 +72,26 @@ class AppServiceProvider extends ServiceProvider
 				statusPath: (string) $config['status_path'],
 				paymentPath: (string) $config['payment_path'],
 				prefix: (string) $config['prefix'],
+			);
+		});
+	}
+
+	/**
+	 * Binds the newsletter list ([[NewsletterList]]): Mailchimp in production,
+	 * the fake everywhere else, whatever the .env holds. Staging's database
+	 * holds real customers, and the list is VIAK's live audience.
+	 */
+	private function registerNewsletterList(): void
+	{
+		$this->app->singleton(NewsletterList::class, function ($app): NewsletterList {
+			if (! $app->isProduction()) {
+				return new FakeNewsletterList;
+			}
+
+			return new Mailchimp(
+				apiKey: (string) config('services.mailchimp.key'),
+				listId: (string) config('services.mailchimp.list_id'),
+				tag: (string) config('services.mailchimp.tag'),
 			);
 		});
 	}

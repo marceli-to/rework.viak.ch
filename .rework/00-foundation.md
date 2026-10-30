@@ -155,7 +155,7 @@ which:
 | `Discount` | 165 | `Actions/Bookings/PriceBasket`, `Support/Basket` — **built**, chunk 06 |
 | `Bookmark` | 82 | Model methods on `User`; 17 rows in three years — **built**, chunk 06 |
 | `ParticipantsChange` | 59 | `NotifyParticipantThreshold`, a listener — **built**, chunk 06 |
-| `NewsletterSubscriber` | 41 | Open — is the Mailchimp sync still in scope? Called from registration and every profile update — **chunk 08** |
+| `NewsletterSubscriber` | 41 | Kept (#13, 2026-10-30): `SyncNewsletter` and `NewsletterList` — **chunk 08** |
 | `Message` | 32 | Folded into the booking Action — **chunk 06**. The message *thread and its screens* are **chunk 08** |
 
 **`RentalInvoice` is a copy of `Invoice`.** The same nine methods —

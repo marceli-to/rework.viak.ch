@@ -75,6 +75,16 @@ return [
 		'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
 	],
 
+	/*
+	 * The newsletter list ([[NewsletterList]], Open-Questions #13). Production
+	 * only: everywhere else signups are logged.
+	 */
+	'mailchimp' => [
+		'key' => env('MAILCHIMP_APIKEY', ''),
+		'list_id' => env('MAILCHIMP_LIST_ID', ''),
+		'tag' => env('MAILCHIMP_TAGS', ''),
+	],
+
 	'run_my_accounts' => [
 		'base_url' => env('RMA_API_BASE', ''),
 		'key' => env('RMA_API_KEY', ''),

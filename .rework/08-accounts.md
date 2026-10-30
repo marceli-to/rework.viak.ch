@@ -382,9 +382,8 @@ Two things the certificate corrected on the way:
 - **Bookmarks** — chunk 06, deliberately small (17 rows).
 - **The invoice worklist** — chunk 03 deferred it, and it is `backoffice`.
 - **`news`, `hero`, `team_member`, the grid** — chunk 04.
-- **The Mailchimp sync.** `NewsletterSubscriber::update()` is called from
-  registration and from every profile update, so this chunk touches it, but
-  whether it survives is the open question `00-foundation.md` already carries.
+- ~~**The Mailchimp sync.**~~ Kept (#13, 2026-10-30): *The newsletter sync*,
+  at the end.
 
 ## What the data says
 
@@ -762,3 +761,35 @@ orphans by construction, not by drift.
 6. ~~Does the message thread stay?~~ — **answered 2026-09-18 by the data: yes,
    built properly.** 251 messages across 122 events, steady over four years. See
    above.
+
+## The newsletter sync (built 2026-10-30)
+
+#13 answered: legacy's Mailchimp sync stays, as it was. Legacy's
+`Facades/NewsletterSubscriber` subscribes (`FNAME`, `LNAME`, then the tags
+`MAILCHIMP_TAGS` and *Deutsch*) when `subscribe_newsletter` is on and
+unsubscribes when it is off; the footer's signup subscribes and tags the same
+way.
+
+- **`NewsletterList`**, on the accounting system's pattern: `Mailchimp` (the
+  Marketing API over plain HTTP, no package) in production, `FakeNewsletterList`
+  (logs) everywhere else, whatever the .env holds. Staging's database holds
+  real customers. Legacy guarded only registration this way; its profile saves
+  reached the live list from any server.
+- **`SyncNewsletter`**, called after registration, `CreateAccount`,
+  `UpdateProfile` (both portals, the API, the dashboard's own profile) and the
+  admin's customer and expert edits. **Not a model observer**: `port:users`
+  saves through Eloquent and would push all 578 accounts at cutover.
+- **Only a save that changes what the list holds goes out**: the box, or the
+  name or address of a subscriber. Legacy synced on every save, so an admin
+  correcting a street number unsubscribed anyone without the box ticked,
+  including somebody who had signed up in the footer. A new account without
+  the box sends nothing.
+- **A failure is reported, never thrown**, as `spatie/laravel-newsletter`
+  swallowed it: no profile goes unsaved because Mailchimp is down or production
+  lacks its key.
+- **Found on the way: the portals' box was never saved.** Both forms showed it,
+  `UpdateProfileRequest` dropped it. It is taken now, with a hidden `0` under
+  the box; a client that leaves the field out (the API) leaves it as it is.
+- **Tags go by `POST …/members/{hash}/tags`**, as Mailchimp documents it.
+  Legacy sends `PATCH`; whether that ever tagged anybody was not checked
+  against the live list.

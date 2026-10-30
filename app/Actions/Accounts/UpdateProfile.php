@@ -75,11 +75,13 @@ class UpdateProfile
 			$user->email_verified_at = null;
 			$user->save();
 			$user->sendEmailVerificationNotification();
+			app(SyncNewsletter::class)->execute($user);
 
 			return $user;
 		}
 
 		$user->save();
+		app(SyncNewsletter::class)->execute($user);
 
 		return $user;
 	}

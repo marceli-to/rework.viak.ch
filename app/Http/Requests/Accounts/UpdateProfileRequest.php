@@ -36,6 +36,7 @@ class UpdateProfileRequest extends FormRequest
 			'phone' => ['nullable', 'string', 'max:50'],
 			'gender' => ['nullable', Rule::enum(Gender::class)],
 			'country_code' => ['nullable', 'string', 'size:2', 'exists:countries,code'],
+			'subscribe_newsletter' => ['nullable', 'boolean'],
 
 			'email' => [
 				'nullable', 'email', 'max:255',
@@ -91,12 +92,21 @@ class UpdateProfileRequest extends FormRequest
 	/** @return array<string, mixed> */
 	public function profileAttributes(): array
 	{
-		return array_filter(
+		$attributes = array_filter(
 			$this->only([
 				'first_name', 'last_name', 'company', 'street', 'street_no',
 				'zip', 'city', 'phone', 'gender', 'country_code',
 			]),
 			fn ($value) => $value !== null,
 		);
+
+		// The portals' box, which went unsaved until 2026-10-30. Only when sent:
+		// the forms post a hidden 0 under it, a client that leaves it out
+		// leaves it as it is ([[SyncNewsletter]]).
+		if ($this->has('subscribe_newsletter')) {
+			$attributes['subscribe_newsletter'] = $this->boolean('subscribe_newsletter');
+		}
+
+		return $attributes;
 	}
 }

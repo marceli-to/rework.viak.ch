@@ -219,10 +219,10 @@ homepage (homepage marker 1). First pass, built to be reshaped:
     legacy's 20 published hero images across and is now rerunnable (rows
     already ported are skipped).
   - The footer (homepage only, as in legacy): *Newsletter* with the reveal
-    form, *Kontakt* with address, phone, mail, Instagram, Facebook. **The
-    signup reaches no Mailchimp list**: `NewsletterController` validates,
-    guards (Turnstile, honeypot, 5/h) and logs, until `Open-Questions.md` #13
-    says whether the integration stays.
+    form, *Kontakt* with address, phone, mail, Instagram, Facebook. The
+    signup subscribes to Mailchimp in production (#13, answered 2026-10-30;
+    `08-accounts.md`, *The newsletter sync*), after Turnstile, a honeypot and
+    5/h; everywhere else it is logged.
 - **Marker 4, the Firmenschulung teaser** (2026-10-07), after *Nächste
   Kurstermine*, a second call to action beside the call band, which stays:
   the band is for whoever does not know yet, the teaser for a company that

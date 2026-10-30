@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Accounts\CreateAccount;
 use App\Actions\Accounts\RequireEmailConfirmation;
+use App\Actions\Accounts\SyncNewsletter;
 use App\Actions\Media\DeleteMedia;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
@@ -71,7 +72,7 @@ class ExpertController extends Controller
 	 * An address the admin changes must be confirmed by the person, as their
 	 * own change must (Marcel, 2026-09-29, [[RequireEmailConfirmation]]).
 	 */
-	public function update(SaveExpertRequest $request, User $expert, RequireEmailConfirmation $confirm): ExpertFormResource
+	public function update(SaveExpertRequest $request, User $expert, RequireEmailConfirmation $confirm, SyncNewsletter $sync): ExpertFormResource
 	{
 		DB::transaction(function () use ($request, $expert): void {
 			$expert->update($request->userAttributes());
@@ -82,6 +83,8 @@ class ExpertController extends Controller
 		if ($expert->wasChanged('email')) {
 			$confirm->execute($expert);
 		}
+
+		$sync->execute($expert);
 
 		return new ExpertFormResource($expert->load('expertProfile'));
 	}

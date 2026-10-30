@@ -31,7 +31,7 @@ class CreateAccount
 	 */
 	public function execute(array $attributes, array $roles): User
 	{
-		return DB::transaction(function () use ($attributes, $roles): User {
+		$user = DB::transaction(function () use ($attributes, $roles): User {
 			$user = new User($attributes);
 			$user->forceFill([
 				'password' => Hash::make(Str::random(40)),
@@ -45,5 +45,9 @@ class CreateAccount
 
 			return $user;
 		});
+
+		app(SyncNewsletter::class)->execute($user);
+
+		return $user;
 	}
 }

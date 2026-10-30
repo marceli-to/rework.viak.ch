@@ -77,6 +77,8 @@
 			{{-- `.line-after`: a 1px black rule under the group and 32px below
 			     it. --}}
 			<div class="mb-32 border-b border-black pb-16">
+				{{-- An unticked box posts nothing: the 0 says so ([[UpdateProfileRequest]]). --}}
+				<input type="hidden" name="subscribe_newsletter" value="0">
 				<x-form.checkbox name="subscribe_newsletter" :checked="(bool) old('subscribe_newsletter', $user->subscribe_newsletter)">
 					Ich möchte den Newsletter abonnieren.
 				</x-form.checkbox>

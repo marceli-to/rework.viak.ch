@@ -6,21 +6,22 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Site\SubscribeNewsletterRequest;
+use App\Support\Newsletter\NewsletterList;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Throwable;
 
 /**
  * The homepage footer's *Abonnieren* (legacy's `NewsletterSubscriberController`).
  *
- * **A stand-in: nothing reaches Mailchimp.** Legacy subscribes the address to
- * the client's live list and tags it `Deutsch` plus `MAILCHIMP_TAGS`. Whether
- * that integration exists at all in the rework is `Open-Questions.md` #13,
- * and a prototype does not write to a client's live list any more than it
- * posts to Run My Accounts ([[03-invoices]]). So the form is real, validated
- * and guarded as Kontakt's is, and a signup is written to the log until #13
- * is answered.
+ * As legacy: the address is subscribed to the client's Mailchimp list and
+ * tagged `Deutsch` plus `MAILCHIMP_TAGS` ([[NewsletterList]], #13). In
+ * production only; everywhere else the fake logs it. Validated and guarded as
+ * Kontakt's form is.
+ *
+ * A Mailchimp failure is reported and the visitor still thanked, as legacy's
+ * `spatie/laravel-newsletter` swallowed it.
  */
 class NewsletterController extends Controller
 {
@@ -43,7 +44,11 @@ class NewsletterController extends Controller
 
 		RateLimiter::hit($key, 3600);
 
-		Log::info('Newsletter signup (not sent to Mailchimp, Open-Questions #13)', $request->safe()->only(['firstname', 'name', 'email']));
+		try {
+			app(NewsletterList::class)->subscribe($request->string('email')->value(), $request->string('firstname')->value(), $request->string('name')->value());
+		} catch (Throwable $e) {
+			report($e);
+		}
 
 		return $back->with('newsletter', 'sent');
 	}

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Accounts\CreateAccount;
 use App\Actions\Accounts\RequireEmailConfirmation;
+use App\Actions\Accounts\SyncNewsletter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SaveCustomerRequest;
 use App\Http\Resources\Admin\CustomerFormResource;
@@ -70,7 +71,7 @@ class CustomerController extends Controller
 	 * An address the admin changes must be confirmed by the person
 	 * ([[RequireEmailConfirmation]]).
 	 */
-	public function update(SaveCustomerRequest $request, User $customer, RequireEmailConfirmation $confirm): CustomerFormResource
+	public function update(SaveCustomerRequest $request, User $customer, RequireEmailConfirmation $confirm, SyncNewsletter $sync): CustomerFormResource
 	{
 		DB::transaction(function () use ($request, $customer): void {
 			$customer->update($request->userAttributes());
@@ -81,6 +82,8 @@ class CustomerController extends Controller
 		if ($customer->wasChanged('email')) {
 			$confirm->execute($customer);
 		}
+
+		$sync->execute($customer);
 
 		return new CustomerFormResource($this->loaded($customer));
 	}
