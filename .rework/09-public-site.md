@@ -2285,3 +2285,25 @@ The last two differences went on 2026-09-30 (Marcel):
   (16px above, 6px below, line height 1, the triangle 20px down). The public
   site keeps legacy's taller heading. Measured against the dashboard's event
   page: the same height.
+
+## `/llms.txt` — 2026-10-30
+
+New, not parity: legacy has none. What VIAK is, for AI assistants
+(llmstxt.org), the way Marcel's other projects do it (gotaticket): a route and
+a Blade view, `text/markdown`, not a file in `public/` ([[LlmsController]],
+`resources/views/site/llms.blade.php`).
+
+- A summary, then the rules an answer about VIAK gets wrong easily: Angebot =
+  a tool with courses, licences or both; the course invoice only once the
+  course is confirmed; courses VAT-exempt, licences exkl. `invoice.vat_rate`;
+  the laptop at `invoice.rental_fee`; licences sent after payment; Firmenschulung
+  on request; the address. Every statement is one the site already makes.
+- Then the fixed pages, and **every Angebot under its category exactly as
+  *Alle Angebote* has it**: the sections moved out of [[OfferController]] into
+  [[Angebote]], which both read. So the file follows the catalogue and needs
+  no editing when VIAK adds an Angebot or sorts one into a category (#66).
+- Links on the canonical host, as the sitemap's.
+- Titles go out with `{!! !!}`: escaped, `&` reads `&amp;` in Markdown.
+
+Marcel shows the wording to the client. `LlmsTest` pins the rules and the
+sections.

@@ -19,6 +19,7 @@ use App\Http\Controllers\Site\ExpertPortalController;
 use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InviteController;
 use App\Http\Controllers\Site\LicenceController;
+use App\Http\Controllers\Site\LlmsController;
 use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\OfferController;
 use App\Http\Controllers\Site\PaymentController;
@@ -48,6 +49,9 @@ Route::redirect('/', '/'.config('app.locale'), 301);
 
 /* Every public page, on the canonical host ([[SitemapController]]); named in `robots.txt`. */
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+
+/* What VIAK is, for AI assistants ([[LlmsController]]). */
+Route::get('/llms.txt', LlmsController::class)->name('llms');
 
 /*
  * On-demand image rendering ([[08-accounts]]). Parameters are clamped to the
