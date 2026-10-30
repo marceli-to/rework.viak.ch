@@ -64,7 +64,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~51~~ | ~~Does the course page stay, and one row per date or the next date?~~ **Answered 2026-10-29: it stays, and booking happens only there**; the row links to it, one row per course with its next date. See `14-angebote.md` | — | — |
 | 52 | *Kurs ab CHF*: **Marcel chose 2026-10-29** the bookable date, falling back to the course fee as *Daten auf Anfrage*. The client to confirm | Client | `14-angebote.md`, *Kurs ab CHF*. Raised 2026-10-26 |
 | ~~53~~ | ~~The nav, and does `/de/kurse` stay?~~ **Answered 2026-10-29 (Marcel): *Angebote · Über uns · Kontakt***, Kurse and Software under it at `/de/angebote/kurse` and `/de/angebote/software`, 301s from legacy's. See `14-angebote.md`, *The nav, the URLs* | — | — |
-| 54 | Who writes *Mehr über …*, the licence features and the one-line leads? | Client | Content only; the pages draw without them. Raised 2026-10-26 |
+| 54 | Who writes *Mehr über …*, the licence features and the one-line leads? **Settled 2026-10-30: Oliver (VIAK) supplies the Angebot pages' text and images**; asked by mail when, and whether the licence pages take 3d-software.ch's texts or stay lean | Client | Content only; the pages draw without them. Raised 2026-10-26 |
 | 55 | *Beliebte Angebote*: **built 2026-10-29 as** an Angebot flagged *Beliebt* or holding a flagged course, then a flagged course no Angebot holds. The client to confirm | Client | `14-angebote.md`, *As built: step 4*. Raised 2026-10-26 |
 | 56 | Search: the catalogue only, or experts and pages too? | Client | `15-search.md`, what is indexed. Raised 2026-10-26 |
 | 57 | Search results: with prices and dates, or titles and leads? | Client | `15-search.md`, the result page. Raised 2026-10-26 |
