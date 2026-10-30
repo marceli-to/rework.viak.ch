@@ -107,6 +107,7 @@
 
 	<x-tracking.head />
 
+	<x-layout.fonts />
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
 </head>
 {{-- The container and the body type, from `components/_blocks.scss` and

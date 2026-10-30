@@ -78,6 +78,9 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
   calls `/opt/plesk/php/8.3/bin/php artisan schedule:run`, and the domain is on
   8.3 in Plesk.
 - **No Node**: `public/build` is committed and arrives with `git pull`.
+- **Cache headers for `/build/assets/`** come from `public/.htaccess`
+  (the plan allows no nginx directives). If a server serves static files from
+  nginx directly, Apache never sees them: set a year's `Cache-Control` there.
 - **`APP_ENV=staging`**: Stripe, Run My Accounts and Mailchimp are fakes
   whatever the .env holds, GTM is off, robots say `Disallow: /`, and every mail
   goes to `MAIL_CATCH_ALL` (Marcel). Mailgun SMTP as legacy's staging had it.

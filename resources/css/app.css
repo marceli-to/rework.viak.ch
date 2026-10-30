@@ -1,5 +1,4 @@
-/* Font imports must precede every other rule (CSS @import ordering). */
-@import url('https://use.typekit.net/bmx5jih.css');
+/* Effra (Typekit) is linked in the head, `components/layout/fonts.blade.php`. */
 @import 'tailwindcss';
 
 @import './partials/fonts.css';

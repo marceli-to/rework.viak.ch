@@ -7,7 +7,8 @@
    request on every page of the live site. Not carried over; worth removing
    there too.
 
-   The @import itself lives at the top of app.css for CSS ordering reasons. */
+   Linked from the head (`components/layout/fonts.blade.php`), not imported
+   here: an @import made the font wait for this stylesheet. */
 @theme {
 	--font-sans: effra, ui-sans-serif, system-ui, -apple-system, 'Helvetica Neue', sans-serif;
 }
