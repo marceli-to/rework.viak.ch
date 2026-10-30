@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://visualisierungs-akademie.ch/sitemap.xml

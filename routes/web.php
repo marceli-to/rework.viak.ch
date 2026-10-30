@@ -24,6 +24,7 @@ use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\OfferController;
 use App\Http\Controllers\Site\PaymentController;
 use App\Http\Controllers\Site\ProjectController;
+use App\Http\Controllers\Site\RobotsController;
 use App\Http\Controllers\Site\SearchController;
 use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\SoftwareController;
@@ -49,6 +50,9 @@ Route::redirect('/', '/'.config('app.locale'), 301);
 
 /* Every public page, on the canonical host ([[SitemapController]]); named in `robots.txt`. */
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+
+/* Crawlable in production only ([[RobotsController]]). */
+Route::get('/robots.txt', RobotsController::class)->name('robots');
 
 /* What VIAK is, for AI assistants ([[LlmsController]]). */
 Route::get('/llms.txt', LlmsController::class)->name('llms');

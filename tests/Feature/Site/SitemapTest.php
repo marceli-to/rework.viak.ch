@@ -65,7 +65,18 @@ it('names only pages that open, each under the URL it calls canonical', function
 	}
 });
 
-it('is named in robots.txt', function () {
-	expect(file_get_contents(public_path('robots.txt')))
-		->toContain('Sitemap: https://visualisierungs-akademie.ch/sitemap.xml');
+it('is named in robots.txt in production, where everything may be crawled', function () {
+	app()->detectEnvironment(fn () => 'production');
+
+	$this->get('/robots.txt')
+		->assertOk()
+		->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+		->assertSee("Disallow:\n\nSitemap: https://visualisierungs-akademie.ch/sitemap.xml", false);
+});
+
+it('disallows everything in robots.txt outside production', function () {
+	$this->get('/robots.txt')
+		->assertOk()
+		->assertSee("User-agent: *\nDisallow: /\n", false)
+		->assertDontSee('Sitemap');
 });

@@ -2307,3 +2307,12 @@ a Blade view, `text/markdown`, not a file in `public/` ([[LlmsController]],
 
 Marcel shows the wording to the client. `LlmsTest` pins the rules and the
 sections.
+
+## `/robots.txt` by environment — 2026-10-30
+
+`public/robots.txt` is gone; `/robots.txt` is a route ([[RobotsController]]).
+**Production** answers as before: everything allowed, the sitemap named on the
+canonical host. **Everywhere else** (staging, a laptop) `Disallow: /`, so a
+copy of the site shown to the client stays out of search results. Under Herd
+it answers 404 with the right body (the quirk in `Todo.md`); the real server
+gives 200.
