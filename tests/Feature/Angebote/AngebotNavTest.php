@@ -91,20 +91,13 @@ it('says Angebote in the menu, lit on every catalogue page, with Kurse and Softw
 	}
 });
 
-it('leads from a course back to each Angebot it belongs to', function () {
+it('names no Angebot on a course page (Marcel, 2026-10-30)', function () {
 	$sketchup = navAngebot('SketchUp', course: true);
-	$vray = navAngebot('V-Ray', licence: true);
-	$course = $sketchup->courses()->first();
-	$course->software()->attach($vray);
+	$sketchup->courses()->first()->software()->attach(navAngebot('V-Ray', licence: true));
 
 	$this->get('/de/angebote/kurse/sketchup-einstiegskurs')
 		->assertOk()
-		->assertSee('href="/de/angebote/sketchup"', false)
-		->assertSee('Alles zu SketchUp')
-		->assertSee('Alles zu V-Ray');
-
-	Course::factory()->create(['title' => ['de' => 'Allein'], 'slug' => ['de' => 'allein']]);
-	$this->get('/de/angebote/kurse/allein')->assertOk()->assertDontSee('Alles zu');
+		->assertDontSee('Alles zu');
 });
 
 it('keeps the lists\' names out of an Angebot\'s slug, and the prototype\'s URLs landing', function () {

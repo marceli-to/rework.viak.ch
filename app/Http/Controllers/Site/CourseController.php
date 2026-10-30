@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\Software;
 use App\Support\CourseFilter;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
@@ -88,10 +87,6 @@ class CourseController extends Controller
 		return view('site.courses.show', [
 			'course' => $course,
 			'browse' => $this->browse($course),
-			// *Alles zu …*, the way back to the Angebote it belongs to ([[14-angebote]]).
-			'angebote' => Software::query()->onSite()->whereKey($course->software->modelKeys())->get()
-				->sortBy(fn (Software $software) => $software->getTranslation('title', app()->getLocale()), SORT_NATURAL | SORT_FLAG_CASE)
-				->values(),
 			// *Kundenmeinungen*: the published testimonials about this course
 			// ([[Course::testimonialsAbout]]).
 			'testimonials' => $course->testimonialsAbout()->published()->ordered()->get(),

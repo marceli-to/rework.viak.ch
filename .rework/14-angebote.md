@@ -194,6 +194,9 @@ Angebot** instead (*Alles zu Rhinoceros*, wording to settle), near the title:
 the client's path runs Angebot → product, and without the link the way back
 is the browser's. A course under two Angebote (*Visualisieren mit SketchUp*:
 SketchUp and V-Ray) names both; a course without one names none.
+**Taken off course pages, 2026-10-30** (Marcel): a course under three
+Angebote (*KI-Einstieg für Video Creator*) stacked three links beside the
+title. The licence page keeps its one.
 
 ### The categories
 
