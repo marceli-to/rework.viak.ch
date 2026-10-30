@@ -11,9 +11,12 @@
 @php
 	$review = [
 		['Startseite', '/de', 'Slider, Vorhaben, nächste Kurstermine, Firmenschulung, beliebte Angebote, Kundenmeinungen, Über uns, Newsletter'],
-		['Kurse', '/de/kurse', 'Liste mit Filter, von dort jede Kursseite'],
-		['Software', '/de/software', 'Liste mit Filter. Rhinoceros hat Beispielinhalte, die übrigen Seiten warten auf Texte und Bilder'],
-		['Eine Softwareseite', '/de/software/rhinoceros', 'Lizenzen mit Stückzahl und Hostsoftware, In den Warenkorb'],
+		['Alle Angebote', '/de/angebote', 'Alle Angebote als Kacheln, nach den fünf Bereichen, jede mit «Kurs», «Software» oder «Kurs & Software»'],
+		['Eine Angebotsseite', '/de/angebote/rhinoceros', 'Kurse mit allen Daten, Lizenzen, Mehr über, Kundenmeinungen. Gebucht und gekauft wird auf der Kurs- bzw. Lizenzseite. Rhinoceros hat Beispielinhalte, die übrigen warten auf Texte und Bilder'],
+		['Kurse', '/de/angebote/kurse', 'Alle Kurse mit Filter, von dort jede Kursseite'],
+		['Software', '/de/angebote/software', 'Alle Lizenzen mit Filter, von dort jede Lizenzseite'],
+		['Eine Lizenzseite', '/de/angebote/software/rhinoceros-8', 'Alle Varianten einer Software mit Stückzahl und Hostsoftware, In den Warenkorb'],
+		['Suche', '/de/suche?q=rhino', 'Die Lupe oben rechts: Kurse und Software, mit Treffern beim Tippen und einer Ergebnisseite'],
 		['Vorhaben', '/de/vorhaben/raume-visualisieren', 'Beispiel «Räume visualisieren», Texte sind Platzhalter'],
 		['Firmenschulung', '/de/firmenschulung', 'Text, Anfrageformular, Kundenmeinungen'],
 		['Über uns', '/de/ueber-uns', 'Text, Expert:innen, Team'],
@@ -61,23 +64,43 @@
 		],
 		[
 			'title' => 'Bundles: mit eigenem Preis?',
-			'text' => '«Das könnte dich auch interessieren» ist gebaut: VIAK wählt je Software und je Kurs im Dashboard passende Kurse und Software aus, sie erscheinen unter der Software-Seite und im Warenkorb (Beispiel: Rhinoceros). Die Kund:innen stellen sich ihr Bundle so selbst zusammen. Soll ein selbst zusammengestelltes Bundle günstiger sein, oder genügen die Empfehlungen? Und sollen sie auch auf den Kursseiten erscheinen (etwa eine Rhino-Lizenz beim Rhino-Kurs)?',
+			'text' => '«Das könnte dich auch interessieren» ist gebaut: VIAK wählt je Software und je Kurs im Dashboard passende Kurse und Software aus, sie erscheinen auf der Angebotsseite und im Warenkorb (Beispiel: Rhinoceros). Die Kund:innen stellen sich ihr Bundle so selbst zusammen. Soll ein selbst zusammengestelltes Bundle günstiger sein, oder genügen die Empfehlungen? Und sollen sie auch auf den Kursseiten erscheinen (etwa eine Rhino-Lizenz beim Rhino-Kurs)?',
 			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
 		],
 		[
-			'title' => 'Newsletter an Mailchimp?',
-			'text' => 'Die Anmeldung im Fuss der Startseite wird im Moment nur aufgezeichnet. Soll sie wie heute an Mailchimp gehen?',
-			'decides' => 'Ob die neue Website eine Mailchimp-Anbindung braucht.',
+			'title' => 'Angebote: Kategorie für die Kurse ohne Software',
+			'text' => 'Visual Facilitator, LEGO Serious Play und Urban Sketching passen in keinen der fünf Bereiche und stehen unter «Weitere». Braucht es einen sechsten Bereich, oder in welchen der fünf gehören sie?',
+			'decides' => 'Wo diese Kurse auf «Alle Angebote» stehen.',
+		],
+		[
+			'title' => 'Angebote: die Rhino-Plugins',
+			'text' => 'Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold und Drakon sind heute Lizenzen unter Rhinoceros. Im Mockup waren sie eigene Angebote. Was soll es sein?',
+			'decides' => 'Ob die Plugins eigene Kacheln und Seiten bekommen. Nebenbei: Rhinoceros zeigt heute «ab» den Preis von Bongo, weil das die günstigste Lizenz darunter ist.',
+		],
+		[
+			'title' => 'Angebote: Lizenzseiten und Angebote mit einem Eintrag',
+			'text' => 'Sollen die Lizenzseiten die Texte von 3d-software.ch übernehmen (Beschreibung, Funktionen, Systemanforderungen), oder bleiben sie knapp, weil der Text auf der Angebotsseite steht? Und behalten Angebote mit nur einem Eintrag (formZ: eine Lizenz) ihre Angebotsseite, oder führt die Kachel direkt zur Lizenz?',
+			'decides' => 'Den Inhalt der Lizenzseiten und wohin die Kachel führt.',
+		],
+		[
+			'title' => 'Angebote: zwei Punkte bestätigen',
+			'text' => '«Kurs ab CHF» nimmt den Preis des nächsten buchbaren Datums, ohne Datum die Kursgebühr mit «Daten auf Anfrage». «Beliebte Angebote» auf der Startseite zeigt Angebote, die selbst oder mit einem Kurs als «Beliebt» markiert sind. Passt beides?',
+			'decides' => 'Nichts, wenn es passt.',
+		],
+		[
+			'title' => 'Suche: was und wie?',
+			'text' => 'Die Suche findet heute Kurse und Software. Sollen auch Expert:innen und Seiten wie Firmenschulung gefunden werden? Und sollen die Treffer Preise und Daten zeigen, oder reichen Titel und Kurztext?',
+			'decides' => 'Was die Suche durchsucht und wie ein Treffer aussieht.',
+		],
+		[
+			'title' => 'KI-Zugang zu den Daten',
+			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
+			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
 		],
 		[
 			'title' => 'Blog und Aktuelles',
 			'text' => 'Im Mockup-Review war Aktuelles als Einstieg in einen Blog vorgesehen, der Blog selbst war offen. Gibt es einen Blog, mit eigenen Seiten?',
 			'decides' => 'Ob Beiträge gebaut werden, und das letzte offene Element der Startseite.',
-		],
-		[
-			'title' => 'Hauptnavigation',
-			'text' => 'Im Mockup-Review stand «Angebot» an Stelle von «Kurse» und «Software». Im Prototyp sind Kurse und Software getrennte Menüpunkte. Passt das so?',
-			'decides' => 'Die Navigation auf jeder Seite.',
 		],
 		[
 			'title' => 'Firmenschulung auf der Startseite',
@@ -112,16 +135,15 @@
 	];
 
 	$content = [
-		['Software-Seiten', 'Texte, Bilder und Kategorien je Software. Nur Rhinoceros hat Beispielinhalte.'],
+		['Angebotsseiten', 'Text und Bilder je Angebot (rund 30), von Oliver. Nur Rhinoceros hat Beispielinhalte. Gepflegt im Dashboard unter Software.'],
 		['Vorhaben', 'Die echten Vorhaben mit Text, Bild und den passenden Kursen und Software.'],
-		['Beliebte Angebote', 'Kurse und Software mit «Beliebt» markieren, im Prototyp sind einige zum Zeigen markiert.'],
+		['Beliebte Angebote', 'Angebote und Kurse mit «Beliebt» markieren, im Prototyp sind einige zum Zeigen markiert.'],
 		['Texte zur Software-Lieferung', 'Die Lieferung erfolgt von Hand durch das Team. Texte wie «Lieferung sofort per E-Mail» aus dem alten Shop sollten nicht übernommen werden.'],
 	];
 
 	$unbuilt = [
 		['Tracking: Kauf-Events und Herkunft', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Offen: Käufe mit Betrag an Google Ads und Meta melden, die Herkunft jeder Buchung festhalten und die Frage «Wie wurdest du auf uns aufmerksam?».', 'Wartet auf die Tracking-Fragen', true],
 		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
-		['Newsletter-Anbindung', 'Die Anmeldung an Mailchimp übergeben.', 'Wartet auf die Mailchimp-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
 		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
@@ -131,6 +153,7 @@
 		['Kreditkarte', 'Stripe-Schlüssel und Webhook im Stripe-Konto von VIAK einrichten. Im Prototyp läuft die Zahlung über eine Testseite, es wird nichts belastet.', true],
 		['Buchhaltung', 'Run My Accounts: Kartenzahlungen werden dort verbucht. Bis zum Go-live wird nichts an die Buchhaltung geschickt.', false],
 		['Mails', 'Im Prototyp gehen alle Mails an eine Testadresse, nie an Kund:innen.', false],
+		['Newsletter', 'Die Anmeldungen gehen wie heute an Mailchimp. Im Prototyp werden sie nur aufgezeichnet.', false],
 		['Daten', 'Ein frischer Export der heutigen Datenbank für den Umzug (der Prototyp arbeitet mit dem Stand vom 11. September 2026), danach Kontrolle der übernommenen Kurse, Buchungen und Rechnungen.', false],
 		['Mietcomputer', 'Beim Umzug prüfen, ob gebuchte Mietcomputer die verfügbare Anzahl eines Termins übersteigen.', false],
 		['Weiterleitungen', 'Alle heutigen Adressen leiten auf die neuen um, damit Suchmaschinen und Lesezeichen weiter funktionieren.', false],
@@ -143,7 +166,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 20. Oktober 2026</div>
+			<div class="mt-8 text-gray-600">Stand 30. Oktober 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
@@ -178,7 +201,7 @@
 	<section class="mt-48 lg:mt-64">
 		<header class="mb-8 sm:text-lg lg:text-xl">
 			<h2 class="font-bold">Fragen an VIAK</h2>
-			<p class="mt-8">Was wir von VIAK brauchen. Die ersten drei braucht es vor dem Go-live, die übrigen halten nichts auf.</p>
+			<p class="mt-8">Was wir von VIAK brauchen. Die markierten braucht es vor dem Go-live, die übrigen halten nichts auf.</p>
 		</header>
 
 		@foreach ($questions as $i => $question)
