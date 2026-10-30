@@ -1,0 +1,1 @@
+import{t as e}from"./client-sgix5i23.js";var t=()=>e.get(`/admin/testimonials`).then(e=>e.data.data),n=t=>e.get(`/admin/testimonials/${t}`).then(e=>e.data.data),r=(t,n)=>(t?e.put(`/admin/testimonials/${t}`,n):e.post(`/admin/testimonials`,n)).then(e=>e.data.data),i=t=>e.delete(`/admin/testimonials/${t}`);export{r as i,n,t as r,i as t};

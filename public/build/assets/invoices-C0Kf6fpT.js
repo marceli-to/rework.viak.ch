@@ -1,0 +1,1 @@
+import{t as e}from"./client-sgix5i23.js";var t=({status:t,search:n=``,page:r=1})=>e.get(`/admin/invoices`,{params:{status:t,suche:n||void 0,page:r}}).then(e=>e.data),n=t=>e.get(`/admin/invoices/${t}`).then(e=>e.data.data),r=(t,n)=>e.put(`/admin/invoices/${t}`,n).then(e=>e.data.data);export{t as n,r,n as t};

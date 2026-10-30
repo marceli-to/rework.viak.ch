@@ -14,7 +14,6 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
@@ -30,3 +29,4 @@ Thumbs.db
 /.rework/history/mockup/assets
 
 storage/app/glide-cache
+INSTALL.txt

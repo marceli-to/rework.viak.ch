@@ -1,0 +1,1 @@
+import{L as e,T as t,V as n,tt as r,w as i}from"./useApi-BPuI6ZR9-BeTmgbid.js";var a={key:0},o={__name:`Loading`,setup(o){let s=r(!1),c=setTimeout(()=>s.value=!0,200);return e(()=>clearTimeout(c)),(e,r)=>s.value?(n(),t(`p`,a,`Wird geladen …`)):i(``,!0)}};export{o as t};

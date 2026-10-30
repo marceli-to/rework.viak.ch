@@ -1,0 +1,1 @@
+import{t as e}from"./client-sgix5i23.js";var t=()=>e.get(`/admin/settings`).then(e=>e.data.data),n=t=>({load:n=>e.get(`/admin/settings/${t}/${n}`).then(e=>e.data.data),save:(n,r)=>(n?e.put(`/admin/settings/${t}/${n}`,r):e.post(`/admin/settings/${t}`,r)).then(e=>e.data.data),remove:n=>e.delete(`/admin/settings/${t}/${n}`)});export{n,t};

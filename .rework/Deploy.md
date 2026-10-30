@@ -10,7 +10,9 @@ server has to do. A step that is only written in a chunk doc gets forgotten.
 In this order, from the release directory:
 
 1. `composer install --no-dev --optimize-autoloader`
-2. `npm ci && npm run build`
+2. ~~`npm ci && npm run build`~~ Nothing: **`public/build` is committed**
+   (2026-10-30). The staging host has no Node, so the bundles are built locally
+   and come with `git pull`. Build before committing any CSS or JS change.
 3. `php artisan migrate --force`
 4. **`php artisan media:move-attachments`**: course documents and message
    attachments onto the private `attachments` disk (`08-accounts.md`,

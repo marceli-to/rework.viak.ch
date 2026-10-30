@@ -1,0 +1,1 @@
+import{t as e}from"./client-sgix5i23.js";var t=()=>e.get(`/admin/projects`).then(e=>e.data.data),n=t=>e.get(`/admin/projects/${t}`).then(e=>e.data.data),r=(t,n)=>(t?e.put(`/admin/projects/${t}`,n):e.post(`/admin/projects`,n)).then(e=>e.data.data),i=t=>e.post(`/admin/projects/order`,{projects:t}),a=t=>e.delete(`/admin/projects/${t}`);export{i as a,r as i,n,t as r,a as t};

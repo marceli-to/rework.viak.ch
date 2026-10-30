@@ -1,0 +1,1 @@
+import{T as e,V as t,W as n}from"./useApi-BPuI6ZR9-BeTmgbid.js";var r={class:`mt-16 text-md italic sm:mt-32 sm:text-lg lg:text-xl`},i={__name:`NoResults`,setup(i){return(i,a)=>(t(),e(`p`,r,[n(i.$slots,`default`)]))}};export{i as t};

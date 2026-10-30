@@ -1,0 +1,1 @@
+import{S as e,T as t,V as n,h as r,it as i,wt as a}from"./useApi-BPuI6ZR9-BeTmgbid.js";var o={class:`font-bold text-teal`},s={__name:`Pending`,setup(s){let c=r();return(r,s)=>(n(),t(`section`,null,[e(`h1`,o,a(i(c).meta.title),1),s[0]||=e(`p`,{class:`mt-32 sm:text-lg lg:text-xl`},`Dieser Bereich ist noch nicht umgesetzt.`,-1)]))}};export{s as default};

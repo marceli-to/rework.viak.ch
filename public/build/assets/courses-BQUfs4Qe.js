@@ -1,0 +1,1 @@
+import{t as e}from"./client-sgix5i23.js";var t=()=>e.get(`/admin/courses`).then(e=>e.data.data),n=t=>e.post(`/admin/courses/order`,{courses:t}),r=t=>e.get(`/admin/courses/${t}`).then(e=>e.data.data),i=(t,n)=>(t?e.put(`/admin/courses/${t}`,n):e.post(`/admin/courses`,n)).then(e=>e.data.data),a=t=>e.delete(`/admin/courses/${t}`);export{n as a,i,r as n,t as r,a as t};
