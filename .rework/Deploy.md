@@ -64,6 +64,34 @@ Beyond Laravel's own keys:
 
 Still open: which PHP production runs (#11).
 
+## Staging (since 2026-10-30)
+
+`https://staging.viak.ch`, on the Plesk host that serves `3d-software.ch`:
+app in `/httpdocs/staging.viak.ch` (absolute
+`/home/httpd/vhosts/3d-software.ch/httpdocs/staging.viak.ch`), document root
+its `public/`. Database `viak_rework_staging`; the old legacy staging's
+`viak_staging` is left alone.
+
+- **Jailed SSH shell**, `$HOME` is `/` (the vhost root). The default `php` is
+  7.4; `~/.bashrc` puts `/opt/plesk/php/8.3/bin` first and `~/.bash_profile`
+  sources it. Cron and the domain's PHP setting are separate: the crontab line
+  calls `/opt/plesk/php/8.3/bin/php artisan schedule:run`, and the domain is on
+  8.3 in Plesk.
+- **No Node**: `public/build` is committed and arrives with `git pull`.
+- **`APP_ENV=staging`**: Stripe, Run My Accounts and Mailchimp are fakes
+  whatever the .env holds, GTM is off, robots say `Disallow: /`, and every mail
+  goes to `MAIL_CATCH_ALL` (Marcel). Mailgun SMTP as legacy's staging had it.
+- **Data**: the local database dumped 2026-10-30, Telescope, `jobs` and
+  `failed_jobs` emptied (the first dump carried 35 queued dev jobs, and the
+  first cron minute mailed them all to the catch-all). `storage/app/public`
+  only; never `documents` or `attachments`, which hold real names.
+- **Logins for the client**: the dev accounts (`Test-Users.md`), which came
+  with the dump.
+
+Update: `git pull && composer install --no-dev -o && php artisan migrate --force
+&& php artisan search:rebuild && php artisan config:cache && php artisan
+route:cache && php artisan view:cache`.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
