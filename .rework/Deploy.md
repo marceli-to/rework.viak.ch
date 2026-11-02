@@ -139,6 +139,10 @@ route:cache && php artisan view:cache`.
    submit* trigger off the old Ads conversion and set that action to
    secondary. If it is not built, leave the trigger: every form, a booking
    among them, keeps counting as CHF 100.
+   **After the switch**, Tag Assistant on the live domain: accept the banner,
+   and `ad_storage` and `analytics_storage` must read *Gewährt* under
+   *Aktueller Status* on the next *Container geladen* (`11-tracking.md`, *Step
+   2 worked out, 2026-11-02*; on staging only `window.dataLayer` can show it).
 8. **Before the first Firmenkurs is invoiced in production**: confirm with
    VIAK that Run My Accounts takes the Firmenkurs customer numbers
    (`VIAK_F{Firmenkurs id}`, beside the accounts' `VIAK_{user id}`) the way it

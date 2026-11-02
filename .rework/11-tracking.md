@@ -208,8 +208,14 @@ banner has to set `ad_storage` and `analytics_storage` to granted when a
 visitor accepts. On the live site it never can (finding 2). **The rework
 already does this** (step 1 as built: `onConsent` / `onChange` in
 `site/components/cookie-consent.js`, defaults in `tracking/head.blade.php`).
-Not yet checked in a browser: on staging the `consent update` should appear in
-`window.dataLayer` even without GTM.
+**Checked 2026-11-02 on staging** (headless Chromium, `window.dataLayer`,
+which exists without GTM): on load `consent default` with all four denied;
+*Akzeptieren* pushes `consent update` with all four granted plus
+`consent_update`; the next page load sends the saved grant again right after
+the default; *Ablehnen* pushes all four denied. Marcel tests it himself too.
+What staging cannot show is GTM reading it: after cutover, Tag Assistant on
+the live domain should show *Gewährt* under *Aktueller Status* for
+`ad_storage` and `analytics_storage` once accepted (`Deploy.md`, cutover).
 
 Consent alone does not fix the count. Finding 1 changes shape after cutover
 but does not go away: the Ads conversion fires on GTM's *form submit*, and the
