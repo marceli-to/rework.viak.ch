@@ -7,7 +7,9 @@ spend brings in.
 
 **Step 1 built 2026-10-20** (*Step 1 as built*, below): GTM and the cookie
 banner come across, with findings 2, 4 and 5 fixed. Steps 2 to 5 wait on #29 to
-#32. **Scoped 2026-09-29** from the client's input (below) and a read of
+#32. **Step 2's `purchase` event worked out 2026-11-02 and deliberately not
+built yet** (*Step 2 worked out*, below): without it Ads still counts every
+form as a CHF 100 conversion after cutover, a booking among them. **Scoped 2026-09-29** from the client's input (below) and a read of
 what the live site sends today. Nothing in the rework tracks anything yet, and
 **that is a parity gap**, not a neutral starting point: the live site runs a
 Google Tag Manager container and a cookie banner, and the rework's layout
@@ -194,6 +196,78 @@ The live site and the rework share one container, and a published change
 applies to both at once. So the new setup is prepared in a separate workspace
 (or a GTM environment pointed at the rework's staging host) and **published at
 cutover**, not before; the live site keeps running on today's version untouched.
+
+### Step 2 worked out, 2026-11-02: not built now, not to be forgotten
+
+**The trigger.** Marcel and VIAK had a call with Google Tag Manager support on
+2026-11-02 about conversions not adding up. Tag Assistant on the live site
+showed `ad_storage` and `analytics_storage` still **denied** when the
+container loaded (`ad_user_data` and `ad_personalization` showing *Gewährt*
+without ever having a default, which is finding 4). Support's advice: the
+banner has to set `ad_storage` and `analytics_storage` to granted when a
+visitor accepts. On the live site it never can (finding 2). **The rework
+already does this** (step 1 as built: `onConsent` / `onChange` in
+`site/components/cookie-consent.js`, defaults in `tracking/head.blade.php`).
+Not yet checked in a browser: on staging the `consent update` should appear in
+`window.dataLayer` even without GTM.
+
+Consent alone does not fix the count. Finding 1 changes shape after cutover
+but does not go away: the Ads conversion fires on GTM's *form submit*, and the
+rework's summary step *is* a `<form>` (`site/checkout/summary.blade.php`), so
+a booking would now trigger it, but as a flat CHF 100 like login,
+registration, the newsletter and the contact form, which still count too. Ads
+still cannot tell a sale from a login. **Decided 2026-11-02 (Marcel): not
+implemented right now.** The plan is written down here so it is picked up
+later.
+
+**Part 1, the app (no client input needed).** The confirmation page
+(`CheckoutController::confirmation`, `site/checkout/confirmation.blade.php`)
+renders the sale, once:
+
+```js
+dataLayer.push({ ecommerce: null });
+dataLayer.push({
+  event: 'purchase',
+  ecommerce: {
+    transaction_id: '<checkout uuid>',
+    value: 1240.00,          // net after discount, excl. VAT
+    currency: 'CHF',
+    items: [{ item_id: '05-161126', item_name: '…', price: …, quantity: 1 }],
+  },
+});
+```
+
+- Server-rendered from what `complete()` stored, not computed in the browser.
+  `complete()` already calls `CheckoutSession::setOutcome()`; the purchase
+  data goes there and the confirmation page consumes it, so a reload or a
+  second return from Stripe pushes nothing. `transaction_id` lets Google drop
+  any duplicate that still gets through.
+- **Net** value: courses carry no VAT, laptops and licences do, so net is the
+  comparable number. It replaces the flat CHF 100.
+- Licence-only orders count too; they go through `complete()` as well.
+- Pushed regardless of the banner; Consent Mode decides what Google may do
+  with it.
+- A test: the confirmation renders the event once, a reload does not.
+- `view_item`, `add_to_cart`, `begin_checkout`, `sign_up` (the table above)
+  are cheap in the same pass; `purchase` is the one that fixes conversions.
+
+**Part 2, GTM and Google Ads (whoever holds the account, #29).**
+
+1. Google Ads: a new conversion action, e.g. *Kursbuchung*, category
+   Purchase, a different value per conversion.
+2. GTM: a *Custom Event* trigger on `purchase`; Data Layer Variables
+   `ecommerce.value`, `ecommerce.transaction_id`, `ecommerce.currency`.
+3. GTM: a Google Ads Conversion Tracking tag for the new action, fed by those
+   variables, fired by that trigger. The GA4 `purchase` event the same way.
+4. **At cutover**: remove the *form submit* trigger from the old conversion
+   and set the old action to *secondary* in Google Ads.
+
+**Timing.** Items 1 to 3 can be published early despite the shared container:
+they fire only on `purchase`, which the live site never pushes, so
+visualisierungs-akademie.ch is unaffected. Only item 4 waits for cutover
+(`Deploy.md`, cutover step 7). Before go-live the tags can only be seen firing
+through a GTM environment (preview link) pointed at staging, because GTM loads
+in production only.
 
 ### Step 3 — First-party attribution, stored with the checkout
 

@@ -134,7 +134,11 @@ route:cache && php artisan view:cache`.
    there (the courses live under `/de/angebote` since 2026-10-29) ([[CheckLegacyUrls]], `Todo.md`, *The
    redirect map*). Under Herd, `/robots.txt` and `/favicon.ico` fail falsely.
 7. The new GTM container version, published together with the DNS switch
-   (`11-tracking.md`, step 5).
+   (`11-tracking.md`, step 5). If the `purchase` event is built by then
+   (`11-tracking.md`, *Step 2 worked out, 2026-11-02*): take the *form
+   submit* trigger off the old Ads conversion and set that action to
+   secondary. If it is not built, leave the trigger: every form, a booking
+   among them, keeps counting as CHF 100.
 8. **Before the first Firmenkurs is invoiced in production**: confirm with
    VIAK that Run My Accounts takes the Firmenkurs customer numbers
    (`VIAK_F{Firmenkurs id}`, beside the accounts' `VIAK_{user id}`) the way it

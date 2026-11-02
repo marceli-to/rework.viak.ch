@@ -142,7 +142,8 @@
 	];
 
 	$unbuilt = [
-		['Tracking: Kauf-Events und Herkunft', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Offen: Käufe mit Betrag an Google Ads und Meta melden, die Herkunft jeder Buchung festhalten und die Frage «Wie wurdest du auf uns aufmerksam?».', 'Wartet auf die Tracking-Fragen', true],
+		['Tracking: Buchungen als Conversion', 'Laut Tag-Manager-Support (Call vom 2. November) müssen Werbe- und Analyse-Cookies nach der Zustimmung freigegeben werden. Das macht die neue Website bereits, die heutige kann es nicht. Offen bleibt: Google Ads zählt jedes abgeschickte Formular (Login, Registrierung, Newsletter, Kontakt und neu auch eine Buchung) pauschal als Conversion mit CHF 100. Damit nur Käufe mit ihrem echten Betrag zählen, meldet die Bestätigungsseite den Kauf an den Tag Manager, und dort wird die Conversion auf dieses Ereignis umgestellt. Der Plan steht, umgesetzt wird es später.', 'Zurückgestellt', false],
+		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Offen: die Herkunft jeder Buchung festhalten und die Frage «Wie wurdest du auf uns aufmerksam?».', 'Wartet auf die Tracking-Fragen', true],
 		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
 		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
@@ -166,7 +167,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 30. Oktober 2026</div>
+			<div class="mt-8 text-gray-600">Stand 2. November 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
