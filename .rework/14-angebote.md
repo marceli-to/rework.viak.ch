@@ -8,7 +8,7 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 ## Status
 
 **Planned 2026-10-29** from the client's answer, see *The client's answer,
-2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open. **Steps 1 to 4 built the same day** (*As built*, at the end): the plan is done. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
+2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open (#66 answered 2026-11-03). **Steps 1 to 4 built the same day** (*As built*, at the end): the plan is done. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
 layout*, at the end); the pages are not. The screenshots shown in the meeting are
 in `history/meeting-2026-10-26/`: `homepage.png` (*Beliebte Angebote*, markers 6
 and 7 of the 2026-09-23 review), `angebote.png` (*Alle Angebote*), `rhino-1.png`
@@ -205,7 +205,12 @@ The client's 5 replace the 3 there are (*3D-Software* 18 courses,
 software and, new, licence products; they drive the filters on Kurse and
 Software. A migration maps what it can; the rest is listed for VIAK to set.
 **Visual Facilitator, LEGO Serious Play and Urban Sketching fit none of the
-5** (#66).
+5** (#66). **Answered 2026-11-03: they do not continue.** The client keeps the
+structure (Software / Kurse) and **sets the 8 courses unpublished itself**;
+nothing is built for it. [[Angebote]] reads only published courses and drops a
+section with no tiles, so *Weitere* goes with them, on the page and in
+`/llms.txt`. On dev data 4 of the 8 still had a Veranstaltung ahead (Visual
+Facilitator 1–3, LEGO 2): whether those run is VIAK's call when it unpublishes.
 
 ### *Kurs ab CHF* (F, #52)
 
@@ -224,10 +229,11 @@ price promise.
 
 ### Open
 
-- **#66** the categories of the courses that fit none, **#67** the Rhino
-  plugins (Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold, Drakon) as
-  Angebote of their own, as the mockup has them, or under Rhinoceros where
-  the import put them. Both to the client.
+- ~~**#66** the categories of the courses that fit none~~: answered
+  2026-11-03, the courses are retired (*The categories*).
+- **#67** the Rhino plugins (Bongo, VisualARQ, Karamba3D, Lands Design,
+  MatrixGold, Drakon) as Angebote of their own, as the mockup has them, or
+  under Rhinoceros where the import put them. To the client.
 
 ### Order of the build
 
@@ -406,7 +412,8 @@ category in its order a teal heading (no collapsible, no count: Marcel), small t
 `lg` (`card/offer.blade.php`: title, tag, arrow; no picture). A tile is an
 Angebot or a course no Angebot holds, under every category it has; what has
 none goes under **Weitere**, last (on dev: Visual Facilitator 1–5, LEGO
-1–2, Urban Sketching, #66). No *in Vorbereitung* tiles.
+1–2, Urban Sketching, #66; retired 2026-11-03, so *Weitere* goes once VIAK
+unpublishes them). No *in Vorbereitung* tiles.
 
 **Software** (`/de/angebote/software`) lists **licence products**, not
 software: `card/licence.blade.php` (the software card one level down, the
@@ -438,7 +445,7 @@ bis Z* beside the heading. It reverses the one grid of 2026-10-09.
 - An Angebot without a picture of its own takes its first course's (on dev,
   SketchUp, Photoshop, After Effects).
 
-**Step 4 is done.** Open: #66, #67, the client's confirmation of #52 and of
+**Step 4 is done.** Open: #67 (#66 answered 2026-11-03), the client's confirmation of #52 and of
 the *Beliebt* rule (#55), and #54 (copy: features, leads, *Mehr über*).
 
 **Revised the same day (Marcel):** the Vorhaben chips came out of the hero;

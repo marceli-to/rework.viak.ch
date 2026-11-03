@@ -76,7 +76,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~63~~ | ~~Should a Firmenschulung enquiry be stored and become a Firmenkurs?~~ **Answered 2026-10-26: no, it stays a mail** | — | — |
 | 64 | The MCP server: which questions should it answer, and may anything be changed through it? | Client | `17-mcp.md`, every tool. Raised 2026-10-26 |
 | 65 | The MCP server: which AI client connects, and who at VIAK uses it? | Client | `17-mcp.md`, tokens; production data leaves the app through it. Raised 2026-10-26 |
-| 66 | Visual Facilitator, LEGO Serious Play and Urban Sketching fit none of the 5 new categories: a 6th, or which of the 5? | Client | `14-angebote.md`, *The categories*. Raised 2026-10-29 |
+| ~~66~~ | ~~Visual Facilitator, LEGO Serious Play and Urban Sketching fit none of the 5 new categories: a 6th, or which of the 5?~~ **Answered 2026-11-03: neither. The 8 courses do not continue**; VIAK sets them unpublished itself, and *Weitere* empties and goes. See `14-angebote.md`, *The categories* | — | — |
 | 67 | The Rhino plugins (Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold, Drakon): Angebote of their own, as the mockup has them, or licences under Rhinoceros, as imported? | Client | `14-angebote.md`, *Open*. Raised 2026-10-29 |
 | ~~38~~ | ~~"Nur zusammen mit Neulizenz": enforced or a note?~~ — **answered 2026-10-08: a note** | — | — |
 | ~~39~~ | ~~Minimum and maximum quantities beyond the Teams licences' 3?~~ — **answered 2026-10-08: none** | — | — |

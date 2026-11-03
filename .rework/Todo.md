@@ -529,6 +529,9 @@ items that are ours rather than the client's.
   the customer chooses at checkout.** The path was already built behind a
   switch; the switch went and the choice is on the payment step. See
   `13-checkout.md`, *The path, built*.
+- ~~The courses that fit no category (#66)~~ — **answered 2026-11-03 (client):
+  they do not continue.** VIAK sets the 8 unpublished itself; *Weitere* empties
+  and goes with no code change. See `14-angebote.md`, *The categories*.
 
 ---
 
