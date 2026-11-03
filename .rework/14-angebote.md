@@ -494,3 +494,25 @@ in, as in the current shop (3d-software.ch, Rhinoceros, tabs *Produkte* and
   are Angebote of their own and stay on their own page only; a product is
   listed once, under its software. Showing one under a second Angebot would
   need its own setting, and nobody has asked for it.
+
+### The Rhino texts (#70, 2026-11-03)
+
+The client's `00_fertig_Webseitentexte_Rhino.docx` (#54's content, for Rhino
+first) checked against the structure. **It fits on the Angebot page and the
+course pages almost field for field**: H1, text, tags = title, Kurzbeschrieb,
+categories; *Rhino lernen* / *Rhino Lizenzen* = *Kurse* / *Lizenzen*;
+course Sublead = Subtitel, Facts = the three facts (dev data already split
+Kursziel, Kursinhalt, Voraussetzungen), *Weitere Informationen* =
+`information_booking`. Where it does not, Marcel's mail proposes:
+
+- **One page per licence** (Rhino 8, Upgrade, EDU, Update EDU): keep one page
+  per product, the subleads as the variants' notes. **EDU public contradicts
+  #1/#36** (EDU hidden, entered by VIAK): asked. No field for
+  *Systemvoraussetzungen*.
+- **A page *Rhino Lizenzen***: none; its sublead as an intro to *Lizenzen*.
+- ***Was ist Rhino?* as a subpage**: it fits *Mehr über* (Detailbeschrieb);
+  a page only for SEO.
+- **New, optional**: Zielgruppen (into the Kurzbeschrieb), an intro line,
+  section intros for Kurse and Lizenzen, a quote box. Not built.
+- ***Gruppengrösse*** is a fourth fact: into Voraussetzungen, or a fourth field.
+- No *Plugins* in the document: it predates #67; the section stays.

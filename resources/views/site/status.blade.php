@@ -68,14 +68,9 @@
 			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
 		],
 		[
-			'title' => 'Angebote: Kategorie für die Kurse ohne Software',
-			'text' => 'Visual Facilitator, LEGO Serious Play und Urban Sketching passen in keinen der fünf Bereiche und stehen unter «Weitere». Braucht es einen sechsten Bereich, oder in welchen der fünf gehören sie?',
-			'decides' => 'Wo diese Kurse auf «Alle Angebote» stehen.',
-		],
-		[
-			'title' => 'Angebote: die Rhino-Plugins',
-			'text' => 'Bongo, VisualARQ, Karamba3D, Lands Design, MatrixGold und Drakon sind heute Lizenzen unter Rhinoceros. Im Mockup waren sie eigene Angebote. Was soll es sein?',
-			'decides' => 'Ob die Plugins eigene Kacheln und Seiten bekommen. Nebenbei: Rhinoceros zeigt heute «ab» den Preis von Bongo, weil das die günstigste Lizenz darunter ist.',
+			'title' => 'Angebote: welche Produkte sind Plugins?',
+			'text' => 'Ein Produkt ist neu «Software» oder «Plugin» (Checkbox im Dashboard). Die Angebotsseite zeigt Kurse, Lizenzen und Plugins, die Kachel in der Software-Übersicht sagt, was es ist. Markiert sind die sechs unter Rhinoceros. Welche weiteren sind Plugins, etwa Maxwell V5, das RealFlow Plugin oder Chaos Phoenix, Vantage und Scans unter V-Ray? Und sollen Produkte ein eigenes Bild bekommen können? Heute zeigen sie das Bild ihres Angebots, die Plugins also das Rhino-Bild.',
+			'decides' => 'Wo diese Produkte stehen, und ob das Produktformular ein Bildfeld bekommt.',
 		],
 		[
 			'title' => 'Angebote: Lizenzseiten und Angebote mit einem Eintrag',
@@ -167,7 +162,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 2. November 2026</div>
+			<div class="mt-8 text-gray-600">Stand 3. November 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
