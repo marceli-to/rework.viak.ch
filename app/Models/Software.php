@@ -140,15 +140,23 @@ class Software extends Model
 		return $fee !== null ? ['price' => $fee, 'dated' => false] : null;
 	}
 
-	/** *Lizenz ab CHF …*: the cheapest listed licence of its products ([[LicenceProduct::fromPrice]]). */
+	/**
+	 * *Lizenz ab CHF …*: the cheapest listed licence of its products
+	 * ([[LicenceProduct::fromPrice]]), **its own before its plugins** (#67):
+	 * Rhinoceros reads its own 550, not Bongo's 280. A plugin's price only
+	 * where it has nothing else.
+	 */
 	public function licenceFrom(): ?string
 	{
-		return $this->products
-			->filter->isListed()
+		$prices = fn ($products) => $products
 			->map->fromPrice()
 			->filter()
 			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
 			->first();
+
+		[$plugins, $own] = $this->products->filter->isListed()->partition->plugin;
+
+		return $prices($own) ?? $prices($plugins);
 	}
 
 	/**

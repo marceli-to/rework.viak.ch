@@ -532,6 +532,11 @@ items that are ours rather than the client's.
 - ~~The courses that fit no category (#66)~~ — **answered 2026-11-03 (client):
   they do not continue.** VIAK sets the 8 unpublished itself; *Weitere* empties
   and goes with no code change. See `14-angebote.md`, *The categories*.
+- ~~The Rhino plugins: own Angebote or under Rhinoceros (#67)?~~ — **answered
+  2026-11-03 (client): under Rhinoceros, tagged *Plugin*.** Built the same
+  day: *Kurse · Lizenzen · Plugins* on the Angebot, the tag on the Software
+  list's tile. Which other products are plugins is #68. See `14-angebote.md`,
+  *Plugins*.
 
 ---
 

@@ -231,9 +231,9 @@ price promise.
 
 - ~~**#66** the categories of the courses that fit none~~: answered
   2026-11-03, the courses are retired (*The categories*).
-- **#67** the Rhino plugins (Bongo, VisualARQ, Karamba3D, Lands Design,
-  MatrixGold, Drakon) as Angebote of their own, as the mockup has them, or
-  under Rhinoceros where the import put them. To the client.
+- ~~**#67** the Rhino plugins as Angebote of their own, or under
+  Rhinoceros~~: answered 2026-11-03, under Rhinoceros, marked *Plugin*
+  (*Plugins*, below). **#68**: which other products are plugins.
 
 ### Order of the build
 
@@ -440,12 +440,13 @@ bis Z* beside the heading. It reverses the one grid of 2026-10-09.
   price, else the lowest course fee with *, Daten auf Anfrage*, else *Kurs
   auf Anfrage*; nothing on an Angebot without courses. **Lizenz ab**
   ([[Software::licenceFrom]]) the cheapest listed licence, else the
-  *Lizenz-Hinweis*, else nothing. **Rhino reads *Lizenz ab CHF 280.00*:
-  that is Bongo, a plugin under it** (#67 would change it).
+  *Lizenz-Hinweis*, else nothing. ~~Rhino reads *Lizenz ab CHF 280.00*:
+  that is Bongo, a plugin under it~~: since #67 its own licences come
+  first, and Rhino reads 550.
 - An Angebot without a picture of its own takes its first course's (on dev,
   SketchUp, Photoshop, After Effects).
 
-**Step 4 is done.** Open: #67 (#66 answered 2026-11-03), the client's confirmation of #52 and of
+**Step 4 is done.** Open: #68 (#66 and #67 answered 2026-11-03), the client's confirmation of #52 and of
 the *Beliebt* rule (#55), and #54 (copy: features, leads, *Mehr über*).
 
 **Revised the same day (Marcel):** the Vorhaben chips came out of the hero;
@@ -464,3 +465,32 @@ it, teal and linked (`titled`). A course without a date shows its name and
 there**: the row has no heart, no *Anmeldung möglich bis*, no *Kurs
 offen, wird bestätigt* (*Kurs findet statt* stays), and *Details* (the same button) leads to the
 course page where *Buchen* stands, as the client wrote.
+
+### Plugins (#67, built 2026-11-03)
+
+**The client, 2026-11-03:** the plugins stay bound to the Angebot they run
+in, as in the current shop (3d-software.ch, Rhinoceros, tabs *Produkte* and
+*Plugins*), and a licence product is tagged **Software** or **Plugin**.
+
+- **The mark**: `licence_products.plugin`, a checkbox *Plugin* in the product
+  form's last row, beside *3-Jahreslizenz auf Anfrage* and *Publizieren*.
+  Default Software. A yes/no, as there is no third kind.
+- **The data**: `database/data/licences.json` carries `plugin` per product,
+  true for the six under Rhinoceros (Bongo 2, VisualARQ 3, Lands Design 6,
+  Karamba3D PRO, MatrixGold, Drakon); `licences:import` sets it on create
+  and on `--refresh`, and the migration sets the same six on a database that
+  already holds the catalogue (staging). The rest are #68, VIAK's to tick.
+- **The Angebot page**: *Kurse · Lizenzen · Plugins*, each its own
+  collapsible, the plugins in the same rows (`_licence.blade.php`). No
+  *Plugins* without one; an Angebot with only plugins shows only *Plugins*.
+- **The Software list's tile**: *Software* or *Plugin* before the category
+  over the title (*Plugin · Architektur & Interior Design*), and the overlay
+  says *Plugin für Rhinoceros*.
+- **Lizenz ab** ([[Software::licenceFrom]]) counts the Angebot's own
+  licences first, a plugin's only where it has none: Rhino 550, not Bongo's
+  280. (Rhino's 90 is the hidden EDU Upgrade, so 550 is right.)
+- **No cross-listing** (Marcel, 2026-11-03): 3d-software.ch's *Plugins* tab
+  also lists V-Ray, Enscape, Lumion and Twinmotion under Rhino. Here those
+  are Angebote of their own and stay on their own page only; a product is
+  listed once, under its software. Showing one under a second Angebot would
+  need its own setting, and nobody has asked for it.

@@ -25,7 +25,7 @@
 	**Kurs ab** by the hybrid of #52 ([[Software::courseFrom]]): the bookable
 	price, else the course fee with *Daten auf Anfrage*, else *Kurs auf
 	Anfrage*; nothing on an Angebot without courses. **Lizenz ab** its
-	cheapest listed licence, else the software's *Lizenz-Hinweis* (*Lizenz
+	cheapest listed licence, its own before its plugins (#67), else the software's *Lizenz-Hinweis* (*Lizenz
 	direkt bei Adobe*), else nothing. Net, as the Software list says them;
 	courses carry no VAT. The prices keep to the foot of the tile, so a row
 	of tiles lines them up.

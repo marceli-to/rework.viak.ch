@@ -5,6 +5,7 @@
 			{
 				"title": "Rhinoceros 8",
 				"manufacturer": "McNeel",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -97,6 +98,7 @@
 			{
 				"title": "Bongo 2",
 				"manufacturer": "McNeel",
+				"plugin": true,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -131,6 +133,7 @@
 			{
 				"title": "VisualARQ 3",
 				"manufacturer": "Asuni",
+				"plugin": true,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -178,6 +181,7 @@
 			{
 				"title": "Lands Design 6",
 				"manufacturer": "Asuni",
+				"plugin": true,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -212,6 +216,7 @@
 			{
 				"title": "Karamba3D PRO",
 				"manufacturer": "Clemens Preisinger",
+				"plugin": true,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -248,6 +253,7 @@
 			{
 				"title": "MatrixGold",
 				"manufacturer": "Gemvision",
+				"plugin": true,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -270,6 +276,7 @@
 			{
 				"title": "Drakon",
 				"manufacturer": "Drakon3D",
+				"plugin": true,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -296,6 +303,7 @@
 			{
 				"title": "V-Ray",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": true,
 				"variants": [
@@ -360,6 +368,7 @@
 			{
 				"title": "Chaos Vantage",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -381,6 +390,7 @@
 			{
 				"title": "Chaos Phoenix",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -403,6 +413,7 @@
 			{
 				"title": "V-Ray Render Node",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -453,6 +464,7 @@
 			{
 				"title": "Chaos Scans Materialbibliothek",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -475,6 +487,7 @@
 			{
 				"title": "V-Ray Education Collection",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -558,6 +571,7 @@
 			{
 				"title": "Twinmotion",
 				"manufacturer": "Epic Games",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -599,6 +613,7 @@
 			{
 				"title": "Unreal Engine",
 				"manufacturer": "Epic Games",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -640,6 +655,7 @@
 			{
 				"title": "Veras",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -709,6 +725,7 @@
 			{
 				"title": "formZ 10",
 				"manufacturer": "AutoDesSys",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -820,6 +837,7 @@
 			{
 				"title": "Cinema 4D",
 				"manufacturer": "Maxon",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -870,6 +888,7 @@
 			{
 				"title": "Maxon One",
 				"manufacturer": "Maxon",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -920,6 +939,7 @@
 			{
 				"title": "Rhino.io",
 				"manufacturer": "LAUBlab",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -947,6 +967,7 @@
 			{
 				"title": "Enscape",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": true,
 				"variants": [
@@ -1037,6 +1058,7 @@
 			{
 				"title": "Enscape Education Collection",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1078,6 +1100,7 @@
 			{
 				"title": "Corona",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": true,
 				"variants": [
@@ -1140,6 +1163,7 @@
 			{
 				"title": "Corona Render Node",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1181,6 +1205,7 @@
 			{
 				"title": "KeyShot Studio",
 				"manufacturer": "Luxion",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1250,6 +1275,7 @@
 			{
 				"title": "Lumion View",
 				"manufacturer": "Act-3D",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": true,
 				"variants": [
@@ -1284,6 +1310,7 @@
 			{
 				"title": "Lumion Pro",
 				"manufacturer": "Act-3D",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": true,
 				"variants": [
@@ -1336,6 +1363,7 @@
 			{
 				"title": "Maxwell V5 Bundle",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1400,6 +1428,7 @@
 			{
 				"title": "Maxwell V5",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": [
 					"Rhinoceros",
 					"Archicad",
@@ -1444,6 +1473,7 @@
 			{
 				"title": "Maxwell V5 Studio",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1480,6 +1510,7 @@
 			{
 				"title": "Maxwell V5 Rendernodes",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1530,6 +1561,7 @@
 			{
 				"title": "Update Maxwell V5",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1571,6 +1603,7 @@
 			{
 				"title": "Chaos Anima",
 				"manufacturer": "Chaos",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": true,
 				"variants": [
@@ -1610,6 +1643,7 @@
 			{
 				"title": "Maxon ZBrush",
 				"manufacturer": "Maxon",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1637,6 +1671,7 @@
 			{
 				"title": "RealFlow 10.5",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1701,6 +1736,7 @@
 			{
 				"title": "RealFlow Plugin",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": [
 					"CINEMA 4D",
 					"3ds Max",
@@ -1727,6 +1763,7 @@
 			{
 				"title": "RealFlow Simnodes",
 				"manufacturer": "Next Limit",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1754,6 +1791,7 @@
 			{
 				"title": "HDR Light Studio",
 				"manufacturer": "Lightmap",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [
@@ -1823,6 +1861,7 @@
 			{
 				"title": "MyArchitectAI",
 				"manufacturer": "Luminary Ventures OÜ",
+				"plugin": false,
 				"hosts": null,
 				"three_years_on_request": false,
 				"variants": [

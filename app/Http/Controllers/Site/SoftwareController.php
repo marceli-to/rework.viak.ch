@@ -46,9 +46,14 @@ class SoftwareController extends Controller
 			->ordered()
 			->get();
 
+		// Its own licences, then the plugins that run in it, each in its own
+		// collapsible (#67).
+		[$plugins, $products] = $software->products->filter->isListed()->partition->plugin;
+
 		return view('site.software.show', [
 			'software' => $software,
-			'products' => $software->products->filter->isListed()->values(),
+			'products' => $products->values(),
+			'plugins' => $plugins->values(),
 			'courses' => $courses,
 			// *Das könnte dich auch interessieren*, without the courses the
 			// page already lists under *Kurse* ([[Recommendations]]).

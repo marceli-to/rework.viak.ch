@@ -49,7 +49,9 @@ final class LicenceProductSchema extends Schema
 			// Saved on their own, each in its own form ([[LicenceVariantSchema]]).
 			Field::custom('variants'),
 			// After the licences, the last thing before *Speichern* (Marcel, 2026-10-09).
+			// *Plugin*: listed under *Plugins* on its Angebot, tagged so on its tile (#67).
 			Field::row([
+				Field::checkbox('plugin')->label('Plugin'),
 				Field::checkbox('three_years_on_request')->label('3-Jahreslizenz auf Anfrage'),
 				Field::checkbox('publish')->label('Publizieren'),
 			]),
@@ -60,7 +62,7 @@ final class LicenceProductSchema extends Schema
 	{
 		return [
 			'software' => '', 'manufacturer' => '', 'title' => '', 'description' => '', 'features' => '', 'categories' => [], 'hosts' => [],
-			'three_years_on_request' => false, 'publish' => true,
+			'plugin' => false, 'three_years_on_request' => false, 'publish' => true,
 		];
 	}
 }

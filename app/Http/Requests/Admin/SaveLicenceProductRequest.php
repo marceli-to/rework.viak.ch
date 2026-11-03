@@ -49,6 +49,7 @@ class SaveLicenceProductRequest extends FormRequest
 			'title' => ['de' => $data['title']],
 			'description' => ['de' => blank($data['description'] ?? null) ? null : $data['description']],
 			'features' => ['de' => blank($data['features'] ?? null) ? null : trim($data['features'])],
+			'plugin' => (bool) ($data['plugin'] ?? false),
 			'three_years_on_request' => (bool) ($data['three_years_on_request'] ?? false),
 			'publish' => (bool) ($data['publish'] ?? false),
 		];

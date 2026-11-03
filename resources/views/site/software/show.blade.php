@@ -18,7 +18,8 @@
 	  Vorhaben chips (built, then taken out by Marcel on 2026-10-29), its
 	  anchor links (the collapsibles are a short scroll) and its breadcrumb
 	  (the site has none).
-	- **Kurse, then Lizenzen**, each a full-width collapsible (Marcel,
+	- **Kurse, then Lizenzen, then Plugins** (the client, 2026-11-03, #67:
+	  the products marked *Plugin*), each a full-width collapsible (Marcel,
 	  2026-10-29: the two columns side by side of the first version were too
 	  cramped). **Under Kurse every date is the course page's own row**
 	  (`card/event.blade.php`) with the course's name over it, teal and
@@ -104,6 +105,15 @@
 		@if ($products->isNotEmpty())
 			<x-ui.collapsible title="Lizenzen">
 				@foreach ($products as $product)
+					@include('site.software._licence', ['product' => $product])
+				@endforeach
+			</x-ui.collapsible>
+		@endif
+
+		{{-- The plugins sold under it (Bongo under Rhinoceros, #67), the same rows. --}}
+		@if ($plugins->isNotEmpty())
+			<x-ui.collapsible title="Plugins">
+				@foreach ($plugins as $product)
 					@include('site.software._licence', ['product' => $product])
 				@endforeach
 			</x-ui.collapsible>

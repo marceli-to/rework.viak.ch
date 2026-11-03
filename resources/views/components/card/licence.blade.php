@@ -13,15 +13,16 @@
 	square image and hover, leading to the product's page. A product has no
 	picture of its own; it shows its software's. The overlay names the maker,
 	the Angebot it belongs to and the cheapest licence, net.
+
+	Over the title, **Software** or **Plugin** (the client, 2026-11-03, #67),
+	so the list says at a glance which it is, then its first category.
 --}}
 <article {{ $attributes->class(['border border-teal p-8 lg:p-16']) }}>
 	<a href="{{ \App\Support\SiteUrl::licence($product->getTranslation('slug', $locale)) }}" class="group block text-black">
 		<header class="min-h-70 sm:min-h-90 lg:min-h-130">
-			@if ($category)
-				<div class="mb-4 text-xxs leading-none font-medium text-gray-600 sm:text-sm lg:text-lg">
-					{{ $category->getTranslation('title', $locale) }}
-				</div>
-			@endif
+			<div class="mb-4 text-xxs leading-none font-medium text-gray-600 sm:text-sm lg:text-lg">
+				{{ $product->kind() }}@if ($category) · {{ $category->getTranslation('title', $locale) }}@endif
+			</div>
 
 			<h2 class="text-lg leading-[1.2] break-words hyphens-auto text-teal sm:text-2xl lg:text-4xl">
 				{{ $product->getTranslation('title', $locale) }}
@@ -36,7 +37,7 @@
 						<li class="py-4">{{ $product->manufacturer->getTranslation('title', $locale) }}</li>
 					@endif
 					@if ($software)
-						<li class="py-4">für {{ $software->getTranslation('title', $locale) }}</li>
+						<li class="py-4">{{ $product->plugin ? 'Plugin für' : 'für' }} {{ $software->getTranslation('title', $locale) }}</li>
 					@endif
 					@if ($from)
 						<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>

@@ -21,6 +21,10 @@ use Spatie\Translatable\HasTranslations;
  * shows with one dropdown of its variants. It sits in a software group, the
  * row courses already hang off, so a software page can list both.
  *
+ * A **plugin** (Bongo, VisualARQ) sits under the Angebot it runs in, as
+ * the client's list has it, and is marked so ([[14-angebote]], #67): the
+ * Angebot lists it under *Plugins*, apart from its own licences.
+ *
  * Soft-deleted, because an order will point at its variants and keep its own
  * frozen title and price.
  */
@@ -32,7 +36,7 @@ class LicenceProduct extends Model
 	use IndexedForSearch;
 	use SoftDeletes;
 
-	protected $fillable = ['software_id', 'manufacturer_id', 'title', 'slug', 'description', 'features', 'three_years_on_request', 'publish', 'order'];
+	protected $fillable = ['software_id', 'manufacturer_id', 'plugin', 'title', 'slug', 'description', 'features', 'three_years_on_request', 'publish', 'order'];
 
 	/** @var array<int, string> */
 	public $translatable = ['title', 'slug', 'description', 'features'];
@@ -40,6 +44,7 @@ class LicenceProduct extends Model
 	protected function casts(): array
 	{
 		return [
+			'plugin' => 'boolean',
 			'three_years_on_request' => 'boolean',
 			'publish' => 'boolean',
 			'order' => 'integer',
@@ -156,6 +161,12 @@ class LicenceProduct extends Model
 	public function scopeListed(Builder $query): Builder
 	{
 		return $query->published()->whereHas('variants', fn (Builder $variants) => $variants->where('listed', true));
+	}
+
+	/** The tag its tile and row show: *Software* or *Plugin*. */
+	public function kind(): string
+	{
+		return $this->plugin ? 'Plugin' : 'Software';
 	}
 
 	public function scopeOrdered(Builder $query): Builder

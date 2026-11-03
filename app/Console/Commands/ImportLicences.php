@@ -101,6 +101,7 @@ class ImportLicences extends Command
 	{
 		$attributes = [
 			'manufacturer_id' => $this->manufacturer($row['manufacturer'])->id,
+			'plugin' => (bool) ($row['plugin'] ?? false),
 			'three_years_on_request' => $row['three_years_on_request'],
 			'order' => $order,
 		];
