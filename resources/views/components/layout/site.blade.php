@@ -109,6 +109,7 @@
 
 	<x-layout.fonts />
 	@vite(['resources/css/app.css', 'resources/js/site/site.js'])
+	<x-layout.feedback />
 </head>
 {{-- The container and the body type, from `components/_blocks.scss` and
      `layout/_base.scss`.

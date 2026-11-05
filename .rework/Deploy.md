@@ -84,6 +84,9 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
 - **`APP_ENV=staging`**: Stripe, Run My Accounts and Mailchimp are fakes
   whatever the .env holds, GTM is off, robots say `Disallow: /`, and every mail
   goes to `MAIL_CATCH_ALL` (Marcel). Mailgun SMTP as legacy's staging had it.
+- **Feedback widget**: Roxy (`roxy.kimiyu.ch`) loads on every page of the site
+  and the dashboard on staging only (`components/layout/feedback.blade.php`).
+  Nothing to remove at cutover.
 - **Data**: the local database dumped 2026-10-30, Telescope, `jobs` and
   `failed_jobs` emptied (the first dump carried 35 queued dev jobs, and the
   first cron minute mailed them all to the catch-all). `storage/app/public`

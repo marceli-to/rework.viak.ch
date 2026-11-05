@@ -29,6 +29,7 @@
 
 	<x-layout.fonts />
 	@vite(['resources/css/app.css', 'resources/js/app/app.js'])
+	<x-layout.feedback />
 </head>
 <body class="mx-auto min-h-screen w-full max-w-[calc(100%-16px)] bg-white px-8 pb-16 text-lg leading-[1.3] tracking-[0.01em] antialiased sm:max-w-[calc(100%-32px)] sm:px-16 sm:text-xl lg:max-w-[1200px] lg:text-3xl">
 	<div id="app"></div>
