@@ -1,1 +1,0 @@
-import{t as e}from"./client-KsWgVMz8.js";var t=()=>e.get(`/admin/experts`).then(e=>e.data.data),n=t=>e.get(`/admin/experts/${t}`).then(e=>e.data.data),r=(t,n)=>(t?e.put(`/admin/experts/${t}`,n):e.post(`/admin/experts`,n)).then(e=>e.data.data),i=t=>e.post(`/admin/experts/order`,{experts:t}),a=t=>e.delete(`/admin/experts/${t}`);export{i as a,r as i,n,t as r,a as t};

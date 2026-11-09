@@ -68,7 +68,7 @@ final class CourseSchema extends Schema
 
 			// *Das könnte dich auch interessieren* ([[Recommendations]]); shown on
 			// the software pages and in the basket, the course page waits on the client.
-			...Recommendations::fields(),
+			...Recommendations::fields('Erscheinen unter «Das könnte dich auch interessieren» im Warenkorb, sobald dieser Kurs darin liegt. Auf der Kursseite nicht.'),
 
 			// Saved on their own, each action at once ([[ImageSection]]).
 			Field::section('Bilder', [Field::custom('images')]),

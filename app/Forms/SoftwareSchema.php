@@ -76,7 +76,7 @@ final class SoftwareSchema extends Schema
 
 			// Saved on their own, each action at once ([[ImageSection]]).
 			// *Das könnte dich auch interessieren* under the page and in the basket ([[Recommendations]]).
-			...Recommendations::fields(),
+			...Recommendations::fields('Erscheinen unter «Das könnte dich auch interessieren» auf der Angebotsseite und im Warenkorb, sobald eine Lizenz dieses Angebots darin liegt.'),
 
 			Field::section('Bilder', [Field::custom('images')->with(['owner' => 'software'])]),
 

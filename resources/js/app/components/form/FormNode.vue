@@ -102,7 +102,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
 	</div>
 	<Checkbox v-else-if="field.type === 'checkbox'" v-model="value">{{ field.label }}</Checkbox>
-	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :error="error" />
+	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :hint="field.hint" :error="error" />
 
 	<!-- *min.* / *max. Teilnehmer*: two columns, as legacy's `span-6` pair. -->
 	<div v-else-if="field.type === 'row' && field.columns" class="grid grid-cols-2 gap-x-16 lg:gap-x-40">

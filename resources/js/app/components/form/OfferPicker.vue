@@ -29,6 +29,8 @@ const props = defineProps({
 	label: { type: String, default: null },
 	options: { type: Array, required: true },
 	error: { type: String, default: null },
+	// Where the picks show, at the head of the open list (Marcel, 2026-11-09).
+	hint: { type: String, default: null },
 });
 
 const byValue = computed(() => Object.fromEntries(props.options.map((item) => [item.value, item])));
@@ -57,6 +59,8 @@ const available = computed(() => {
 <template>
 	<Collapsible :count="rows.length" :invalid="!!error">
 		<template #title>{{ label }}</template>
+
+		<p v-if="hint" class="mt-8 text-md text-gray-600 lg:text-lg">{{ hint }}</p>
 
 		<EditableListItem
 			v-for="(item, index) in rows"

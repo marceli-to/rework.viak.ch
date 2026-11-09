@@ -29,11 +29,14 @@ final class Recommendations
 
 	/**
 	 * The two pickers, for the software form and the course form alike: the
-	 * Vorhaben's (`Field::offers`), courses then software.
+	 * Vorhaben's (`Field::offers`), courses then software. `$where` is the
+	 * sentence at the head of each, saying where the picks show (Marcel,
+	 * 2026-11-09): an Angebot's on its page and in the basket, a course's in
+	 * the basket only.
 	 *
 	 * @return array<int, Field>
 	 */
-	public static function fields(): array
+	public static function fields(string $where): array
 	{
 		return [
 			Field::offers('recommended_courses', fn () => Course::query()->orderBy('number')->get()
@@ -41,12 +44,12 @@ final class Recommendations
 					'label' => $course->getTranslation('title', 'de'),
 					'hint' => $course->displayNumber(),
 					'publish' => $course->publish,
-				]])->all())->label('Empfohlene Kurse'),
+				]])->all())->label('Empfohlene Kurse')->with(['hint' => $where]),
 			Field::offers('recommended_software', fn () => Software::query()->ordered()->get()
 				->mapWithKeys(fn (Software $software) => [$software->uuid => [
 					'label' => $software->getTranslation('title', 'de'),
 					'publish' => $software->publish,
-				]])->all())->label('Empfohlene Software'),
+				]])->all())->label('Empfohlene Software')->with(['hint' => $where]),
 		];
 	}
 
