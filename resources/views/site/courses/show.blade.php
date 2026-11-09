@@ -134,9 +134,15 @@
 
 		@if ($facts->isNotEmpty())
 			<x-ui.collapsible title="Facts">
+				{{-- Legacy's three columns; a fourth (*Gruppengrösse*, #70) makes
+				     them two by two, four abreast from lg. --}}
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 					@foreach ($facts as $fact)
-						<x-ui.rich-text :html="$fact" class="mb-16 sm:col-span-4 sm:mb-0" />
+						<x-ui.rich-text :html="$fact" @class([
+							'mb-16 sm:mb-0',
+							'sm:col-span-4' => $facts->count() <= 3,
+							'sm:col-span-6 lg:col-span-3' => $facts->count() > 3,
+						]) />
 					@endforeach
 				</div>
 			</x-ui.collapsible>

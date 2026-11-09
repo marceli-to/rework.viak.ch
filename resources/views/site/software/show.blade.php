@@ -5,6 +5,15 @@
 	$visuals = $software->visuals();
 	$information = $software->getTranslation('information', $locale, false);
 	$og = $software->openGraph();
+
+	// The client's website texts (#70), plain text, each optional.
+	$text = fn (string $field) => trim((string) $software->getTranslation($field, $locale, false));
+	$audiences = $text('audiences');
+	$intro = $text('intro');
+	$coursesIntro = $text('courses_intro');
+	$licencesIntro = $text('licences_intro');
+	$quote = $text('quote');
+	$about = filled($software->getTranslation('full_description', $locale, false));
 @endphp
 
 {{--
@@ -28,8 +37,14 @@
 	  *Neues Kursdatum folgt in Kürze*. A licence row (`_licence.blade.php`)
 	  is drawn in the same columns and links to the licence's page. Under the courses the way to a
 	  Firmenschulung; no *exkl. MWST* line under either (Marcel).
-	- ***Mehr über …*** is the *Detailbeschrieb*, the further images beside it
-	  with their captions (the first is the hero's). Then *Weitere
+	- **The client's website texts** (#70, 2026-11-06, [[14-angebote]] *The
+	  website texts*), each only when filled: *Zielgruppen* and the intro
+	  sentence under the hero's text, a paragraph at the head of *Kurse* and
+	  of *Lizenzen*, and the **quote box** after the licences, in the
+	  testimonial card's frame (`card/testimonial`).
+	- ***Was ist …?*** (the *Detailbeschrieb*) is **a page of its own** since
+	  #70, for Google ([[SoftwareController::about]]); the hero links to it.
+	  Until then it was a collapsible here, *Mehr über …*. Then *Weitere
 	  Informationen*, *Kundenmeinungen*, and only then the recommendations,
 	  which before stood above the copy: the mockup ends on what the Angebot
 	  is, not on what else there is. The browse pair last.
@@ -72,6 +87,23 @@
 				@if ($html = $software->getTranslation('short_description', $locale, false))
 					<x-ui.rich-text :html="$html" hero />
 				@endif
+
+				@if ($audiences || $intro || $about)
+					<div @class(['[&_p]:mb-12 lg:[&_p]:mb-16 [&_p:last-child]:mb-0', 'mt-12 lg:mt-16' => filled($software->getTranslation('short_description', $locale, false))])>
+						@if ($audiences)
+							<p><span class="font-bold">Zielgruppen:</span> {{ $audiences }}</p>
+						@endif
+						@if ($intro)
+							<p>{{ $intro }}</p>
+						@endif
+						@if ($about)
+							<p>
+								<a href="{{ \App\Support\SiteUrl::softwareAbout($software->getTranslation('slug', $locale)) }}"
+									class="underline decoration-1 underline-offset-[3px] hover:no-underline sm:decoration-2 sm:underline-offset-[5px]">Was ist {{ $title }}?</a>
+							</p>
+						@endif
+					</div>
+				@endif
 			</div>
 		</div>
 	</article>
@@ -79,6 +111,10 @@
 	<div class="mt-48 lg:mt-64">
 		@if ($courses->isNotEmpty())
 			<x-ui.collapsible title="Kurse">
+				@if ($coursesIntro)
+					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40"><p class="sm:col-span-8">{{ $coursesIntro }}</p></div>
+				@endif
+
 				{{-- Every date as the course page draws it (`card/event.blade.php`),
 				     the course's name over it (Marcel, 2026-10-29); a course with
 				     none says what its own page says. --}}
@@ -104,6 +140,10 @@
 		{{-- None for an Angebot of courses only, Blender or After Effects. --}}
 		@if ($products->isNotEmpty())
 			<x-ui.collapsible title="Lizenzen">
+				@if ($licencesIntro)
+					<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40"><p class="sm:col-span-8">{{ $licencesIntro }}</p></div>
+				@endif
+
 				@foreach ($products as $product)
 					@include('site.software._licence', ['product' => $product])
 				@endforeach
@@ -119,32 +159,9 @@
 			</x-ui.collapsible>
 		@endif
 
-		@if ($html = $software->getTranslation('full_description', $locale, false))
-			<x-ui.collapsible :title="'Mehr über '.$title">
-				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<x-ui.rich-text :html="$html" class="sm:col-span-8" />
-
-					@if ($visuals->count() > 1)
-						<div class="flex flex-col gap-24 max-sm:mt-32 sm:col-span-4">
-							@foreach ($visuals->slice(1) as $visual)
-								<figure>
-									<x-media.image
-										:media="$visual"
-										ratio="16/9"
-										sizes="(min-width: 1132px) 340px, (min-width: 700px) 33vw, 100vw"
-										:max-width="1024"
-										:alt="$visual->alt ?: $title"
-										class="block w-full"
-									/>
-									@if ($visual->caption)
-										<figcaption class="mt-8 text-gray-600">{{ $visual->caption }}</figcaption>
-									@endif
-								</figure>
-							@endforeach
-						</div>
-					@endif
-				</div>
-			</x-ui.collapsible>
+		{{-- The client's *Zitatbox* (#70), framed as a testimonial is. --}}
+		@if ($quote)
+			<aside class="mb-64 border border-teal p-8 text-md leading-[1.4] text-teal sm:text-lg lg:p-16 lg:text-xl">{{ $quote }}</aside>
 		@endif
 
 		{{-- One column where a course has two, at *Detailbeschrieb*'s width. --}}

@@ -38,7 +38,17 @@ final class SoftwareSchema extends Schema
 			]),
 			Field::textarea('subtitle')->label('Subtitel')->rules(['max:1000']),
 			Field::richtext('short_description')->label('Kurzbeschrieb'),
-			Field::richtext('full_description')->label('Detailbeschrieb'),
+			// The client's website texts, all optional ([[14-angebote]], *The website texts*, #70).
+			Field::textarea('audiences')->label('Zielgruppen')->rules(['max:1000'])
+				->with(['rows' => 2, 'hint' => 'Eine Zeile, zum Beispiel «Architektur- & Ingenieurbüros, Industrial Design». Steht unter dem Kurzbeschrieb.']),
+			Field::textarea('intro')->label('Einleitung')->rules(['max:1000'])
+				->with(['rows' => 2, 'hint' => 'Ein Satz unter den Zielgruppen, vor Kurse und Lizenzen.']),
+			Field::textarea('courses_intro')->label('Einleitung Kurse')->rules(['max:1000'])->with(['rows' => 2]),
+			Field::textarea('licences_intro')->label('Einleitung Lizenzen')->rules(['max:1000'])->with(['rows' => 2]),
+			Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
+			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
+			Field::richtext('full_description')->label('Was ist …?')
+				->with(['hint' => 'Eigene Seite, auf der Angebotsseite verlinkt. Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile.']),
 			Field::richtext('information')->label('Weitere Informationen'),
 			// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
 			Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
@@ -71,6 +81,7 @@ final class SoftwareSchema extends Schema
 		return [
 			'title' => '', 'subtitle' => '', 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'information' => '', 'licence_note' => '',
+			'audiences' => '', 'intro' => '', 'courses_intro' => '', 'licences_intro' => '', 'quote' => '',
 			'categories' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
 			'seo_description' => '', 'seo_tags' => '',

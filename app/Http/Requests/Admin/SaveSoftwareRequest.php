@@ -20,6 +20,9 @@ class SaveSoftwareRequest extends FormRequest
 	/** The editor's fields, cleaned before they are stored ([[EditorHtml]]). */
 	public const RICH = ['short_description', 'full_description', 'information'];
 
+	/** The Angebot page's plain texts (#70), trimmed, empty as null. */
+	public const PLAIN = ['audiences', 'intro', 'courses_intro', 'licences_intro', 'quote'];
+
 	public function authorize(): bool
 	{
 		return $this->user()?->isAdmin() ?? false;
@@ -59,6 +62,10 @@ class SaveSoftwareRequest extends FormRequest
 
 		foreach (self::RICH as $field) {
 			$attributes[$field] = $de(EditorHtml::sanitize($data[$field] ?? null));
+		}
+
+		foreach (self::PLAIN as $field) {
+			$attributes[$field] = $de(isset($data[$field]) ? trim($data[$field]) : null);
 		}
 
 		return $attributes;

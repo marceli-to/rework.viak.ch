@@ -181,3 +181,23 @@ it('draws every date as the course page does, the course\'s name over it', funct
 	// Each date its own row, its name and *Details* both leading to the course.
 	expect(substr_count($html, 'href="/de/angebote/kurse/blender-einfuehrungskurs"'))->toBe(4);
 });
+
+/** For dev and staging: the client's website texts brought new tags (#70). */
+it('lets the file win with --sync, courses following their software', function () {
+	$this->artisan('catalogue:categories')->assertSuccessful();
+	$lumion = Software::create(['title' => ['de' => 'Lumion'], 'order' => 0, 'publish' => true]);
+	$ai = Category::query()->where('title->de', 'AI & Neue Workflows')->first();
+	$lumion->categories()->sync([$ai->id]);
+	$course = Course::factory()->create();
+	$course->software()->attach($lumion);
+	$course->categories()->sync([$ai->id]);
+
+	// Without --sync, VIAK's choice stands.
+	$this->artisan('catalogue:categories')->assertSuccessful();
+	expect(categoryTitles($lumion->categories()->get()))->toBe(['AI & Neue Workflows']);
+
+	$this->artisan('catalogue:categories', ['--sync' => true])->assertSuccessful();
+
+	expect(categoryTitles($lumion->categories()->get()))->toBe(['Animation & Interaktion', 'Architektur & Interior Design'])
+		->and(categoryTitles($course->categories()->get()))->toBe(['Animation & Interaktion', 'Architektur & Interior Design']);
+});

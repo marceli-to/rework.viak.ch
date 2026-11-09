@@ -377,6 +377,16 @@ final class SiteUrl
 	}
 
 	/**
+	 * An Angebot's *Was ist …?* page (#70, [[14-angebote]] *The website
+	 * texts*): `/de/angebote/rhinoceros/was-ist-rhinoceros`, the slug twice so
+	 * the page's own words are in its URL, as the client's texts have it.
+	 */
+	public static function softwareAbout(string $slug, ?string $locale = null): string
+	{
+		return self::software($slug, $locale).'/'.self::segment('what_is', $locale).'-'.$slug;
+	}
+
+	/**
 	 * One licence product, where it is bought ([[14-angebote]]):
 	 * `/de/angebote/software/{slug}`, under the catalogue as the client's two
 	 * levels have it (2026-10-29).

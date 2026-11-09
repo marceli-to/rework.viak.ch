@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * A course as the dashboard's form holds it ([[07-dashboard]]) — **the same
  * shape [[SaveCourseRequest]] takes back**, so the form sends what it was
- * given. German strings, taxonomy uuids, three facts, the videos inline.
+ * given. German strings, taxonomy uuids, four facts, the videos inline.
  *
  * Plus two things the form reads and never sends: the public URL, and whether
  * any date of it has bookings, which is what decides if it may be deleted.
@@ -46,7 +46,7 @@ class CourseFormResource extends JsonResource
 			$form[$field] = $de($field);
 		}
 
-		$form['facts'] = collect(range(0, 2))
+		$form['facts'] = collect(range(0, 3))
 			->map(fn (int $index) => is_array($facts[$index] ?? null) ? ($facts[$index]['de'] ?? '') : (string) ($facts[$index] ?? ''))
 			->all();
 

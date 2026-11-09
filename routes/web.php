@@ -123,6 +123,11 @@ Route::prefix('{locale}')
 				->where('slug', '(?!(?:'.$segments['courses'].'|'.$segments['software'].')$)[^/]+')
 				->name("{$locale}.software.show");
 
+			// Its *Was ist …?* page (#70), `/de/angebote/rhinoceros/was-ist-rhinoceros`.
+			Route::get($segments['offers'].'/{slug}/'.$segments['what_is'].'-{about}', [SoftwareController::class, 'about'])
+				->where('slug', '(?!(?:'.$segments['courses'].'|'.$segments['software'].')$)[^/]+')
+				->name("{$locale}.software.about");
+
 			/*
 			 * **Legacy's course URLs, 301 in one hop** to where they live now
 			 * (`Todo.md`, *The redirect map*). `/de/kurse` keeps its query

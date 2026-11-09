@@ -17,8 +17,9 @@ use Illuminate\Support\Str;
  * ([[05-licences]]): `php artisan db:seed --class=SoftwareShowcaseSeeder`.
  * Safe to run again.
  *
- * **The copy is ours, written to fill the page**, not VIAK's: no software
- * has copy yet, in legacy or the mockups. So this is not run in production.
+ * **The copy is the client's** since 2026-11-06 (their website texts for
+ * Rhino, #70); until then it was ours, written to fill the page. Still not
+ * run in production: the images and testimonials are made up for the layout.
  * Rhinoceros, because it has the most courses. The images are copies of its
  * beginners' course's, the categories its courses', and the two
  * *Kundenmeinungen* are invented for the layout.
@@ -34,30 +35,29 @@ class SoftwareShowcaseSeeder extends Seeder
 	{
 		$software = Software::query()->where('slug->de', self::SLUG)->firstOrFail();
 
-		$software->setTranslations('subtitle', ['de' => '3D-Modellierung für Design, Architektur und Fertigung']);
+		// The client's own copy since 2026-11-06 (`.rework/content/00_fertig_Webseitentexte_Rhino.docx`, #70).
+		$software->setTranslations('subtitle', []);
 
 		$software->setTranslations('short_description', ['de' => <<<'HTML'
-			<p>Rhinoceros, kurz Rhino, ist das 3D-Programm für alle, die präzise Freiformen brauchen: vom Schmuckstück über das Möbel bis zur Fassade. Rhino modelliert mit NURBS-Flächen und SubD, liest und schreibt die gängigen CAD-Formate und läuft auf Windows und macOS.</p>
-			<p>Bei uns bekommen Sie die Lizenz und den Kurs dazu aus einer Hand.</p>
+			<p>Hochpräzise 3D-Modelliersoftware für Architektur, Produkt- und Industriedesign sowie die Uhren- und Schmuckindustrie. Mit Rhino erstellst du dank exakter Kurven, Flächen und Volumen hochwertige 3D-Modelle, bereit für Planung, Visualisierung und Fertigung mit 3D-Druck oder CNC.</p>
 			HTML]);
 
+		$software->setTranslations('audiences', ['de' => 'Architektur- & Ingenieurbüros, Yachtdesign, Uhren- & Schmuckdesign, Industrial Design, Landschaftsarchitektur']);
+		$software->setTranslations('intro', ['de' => 'Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten öffentliche & individuelle Schulungen sowie Software-Lizenzen von Rhino an:']);
+		$software->setTranslations('courses_intro', ['de' => 'Lerne, wie du in der Praxis professionelle Modelle für Architektur, Produkt- und Industriedesign erstellst.']);
+		$software->setTranslations('licences_intro', ['de' => 'Kaufe deine Rhino Lizenz direkt bei uns im Shop. Unsicher, welche Lizenz für dich passend ist? Melde dich bei uns. Wir helfen gerne weiter.']);
+		$software->setTranslations('quote', ['de' => 'Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.']);
+
+		// *Was ist Rhinoceros?*, a page of its own.
 		$software->setTranslations('full_description', ['de' => <<<'HTML'
-			<p>Rhino wird von Robert McNeel &amp; Associates entwickelt und ist seit über 25 Jahren im Einsatz, in Designbüros, Architekturbüros, Ateliers und in der Industrie. Es verbindet die Genauigkeit eines CAD-Programms mit der Freiheit eines Modellierers: Kurven und Flächen lassen sich exakt bemassen und trotzdem frei formen.</p>
-			<p>Mit Plugins wie V-Ray, Enscape, VisualARQ oder Lands Design wird Rhino zur Plattform für Visualisierung, BIM und Landschaftsarchitektur.</p>
-			<p><strong>Was Rhino 8 mitbringt</strong></p>
-			<ul>
-				<li>NURBS-Modellierung für exakte, fertigungstaugliche Geometrie</li>
-				<li>SubD für organische Formen, die sich in NURBS umwandeln lassen</li>
-				<li>Grasshopper, die visuelle Programmierung für parametrisches Design, ist eingebaut</li>
-				<li>Import und Export von DWG, DXF, STEP, IGES, OBJ, STL und vielen weiteren Formaten</li>
-				<li>Werkzeuge für Zeichnungen, Bemassung und Layouts</li>
-			</ul>
+			<p>Rhinoceros, kurz Rhino oder Rhino3D, ist eine kommerzielle CAD-Software, entwickelt von Robert McNeel &amp; Associates.</p>
+			<p><strong>Woher kommt Rhino?</strong></p>
+			<p>Hinter Rhino steht Robert McNeel &amp; Associates, ein 1980 gegründetes Softwareunternehmen mit Sitz in Seattle. Die Firma ist bis heute in Privatbesitz und finanziert sich ausschliesslich aus eigenen Erträgen. Sie ist mit Niederlassungen von Barcelona bis Tokio sowie über 700 Händlern und Schulungspartnern weltweit präsent. Einer davon ist die Visualisierungs-Akademie Schweiz GmbH in Zürich.</p>
+			<p><strong>Für wen ist Rhino?</strong></p>
+			<p>Rhino wird für DesignerInnen, IngenieurInnen und Fertigungsfachleute entwickelt. Architekturbüros nutzen es für Freiform- und Wettbewerbsmodelle, Produkt- und IndustriedesignerInnen von Möbel- bis zu Bootsrumpf-Modellen. In der Uhren- und Schmuckbranche ist Rhino weit verbreitet. Dazu kommen Modellbau, 3D-Druck und CNC-Fertigung: überall dort, wo aus einer Idee ein exaktes, produzierbares Modell werden soll.</p>
 			HTML]);
 
-		$software->setTranslations('information', ['de' => <<<'HTML'
-			<p>Sie sind nicht sicher, welche Lizenz zu Ihnen passt? Rufen Sie uns an oder schreiben Sie uns, wir beraten Sie gerne.</p>
-			<p>Eine Dauerlizenz läuft unbefristet und lässt sich auf die nächste Version aktualisieren. Für Schulen und Studierende gibt es eigene Lizenzen, die wir auf Anfrage anbieten.</p>
-			HTML]);
+		$software->setTranslations('information', []);
 
 		$software->setTranslations('seo_description', ['de' => 'Rhinoceros 8 kaufen und lernen: Lizenzen für Windows und macOS und Rhino-Kurse in Zürich, bei der Visualisierungs-Akademie.']);
 		$software->setTranslations('seo_tags', ['de' => 'Rhino, Rhinoceros, Rhino 8, Grasshopper, SubD, NURBS, Lizenz, Kurs']);

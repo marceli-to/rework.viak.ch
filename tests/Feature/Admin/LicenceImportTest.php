@@ -17,7 +17,7 @@ it('imports the whole catalogue into the course software it already has', functi
 	$this->artisan('licences:import')->assertSuccessful();
 
 	expect(LicenceVariant::count())->toBe(107)
-		->and(LicenceVariant::where('listed', false)->count())->toBe(13)
+		->and(LicenceVariant::where('listed', false)->count())->toBe(10) // 13 until the three EDU went public (#70)
 		->and(LicenceVariant::where('price', 0)->count())->toBe(10)
 		->and(Manufacturer::count())->toBe(15)
 		->and(LicenceProduct::where('title->de', 'Rhinoceros 8')->first()->software_id)->toBe($rhino->id)

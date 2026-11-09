@@ -56,6 +56,9 @@ return [
 			// and Software are pages under it. So far only one licence's page,
 			// `/de/angebote/software/{slug}`; the rest moves with the nav.
 			'offers' => 'angebote',
+			// An Angebot's *Was ist …?* page, `/de/angebote/rhinoceros/was-ist-rhinoceros`
+			// (#70, the client's website texts: `Alle Angebote/Rhino/Was-ist-Rhino`).
+			'what_is' => 'was-ist',
 			// The homepage footer's newsletter form posts here; no page of its own.
 			'newsletter' => 'newsletter',
 			// The site search's result page ([[15-search]]). New, not indexed.

@@ -544,3 +544,45 @@ the week of 2026-11-09.
   template block, not a field.
 
 Reply with #71–73: `~/Desktop/Webseitentexte-Antwort-Oliver.txt` (2026-11-09).
+
+### As built: what the website texts settled, 2026-11-09
+
+Marcel sent the reply with #71–73 the same day and asked for the settled
+part to be built.
+
+- **Five optional Angebot texts** (`software.audiences`, `intro`,
+  `courses_intro`, `licences_intro`, `quote`; plain text, translatable),
+  in the dashboard form after *Kurzbeschrieb*. On the page: *Zielgruppen:* and
+  the intro under the hero's text; a paragraph heading *Kurse* and *Lizenzen*
+  (8 of 12 columns); the quote box after the licences and plugins, in the
+  testimonial card's frame (1px teal, 8/16px inside), teal text. The
+  collapsibles keep their names (*Kurse*, *Lizenzen*), not the docs' *Rhino
+  lernen*, *Rhino Lizenzen* and their *Schulung* / *Software* eyebrows.
+- ***Was ist …?* is a page**: `/de/angebote/{slug}/was-ist-{slug}`
+  (`SoftwareController::about`, `site/software/about.blade.php`), its body
+  the *Detailbeschrieb*, relabelled *Was ist …?* in the form (no new column:
+  only Rhino had one, our filler). Not found while empty; a wrong second slug
+  301s. The Angebot's image on top, then the text page layout, the heading
+  and a back link to the Angebot in the aside, further images under the text.
+  Meta description = the text's first 155 characters. The Angebot page lost
+  *Mehr über …* and links *Was ist {Angebot}?* from the hero. The editor has
+  no headings, so the docs' H2s are bold lines; the editor got a hint line.
+- **Four facts**: `facts.3` in the course form; the page lays four out two by
+  two from `sm`, four abreast from `lg`; three stay as legacy's three columns.
+  Existing courses keep *Gruppengrösse* inside their third column until their
+  texts are entered.
+- **EDU public**: migration `list_edu_licences` lists RHN-1091 (*EDU*),
+  RHN-1092 (*EDU Upgrade*), RHN-2008 (VisualARQ *Educational*), and
+  `licences.json` with it. Lab licences and the Education Collections stay
+  unlisted (a school's order, not a student's). **Side effect, open:** Rhino's
+  *Lizenz ab* is now **CHF 90** (EDU Upgrade), on the tile and the Rhinoceros 8
+  row; Marcel told the client 550 on 2026-11-03.
+- **Tags from the docs**: `categories.json` updated for Anima, CINEMA 4D,
+  Lumion, Premiere Pro, Unreal Engine, Veras, ZBrush, formZ;
+  `catalogue:categories --sync` lets the file win on a database that has an
+  assignment (run on dev 2026-11-09; staging step in `Deploy.md`).
+- `SoftwareShowcaseSeeder` now writes the client's Rhino copy (not ours).
+
+Not built, waiting on #71–73: the licence page per Angebot, Systemvoraussetzungen,
+plugins and topic Angebote, Maxon One. The texts of the other 29 docs are not
+entered; an import from the docx is possible once the structure settles.

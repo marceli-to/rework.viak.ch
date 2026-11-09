@@ -38,6 +38,9 @@ class SoftwareFormResource extends JsonResource
 		foreach (SaveSoftwareRequest::RICH as $field) {
 			$form[$field] = $de($field);
 		}
+		foreach (SaveSoftwareRequest::PLAIN as $field) {
+			$form[$field] = $de($field);
+		}
 		$form['licence_note'] = $de('licence_note');
 
 		$form['categories'] = $this->categories->pluck('uuid')->all();

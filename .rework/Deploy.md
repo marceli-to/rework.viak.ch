@@ -98,6 +98,13 @@ Update: `git pull && composer install --no-dev -o && php artisan migrate --force
 && php artisan search:rebuild && php artisan config:cache && php artisan
 route:cache && php artisan view:cache`.
 
+**Once, after the pull that brings the website texts (2026-11-09):**
+`php artisan catalogue:categories --sync` (`--dry-run` first). The client's
+texts changed the tags of eight Angebote; `--sync` lets the file win over what
+staging holds and gives courses their software's again. Not needed when the
+next dump replaces the database (it already carries them), and **not at the
+cutover**, where the plain run assigns from nothing.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same

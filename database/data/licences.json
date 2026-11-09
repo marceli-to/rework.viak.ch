@@ -49,7 +49,7 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": true
 					},
 					{
 						"title": "EDU Upgrade",
@@ -63,7 +63,7 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": true
 					},
 					{
 						"title": "Lab license 30 seats",
@@ -174,7 +174,7 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": true
 					}
 				]
 			},

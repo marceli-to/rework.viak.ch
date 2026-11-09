@@ -29,12 +29,20 @@ use Illuminate\Support\Facades\DB;
  * (the plugins sold under Rhinoceros), else its software's; a **course** its
  * software's, all of them. What is left without one is listed: on dev data,
  * the eight courses with no software (#66).
+ *
+ * **`--sync`** makes the file win (2026-11-09, the tags in the client's
+ * website texts, [[14-angebote]] *The website texts*): every software and
+ * product the file names gets exactly the file's categories, and every
+ * course with a software is given its software's again. For a database that
+ * already holds an assignment (dev, staging); VIAK's own choices there are
+ * overwritten, so not at the cutover, where the plain run finds nothing set.
  */
 class SeedCategories extends Command
 {
 	protected $signature = 'catalogue:categories
 		{file=database/data/categories.json : The categories and the first assignment}
-		{--dry-run : Report what would change without writing}';
+		{--dry-run : Report what would change without writing}
+		{--sync : The file wins: replace the categories of what it names; courses follow their software}';
 
 	protected $description = 'Put the five Angebot categories in place of the legacy ones';
 
@@ -122,11 +130,11 @@ class SeedCategories extends Command
 		foreach (Software::query()->with('categories')->get() as $software) {
 			$titles = $map[$software->getTranslation('title', 'de')] ?? [];
 
-			if ($software->categories->isNotEmpty() || $titles === []) {
+			if ($titles === [] || ($software->categories->isNotEmpty() && ! $this->option('sync'))) {
 				continue;
 			}
 
-			$software->categories()->attach($this->ids($titles, $categories));
+			$software->categories()->sync($this->ids($titles, $categories));
 			$this->counts['software']++;
 		}
 	}
@@ -138,17 +146,18 @@ class SeedCategories extends Command
 	private function products(array $map, array $categories): void
 	{
 		foreach (LicenceProduct::query()->with(['categories', 'software.categories'])->get() as $product) {
-			if ($product->categories->isNotEmpty()) {
+			$titles = $map[$product->getTranslation('title', 'de')] ?? null;
+
+			if ($product->categories->isNotEmpty() && ! ($this->option('sync') && $titles !== null)) {
 				continue;
 			}
 
-			$titles = $map[$product->getTranslation('title', 'de')] ?? null;
 			$ids = $titles !== null
 				? $this->ids($titles, $categories)
 				: ($product->software?->categories->modelKeys() ?? []);
 
 			if ($ids !== []) {
-				$product->categories()->attach($ids);
+				$product->categories()->sync($ids);
 				$this->counts['products']++;
 			}
 		}
@@ -158,14 +167,17 @@ class SeedCategories extends Command
 	private function courses(): void
 	{
 		foreach (Course::query()->with(['categories', 'software.categories'])->get() as $course) {
-			if ($course->categories->isNotEmpty()) {
+			// With --sync, a course with a software follows it again.
+			$resync = $this->option('sync') && $course->software->isNotEmpty();
+
+			if ($course->categories->isNotEmpty() && ! $resync) {
 				continue;
 			}
 
 			$ids = $course->software->flatMap(fn (Software $software) => $software->categories->modelKeys())->unique()->values()->all();
 
 			if ($ids !== []) {
-				$course->categories()->attach($ids);
+				$course->categories()->sync($ids);
 				$this->counts['courses']++;
 			}
 		}

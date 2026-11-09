@@ -40,10 +40,13 @@ final class CourseSchema extends Schema
 			Field::richtext('information_content'),
 			Field::richtext('summary')->label('Kursbeschreibung (PDF)'),
 
+			// Four columns since #70 (the client's website texts, 2026-11-06):
+			// Kursziel, Kursinhalt, Voraussetzungen, Gruppengrösse.
 			Field::section('Facts', [
 				Field::richtext('facts.0'),
 				Field::richtext('facts.1'),
 				Field::richtext('facts.2'),
+				Field::richtext('facts.3'),
 			]),
 
 			Field::section('Einstellungen', [
@@ -93,7 +96,7 @@ final class CourseSchema extends Schema
 			'number' => app(CourseNumber::class)->next(),
 			'title' => '', 'subtitle' => '', 'fee' => '', 'online' => false, 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'information_booking' => '', 'information_content' => '', 'summary' => '',
-			'facts' => ['', '', ''],
+			'facts' => ['', '', '', ''],
 			'categories' => [], 'languages' => [], 'levels' => [], 'software' => [], 'tags' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
 			'videos' => [],

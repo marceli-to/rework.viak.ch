@@ -42,12 +42,14 @@ class Software extends Model
 
 	protected $fillable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
+		'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
 		'information', 'licence_note', 'seo_description', 'seo_tags',
 		'order', 'publish', 'featured',
 	];
 
 	public $translatable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
+		'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
 		'information', 'licence_note', 'seo_description', 'seo_tags',
 	];
 

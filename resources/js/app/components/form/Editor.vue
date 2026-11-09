@@ -31,6 +31,7 @@ defineProps({
 	label: { type: String, default: null },
 	required: { type: Boolean, default: false },
 	error: { type: String, default: null },
+	hint: { type: String, default: null },
 });
 
 const id = useId();
@@ -161,6 +162,7 @@ const buttons = [
 		</div>
 
 		<div v-if="error" class="pt-8 text-md text-danger lg:text-lg">{{ error }}</div>
+		<div v-else-if="hint" class="pt-8 text-md text-gray-600 lg:text-lg">{{ hint }}</div>
 
 		<LinkDialog v-if="linking" :href="linking.href" :needs-text="linking.needsText" @apply="applyLink" @remove="removeLink" @close="cancelLink" />
 	</div>

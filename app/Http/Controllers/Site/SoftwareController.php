@@ -64,6 +64,29 @@ class SoftwareController extends Controller
 	}
 
 	/**
+	 * *Was ist …?* (#70, the client 2026-11-06): the *Detailbeschrieb* as a
+	 * page of its own, for Google, linked from the Angebot's hero. Not found
+	 * while the field is empty. The slug stands in the URL twice
+	 * ([[SiteUrl::softwareAbout]]); a second one that does not match is sent
+	 * to the right URL.
+	 */
+	public function about(string $slug, string $about): View|RedirectResponse
+	{
+		$software = $this->onSite()
+			->where('slug->'.app()->getLocale(), $slug)
+			->with('media')
+			->firstOrFail();
+
+		abort_if(blank($software->getTranslation('full_description', app()->getLocale(), false)), 404);
+
+		if ($about !== $slug) {
+			return redirect(SiteUrl::softwareAbout($slug), 301);
+		}
+
+		return view('site.software.about', ['software' => $software]);
+	}
+
+	/**
 	 * The list's order: by name, as the dashboard groups them.
 	 *
 	 * @return Collection<int, Software>

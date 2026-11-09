@@ -19,7 +19,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * **The payload is the form's own shape**, the one [[CourseFormResource]]
  * hands out: German strings for the texts, uuids for the taxonomies, SEO flat,
- * three facts, the videos inline. What the form loads is what it saves.
+ * four facts, the videos inline. What the form loads is what it saves.
  *
  * **What is valid is declared in [[CourseSchema]]**, with the labels the
  * messages use — the field kit's one place for them. This request keeps what
@@ -101,8 +101,10 @@ class SaveCourseRequest extends FormRequest
 		}
 
 		$existing = array_values($course?->facts ?? []);
-		$attributes['facts'] = collect(array_pad($data['facts'] ?? [], 3, null))
-			->take(3)
+		// Four since #70 (the client 2026-11-06): *Gruppengrösse* joined
+		// Kursziel, Kursinhalt and Voraussetzungen.
+		$attributes['facts'] = collect(array_pad($data['facts'] ?? [], 4, null))
+			->take(4)
 			->map(fn (?string $html, int $index) => [
 				...(is_array($existing[$index] ?? null) ? $existing[$index] : []),
 				'de' => EditorHtml::sanitize($html),

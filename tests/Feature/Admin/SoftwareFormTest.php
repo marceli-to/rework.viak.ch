@@ -97,3 +97,24 @@ it('hands out the software form', function () {
 		->assertOk()
 		->assertJsonPath('data.fields.0.name', 'title');
 });
+
+/** The Angebot page's new texts (#70, [[14-angebote]] *The website texts*). */
+it('saves the new texts in the software form, German only, empty as nothing', function () {
+	$software = Software::create(['title' => ['de' => 'Rhinoceros'], 'quote' => ['en' => 'English stays']]);
+
+	$this->actingAs($this->admin)->putJson("/api/admin/software/{$software->uuid}", softwarePayload([
+		'audiences' => '  Architektur- & Ingenieurbüros, Yachtdesign ',
+		'intro' => 'Die Visualisierungs-Akademie bietet Schulungen und Lizenzen an:',
+		'courses_intro' => 'Lerne Rhino in der Praxis.',
+		'licences_intro' => '',
+		'quote' => 'Die passende Software und das Wissen.',
+	]))->assertOk()
+		->assertJsonPath('data.audiences', 'Architektur- & Ingenieurbüros, Yachtdesign')
+		->assertJsonPath('data.licences_intro', '');
+
+	$software->refresh();
+
+	expect($software->getTranslation('courses_intro', 'de'))->toBe('Lerne Rhino in der Praxis.')
+		->and($software->getTranslation('licences_intro', 'de', false))->toBe('')
+		->and($software->getTranslation('quote', 'en'))->toBe('English stays');
+});

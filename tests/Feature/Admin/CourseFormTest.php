@@ -11,6 +11,7 @@ use App\Models\Language;
 use App\Models\Level;
 use App\Models\Software;
 use App\Models\User;
+use App\Support\SiteUrl;
 
 /**
  * The dashboard's course form — `/api/admin/courses/{course}` and its
@@ -211,4 +212,21 @@ it('flags a course for the homepage’s Beliebte Angebote, and unflags it', func
 
 	$this->putJson("/api/admin/courses/{$course->uuid}", coursePayload(['featured' => false]))->assertOk();
 	expect($course->fresh()->featured)->toBeFalse();
+});
+
+/** *Gruppengrösse* joined the facts (#70, the client 2026-11-06). */
+it('keeps four facts, Gruppengrösse the fourth, and lays four out two by two', function () {
+	$course = Course::factory()->create(['publish' => true]);
+
+	$this->actingAs($this->admin)->getJson("/api/admin/courses/{$course->uuid}")->assertJsonCount(4, 'data.facts');
+
+	$this->putJson("/api/admin/courses/{$course->uuid}", coursePayload([
+		'facts' => ['<p>Kursziel</p>', '<p>Kursinhalt</p>', '<p>Voraussetzungen</p>', '<p><strong>Gruppengrösse:</strong> 4 bis 8</p>'],
+	]))->assertOk();
+
+	expect($course->refresh()->facts[3])->toBe(['de' => '<p><strong>Gruppengrösse:</strong> 4 bis 8</p>']);
+
+	$this->get(SiteUrl::course($course->getTranslation('slug', 'de')))->assertOk()
+		->assertSeeInOrder(['Kursziel', 'Kursinhalt', 'Voraussetzungen', 'Gruppengrösse:'])
+		->assertSee('sm:col-span-6 lg:col-span-3', false);
 });
