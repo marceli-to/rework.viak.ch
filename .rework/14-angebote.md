@@ -603,6 +603,13 @@ order**, with the collapsible sections the form already had:
 - **Seite «Was ist …?»**: the text;
 - then Einstellungen, Empfehlungen, Bilder, SEO as before.
 
+**Revised the same day (Marcel): one section per page.** The header fields
+sat above *Seite «Angebot»* though they fill that page too, so they moved in:
+only *Titel* stands above (it names the record everywhere), then *Seite
+«Angebot»* with Kurzbeschrieb, Zielgruppen, Einleitung, the two section
+intros, Lizenz-Hinweis and Zitatbox, then *Seite «Was ist …?»*. A *Seite «…
+Lizenzen»* section follows the same rule if #71 is yes.
+
 Every section shut on load, Einstellungen included (Marcel, same day). Each page's section opens with *Seite ansehen*, a link to the page as saved, in a new tab (`preview` on the section, the resource's `url` / `about_url`); the public page needs the Angebot published.
 
 **Subtitel and Weitere Informationen left the form**: the client's texts have

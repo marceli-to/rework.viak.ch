@@ -37,21 +37,20 @@ final class SoftwareSchema extends Schema
 				},
 			]),
 			/*
-			 * Grouped by the page each text fills, in that page's order (Marcel,
-			 * 2026-11-09, [[14-angebote]] *The form, by page*): the Angebot
-			 * page's header open above, then its sections, then *Was ist …?*. Each
-			 * page's section links to the page as saved (`preview`).
+			 * **One section per page**, each with that page's texts in its order
+			 * and a link to the page as saved (`preview`) (Marcel, 2026-11-09,
+			 * [[14-angebote]] *The form, by page*). Only the title stands above:
+			 * it names the record everywhere, not one page.
 			 * *Subtitel* and *Weitere Informationen* left the form: the client's
 			 * texts have neither. Their columns stay, and the page still shows
 			 * what they hold.
 			 */
-			Field::richtext('short_description')->label('Kurzbeschrieb'),
-			Field::textarea('audiences')->label('Zielgruppen')->rules(['max:1000'])
-				->with(['rows' => 2, 'hint' => 'Eine Zeile, zum Beispiel «Architektur- & Ingenieurbüros, Industrial Design».']),
-			Field::textarea('intro')->label('Einleitung')->rules(['max:1000'])
-				->with(['rows' => 2, 'hint' => 'Ein Satz, der zu Kurse und Lizenzen überleitet.']),
-
 			Field::section('Seite «Angebot»', [
+				Field::richtext('short_description')->label('Kurzbeschrieb'),
+				Field::textarea('audiences')->label('Zielgruppen')->rules(['max:1000'])
+					->with(['rows' => 2, 'hint' => 'Eine Zeile, zum Beispiel «Architektur- & Ingenieurbüros, Industrial Design».']),
+				Field::textarea('intro')->label('Einleitung')->rules(['max:1000'])
+					->with(['rows' => 2, 'hint' => 'Ein Satz, der zu Kurse und Lizenzen überleitet.']),
 				Field::textarea('courses_intro')->label('Einleitung Kurse')->rules(['max:1000'])->with(['rows' => 2]),
 				Field::textarea('licences_intro')->label('Einleitung Lizenzen')->rules(['max:1000'])->with(['rows' => 2]),
 				// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
