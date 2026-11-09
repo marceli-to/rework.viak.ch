@@ -111,7 +111,7 @@ onMounted(async () => {
 
 					<!-- Room under the software's pencil before the first product's rule,
 					     which otherwise ran into it (Marcel, 2026-11-09). -->
-					<div aria-hidden="true" class="h-24 sm:h-32" />
+					<div aria-hidden="true" class="h-12 sm:h-16" />
 
 					<EditableListItem
 						v-for="item in entry.products"

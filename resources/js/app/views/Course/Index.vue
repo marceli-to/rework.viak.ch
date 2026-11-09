@@ -138,7 +138,7 @@ onMounted(async () => {
 
 				<!-- Room under the course's pencil before the first row's rule, as on
 				     the Software list (Marcel, 2026-11-09). -->
-				<div aria-hidden="true" class="h-24 sm:h-32" />
+				<div aria-hidden="true" class="h-12 sm:h-16" />
 
 				<EventRow v-for="event in course.events" :key="event.uuid" :event="event" />
 				<NoResults v-if="!course.events.length">Es sind keine Veranstaltungen vorhanden.</NoResults>
