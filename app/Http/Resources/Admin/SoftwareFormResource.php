@@ -27,7 +27,6 @@ class SoftwareFormResource extends JsonResource
 			'uuid' => $this->uuid,
 			'url' => SiteUrl::software($this->getTranslation('slug', 'de'), 'de'),
 			'title' => $de('title'),
-			'subtitle' => $de('subtitle'),
 			'publish' => $this->publish,
 			'featured' => $this->featured,
 			// What keeps it from being deleted ([[SoftwareController::destroy]]).

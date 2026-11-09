@@ -17,8 +17,12 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class SaveSoftwareRequest extends FormRequest
 {
-	/** The editor's fields, cleaned before they are stored ([[EditorHtml]]). */
-	public const RICH = ['short_description', 'full_description', 'information'];
+	/**
+	 * The editor's fields, cleaned before they are stored ([[EditorHtml]]).
+	 * *Subtitel* and *Weitere Informationen* left the form on 2026-11-09 and
+	 * are not written: what they hold stays.
+	 */
+	public const RICH = ['short_description', 'full_description'];
 
 	/** The Angebot page's plain texts (#70), trimmed, empty as null. */
 	public const PLAIN = ['audiences', 'intro', 'courses_intro', 'licences_intro', 'quote'];
@@ -52,7 +56,6 @@ class SaveSoftwareRequest extends FormRequest
 
 		$attributes = [
 			'title' => ['de' => $data['title']],
-			'subtitle' => $de($data['subtitle'] ?? null),
 			'licence_note' => $de(isset($data['licence_note']) ? trim($data['licence_note']) : null),
 			'seo_description' => $de($data['seo_description'] ?? null),
 			'seo_tags' => $de($data['seo_tags'] ?? null),

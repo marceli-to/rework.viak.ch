@@ -20,10 +20,8 @@ function softwarePayload(array $overrides = []): array
 {
 	return [
 		'title' => 'Rhinoceros',
-		'subtitle' => 'Präzises Freiform-Modellieren',
 		'short_description' => '<p>Rhino ist das Werkzeug.</p>',
 		'full_description' => '<p>Präzision statt Polygone.</p>',
-		'information' => '',
 		'categories' => [],
 		'publish' => true,
 		'featured' => true,
@@ -55,19 +53,24 @@ it('makes the slug once, from the title, through any door', function () {
 });
 
 it('saves the copy, the categories and the SEO, German only', function () {
-	$software = Software::create(['title' => ['de' => 'Rhinoceros', 'en' => 'Rhinoceros'], 'subtitle' => ['en' => 'Freeform']]);
+	$software = Software::create([
+		'title' => ['de' => 'Rhinoceros', 'en' => 'Rhinoceros'], 'subtitle' => ['de' => 'Alt', 'en' => 'Freeform'],
+		'information' => ['de' => '<p>Info</p>'],
+	]);
 	$category = Category::create(['title' => ['de' => 'Architektur'], 'order' => 1, 'publish' => true]);
 
 	$this->actingAs($this->admin)
 		->putJson("/api/admin/software/{$software->uuid}", softwarePayload(['categories' => [$category->uuid]]))
 		->assertOk()
-		->assertJsonPath('data.subtitle', 'Präzises Freiform-Modellieren')
 		->assertJsonPath('data.categories', [$category->uuid])
 		->assertJsonPath('data.seo_description', 'Rhino-Lizenzen und Kurse');
 
 	$software->refresh();
 	expect($software->featured)->toBeTrue()
 		->and($software->getTranslation('subtitle', 'en'))->toBe('Freeform')
+		// Off the form since 2026-11-09: a save leaves what it holds.
+		->and($software->getTranslation('subtitle', 'de'))->toBe('Alt')
+		->and($software->getTranslation('information', 'de'))->toBe('<p>Info</p>')
 		->and($software->getTranslation('full_description', 'de'))->toBe('<p>Präzision statt Polygone.</p>');
 });
 

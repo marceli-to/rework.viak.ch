@@ -589,3 +589,23 @@ part to be built.
 Not built, waiting on #71–73: the licence page per Angebot, Systemvoraussetzungen,
 plugins and topic Angebote, Maxon One. The texts of the other 29 docs are not
 entered; an import from the docx is possible once the structure settles.
+
+### The form, by page (Marcel, 2026-11-09)
+
+The software form had eleven texts in one run, for two pages (three if #71
+is yes), with nothing saying which. **Grouped by the page each fills, in its
+order**, with the collapsible sections the form already had:
+
+- open at the top, the Angebot page's header: Titel, Kurzbeschrieb,
+  Zielgruppen, Einleitung;
+- **Angebotsseite** (open): Einleitung Kurse, Einleitung Lizenzen,
+  Lizenz-Hinweis, Zitatbox;
+- **Seite «Was ist …?»** (open): the text;
+- then Einstellungen, Empfehlungen, Bilder, SEO as before.
+
+**Subtitel and Weitere Informationen left the form**: the client's texts have
+neither, and no Angebot held either but our Rhino filler. Their columns stay,
+a save does not touch them, and the page still shows what they hold. A
+*Seite «… Lizenzen»* section (intro line, Systemvoraussetzungen) comes with #71
+if the answer is yes. Tabs and a screen per page were weighed and left: the
+dashboard has no tabs, and one record wants one save.

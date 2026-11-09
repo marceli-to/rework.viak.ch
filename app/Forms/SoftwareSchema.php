@@ -36,23 +36,34 @@ final class SoftwareSchema extends Schema
 					}
 				},
 			]),
-			Field::textarea('subtitle')->label('Subtitel')->rules(['max:1000']),
+			/*
+			 * Grouped by the page each text fills, in that page's order (Marcel,
+			 * 2026-11-09, [[14-angebote]] *The form, by page*): the Angebot
+			 * page's header open above, then its sections, then *Was ist …?*.
+			 * *Subtitel* and *Weitere Informationen* left the form: the client's
+			 * texts have neither. Their columns stay, and the page still shows
+			 * what they hold.
+			 */
 			Field::richtext('short_description')->label('Kurzbeschrieb'),
-			// The client's website texts, all optional ([[14-angebote]], *The website texts*, #70).
 			Field::textarea('audiences')->label('Zielgruppen')->rules(['max:1000'])
-				->with(['rows' => 2, 'hint' => 'Eine Zeile, zum Beispiel «Architektur- & Ingenieurbüros, Industrial Design». Steht unter dem Kurzbeschrieb.']),
+				->with(['rows' => 2, 'hint' => 'Eine Zeile, zum Beispiel «Architektur- & Ingenieurbüros, Industrial Design».']),
 			Field::textarea('intro')->label('Einleitung')->rules(['max:1000'])
-				->with(['rows' => 2, 'hint' => 'Ein Satz unter den Zielgruppen, vor Kurse und Lizenzen.']),
-			Field::textarea('courses_intro')->label('Einleitung Kurse')->rules(['max:1000'])->with(['rows' => 2]),
-			Field::textarea('licences_intro')->label('Einleitung Lizenzen')->rules(['max:1000'])->with(['rows' => 2]),
-			Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
+				->with(['rows' => 2, 'hint' => 'Ein Satz, der zu Kurse und Lizenzen überleitet.']),
+
+			Field::section('Angebotsseite', [
+				Field::textarea('courses_intro')->label('Einleitung Kurse')->rules(['max:1000'])->with(['rows' => 2]),
+				Field::textarea('licences_intro')->label('Einleitung Lizenzen')->rules(['max:1000'])->with(['rows' => 2]),
+				// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
+				Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
+					->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
+				Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
+			])->with(['open' => true]),
+
 			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
-			Field::richtext('full_description')->label('Was ist …?')
-				->with(['hint' => 'Eigene Seite, auf der Angebotsseite verlinkt. Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile.']),
-			Field::richtext('information')->label('Weitere Informationen'),
-			// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
-			Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
-				->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
+			Field::section('Seite «Was ist …?»', [
+				Field::richtext('full_description')
+					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
+			])->with(['open' => true]),
 
 			Field::section('Einstellungen', [
 				Field::row([
@@ -79,8 +90,8 @@ final class SoftwareSchema extends Schema
 	public function defaults(): array
 	{
 		return [
-			'title' => '', 'subtitle' => '', 'publish' => false, 'featured' => false,
-			'short_description' => '', 'full_description' => '', 'information' => '', 'licence_note' => '',
+			'title' => '', 'publish' => false, 'featured' => false,
+			'short_description' => '', 'full_description' => '', 'licence_note' => '',
 			'audiences' => '', 'intro' => '', 'courses_intro' => '', 'licences_intro' => '', 'quote' => '',
 			'categories' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
