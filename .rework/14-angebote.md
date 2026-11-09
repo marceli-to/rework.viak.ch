@@ -516,3 +516,31 @@ Kursziel, Kursinhalt, Voraussetzungen), *Weitere Informationen* =
   section intros for Kurse and Lizenzen, a quote box. Not built.
 - ***Gruppengrösse*** is a fourth fact: into Voraussetzungen, or a fourth field.
 - No *Plugins* in the document: it predates #67; the section stays.
+
+### The website texts (#70 answered, 2026-11-06)
+
+Oliver's answer to the mail above, with 30 docs in `.rework/content/`
+(`00_fertig_Webseitentexte_*.docx`, superseded versions in `Archiv/`); more
+(the KI courses, the plugin list, the software list, the old sitemap) promised
+the week of 2026-11-09.
+
+- **EDU licences are public**, reversing #1/#36 ("we adjust later if needed").
+- **Gruppengrösse is a fourth fact.** Every course doc fills it.
+- **The new optional Angebot fields are wanted**: Zielgruppen, an intro line,
+  section intros for Kurse and Lizenzen, a quote box. Every overview doc has
+  them in the same order.
+- ***Was ist …?* is a page of its own** per Angebot (for Google), linked from
+  the Angebot page: title, intro, *Woher kommt …?*, *Für wen ist …?*.
+- **A licence page per Angebot** (`Software/X`), not per licence and not per
+  product: each licence an H3 with text, price, CTA, the Systemvoraussetzungen
+  at the foot. It would replace the product page with the dropdown. Per-licence
+  texts are all placeholders. Asked as #71.
+- **The docs go beyond the answer**: plugins as Angebote (#72, against #67);
+  Angebote without software and Maxon One split from Cinema 4D (#73).
+- The tags in the PS are the five already seeded; the docs' per-Angebot tags
+  differ from `categories.json` in places (Anima, formZ, Lumion, ZBrush,
+  Cinema 4D, Veras) and are to be taken from the docs.
+- Every course doc repeats one fixed paragraph about Nightnurse Images: a
+  template block, not a field.
+
+Reply with #71–73: `~/Desktop/Webseitentexte-Antwort-Oliver.txt` (2026-11-09).
