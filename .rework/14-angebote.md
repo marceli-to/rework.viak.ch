@@ -598,12 +598,12 @@ order**, with the collapsible sections the form already had:
 
 - open at the top, the Angebot page's header: Titel, Kurzbeschrieb,
   Zielgruppen, Einleitung;
-- **Angebotsseite**: Einleitung Kurse, Einleitung Lizenzen,
+- **Seite «Angebot»**: Einleitung Kurse, Einleitung Lizenzen,
   Lizenz-Hinweis, Zitatbox;
 - **Seite «Was ist …?»**: the text;
 - then Einstellungen, Empfehlungen, Bilder, SEO as before.
 
-Every section shut on load, Einstellungen included (Marcel, same day).
+Every section shut on load, Einstellungen included (Marcel, same day). Each page's section opens with *Seite ansehen*, a link to the page as saved, in a new tab (`preview` on the section, the resource's `url` / `about_url`); the public page needs the Angebot published.
 
 **Subtitel and Weitere Informationen left the form**: the client's texts have
 neither, and no Angebot held either but our Rhino filler. Their columns stay,

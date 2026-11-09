@@ -113,7 +113,9 @@ it('saves the new texts in the software form, German only, empty as nothing', fu
 		'quote' => 'Die passende Software und das Wissen.',
 	]))->assertOk()
 		->assertJsonPath('data.audiences', 'Architektur- & Ingenieurbüros, Yachtdesign')
-		->assertJsonPath('data.licences_intro', '');
+		->assertJsonPath('data.licences_intro', '')
+		// *Seite ansehen* in the «Was ist …?» section, once there is a text.
+		->assertJsonPath('data.about_url', '/de/angebote/rhinoceros/was-ist-rhinoceros');
 
 	$software->refresh();
 

@@ -26,6 +26,10 @@ class SoftwareFormResource extends JsonResource
 		$form = [
 			'uuid' => $this->uuid,
 			'url' => SiteUrl::software($this->getTranslation('slug', 'de'), 'de'),
+			// *Seite ansehen* in the form's «Was ist …?» section: only once there is a page.
+			'about_url' => filled($this->getTranslation('full_description', 'de', false))
+				? SiteUrl::softwareAbout($this->getTranslation('slug', 'de'), 'de')
+				: null,
 			'title' => $de('title'),
 			'publish' => $this->publish,
 			'featured' => $this->featured,

@@ -39,7 +39,8 @@ final class SoftwareSchema extends Schema
 			/*
 			 * Grouped by the page each text fills, in that page's order (Marcel,
 			 * 2026-11-09, [[14-angebote]] *The form, by page*): the Angebot
-			 * page's header open above, then its sections, then *Was ist …?*.
+			 * page's header open above, then its sections, then *Was ist …?*. Each
+			 * page's section links to the page as saved (`preview`).
 			 * *Subtitel* and *Weitere Informationen* left the form: the client's
 			 * texts have neither. Their columns stay, and the page still shows
 			 * what they hold.
@@ -50,20 +51,20 @@ final class SoftwareSchema extends Schema
 			Field::textarea('intro')->label('Einleitung')->rules(['max:1000'])
 				->with(['rows' => 2, 'hint' => 'Ein Satz, der zu Kurse und Lizenzen überleitet.']),
 
-			Field::section('Angebotsseite', [
+			Field::section('Seite «Angebot»', [
 				Field::textarea('courses_intro')->label('Einleitung Kurse')->rules(['max:1000'])->with(['rows' => 2]),
 				Field::textarea('licences_intro')->label('Einleitung Lizenzen')->rules(['max:1000'])->with(['rows' => 2]),
 				// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
 				Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
 					->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
 				Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			]),
+			])->with(['preview' => 'url']),
 
 			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
 			Field::section('Seite «Was ist …?»', [
 				Field::richtext('full_description')
 					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
-			]),
+			])->with(['preview' => 'about_url']),
 
 			Field::section('Einstellungen', [
 				Field::row([

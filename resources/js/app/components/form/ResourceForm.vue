@@ -62,7 +62,7 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 			</template>
 
 			<fieldset class="min-w-0" :disabled="!creating && locked(meta)" :class="{ 'pointer-events-none opacity-40 select-none': !creating && locked(meta) }">
-				<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" />
+				<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" :meta="meta" />
 
 				<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>
 

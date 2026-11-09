@@ -37,6 +37,8 @@ const props = defineProps({
 	errors: { type: Object, default: () => ({}) },
 	path: { type: String, default: '' },
 	record: { type: String, default: null },
+	// The record's read-only rest (`url`…), for a section's `preview` link.
+	meta: { type: Object, default: () => ({}) },
 });
 
 const CUSTOM = { images: ImageSection, variants: VariantSection };
@@ -106,12 +108,12 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 
 	<!-- *min.* / *max. Teilnehmer*: two columns, as legacy's `span-6` pair. -->
 	<div v-else-if="field.type === 'row' && field.columns" class="grid grid-cols-2 gap-x-16 lg:gap-x-40">
-		<FormNode v-for="child in field.fields" :key="child.name" :field="child" :model="model" :errors="errors" :path="path" :record="record" />
+		<FormNode v-for="child in field.fields" :key="child.name" :field="child" :model="model" :errors="errors" :path="path" :record="record" :meta="meta" />
 	</div>
 
 	<!-- *Onlinekurs* / *Publizieren*: side by side, closed by a rule. -->
 	<div v-else-if="field.type === 'row'" class="mb-32 flex gap-x-64 border-b border-black pb-24 lg:gap-x-80">
-		<FormNode v-for="child in field.fields" :key="child.name" :field="child" :model="model" :errors="errors" :path="path" :record="record" />
+		<FormNode v-for="child in field.fields" :key="child.name" :field="child" :model="model" :errors="errors" :path="path" :record="record" :meta="meta" />
 	</div>
 
 	<!-- `count`: a section that holds one list says how many are ticked, shut or open
@@ -119,7 +121,13 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<Collapsible v-else-if="field.type === 'section'" :expanded="field.open" :invalid="invalid" :count="field.count ? (get(model, field.count) ?? []).length : 0">
 		<template #title>{{ field.label }}</template>
 		<div class="mt-16">
-			<FormNode v-for="(child, index) in field.fields" :key="child.name ?? index" :field="child" :model="model" :errors="errors" :path="path" :record="record" />
+			<!-- `preview`: the `meta` key holding the page this section fills; a link
+			     to it as saved, in a new tab (Marcel, 2026-11-09). -->
+			<p v-if="field.preview && meta[field.preview]" class="mb-24 text-md lg:text-lg">
+				<a :href="meta[field.preview]" target="_blank" rel="noopener" class="text-teal hover:text-black">Seite ansehen</a>
+				<span class="text-gray-600"> (gespeicherter Stand, nur wenn publiziert)</span>
+			</p>
+			<FormNode v-for="(child, index) in field.fields" :key="child.name ?? index" :field="child" :model="model" :errors="errors" :path="path" :record="record" :meta="meta" />
 		</div>
 	</Collapsible>
 
@@ -132,7 +140,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		<h3 class="mb-12 font-bold sm:text-lg lg:mb-16 lg:text-xl" :class="{ 'text-danger': error }">{{ field.label }}<template v-if="field.required"> *</template></h3>
 		<div v-for="(row, index) in rows" :key="index" class="flex items-start gap-x-16 lg:gap-x-32">
 			<div v-for="child in field.fields" :key="child.name" class="min-w-0 flex-1">
-				<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
+				<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" :meta="meta" />
 			</div>
 			<!-- An empty label and an input's line, so the bin sits on the inputs
 			     at every size and stays there when an error grows a column. -->
@@ -159,7 +167,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<div v-else-if="field.type === 'repeater' && field.removeBelow">
 		<div v-for="(row, index) in rows" :key="row.uuid ?? `neu-${index}`" class="mb-32">
 			<div class="border-b border-black pb-24">
-				<FormNode v-for="(child, position) in field.fields" :key="child.name ?? position" :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
+				<FormNode v-for="(child, position) in field.fields" :key="child.name ?? position" :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" :meta="meta" />
 			</div>
 			<div class="mt-16 flex items-center justify-between">
 				<button v-if="index === rows.length - 1" type="button" :title="field.add ?? 'Hinzufügen'" class="block hover:text-teal" @click="add">
@@ -182,10 +190,10 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		<div v-for="(row, index) in rows" :key="row.uuid ?? `neu-${index}`" class="mb-32 border-b border-black pb-24">
 			<template v-for="(child, position) in field.fields" :key="child.name ?? position">
 				<div v-if="child.type === 'checkbox'" class="flex items-center justify-between">
-					<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
+					<FormNode :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" :meta="meta" />
 					<button type="button" class="transition-colors hover:text-teal sm:text-lg lg:text-xl" @click="rows.splice(index, 1)">Entfernen</button>
 				</div>
-				<FormNode v-else :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" />
+				<FormNode v-else :field="child" :model="row" :errors="errors" :path="`${key}.${index}.`" :record="record" :meta="meta" />
 			</template>
 			<!-- A row with no checkbox to sit beside (an invoice address) takes it on a line of its own. -->
 			<div v-if="!field.fields.some((child) => child.type === 'checkbox')" class="flex justify-end">
