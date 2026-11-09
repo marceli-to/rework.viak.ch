@@ -57,13 +57,13 @@ final class SoftwareSchema extends Schema
 				Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
 					->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
 				Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['open' => true]),
+			]),
 
 			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
 			Field::section('Seite «Was ist …?»', [
 				Field::richtext('full_description')
 					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
-			])->with(['open' => true]),
+			]),
 
 			Field::section('Einstellungen', [
 				Field::row([
@@ -72,7 +72,7 @@ final class SoftwareSchema extends Schema
 					Field::checkbox('featured')->label('Beliebt'),
 				]),
 				Field::checkboxes('categories', Category::class)->label('Kategorien'),
-			])->with(['open' => true]),
+			]),
 
 			// Saved on their own, each action at once ([[ImageSection]]).
 			// *Das könnte dich auch interessieren* under the page and in the basket ([[Recommendations]]).
