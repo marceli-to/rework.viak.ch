@@ -31,6 +31,7 @@ class LicenceVariantFormResource extends JsonResource
 			'min_quantity' => $this->min_quantity ?? '',
 			'note' => $this->getTranslation('note', 'de', false) ?: '',
 			'listed' => $this->listed,
+			'education' => $this->education,
 			// For the list's row, not sent back: what the shop's dropdown will say.
 			'label' => $this->shopLabel(),
 			// For the title and the way back, not sent back.

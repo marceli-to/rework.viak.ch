@@ -574,9 +574,12 @@ part to be built.
 - **EDU public**: migration `list_edu_licences` lists RHN-1091 (*EDU*),
   RHN-1092 (*EDU Upgrade*), RHN-2008 (VisualARQ *Educational*), and
   `licences.json` with it. Lab licences and the Education Collections stay
-  unlisted (a school's order, not a student's). **Side effect, open:** Rhino's
-  *Lizenz ab* is now **CHF 90** (EDU Upgrade), on the tile and the Rhinoceros 8
-  row; Marcel told the client 550 on 2026-11-03.
+  unlisted (a school's order, not a student's). That made Rhino read *Lizenz
+  ab CHF 90* (EDU Upgrade). **Settled the same day (Marcel):** a variant has an
+  *Ausbildungslizenz* checkbox (`licence_variants.education`, set by migration
+  on the 12 EDU, lab and university SKUs and in `licences.json`, badge
+  *Ausbildung* in the dashboard list), and `LicenceProduct::fromPrice` leaves
+  those out unless a product has nothing else. Rhino reads 550 again.
 - **Tags from the docs**: `categories.json` updated for Anima, CINEMA 4D,
   Lumion, Premiere Pro, Unreal Engine, Veras, ZBrush, formZ;
   `catalogue:categories --sync` lets the file win on a database that has an

@@ -123,14 +123,20 @@ class LicenceProduct extends Model
 		return array_values(array_filter(array_map('trim', preg_split('/\R/u', $text) ?: []), 'strlen'));
 	}
 
-	/** "ab CHF …": the cheapest listed variant that costs something; a demo is not a price. */
+	/**
+	 * "ab CHF …": the cheapest listed variant that costs something; a demo is
+	 * not a price. **An Ausbildungslizenz only where there is nothing else**
+	 * (Marcel, 2026-11-09): with EDU in the shop (#70) Rhinoceros 8 read
+	 * *ab CHF 90*, its EDU Upgrade, and now reads its own 550 again.
+	 */
 	public function fromPrice(): ?string
 	{
-		return $this->variants
+		[$education, $others] = $this->variants
 			->filter(fn (LicenceVariant $variant) => $variant->listed && bccomp($variant->price, '0', 2) > 0)
 			->sortBy(fn (LicenceVariant $variant) => (float) $variant->price)
-			->first()
-			?->price;
+			->partition->education;
+
+		return ($others->first() ?? $education->first())?->price;
 	}
 
 	/**

@@ -43,6 +43,7 @@ class LicenceProductFormResource extends JsonResource
 				'note' => $variant->getTranslation('note', 'de', false) ?: '',
 				'min_quantity' => $variant->min_quantity ?? '',
 				'listed' => $variant->listed,
+				'education' => $variant->education,
 			])->values()->all(),
 			// For the list, not sent back.
 			'group' => $this->software->getTranslation('title', 'de'),

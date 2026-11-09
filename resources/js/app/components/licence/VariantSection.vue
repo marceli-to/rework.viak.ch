@@ -85,6 +85,7 @@ onMounted(async () => {
 						<Badge>{{ item.sku }}</Badge>
 						<Badge>CHF {{ price(item.price) }}</Badge>
 						<Badge v-if="item.min_quantity">mind. {{ item.min_quantity }}</Badge>
+						<Badge v-if="item.education">Ausbildung</Badge>
 						<Badge v-if="!item.listed">Nur manuell</Badge>
 					</span>
 				</div>

@@ -160,6 +160,7 @@ class ImportLicences extends Command
 			'note' => $row['note'] === null ? null : ['de' => $row['note']],
 			'min_quantity' => $row['min_quantity'],
 			'listed' => $row['listed'],
+			'education' => $row['education'] ?? false,
 			'order' => $order,
 		];
 

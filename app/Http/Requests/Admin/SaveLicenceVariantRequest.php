@@ -52,6 +52,7 @@ class SaveLicenceVariantRequest extends FormRequest
 			'note' => blank($data['note'] ?? null) ? null : ['de' => $data['note']],
 			'min_quantity' => blank($data['min_quantity'] ?? null) ? null : (int) $data['min_quantity'],
 			'listed' => (bool) ($data['listed'] ?? false),
+			'education' => (bool) ($data['education'] ?? false),
 		];
 	}
 }

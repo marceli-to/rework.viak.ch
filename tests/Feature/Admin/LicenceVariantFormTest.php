@@ -115,3 +115,13 @@ it('deletes a variant softly', function () {
 
 	expect(LicenceVariant::withTrashed()->find($variant->id)->trashed())->toBeTrue();
 });
+
+it('marks an Ausbildungslizenz', function () {
+	$uuid = $this->actingAs($this->admin)
+		->postJson("/api/admin/licences/{$this->product->uuid}/variants", variantPayload(['education' => true]))
+		->assertCreated()
+		->assertJsonPath('data.education', true)
+		->json('data.uuid');
+
+	expect(LicenceVariant::where('uuid', $uuid)->first()->education)->toBeTrue();
+});

@@ -49,7 +49,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": true
+						"listed": true,
+						"education": true
 					},
 					{
 						"title": "EDU Upgrade",
@@ -63,7 +64,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": true
+						"listed": true,
+						"education": true
 					},
 					{
 						"title": "Lab license 30 seats",
@@ -77,7 +79,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					},
 					{
 						"title": "Lab license 30 seats Upgrade",
@@ -91,7 +94,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					}
 				]
 			},
@@ -174,7 +178,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": true
+						"listed": true,
+						"education": true
 					}
 				]
 			},
@@ -503,7 +508,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					},
 					{
 						"title": "University 15-29 seats",
@@ -517,7 +523,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					},
 					{
 						"title": "University 30-49 seats",
@@ -531,7 +538,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					},
 					{
 						"title": "University 50-74 seats",
@@ -545,7 +553,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					},
 					{
 						"title": "University 100+ seats",
@@ -559,7 +568,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					}
 				]
 			}
@@ -1074,7 +1084,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					},
 					{
 						"title": "University 100+ seats",
@@ -1088,7 +1099,8 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": false
+						"listed": false,
+						"education": true
 					}
 				]
 			}

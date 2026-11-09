@@ -83,3 +83,16 @@ it('marks the six plugins under Rhinoceros on import', function () {
 	expect(LicenceProduct::where('plugin', true)->get()->map(fn (LicenceProduct $product) => $product->getTranslation('title', 'de'))->sort()->values()->all())
 		->toBe(['Bongo 2', 'Drakon', 'Karamba3D PRO', 'Lands Design 6', 'MatrixGold', 'VisualARQ 3']);
 });
+
+/** With EDU in the shop (#70), an Ausbildungslizenz is no "ab" price (Marcel, 2026-11-09). */
+it('leaves an Ausbildungslizenz out of the from-price, unless there is nothing else', function () {
+	$rhino = rhinoWithBongo();
+	$product = LicenceProduct::where('title->de', 'Rhinoceros 8')->first();
+	$edu = LicenceVariant::factory()->for($product, 'product')->create(['price' => '90.00', 'listed' => true, 'education' => true]);
+
+	expect($product->fresh()->fromPrice())->toBe('550.00')
+		->and($rhino->fresh()->licenceFrom())->toBe('550.00');
+
+	$product->variants()->whereKeyNot($edu->id)->delete();
+	expect($product->fresh()->fromPrice())->toBe('90.00');
+});

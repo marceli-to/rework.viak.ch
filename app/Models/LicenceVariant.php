@@ -34,7 +34,7 @@ class LicenceVariant extends Model
 	use IndexedForSearch;
 	use SoftDeletes;
 
-	protected $fillable = ['licence_product_id', 'title', 'sku', 'price', 'licence_type', 'access', 'platforms', 'note', 'min_quantity', 'listed', 'order'];
+	protected $fillable = ['licence_product_id', 'title', 'sku', 'price', 'licence_type', 'access', 'platforms', 'note', 'min_quantity', 'listed', 'education', 'order'];
 
 	/** @var array<int, string> */
 	public $translatable = ['title', 'note'];
@@ -48,6 +48,7 @@ class LicenceVariant extends Model
 			'platforms' => AsEnumCollection::of(Platform::class),
 			'min_quantity' => 'integer',
 			'listed' => 'boolean',
+			'education' => 'boolean',
 			'order' => 'integer',
 		];
 	}
