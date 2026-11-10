@@ -618,3 +618,27 @@ a save does not touch them, and the page still shows what they hold. A
 *Seite «… Lizenzen»* section (intro line, Systemvoraussetzungen) comes with #71
 if the answer is yes. Tabs and a screen per page were weighed and left: the
 dashboard has no tabs, and one record wants one save.
+
+### The texts for every Angebot (2026-11-10)
+
+Rhino was the only page with the client's texts; the rest of the docs went in
+the next day (Marcel). **`catalogue:texts`** writes them from
+`database/data/texts.json`, read out of `.rework/content/` once (a script,
+not kept: the docs are not in the repo). Per Angebot the page's Kurzbeschrieb,
+Zielgruppen, Einleitung, the two section intros, Zitatbox, and *Was ist …?*
+(its H2s as bold lines, as Rhino's). Course pages and licence pages in the
+docs are not read.
+
+**22 Angebote plus Rhino.** Seven docs wait: Bongo, Karamba3D, VisualARQ
+(plugins, #72); Maxon One, Architekturfotografie, Architekturvisualisierung,
+KI-Video (no record, #73). Doc names map to titles by hand (Drakon3D →
+Drakon, Corona → Corona Renderer, SketchUp → SketchUp Pro).
+
+**The client's en dashes stay** (52 of them): their copy, verbatim, and the
+no-long-dash rule is about the em dash in our text. Rhino's were rewritten by
+us on 2026-11-09 and the command does not touch a filled field, so Rhino
+keeps that version.
+
+Veras's doc names *Enscape lernen* over its course intro; the intro itself is
+about Enscape with Veras, taken as written.
+

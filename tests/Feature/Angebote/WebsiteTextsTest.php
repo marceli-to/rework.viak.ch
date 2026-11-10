@@ -65,3 +65,39 @@ it('sends a Was ist URL with the wrong name to the right one, and an unknown Ang
 	$this->get('/de/angebote/rhinoceros/was-ist-rhino')->assertRedirect('/de/angebote/rhinoceros/was-ist-rhinoceros')->assertStatus(301);
 	$this->get('/de/angebote/v-ray/was-ist-v-ray')->assertNotFound();
 });
+
+it('fills empty texts from the file, keeps what is written, and overwrites with --force', function () {
+	$file = 'storage/framework/testing-texts.json';
+	file_put_contents(base_path($file), json_encode([
+		'Rhinoceros' => ['doc' => 'x.docx', 'audiences' => 'Yachtdesign', 'quote' => 'Aus einer Hand.', 'short_description' => '<p>Neu.</p>'],
+		'Maxon One' => ['audiences' => 'Motion Design'],
+	]));
+	$rhino = rhinoWithTexts();
+
+	$this->artisan('catalogue:texts', ['file' => $file])->assertSuccessful()->expectsOutputToContain('No Angebot «Maxon One»');
+	$rhino->refresh();
+	expect($rhino->getTranslation('audiences', 'de'))->toBe('Yachtdesign')
+		->and($rhino->getTranslation('quote', 'de'))->toBe('Aus einer Hand.')
+		->and($rhino->getTranslation('short_description', 'de'))->toBe('<p>Hochpräzise 3D-Modelliersoftware.</p>');
+
+	$this->artisan('catalogue:texts', ['file' => $file, '--force' => true, '--dry-run' => true])->assertSuccessful();
+	expect($rhino->refresh()->getTranslation('short_description', 'de'))->toBe('<p>Hochpräzise 3D-Modelliersoftware.</p>');
+
+	$this->artisan('catalogue:texts', ['file' => $file, '--force' => true])->assertSuccessful();
+	expect($rhino->refresh()->getTranslation('short_description', 'de'))->toBe('<p>Neu.</p>');
+
+	unlink(base_path($file));
+});
+
+it('has a text for every Angebot it names, and every one of them exists in the catalogue file', function () {
+	$texts = json_decode(file_get_contents(base_path('database/data/texts.json')), true);
+	$categories = json_decode(file_get_contents(base_path('database/data/categories.json')), true);
+
+	expect($texts)->not->toBeEmpty();
+
+	foreach ($texts as $title => $fields) {
+		expect($categories['software'])->toHaveKey($title)
+			->and($fields['short_description'] ?? '')->toStartWith('<p>')
+			->and($fields['full_description'] ?? '')->toStartWith('<p>');
+	}
+});

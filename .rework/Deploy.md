@@ -105,6 +105,11 @@ staging holds and gives courses their software's again. Not needed when the
 next dump replaces the database (it already carries them), and **not at the
 cutover**, where the plain run assigns from nothing.
 
+**Then `php artisan catalogue:texts`** (`--dry-run` first, 2026-11-10): the
+client's texts for 22 more Angebot pages and their *Was ist …?* pages
+(`database/data/texts.json`). Fills empty fields only, so it is safe to rerun
+and keeps what VIAK has typed; `--force` makes the file win.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
@@ -124,6 +129,9 @@ cutover**, where the plain run assigns from nothing.
    products and courses (`database/data/categories.json`, `14-angebote.md`).
    It lists what is on the site with no category; VIAK sets those in the
    dashboard. Rerunnable: what has a category is left alone.
+   **Then `php artisan catalogue:texts`** (`--dry-run` first): the client's
+   website texts onto the Angebot pages (`database/data/texts.json`). Empty
+   fields only; it reports what it kept and any Angebot it did not find.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
    And step 7 (`search:rebuild`): the ports insert without Eloquent's
