@@ -14,8 +14,8 @@
 	texts). Until then the text was the Angebot page's *Mehr über …*.
 
 	The Angebot's image on top, as on its page, then the site's text page
-	(`layout/article`): the heading and the way back to the Angebot in the
-	aside, the text in the column, the further images under it with their
+	(`layout/article`): the heading in the aside, the text in the column with
+	the way on to the Angebot after it, the further images under it with their
 	captions (*Mehr über …* had them beside the text).
 
 	The description for search engines is the text's opening, cut: the
@@ -46,10 +46,17 @@
 	<x-layout.article class="mb-64">
 		<x-slot:aside>
 			<h1 class="font-bold text-teal">{{ $heading }}</h1>
-			<x-ui.back-link :href="\App\Support\SiteUrl::software($software->getTranslation('slug', $locale))" :label="$title" />
 		</x-slot:aside>
 
 		<x-ui.rich-text :html="$html" />
+
+		{{-- After the text, onward to the Angebot (Marcel, 2026-11-10: not in
+		     the aside under the heading), worded and pointing as on the
+		     licence page. The wrapper tops up the link's own sm:mt-20
+		     lg:mt-40 to 32px from a phone up. --}}
+		<div class="mt-32 sm:mt-12 lg:mt-0">
+			<x-ui.back-link :href="\App\Support\SiteUrl::software($software->getTranslation('slug', $locale))" :label="'Alles zu '.$title" direction="right" />
+		</div>
 
 		@foreach ($visuals->slice(1) as $visual)
 			<figure class="mt-32 sm:mt-48">
