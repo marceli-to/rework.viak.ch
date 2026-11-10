@@ -51,11 +51,11 @@
 		<x-ui.rich-text :html="$html" />
 
 		{{-- After the text, onward to the Angebot (Marcel, 2026-11-10: not in
-		     the aside under the heading), worded and pointing as on the
-		     licence page. The wrapper tops up the link's own sm:mt-20
+		     the aside under the heading, and worded generically), pointing on as
+		     on the licence page. The wrapper tops up the link's own sm:mt-20
 		     lg:mt-40 to 32px from a phone up. --}}
 		<div class="mt-32 sm:mt-12 lg:mt-0">
-			<x-ui.back-link :href="\App\Support\SiteUrl::software($software->getTranslation('slug', $locale))" :label="'Alles zu '.$title" direction="right" />
+			<x-ui.back-link :href="\App\Support\SiteUrl::software($software->getTranslation('slug', $locale))" label="Zum Angebot" direction="right" />
 		</div>
 
 		@foreach ($visuals->slice(1) as $visual)
