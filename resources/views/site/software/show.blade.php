@@ -160,11 +160,11 @@
 		@endif
 
 		{{-- The client's *Zitatbox* (#70) as a pull quote (Marcel, 2026-11-10):
-		     no frame, the scale's largest sizes, in «». Under the hero's text,
-		     columns 5 to 12, so the page's two teal texts line up. --}}
+		     no frame, the scale's largest sizes, in «», centred on the page in
+		     its middle eight columns. --}}
 		@if ($quote)
 			<div class="mb-64 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-				<blockquote class="text-2xl leading-[1.3] text-teal sm:col-span-8 sm:col-start-5 sm:text-3xl lg:text-4xl">«{{ $quote }}»</blockquote>
+				<blockquote class="text-2xl leading-[1.3] text-teal text-center sm:col-span-8 sm:col-start-3 sm:text-3xl lg:text-4xl">«{{ $quote }}»</blockquote>
 			</div>
 		@endif
 
