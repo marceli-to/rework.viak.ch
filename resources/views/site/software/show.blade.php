@@ -40,8 +40,8 @@
 	- **The client's website texts** (#70, 2026-11-06, [[14-angebote]] *The
 	  website texts*), each only when filled: *Zielgruppen* and the intro
 	  sentence under the hero's text, a paragraph at the head of *Kurse* and
-	  of *Lizenzen*, and the **quote box** after the licences, in the
-	  testimonial card's frame (`card/testimonial`).
+	  of *Lizenzen*, and the **quote** after the licences, a pull quote
+	  in «».
 	- ***Was ist …?*** (the *Detailbeschrieb*) is **a page of its own** since
 	  #70, for Google ([[SoftwareController::about]]); the hero links to it.
 	  Until then it was a collapsible here, *Mehr über …*. Then *Weitere
@@ -159,9 +159,13 @@
 			</x-ui.collapsible>
 		@endif
 
-		{{-- The client's *Zitatbox* (#70), framed as a testimonial is. --}}
+		{{-- The client's *Zitatbox* (#70) as a pull quote (Marcel, 2026-11-10):
+		     no frame, the scale's largest sizes, in «». Under the hero's text,
+		     columns 5 to 12, so the page's two teal texts line up. --}}
 		@if ($quote)
-			<aside class="mb-64 border border-teal p-8 text-md leading-[1.4] text-teal sm:text-lg lg:p-16 lg:text-xl">{{ $quote }}</aside>
+			<div class="mb-64 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
+				<blockquote class="text-2xl leading-[1.3] text-teal sm:col-span-8 sm:col-start-5 sm:text-3xl lg:text-4xl">«{{ $quote }}»</blockquote>
+			</div>
 		@endif
 
 		{{-- One column where a course has two, at *Detailbeschrieb*'s width. --}}
