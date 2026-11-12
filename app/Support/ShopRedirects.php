@@ -105,6 +105,6 @@ class ShopRedirects
 
 	private static function licence(?LicenceProduct $product): ?string
 	{
-		return $product ? SiteUrl::licence($product->getTranslation('slug', 'de'), 'de') : null;
+		return $product ? SiteUrl::licence($product, 'de') : null;
 	}
 }

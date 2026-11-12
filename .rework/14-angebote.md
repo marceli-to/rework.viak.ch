@@ -773,3 +773,41 @@ Enscape course copy kept verbatim for Oliver to fix: *Hostsoftwar*,
   *Plugin* / *Kurs & Plugin* ([[Software::offer]]); a product tile's overlay
   *Plugin für …* from its Angebot's hosts. *Ab CHF* on an Angebot is its own
   products only (Rhinoceros never read Bongo's anyway).
+
+### As built: step 5, the licence page per Angebot (2026-11-12)
+
+#71. Its order is the client's docs' (`../Software/Corona`): *{Angebot}
+Lizenzen* and the *Sublead*, a block per licence (title, text, price, CTA),
+*Systemvoraussetzungen*, the page's own Zitatbox.
+
+- **`/de/angebote/software/{angebot}`** ([[SiteUrl::licences]],
+  [[LicenceController::show]]), there while the Angebot sells something
+  (`Software::sellsLicences`). It replaces the page per product: a
+  product's old URL answers **301 to its block**, `…/{angebot}#{product}`
+  ([[SiteUrl::licence]] now takes the product). An Angebot wins a slug both
+  have; V-Ray's product is V-Ray's block anyway. The sitemap lists the
+  Angebote' pages, not products.
+- **Product by product, in the card staging had** (`card/product`): name and
+  maker as heading, description, *3-Jahreslizenz auf Anfrage*, then one row
+  per licence (title, platforms, **the licence's text**, host select, price
+  with Streichpreis, *Anzahl*, *In den Warenkorb*). The article carries the
+  product's slug as `id`. The heading no longer links (it is the page).
+  Grouping by product kept on purpose: V-Ray's 13 licences read as 6 groups.
+- **The licence's text** is the variant's *Hinweis*, widened from a line
+  (255) to a paragraph (1000, textarea), shown plain under the title with
+  its line breaks; it was italic, a remark. The list's *Bemerkung* was
+  already in it where it is a note (*Aktivierung auf max. 2 Computern*,
+  *Inkl. 5 Simnodes*); *Mindestens 3* is the minimum, *3-Jahreslizenz* the
+  product's flag. Everything else waits for #79.
+- **New Angebot fields**, in a form section *Seite «Lizenzen»* with *Seite
+  ansehen*: `licences_lead` (*Einleitung*), `requirements`
+  (*Systemvoraussetzungen*, rich text, empty in every doc so far:
+  placeholders), `licences_quote` (*Zitatbox*). `catalogue:texts` fills lead
+  and quote for the 20 Angebote whose doc has a licence page.
+- The title is *{Angebot} Lizenzen* from the record, not the doc's H1 (*Chaos
+  Corona Lizenzen*, *Rhino Lizenzen*): one rule, no field.
+- Everything that linked a product page now links its block: the Angebot
+  page's rows, the Software list's tiles, the search, the 3d-software.ch
+  redirects. Those redirects' fallbacks for the plugins now name the
+  plugin's own Angebot (Bongo, Drakon, Karamba3D, Lands Design, VisualARQ,
+  Rhino.io); `port:check-shop-urls`: 202 paths, all one hop.

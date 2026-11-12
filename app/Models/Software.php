@@ -43,6 +43,7 @@ class Software extends Model
 	protected $fillable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
 		'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
+		'licences_lead', 'requirements', 'licences_quote',
 		'information', 'licence_note', 'seo_description', 'seo_tags',
 		'order', 'publish', 'featured', 'plugin',
 	];
@@ -50,6 +51,7 @@ class Software extends Model
 	public $translatable = [
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
 		'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
+		'licences_lead', 'requirements', 'licences_quote',
 		'information', 'licence_note', 'seo_description', 'seo_tags',
 	];
 
@@ -88,6 +90,15 @@ class Software extends Model
 		return $this->belongsToMany(Software::class, 'software_host', 'host_id', 'software_id');
 	}
 
+	/**
+	 * **Its licence page** (#71) exists while it sells something: published
+	 * with a listed product under it ([[LicenceController::show]]).
+	 */
+	public function scopeSellsLicences(Builder $query): Builder
+	{
+		return $query->published()->whereHas('products', fn (Builder $products) => $products->listed());
+	}
+
 	/** The products an order may name it as host of ([[LicenceProduct::hosts]]). */
 	public function hostOf(): BelongsToMany
 	{
@@ -97,7 +108,8 @@ class Software extends Model
 	/** The licence products sold under it. */
 	public function products(): HasMany
 	{
-		return $this->hasMany(LicenceProduct::class);
+		// Each loaded product knows its software: its URL needs the slug ([[SiteUrl::licence]]).
+		return $this->hasMany(LicenceProduct::class)->chaperone();
 	}
 
 	/**

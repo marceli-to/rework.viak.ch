@@ -30,6 +30,10 @@ class SoftwareFormResource extends JsonResource
 			'about_url' => filled($this->getTranslation('full_description', 'de', false))
 				? SiteUrl::softwareAbout($this->getTranslation('slug', 'de'), 'de')
 				: null,
+			// And in «Lizenzen»: only while it sells something (#71).
+			'licences_url' => $this->products()->listed()->exists()
+				? SiteUrl::licences($this->getTranslation('slug', 'de'), 'de')
+				: null,
 			'title' => $de('title'),
 			'publish' => $this->publish,
 			'featured' => $this->featured,

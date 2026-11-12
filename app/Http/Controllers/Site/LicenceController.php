@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\LicenceProduct;
+use App\Models\Software;
 use App\Support\LicenceFilter;
 use App\Support\SiteUrl;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,13 +15,15 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * One licence product, *Rhinoceros 8* with its six licences: where it is
- * bought ([[14-angebote]], the client 2026-10-29: buying only ever on the
- * product's own page, the Angebot is the overview). One page per product,
- * not per licence (Marcel, 2026-10-29). Drawn as a course page is.
+ * **An Angebot's licence page** (#71, the client 2026-11-12): every licence
+ * of the Angebot on one page, product by product, each licence a block of
+ * its own with its *Anzahl* and button; *Systemvoraussetzungen* once. Where
+ * the licences are bought ([[14-angebote]], the client 2026-10-29: the
+ * Angebot page is the overview). Drawn as a course page is.
  *
- * On the site when it is listed (published, a licence listed) under a
- * published software, which is then an Angebot by [[Software::scopeOnSite]].
+ * Until 2026-11-12 one page per product (Marcel, 2026-10-29); a product's
+ * old URL now leads to its block. A product is on the site when it is
+ * listed (published, a licence listed) under a published software.
  */
 class LicenceController extends Controller
 {
@@ -52,17 +55,27 @@ class LicenceController extends Controller
 		return redirect(SiteUrl::softwareIndex().($query ? "?{$query}" : ''), 301);
 	}
 
-	public function show(string $slug): View
+	/**
+	 * The Angebot by its slug; failing that, a product's page of before
+	 * #71, sent to its block on its Angebot's page (one hop, 301). An
+	 * Angebot wins a slug both have: V-Ray's product is V-Ray's block anyway.
+	 */
+	public function show(string $slug): View|RedirectResponse
 	{
-		$product = $this->onSite()
-			->where('slug->'.app()->getLocale(), $slug)
-			->with(['software.media', 'manufacturer', 'variants', 'hosts'])
-			->firstOrFail();
+		$locale = app()->getLocale();
 
-		return view('site.licences.show', [
-			'product' => $product,
-			'software' => $product->software,
-		]);
+		$software = Software::query()->sellsLicences()
+			->where('slug->'.$locale, $slug)
+			->with(['media', 'products' => fn ($query) => $query->listed()->ordered()->with(['manufacturer', 'variants', 'hosts'])])
+			->first();
+
+		if ($software === null) {
+			$product = $this->onSite()->where('slug->'.$locale, $slug)->with('software')->firstOrFail();
+
+			return redirect(SiteUrl::licence($product), 301);
+		}
+
+		return view('site.licences.show', ['software' => $software]);
 	}
 
 	/** @return Builder<LicenceProduct> listed, under a published software */

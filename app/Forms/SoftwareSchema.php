@@ -65,6 +65,15 @@ final class SoftwareSchema extends Schema
 					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
 			])->with(['preview' => 'about_url']),
 
+			// Its licence page since #71 (the client, 2026-11-12): one page per Angebot.
+			Field::section('Seite «Lizenzen»', [
+				Field::textarea('licences_lead')->label('Einleitung')->rules(['max:1000'])
+					->with(['rows' => 2, 'hint' => 'Unter dem Titel «… Lizenzen», z.B. «Corona Lizenzen für Einzelpersonen und Teams».']),
+				Field::richtext('requirements')->label('Systemvoraussetzungen')
+					->with(['hint' => 'Einmal für alle Lizenzen dieses Angebots.']),
+				Field::textarea('licences_quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
+			])->with(['preview' => 'licences_url']),
+
 			Field::section('Einstellungen', [
 				Field::row([
 					Field::checkbox('publish')->label('Publizieren'),
@@ -103,6 +112,7 @@ final class SoftwareSchema extends Schema
 			'title' => '', 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'licence_note' => '',
 			'audiences' => '', 'intro' => '', 'courses_intro' => '', 'licences_intro' => '', 'quote' => '',
+			'licences_lead' => '', 'requirements' => '', 'licences_quote' => '',
 			'plugin' => false, 'categories' => [], 'hosts' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
 			'seo_description' => '', 'seo_tags' => '',

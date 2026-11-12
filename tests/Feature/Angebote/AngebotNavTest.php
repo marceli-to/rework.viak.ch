@@ -86,7 +86,7 @@ it('says Angebote in the menu, lit on every catalogue page, with Kurse and Softw
 		->and($desktop)->not->toContain('href="/de/angebote/software"')
 		->and($home)->toContain('min-h-40 items-center justify-end text-2xl');
 
-	foreach (['/de/angebote', '/de/angebote/kurse', '/de/angebote/software', '/de/angebote/rhinoceros', '/de/angebote/software/rhinoceros-8', '/de/angebote/kurse/rhinoceros-einstiegskurs'] as $url) {
+	foreach (['/de/angebote', '/de/angebote/kurse', '/de/angebote/software', '/de/angebote/rhinoceros', '/de/angebote/software/rhinoceros', '/de/angebote/kurse/rhinoceros-einstiegskurs'] as $url) {
 		$this->get($url)->assertOk()->assertSee('class="hover:text-teal text-teal">'."\n\t\t\t\t\t\t\t\tAngebote", false);
 	}
 });

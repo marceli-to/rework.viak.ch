@@ -49,7 +49,7 @@ it('names the fixed pages, the published Vorhaben, courses and software and the 
 		"{$host}/de/angebote/kurse/rhino-einstiegskurs",
 		"{$host}/de/angebote/software",
 		"{$host}/de/angebote/rhinoceros",
-		"{$host}/de/angebote/software/rhinoceros-8",
+		"{$host}/de/angebote/software/rhinoceros",
 		"{$host}/de/ueber-uns",
 		"{$host}/de/experte/remo-kast/{$this->expert->uuid}",
 		"{$host}/de/kontakt",

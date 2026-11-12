@@ -10,7 +10,6 @@ use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Manufacturer;
 use App\Models\Software;
-use App\Support\SiteUrl;
 
 /**
  * The software list and a software's page ([[05-licences]]), drawn as the
@@ -93,7 +92,7 @@ it('lists every product as a row leading to its own page, and a course without a
 		->assertSee('Rhinoceros Pro')
 		->assertSee('ab CHF 940.00')
 		->assertDontSee('CHF 90.00')
-		->assertSee('href="/de/angebote/software/bongo-2"', false)
+		->assertSee('href="/de/angebote/software/rhinoceros#bongo-2"', false)
 		->assertSee('Lizenz kaufen')
 		->assertDontSee('In den Warenkorb')
 		// No date ahead: its name, linked, and what its own page says.
@@ -111,9 +110,7 @@ it('keeps a renamed software on its URL', function () {
 
 it('strikes a Streichpreis through beside the price', function () {
 	shopSoftware('Rhinoceros', [['title' => ['de' => 'Upgrade (Promo)'], 'price' => '360.00', 'compare_price' => '550.00'], ['price' => '930.00']]);
-	$product = LicenceProduct::where('title->de', 'Rhinoceros Pro')->first();
-
-	$page = $this->get(SiteUrl::licence($product->getTranslation('slug', 'de')))->assertOk();
+	$page = $this->get('/de/angebote/software/rhinoceros')->assertOk();
 
 	$page->assertSee('CHF 360.00', false)
 		->assertSee('<s class="text-gray-600"><span class="sr-only">statt </span>CHF 550.00</s>', false);

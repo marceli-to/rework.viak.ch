@@ -31,7 +31,7 @@ class ImportWebsiteTexts extends Command
 	protected $description = 'Fill the Angebot pages with the client\'s website texts';
 
 	/** What the file may set; anything else in an entry (its doc) is ignored. */
-	private const FIELDS = ['short_description', 'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote', 'full_description'];
+	private const FIELDS = ['short_description', 'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote', 'full_description', 'licences_lead', 'licences_quote'];
 
 	public function handle(): int
 	{

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 use App\Enums\Role;
+use App\Models\LicenceProduct;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -387,13 +388,22 @@ final class SiteUrl
 	}
 
 	/**
-	 * One licence product, where it is bought ([[14-angebote]]):
-	 * `/de/angebote/software/{slug}`, under the catalogue as the client's two
-	 * levels have it (2026-10-29).
+	 * **An Angebot's licence page**, where its licences are bought (#71, the
+	 * client 2026-11-12): `/de/angebote/software/{angebot}`, under the
+	 * Software list, as the client's docs have it (`../Software/Corona`).
+	 * Until then this URL held one product's page.
 	 */
-	public static function licence(string $slug, ?string $locale = null): string
+	public static function licences(string $slug, ?string $locale = null): string
 	{
 		return self::softwareIndex($locale).'/'.$slug;
+	}
+
+	/** One licence product: its block on its Angebot's licence page, by its slug. */
+	public static function licence(LicenceProduct $product, ?string $locale = null): string
+	{
+		$locale ??= app()->getLocale();
+
+		return self::licences((string) $product->software->getTranslation('slug', $locale), $locale).'#'.$product->getTranslation('slug', $locale);
 	}
 
 	/** The site search's result page, with the query if there is one ([[15-search]]). */

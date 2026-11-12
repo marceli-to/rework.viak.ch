@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\LicenceProduct;
 use App\Models\Project;
 use App\Models\Software;
 use App\Models\User;
@@ -47,10 +46,11 @@ class SitemapController extends Controller
 				->map(fn (Software $software) => $software->getTranslation('slug', $locale, false))
 				->filter()
 				->map(fn (string $slug) => SiteUrl::software($slug, $locale)),
-			...LicenceProduct::query()->listed()->whereHas('software', fn ($software) => $software->published())->get()
-				->map(fn (LicenceProduct $product) => $product->getTranslation('slug', $locale, false))
+			// The licence page per Angebot (#71); a product is a block on it.
+			...Software::query()->sellsLicences()->get()
+				->map(fn (Software $software) => $software->getTranslation('slug', $locale, false))
 				->filter()
-				->map(fn (string $slug) => SiteUrl::licence($slug, $locale)),
+				->map(fn (string $slug) => SiteUrl::licences($slug, $locale)),
 			SiteUrl::about($locale),
 			...User::query()->publiclyListedExperts()->get()
 				->map(fn (User $expert) => SiteUrl::expert($expert, $locale)),

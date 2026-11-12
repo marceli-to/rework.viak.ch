@@ -47,18 +47,16 @@
 	([[PriceBasketRequest]]): a plugin needs its host, and a licence with a
 	minimum takes no fewer.
 --}}
-<article {{ $attributes->class([
+<article id="{{ $product->getTranslation('slug', $locale) }}" {{ $attributes->class([
 	'relative leading-[1.5] sm:text-lg sm:leading-[1.4] lg:text-xl',
 	'mt-48 border-t border-black pt-8 first:mt-16 sm:mt-64 sm:pt-16 sm:first:mt-32' => ! $bare,
 ]) }}>
-	{{-- **`bare` on the product's own page** ([[14-angebote]]): its name,
-	     maker and description are the page's hero there, so the card starts
-	     with the licences. Elsewhere the name links to that page. --}}
+	{{-- **`bare`** starts with the licences, for a page whose hero names the
+	     product. On the licence page per Angebot (#71) every product has its
+	     heading, anchored by its slug on the `<article>`. --}}
 	@unless ($bare)
 		<div class="flex flex-wrap items-baseline justify-between gap-x-16">
-			<h3 class="font-bold text-teal">
-				<a href="{{ \App\Support\SiteUrl::licence($product->getTranslation('slug', $locale)) }}" class="hover:text-black">{{ $product->getTranslation('title', $locale) }}</a>
-			</h3>
+			<h3 class="font-bold text-teal">{{ $product->getTranslation('title', $locale) }}</h3>
 			@if ($product->manufacturer)
 				<div>von {{ $product->manufacturer->getTranslation('title', $locale) }}</div>
 			@endif
@@ -99,8 +97,11 @@
 					<div class="text-gray-600">{{ $licence['platforms'] }}</div>
 				@endif
 
+				{{-- The block's text under its title (#71: "manchmal muss man zu
+				     einer Lizenz einen Hinweis schreiben können"), a paragraph,
+				     its line breaks kept. Italic until then, as a remark. --}}
 				@if ($licence['note'])
-					<div class="mt-8"><em class="italic">{{ $licence['note'] }}</em></div>
+					<p class="mt-8 whitespace-pre-line">{{ $licence['note'] }}</p>
 				@endif
 
 				@if ($hosts->isNotEmpty())

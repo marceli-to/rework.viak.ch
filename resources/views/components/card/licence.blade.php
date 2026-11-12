@@ -19,7 +19,7 @@
 	so the list says at a glance which it is, then its first category.
 --}}
 <article {{ $attributes->class(['border border-teal p-8 lg:p-16']) }}>
-	<a href="{{ \App\Support\SiteUrl::licence($product->getTranslation('slug', $locale)) }}" class="group block text-black">
+	<a href="{{ \App\Support\SiteUrl::licence($product) }}" class="group block text-black">
 		<header class="min-h-70 sm:min-h-90 lg:min-h-130">
 			<div class="mb-4 text-xxs leading-none font-medium text-gray-600 sm:text-sm lg:text-lg">
 				{{ $product->kind() }}@if ($category) · {{ $category->getTranslation('title', $locale) }}@endif

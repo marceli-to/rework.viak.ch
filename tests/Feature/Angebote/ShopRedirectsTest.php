@@ -29,7 +29,7 @@ it('sends an old product page to the licence page holding its article number', f
 
 	$this->get('https://www.3d-software.ch/public/Bongo-2/RHN-1121')
 		->assertStatus(301)
-		->assertRedirect('https://'.config('site.canonical_host').'/de/angebote/software/bongo-2');
+		->assertRedirect('https://'.config('site.canonical_host').'/de/angebote/software/rhinoceros#bongo-2');
 });
 
 it('sends an article number nobody holds to its Angebot, until a product does', function () {
@@ -43,7 +43,7 @@ it('sends an article number nobody holds to its Angebot, until a product does', 
 	]), 'product')->create(['sku' => 'RHN-1003', 'listed' => true]);
 
 	$this->get('https://3d-software.ch/public/Rhinoceros-9/RHN-1003')
-		->assertRedirect('https://'.config('site.canonical_host').'/de/angebote/software/rhinoceros-9');
+		->assertRedirect('https://'.config('site.canonical_host').'/de/angebote/software/rhinoceros#rhinoceros-9');
 });
 
 it('takes the old shop\'s fixed pages, and sends anything else to the software list', function () {

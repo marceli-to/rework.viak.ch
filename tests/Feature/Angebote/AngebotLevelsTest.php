@@ -123,25 +123,39 @@ it('leaves what VIAK chose alone on a rerun, and writes nothing on a dry run', f
 		->and(Category::query()->count())->toBe(5);
 });
 
-it('sells a licence product on its own page, with the way back to its Angebot', function () {
+it('sells an Angebot\'s licences on its licence page, each product a block, with the way back (#71)', function () {
 	$rhino = angebot('Rhinoceros', licence: true);
 	$product = $rhino->products()->first();
-	$product->update(['features' => ['de' => "Kauflizenz, unbefristet\nWindows und Mac"]]);
+	$product->update(['description' => ['de' => '<p>Das Original.</p>']]);
 	$product->manufacturer->update(['title' => ['de' => 'McNeel']]);
+	$product->variants()->first()->update(['note' => ['de' => 'Nur mit einer Neulizenz.']]);
+	$rhino->update([
+		'licences_lead' => ['de' => 'Offizieller Schweizer Reseller.'],
+		'requirements' => ['de' => '<p>Windows 11, macOS 26</p>'],
+		'licences_quote' => ['de' => 'Unsicher, welche Lizenz die richtige ist?'],
+	]);
 
-	$this->get('/de/angebote/software/rhinoceros-8')
+	$this->get('/de/angebote/software/rhinoceros')
 		->assertOk()
-		->assertSee('Rhinoceros 8')
-		->assertSee('von McNeel')
-		->assertSee('Kauflizenz, unbefristet')
-		->assertSee('In den Warenkorb')
-		->assertSee('Alles zu Rhinoceros')
+		->assertSeeInOrder(['Rhinoceros Lizenzen', 'Offizieller Schweizer Reseller.', 'Alles zu Rhinoceros', 'Lizenzen',
+			'id="rhinoceros-8"', 'Rhinoceros 8', 'von McNeel', 'Das Original.', 'Nur mit einer Neulizenz.', 'In den Warenkorb',
+			'Systemvoraussetzungen', 'Windows 11, macOS 26', '«Unsicher, welche Lizenz die richtige ist?»'], false)
 		->assertSee('href="/de/angebote/rhinoceros"', false);
 
-	// The Angebot's card names it and links here.
-	$this->get('/de/angebote/rhinoceros')->assertSee('href="/de/angebote/software/rhinoceros-8"', false);
+	// A product's page of before is its block now, one hop.
+	$this->get('/de/angebote/software/rhinoceros-8')->assertRedirect('/de/angebote/software/rhinoceros#rhinoceros-8')->assertStatus(301);
 
-	expect($this->get('/sitemap.xml')->getContent())->toContain('/de/angebote/software/rhinoceros-8');
+	// The Angebot's row names it and links to its block.
+	$this->get('/de/angebote/rhinoceros')->assertSee('href="/de/angebote/software/rhinoceros#rhinoceros-8"', false);
+
+	expect($this->get('/sitemap.xml')->getContent())->toContain('/de/angebote/software/rhinoceros<')
+		->not->toContain('/de/angebote/software/rhinoceros-8');
+});
+
+it('has no licence page for an Angebot that sells nothing', function () {
+	angebot('Blender', course: true);
+
+	$this->get('/de/angebote/software/blender')->assertNotFound();
 });
 
 it('has no page for a product that is not on the site', function () {

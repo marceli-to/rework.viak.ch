@@ -134,6 +134,10 @@ The third migration of that update makes the plugins Angebote of their own
 takes its product), nothing to run for it. The `catalogue:texts` above then
 also fills Bongo, Karamba3D and VisualARQ.
 
+The fourth adds the licence page's fields (#71). The same `catalogue:texts`
+fills their Einleitung and Zitatbox for 20 Angebote; if it already ran
+before this pull, run it once more.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same

@@ -2,7 +2,7 @@
 	$locale = app()->getLocale();
 	$from = $product->fromPrice();
 	$features = $product->featureList($locale);
-	$href = \App\Support\SiteUrl::licence($product->getTranslation('slug', $locale));
+	$href = \App\Support\SiteUrl::licence($product);
 @endphp
 
 {{--

@@ -22,10 +22,10 @@ class SaveSoftwareRequest extends FormRequest
 	 * *Subtitel* and *Weitere Informationen* left the form on 2026-11-09 and
 	 * are not written: what they hold stays.
 	 */
-	public const RICH = ['short_description', 'full_description'];
+	public const RICH = ['short_description', 'full_description', 'requirements'];
 
-	/** The Angebot page's plain texts (#70), trimmed, empty as null. */
-	public const PLAIN = ['audiences', 'intro', 'courses_intro', 'licences_intro', 'quote'];
+	/** The Angebot page's plain texts (#70) and its licence page's (#71), trimmed, empty as null. */
+	public const PLAIN = ['audiences', 'intro', 'courses_intro', 'licences_intro', 'quote', 'licences_lead', 'licences_quote'];
 
 	public function authorize(): bool
 	{

@@ -49,8 +49,9 @@ final class LicenceVariantSchema extends Schema
 			Field::row([
 				Field::number('min_quantity')->label('Mindestmenge')->rules(['integer', 'min:1', 'max:999'])
 					->with(['hint' => 'Kleinste Stückzahl im Warenkorb, z.B. 3 bei Teams-Lizenzen. Leer: ab 1 Stück.']),
-				Field::text('note')->label('Hinweis')->rules(['max:255'])
-					->with(['hint' => 'z.B. «nur zusammen mit einer Neulizenz».']),
+				// The licence's text on the licence page (#71): a line or a paragraph.
+				Field::textarea('note')->label('Hinweis')->rules(['max:1000'])
+					->with(['rows' => 3, 'hint' => 'Steht unter dem Titel der Lizenz, z.B. «Nur zusammen mit einer Neulizenz».']),
 			])->with(['columns' => 2]),
 			Field::row([
 				// Not *Publizieren*: that is the product's. Unticked is an EDU or
