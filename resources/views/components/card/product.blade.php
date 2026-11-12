@@ -9,6 +9,8 @@
 		'label' => $variant->shopLabel(),
 		// A demo costs nothing (#35): *kostenlos*, as a free course date says it.
 		'price' => (float) $variant->price > 0 ? 'CHF '.number_format((float) $variant->price, 2, '.', "'") : null,
+		// A Streichpreis (2026-11-12), struck through after the price.
+		'compare' => $variant->compare_price ? 'CHF '.number_format((float) $variant->compare_price, 2, '.', "'") : null,
 		'min' => max(1, (int) $variant->min_quantity),
 		'note' => $variant->getTranslation('note', $locale, false) ?: null,
 		'platforms' => $variant->platforms?->map->label()->join(', '),
@@ -116,6 +118,9 @@
 			{{-- What it costs --}}
 			<div class="max-sm:mt-16 sm:col-span-6 lg:col-span-3">
 				{{ $licence['price'] ?? 'kostenlos' }}
+				@if ($licence['compare'])
+					<s class="text-gray-600"><span class="sr-only">statt </span>{{ $licence['compare'] }}</s>
+				@endif
 			</div>
 
 			{{-- How many, and the way in --}}

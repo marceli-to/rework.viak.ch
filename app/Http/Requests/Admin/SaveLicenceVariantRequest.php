@@ -46,6 +46,7 @@ class SaveLicenceVariantRequest extends FormRequest
 			'title' => ['de' => $data['title']],
 			'sku' => trim($data['sku']),
 			'price' => number_format((float) $data['price'], 2, '.', ''),
+			'compare_price' => blank($data['compare_price'] ?? null) ? null : number_format((float) $data['compare_price'], 2, '.', ''),
 			'licence_type' => $data['licence_type'] ?? null,
 			'access' => $data['access'] ?? null,
 			'platforms' => array_values($data['platforms'] ?? []),

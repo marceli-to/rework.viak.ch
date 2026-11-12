@@ -159,6 +159,7 @@ class ImportLicences extends Command
 			'licence_product_id' => $product->id,
 			'title' => ['de' => $row['title']],
 			'price' => $row['price'],
+			'compare_price' => $row['compare_price'] ?? null,
 			'licence_type' => $row['licence_type'],
 			'access' => $row['access'],
 			'platforms' => $row['platforms'],

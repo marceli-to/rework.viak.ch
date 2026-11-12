@@ -25,6 +25,10 @@ use Spatie\Translatable\HasTranslations;
  * Updates, upgrades and demos are variants too (#37): "konsequent
  * Produktvarianten als Dropdown". A demo costs 0 and is ordered like the rest
  * (#35). `listed = false` keeps a variant off the site (#36).
+ *
+ * `compare_price` is a **Streichpreis** (the client, 2026-11-12): shown struck
+ * through beside the price, as the old shop showed its Rhino 9 promo. Only
+ * shown; the price is what is charged.
  */
 class LicenceVariant extends Model
 {
@@ -34,7 +38,7 @@ class LicenceVariant extends Model
 	use IndexedForSearch;
 	use SoftDeletes;
 
-	protected $fillable = ['licence_product_id', 'title', 'sku', 'price', 'licence_type', 'access', 'platforms', 'note', 'min_quantity', 'listed', 'education', 'order'];
+	protected $fillable = ['licence_product_id', 'title', 'sku', 'price', 'compare_price', 'licence_type', 'access', 'platforms', 'note', 'min_quantity', 'listed', 'education', 'order'];
 
 	/** @var array<int, string> */
 	public $translatable = ['title', 'note'];
@@ -43,6 +47,7 @@ class LicenceVariant extends Model
 	{
 		return [
 			'price' => 'decimal:2',
+			'compare_price' => 'decimal:2',
 			'licence_type' => LicenceType::class,
 			'access' => LicenceAccess::class,
 			'platforms' => AsEnumCollection::of(Platform::class),

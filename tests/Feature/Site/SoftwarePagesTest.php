@@ -10,6 +10,7 @@ use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Manufacturer;
 use App\Models\Software;
+use App\Support\SiteUrl;
 
 /**
  * The software list and a software's page ([[05-licences]]), drawn as the
@@ -106,4 +107,15 @@ it('keeps a renamed software on its URL', function () {
 	$software->update(['title' => ['de' => 'V-Ray 7']]);
 
 	$this->get('/de/angebote/v-ray')->assertOk()->assertSee('V-Ray 7');
+});
+
+it('strikes a Streichpreis through beside the price', function () {
+	shopSoftware('Rhinoceros', [['title' => ['de' => 'Upgrade (Promo)'], 'price' => '360.00', 'compare_price' => '550.00'], ['price' => '930.00']]);
+	$product = LicenceProduct::where('title->de', 'Rhinoceros Pro')->first();
+
+	$page = $this->get(SiteUrl::licence($product->getTranslation('slug', 'de')))->assertOk();
+
+	$page->assertSee('CHF 360.00', false)
+		->assertSee('<s class="text-gray-600"><span class="sr-only">statt </span>CHF 550.00</s>', false);
+	expect(substr_count($page->getContent(), '<s class="text-gray-600">'))->toBe(1);
 });

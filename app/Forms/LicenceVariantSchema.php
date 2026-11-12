@@ -32,6 +32,12 @@ final class LicenceVariantSchema extends Schema
 				Field::number('price')->label('Preis CHF exkl. '.config('invoice.vat_label'))->required()->rules(['min:0', 'max:99999.99', 'decimal:0,2'])
 					->with(['hint' => '0 für eine Demoversion.']),
 			])->with(['columns' => 2]),
+			// A Streichpreis (the client, 2026-11-12): the Rhino 9 Upgrade promo.
+			Field::row([
+				Field::number('compare_price')->label('Streichpreis CHF')->rules(['min:0', 'max:99999.99', 'decimal:0,2', 'gt:price'])
+					->message('gt', 'Der Streichpreis muss höher sein als der Preis.')
+					->with(['hint' => 'Erscheint durchgestrichen neben dem Preis, z.B. bei einer Promo. Leer: keiner.']),
+			])->with(['columns' => 2]),
 			Field::row([
 				Field::select('licence_type', collect(LicenceType::cases())->mapWithKeys(fn (LicenceType $type) => [$type->value => $type->label()])->all())
 					->label('Lizenztyp')->with(['placeholder' => 'Keiner (Demo)']),
@@ -61,7 +67,7 @@ final class LicenceVariantSchema extends Schema
 	public function defaults(): array
 	{
 		return [
-			'title' => '', 'sku' => '', 'price' => '', 'licence_type' => LicenceType::Subscription->value,
+			'title' => '', 'sku' => '', 'price' => '', 'compare_price' => '', 'licence_type' => LicenceType::Subscription->value,
 			'access' => LicenceAccess::Named->value, 'platforms' => [Platform::Windows->value, Platform::MacOS->value],
 			'min_quantity' => '', 'note' => '', 'listed' => true, 'education' => false,
 		];

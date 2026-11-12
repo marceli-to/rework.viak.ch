@@ -125,3 +125,19 @@ it('marks an Ausbildungslizenz', function () {
 
 	expect(LicenceVariant::where('uuid', $uuid)->first()->education)->toBeTrue();
 });
+
+it('keeps a Streichpreis above the price, and empty means none', function () {
+	$this->actingAs($this->admin)
+		->postJson("/api/admin/licences/{$this->product->uuid}/variants", variantPayload(['price' => '360', 'compare_price' => '300']))
+		->assertJsonValidationErrors(['compare_price' => 'Der Streichpreis muss höher sein als der Preis.']);
+
+	$this->actingAs($this->admin)
+		->postJson("/api/admin/licences/{$this->product->uuid}/variants", variantPayload(['price' => '360', 'compare_price' => '550']))
+		->assertCreated()
+		->assertJsonPath('data.compare_price', '550.00');
+
+	$this->actingAs($this->admin)
+		->postJson("/api/admin/licences/{$this->product->uuid}/variants", variantPayload(['sku' => 'VRY-1002', 'compare_price' => '']))
+		->assertCreated()
+		->assertJsonPath('data.compare_price', '');
+});

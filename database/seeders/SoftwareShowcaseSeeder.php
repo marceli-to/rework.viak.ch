@@ -59,8 +59,8 @@ class SoftwareShowcaseSeeder extends Seeder
 
 		$software->setTranslations('information', []);
 
-		$software->setTranslations('seo_description', ['de' => 'Rhinoceros 8 kaufen und lernen: Lizenzen für Windows und macOS und Rhino-Kurse in Zürich, bei der Visualisierungs-Akademie.']);
-		$software->setTranslations('seo_tags', ['de' => 'Rhino, Rhinoceros, Rhino 8, Grasshopper, SubD, NURBS, Lizenz, Kurs']);
+		$software->setTranslations('seo_description', ['de' => 'Rhinoceros 9 kaufen und lernen: Lizenzen für Windows und macOS und Rhino-Kurse in Zürich, bei der Visualisierungs-Akademie.']);
+		$software->setTranslations('seo_tags', ['de' => 'Rhino, Rhinoceros, Rhino 9, Grasshopper, SubD, NURBS, Lizenz, Kurs']);
 		$software->save();
 
 		$this->images($software);

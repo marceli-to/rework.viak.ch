@@ -537,6 +537,13 @@ items that are ours rather than the client's.
   day: *Kurse · Lizenzen · Plugins* on the Angebot, the tag on the Software
   list's tile. Which other products are plugins is #68. See `14-angebote.md`,
   *Plugins*.
+- ~~Plugins, the licence page, topic Angebote (#68, #71–73)~~ — **answered
+  2026-11-12 (Oliver), with a reworked software list**: plugins become
+  Angebote of their own with optional host programs (undoing #67's build), a
+  licence page per Angebot with a block per licence, topic Angebote tagged
+  *Kurs*, Maxon One on its own, Photoshop stays, Maxwell is deleted, DaVinci
+  goes with its course. Questions left: #75–79. See `14-angebote.md`, *The
+  answers of 2026-11-12*.
 
 ---
 

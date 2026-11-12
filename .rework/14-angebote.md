@@ -642,3 +642,66 @@ keeps that version.
 Veras's doc names *Enscape lernen* over its course intro; the intro itself is
 about Enscape with Veras, taken as written.
 
+
+## The answers of 2026-11-12, and the plan from them
+
+Oliver answered #68 and #71–73 by mail, with two attachments: the reworked
+software list (`Software_Lizenztypen_claude.xlsx`, one row per article number,
+with *Produktart* Software/Plugin, *Frontend Sichtbarkeit* Y/N and a
+*Bemerkung*) and the website texts again (4 new docs, 2 changed). The answers,
+and the questions they leave (#75–79), are in `Open-Questions.md`.
+
+**What changes, in the order it is built:**
+
+1. **The software list.** Rhino 9 replaces Rhino 8; the Rhino 9 Upgrade is a
+   promo, CHF 360 *statt* 550, so a licence gets a **Streichpreis**. Old
+   products stay, hidden. Maxwell is deleted. EDU hidden again as the list
+   says (#75). RHN-2042 is Drakon's demo, MatrixGold RHN-2043. Every other
+   price in the list is the one we have. The Produktart tags wait for step 4.
+2. **Hidden work in progress** (data): ComfyUI, D5 Render, FigmaWeave and
+   Photoshop-KI are new Angebote, created unpublished with their texts. The
+   new *SketchUp + D5 Render* and *Enscape & Veras mit Archicad* courses are
+   created unpublished; *Visualisieren mit SketchUp* and *Enscape für
+   Archicad* stay online until they replace them (#76). *DaVinci Resolve
+   Einführungskurs* is unpublished, which takes the DaVinci Angebot off the
+   site with it: an Angebot without a listed licence shows only while it has
+   a published course ([[Software::scopeOnSite]]), the coupling Oliver asked
+   for. 3ds Max, Substance 3D, ChatGPT, Perplexity and Midjourney are no
+   Angebote on the site: legacy's program tags on offline courses.
+3. **The texts**: the 4 new docs and the changed Enscape and KI-Video into
+   `texts.json`; the changed ones need `catalogue:texts --force`.
+4. **Plugins as Angebote of their own** (#72), replacing #67: the plugin flag
+   moves from the product to the Angebot, which gets optional host programs
+   (many), shown as *Plugin für …*. The Rhino plugins, Rhino.io, V-Ray (with
+   Phoenix, Scans, render nodes), Corona, Enscape, Veras. Lumion View is #77.
+5. **The licence page per Angebot** (#71): one page per Angebot, a block per
+   licence (title, optional note, price, button), Systemvoraussetzungen once
+   per Angebot. The note is the list's *Bemerkung* (#79). The 3d-software.ch
+   redirects then point at the Angebot's licence page.
+6. **Topic Angebote** (#73): Architekturvisualisierung, Architekturfotografie
+   (*Gestaltung & Bearbeitung*), KI-Video, tagged *Kurs*, their courses moved
+   off Photoshop / After Effects / Premiere; Maxon One out of Cinema 4D.
+
+### As built: step 1, the software list (2026-11-12)
+
+Migration `2026_11_12_000002_software_list_of_2026_11_12` on a database that
+has the catalogue; `licences.json` and `categories.json` the same for a fresh
+import (`licences:import` on the migrated dev data creates nothing).
+
+- **Streichpreis**: `licence_variants.compare_price`, nullable, in the variant
+  form as *Streichpreis CHF* (must be above the price), a *statt CHF …*
+  badge in the product's list. The licence row shows it struck through after
+  the price, grey (`card/product`). Display only: the basket and invoice
+  charge the price. No percentage, no badge: the old shop's *%* box and
+  *gespart* were not taken.
+- **Rhinoceros 8 → Rhinoceros 9**, renamed with its URL
+  (`/de/angebote/software/rhinoceros-9`; nothing is live yet). RHN-1003
+  Vollversion 930 and RHN-1013 *Upgrade (Promo)* 360 statt 550 added; Rhino
+  8's two stay in the product as *Rhino 8 Vollversion* / *Rhino 8 Update*,
+  unlisted (pickable in a manual order). One product, not a hidden second
+  one. The Angebot's SEO filler says Rhino 9. *Ab CHF* on Rhino now reads 360.
+- EDU unlisted again (RHN-1091, 1092, 2008) as the list marks them (#75).
+- RHN-2042 Drakon *Demoversion* (0, listed), MatrixGold RHN-2043.
+- **Maxwell soft-deleted** (Angebot, 5 products, 13 licences). Its hosts
+  (Archicad, Maya: unpublished programs) stay.
+- The Produktart tags are not set: they belong to the plugin move (step 4).

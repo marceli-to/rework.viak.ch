@@ -114,6 +114,11 @@ and keeps what VIAK has typed; `--force` makes the file win.
 Render unpublished, the client's ask). The 3d-software.ch redirects need
 nothing on staging: its domain does not point there.
 
+The same update's second migration (the software list of 2026-11-12) puts in
+Rhino 9, the Rhino 9 Upgrade promo with its Streichpreis, Drakon's demo,
+hides EDU and deletes Maxwell. Nothing else to run: `search:rebuild` in the
+update line indexes the new licences.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
