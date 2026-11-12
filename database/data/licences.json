@@ -976,7 +976,12 @@
 						"listed": true
 					}
 				]
-			},
+			}
+		]
+	},
+	{
+		"software": "Maxon One",
+		"products": [
 			{
 				"title": "Maxon One",
 				"manufacturer": "Maxon",

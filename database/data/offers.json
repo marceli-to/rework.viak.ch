@@ -122,5 +122,34 @@
 	],
 	"unpublish": [
 		"DaVinci Resolve Einführungskurs"
+	],
+	"topics": [
+		{
+			"title": "Architekturvisualisierung",
+			"courses": [
+				"Geheimnisse der Architekturvisualisierung"
+			],
+			"replaces": [
+				"Adobe Photoshop"
+			]
+		},
+		{
+			"title": "Architekturfotografie",
+			"courses": [
+				"Einführung in die Architekturfotografie"
+			],
+			"replaces": [
+				"Adobe Photoshop"
+			]
+		},
+		{
+			"title": "KI-Video",
+			"courses": [
+				"KI-Einstieg für Video Creator"
+			],
+			"replaces": [
+				"Adobe Photoshop"
+			]
+		}
 	]
 }

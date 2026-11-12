@@ -25,6 +25,12 @@ use Illuminate\Support\Facades\DB;
  *   facts and *Weitere Informationen*. **The fee is 0**: the docs give none,
  *   VIAK sets it before publishing. Two replace a course that stays online
  *   until then (`replaces`, for the record only).
+ * - `topics`: **Angebote without a program** (#73: Architekturvisualisierung,
+ *   Architekturfotografie, KI-Video), published, tagged *Kurs* by their
+ *   courses ([[Software::offer]]). Each named course takes its topic in place
+ *   of the programs under `replaces` (Photoshop, which Oliver hides: its
+ *   Angebot then has nothing published and leaves the site); its other
+ *   programs stay (KI-Video's course under After Effects and Premiere).
  * - `unpublish`: courses taken off the site. *DaVinci Resolve
  *   Einführungskurs* is the only one: without it DaVinci has nothing to
  *   show and its Angebot leaves the site with it ([[Software::scopeOnSite]]).
@@ -32,7 +38,7 @@ use Illuminate\Support\Facades\DB;
  * **Rerunnable**: a software or course that exists by its German title is
  * left alone. The unpublishing is applied on every run, so run this at the
  * cutover (after the ports, which bring the DaVinci course back as legacy
- * has it) and not again once VIAK has decided otherwise.
+ * has it, and the courses' programs as legacy tags them) and not again once VIAK has decided otherwise.
  */
 class ImportNewOffers extends Command
 {
@@ -72,6 +78,10 @@ class ImportNewOffers extends Command
 			$rows[] = ['Kurs', $entry['title'], $this->course($create, $entry)];
 		}
 
+		foreach ($file['topics'] ?? [] as $topic) {
+			$rows[] = ['Thema', $topic['title'], $this->topic($topic)];
+		}
+
 		foreach ($file['unpublish'] as $title) {
 			$changed = Course::query()->where('title->de', $title)->where('publish', true)->update(['publish' => false]);
 			$rows[] = ['Kurs', $title, $changed ? 'unpublished' : 'not published already'];
@@ -87,6 +97,25 @@ class ImportNewOffers extends Command
 		}
 
 		return self::SUCCESS;
+	}
+
+	/** @param  array{title: string, courses: array<int, string>, replaces: array<int, string>}  $topic */
+	private function topic(array $topic): string
+	{
+		$software = Software::query()->where('title->de', $topic['title'])->first();
+		$created = $software === null;
+		$software ??= Software::create(['title' => ['de' => $topic['title']], 'order' => (int) Software::max('order') + 1, 'publish' => true]);
+
+		$replaced = Software::query()->whereIn('title->de', $topic['replaces'])->pluck('id');
+		$moved = 0;
+
+		foreach (Course::query()->whereIn('title->de', $topic['courses'])->get() as $course) {
+			$course->software()->syncWithoutDetaching([$software->id]);
+			$course->software()->detach($replaced);
+			$moved++;
+		}
+
+		return ($created ? 'created, published' : 'exists').", {$moved} course(s) under it";
 	}
 
 	/** @param  array<string, mixed>  $entry */

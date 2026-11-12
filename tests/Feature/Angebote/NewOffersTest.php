@@ -50,6 +50,27 @@ it('leaves what exists alone on a rerun, and writes nothing on a dry run', funct
 
 	$this->artisan('catalogue:offers')->assertSuccessful();
 	expect(Course::count())->toBe(6)
-		->and(Software::count())->toBe(7)
+		->and(Software::count())->toBe(10) // the four, the three new, the three topics
 		->and(Course::where('title->de', 'Enscape & Veras')->value('fee'))->toBe('549.00');
+});
+
+it('puts the topic courses under Angebote of their own in place of Photoshop, keeping their other programs', function () {
+	$photoshop = Software::where('title->de', 'Adobe Photoshop')->first();
+	$premiere = Software::create(['title' => ['de' => 'Adobe Premiere Pro'], 'publish' => true]);
+	$foto = Course::factory()->create(['title' => ['de' => 'Einführung in die Architekturfotografie']]);
+	$foto->software()->attach($photoshop);
+	$video = Course::factory()->create(['title' => ['de' => 'KI-Einstieg für Video Creator']]);
+	$video->software()->attach([$photoshop->id, $premiere->id]);
+
+	$this->artisan('catalogue:offers')->assertSuccessful();
+	$this->artisan('catalogue:offers')->assertSuccessful();
+
+	$topic = Software::where('title->de', 'Architekturfotografie')->first();
+
+	expect($topic->publish)->toBeTrue()
+		->and($topic->offer())->toBe('Kurs')
+		->and($foto->software()->pluck('title')->all())->toBe(['Architekturfotografie'])
+		->and($video->software()->get()->map->getTranslation('title', 'de')->sort()->values()->all())->toBe(['Adobe Premiere Pro', 'KI-Video'])
+		->and(Software::where('title->de', 'KI-Video')->count())->toBe(1)
+		->and(Software::query()->onSite()->whereKey($photoshop->id)->exists())->toBeFalse();
 });

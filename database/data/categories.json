@@ -51,7 +51,11 @@
 		"Lands Design": ["Architektur & Interior Design"],
 		"Karamba3D": ["Architektur & Interior Design"],
 		"MatrixGold": ["Schmuck- & Produktdesign"],
-		"Rhino.io": ["Schmuck- & Produktdesign", "Architektur & Interior Design", "Animation & Interaktion"]
+		"Rhino.io": ["Schmuck- & Produktdesign", "Architektur & Interior Design", "Animation & Interaktion"],
+		"Architekturvisualisierung": ["Architektur & Interior Design", "Gestaltung & Bearbeitung"],
+		"Architekturfotografie": ["Architektur & Interior Design", "Gestaltung & Bearbeitung"],
+		"KI-Video": ["Animation & Interaktion", "Gestaltung & Bearbeitung"],
+		"Maxon One": ["Animation & Interaktion", "Gestaltung & Bearbeitung"]
 	},
 	"products": {}
 }

@@ -138,6 +138,12 @@ The fourth adds the licence page's fields (#71). The same `catalogue:texts`
 fills their Einleitung and Zitatbox for 20 Angebote; if it already ran
 before this pull, run it once more.
 
+The fifth moves Maxon One into an Angebot of its own. **Then run
+`catalogue:offers`, `catalogue:categories` and `catalogue:texts` once more**
+(2026-11-12, step 6): the first now also makes the topic Angebote
+Architekturvisualisierung, Architekturfotografie and KI-Video and moves their
+courses off Photoshop, the second gives them categories, the third texts.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same

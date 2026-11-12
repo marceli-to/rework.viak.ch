@@ -26,6 +26,7 @@ it('imports the whole catalogue into the course software it already has', functi
 		->and(LicenceVariant::where('sku', 'RHN-1013')->value('compare_price'))->toBe('550.00')
 		->and(LicenceProduct::where('title->de', 'Rhinoceros 9')->first()->software_id)->toBe($rhino->id)
 		->and(Software::where('title->de', 'Maxwell Render')->exists())->toBeFalse()
+		->and(LicenceProduct::where('title->de', 'Maxon One')->first()->software->getTranslation('title', 'de'))->toBe('Maxon One')
 		->and(Software::where('title->de', 'Rhinoceros')->count())->toBe(1);
 });
 

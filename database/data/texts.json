@@ -314,5 +314,43 @@
 		"full_description": "<p>VisualARQ ist ein Architektur- und BIM-Plugin für Rhino, entwickelt von Asuni in Barcelona.</p><p><strong>Woher kommt VisualARQ?</strong></p><p>VisualARQ wird von Asuni entwickelt, einem Softwarehaus in Barcelona, das eng mit McNeel Europe, dem europäischen Sitz der Rhino-Entwickler, zusammenarbeitet. Von Asuni stammt auch das Landschaftsarchitektur-Plugin Lands Design. Die Visualisierungs-Akademie Schweiz GmbH in Zürich vertreibt VisualARQ für die Schweiz.</p><p><strong>Für wen ist VisualARQ?</strong></p><p>VisualARQ wird für ArchitektInnen entwickelt, die in Rhino Architektur entwerfen. Du modellierst mit 3D-Architekturobjekten, erhältst die Projektdokumentation automatisch und tauschst Daten via IFC mit anderen BIM-Programmen aus. Ideal für Freiformarchitektur und Wettbewerbe.</p>",
 		"licences_lead": "Lizenzen von VisualARQ 3 für Rhino – als Neulizenz, mit SAVANNA-Bibliothek oder als Update.",
 		"licences_quote": "Unsicher, welche Lizenz die richtige ist? Kontaktiere uns. Wir helfen gerne weiter. Bist du neu bei Rhino? In unserem Einstiegskurs lernst du alle Basics, um mit Rhino durchzustarten."
+	},
+	"Architekturvisualisierung": {
+		"doc": "00_fertig_Webseitentexte_Architekturvisualisierung.docx",
+		"short_description": "<p>Gute Bilder entstehen nicht durch komplexe Software, sondern durch bewusste Entscheidungen zu Komposition, Licht und Material. Lerne bei Nightnurse Images, einem der führenden Schweizer Studios für Architekturvisualisierung, was eine Visualisierung wirklich überzeugend macht.</p>",
+		"intro": "Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten öffentliche & individuelle Schulungen zu Architekturvisualisierung an:",
+		"audiences": "Architektur- & Planungsbüros, VisualisiererInnen, 3D-Artists, Immobilienentwicklung & -vermarktung",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"courses_intro": "Von Nightnurse Images lernst du, wie überzeugende Visualisierungen für Wettbewerbe, Architekturprojekte und Immobilienvermarktung entstehen.",
+		"full_description": "<p>Architekturvisualisierungen stellen geplante Gebäude und Räume verständlich dar, bevor sie gebaut sind.</p><p><strong>Warum Architekturvisualisierung?</strong></p><p>Die Visualisierung ist ein zentrales Werkzeug in der Wettbewerbsplanung, der Immobilienvermarktung und der öffentlichen Kommunikation, um ein geplantes Projekt verständlich darzustellen. Visualisierungen erklären komplexe Zusammenhänge und schaffen Mehrheiten auf visueller Basis.</p><p><strong>Für wen sind unsere ArchViz Kurse?</strong></p><p>Unsere Kurse zur Architekturvisualisierung richten sich an ArchitektInnen, 3D-Artists, VisualisiererInnen und Immobilienfachleute, die mit ihren Bildern überzeugen wollen. Du lernst, eine eigenständige Bildsprache zu entwickeln und das Beste aus deinen Renderings herauszuholen.</p>"
+	},
+	"Architekturfotografie": {
+		"doc": "00_fertig_Webseitentexte_Architekturfotografie.docx",
+		"short_description": "<p>Gute Architektur verdient starke Bilder. Lerne, Gebäude und Räume auf hohem Niveau zu fotografieren und deine Aufnahmen so zu bearbeiten, dass sie Architektur, Atmosphäre und Materialien überzeugend vermitteln – für Portfolio, Wettbewerbe und Marketing.</p>",
+		"intro": "Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten öffentliche Schulungen zu Architekturfotografie an:",
+		"audiences": "Architektur- & Planungsbüros, Innenarchitektur, Immobilienvermarktung, FotografInnen",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"courses_intro": "Lerne von der Architekturfotografin Seraina Wirz, wie du Räume authentisch in Szene setzt.",
+		"full_description": "<p>Architekturfotografie übersetzt gebaute Räume in Bilder, die ihre Qualität, Atmosphäre und Geschichte vermitteln.</p><p><strong>Warum Architekturfotografie?</strong></p><p>Eine gute Ausrüstung allein garantiert noch kein gutes Bild. Entscheidend ist, die eigene räumliche Wahrnehmung spannend ins zweidimensionale Bild zu übersetzen und mit Licht, Oberflächen und Brennweite eine Geschichte zu erzählen. Genau dieses Handwerk verbindet Architekturfotografie (und übrigens auch Architekturvisualisierung).</p><p><strong>Für wen sind unsere Kurse?</strong></p><p>Unsere Kurse richten sich an ArchitektInnen, Planende und Fotografierende, die ihre Projekte selbst überzeugend dokumentieren wollen – und an VisualisiererInnen, die ihr Auge für Licht und Komposition schärfen möchten.</p>"
+	},
+	"KI-Video": {
+		"doc": "00_fertig_Webseitentexte_KI-Video.docx",
+		"short_description": "<p>Für Videoerstellung und -Bearbeitung revolutioniert KI die bestehenden Workflows. Welche Tools bringen Mehrwert, ohne dass du die kreative Hoheit über deinen Content verlierst? Wie kann uns KI in Effizienz und Kreativität unterstützen? Diesen Fragen gehen wir nach.</p>",
+		"intro": "Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten öffentliche & individuelle Schulungen zu KI-Video Content an:",
+		"audiences": "Content Creator & Social Media, Marketing & Kommunikation, Video- & Filmproduktion, Motion Design, Agenturen",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"courses_intro": "Lerne, wie du mit KI und Schnittprogrammen schneller zu besserem Video-Content kommst.",
+		"full_description": "<p>Künstliche Intelligenz flutet den Kreativmarkt und verändert die Art, wie wir kreativ arbeiten. Wir schauen genauer hin und evaluieren, was für Video- und Filmschaffende Sinn macht und was nicht.</p><p><strong>Warum KI-Video Content?</strong></p><p>Fast täglich erscheinen neue KI-Modelle für Bild- und Videogenerierung. Wer im Produktionsalltag steckt, hat kaum Zeit, sie alle zu testen. Entscheidend ist zu wissen, welche Werkzeuge dir wirklich helfen und welche nur Zeit kosten – und wie du sie mit Premiere Pro oder After Effects kombinierst.</p><p><strong>Für wen sind unsere KI Video-Kurse?</strong></p><p>Unsere Kurse richten sich an alle, die im Bereich Video, Motion Graphics oder Animation arbeiten – ebenso an Marketing-Teams und Content Creator, die professionelle Videos für YouTube, Instagram, TikTok oder Firmenpräsentationen produzieren.</p>"
+	},
+	"Maxon One": {
+		"doc": "00_fertig_Webseitentexte_MaxonOne.docx",
+		"short_description": "<p>Das All-in-one-Paket von Maxon für 3D, Motion Design und Visual Effects. Maxon One vereint Cinema 4D, Redshift, Red Giant, ZBrush, Universe und Forger in einem Abo – vom Modell über das Rendering bis zu den fertigen Visuals.</p>",
+		"intro": "Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten Software-Lizenzen für Maxon One an:",
+		"audiences": "Motion Design & Kreativ-Agenturen, Film & TV, VFX-Studios, 3D- und CGI-Artists, Game Developer und Architektur",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"licences_intro": "Kaufe deine Maxon One Lizenz direkt bei uns im Shop – für Einzelpersonen oder Teams. Unsicher, welche Lizenz für dich passend ist? Melde dich bei uns. Wir helfen gerne weiter.",
+		"full_description": "<p>Maxon One ist das Software-Paket von Maxon mit allen wichtigen Programmen für 3D und Motion Design.</p><p><strong>Woher kommt Maxon One?</strong></p><p>Maxon One stammt von der Maxon Computer GmbH, dem deutschen Hersteller von Cinema 4D. Maxon hat sein Angebot in den letzten Jahren um Redshift, Red Giant und ZBrush erweitert und bündelt diese Programme seit 2020 in Maxon One. Die Visualisierungs-Akademie Schweiz GmbH in Zürich vertreibt Maxon One für die Schweiz.</p><p><strong>Für wen ist Maxon One?</strong></p><p>Maxon One wird für Kreative entwickelt, die mehr als ein Werkzeug brauchen: Motion DesignerInnen, VFX-Artists, Agenturen und Studios. Du nutzt Cinema 4D und Redshift für Modelling und Rendering, Red Giant für Effekte und ZBrush für Sculpting – alles in einem Abo.</p>",
+		"licences_lead": "Jahresmietlizenzen von Maxon One – für Einzelpersonen und Teams.",
+		"licences_quote": "Unsicher, ob du Maxon One oder Cinema 4D brauchst? Kontaktiere uns. Wir helfen gerne weiter."
 	}
 }

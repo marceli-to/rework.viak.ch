@@ -811,3 +811,32 @@ Lizenzen* and the *Sublead*, a block per licence (title, text, price, CTA),
   redirects. Those redirects' fallbacks for the plugins now name the
   plugin's own Angebot (Bongo, Drakon, Karamba3D, Lands Design, VisualARQ,
   Rhino.io); `port:check-shop-urls`: 202 paths, all one hop.
+
+### As built: step 6, topic Angebote and Maxon One (2026-11-12)
+
+#73. **Topic Angebote** through `catalogue:offers` (`topics` in
+`offers.json`), so the cutover repeats it after the port, which tags the
+courses as legacy does:
+
+- **Architekturvisualisierung, Architekturfotografie, KI-Video**, published,
+  named from the docs' URLs (their H1s read *Geheimnisse der
+  Architekturvisualisierung*, the course's own name, *Architekturfotografie
+  Kurse*, *KI in Video*). Tagged *Kurs* by their courses, nothing set.
+  Categories from the docs; Architekturfotografie under *Architektur &
+  Interior Design* and *Gestaltung & Bearbeitung* (Oliver: "passt").
+- Each course **takes its topic in place of Photoshop**; its other programs
+  stay, so *KI-Einstieg für Video Creator* is listed under After Effects and
+  Premiere Pro too. **Photoshop leaves the site** with that: its only course
+  left is the hidden *Rendering-Finish mit Photoshop & KI* (step 2), which is
+  what Oliver asked for. It comes back when VIAK publishes that course.
+- Texts from the docs (the KI-Video doc has its text on the line after an
+  empty «Text:», which the read now joins). The *Was ist …?* link says *Was
+  ist KI-Video?*; the doc titles that page *Wieso KI-Video Content?*. The
+  course texts of the changed KI-Video doc (new title *KI für Video &
+  Motiondesign*, two days) are not imported: course texts are not read from
+  the docs for existing courses.
+
+**Maxon One**, migration `2026_11_12_000005_maxon_one_own_angebot` and its
+own group in `licences.json`: the product out from under CINEMA 4D into an
+Angebot of its own, with its categories, the doc's texts and licence page
+texts.
