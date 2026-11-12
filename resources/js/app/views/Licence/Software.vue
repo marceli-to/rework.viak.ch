@@ -33,6 +33,5 @@ const blocked = (meta) => {
 			question: (form) => form.title,
 		}"
 		:blocked="blocked"
-		:lead="(meta) => meta.offline"
 	/>
 </template>
