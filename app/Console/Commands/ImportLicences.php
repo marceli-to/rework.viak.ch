@@ -49,7 +49,7 @@ class ImportLicences extends Command
 
 		DB::transaction(function () use ($groups): void {
 			foreach ($groups as $group) {
-				$software = $this->software($group['software']);
+				$software = $this->software($group['software'], $group['publish'] ?? true);
 
 				foreach ($group['products'] as $position => $row) {
 					$product = $this->product($software, $row, $position + 1);
@@ -69,8 +69,13 @@ class ImportLicences extends Command
 		return self::SUCCESS;
 	}
 
-	/** An existing group by its exact name, as the course software has it (CINEMA 4D); a new one goes to the end. */
-	private function software(string $title): Software
+	/**
+	 * An existing group by its exact name, as the course software has it
+	 * (CINEMA 4D); a new one goes to the end, published unless the file says
+	 * `"publish": false` (Maxwell Render, deactivated by the client
+	 * 2026-11-12). An existing group keeps its own setting.
+	 */
+	private function software(string $title, bool $publish = true): Software
 	{
 		$existing = Software::query()->where('title->de', $title)->first();
 
@@ -80,7 +85,7 @@ class ImportLicences extends Command
 
 		$this->counts['software']++;
 
-		return Software::create(['title' => ['de' => $title], 'order' => (int) Software::max('order') + 1, 'publish' => true]);
+		return Software::create(['title' => ['de' => $title], 'order' => (int) Software::max('order') + 1, 'publish' => $publish]);
 	}
 
 	private function manufacturer(string $title): Manufacturer

@@ -434,6 +434,16 @@ Plattform, Frontend-Sichtbarkeit, a remark and the shop URL.
 
 ### This replaces 3d-software.ch — answered 2026-09-29
 
+**Its URLs, 2026-11-12** (the client's page tree): every path on its hosts is
+one 301 to its new page ([[ShopRedirects]], `database/data/shop-redirects.json`,
+built from the list by a script kept beside it in `.rework/content/3d-software/`).
+A product page goes to the licence page holding its article number, resolved
+on each request, else to its Angebot; categories and the old plugin tree to
+the Angebot; blog posts to the Angebot they are about; start, shop and blog
+to the software list; Kontakt, Beratung and Impressum to `/de/kontakt`; what
+the map does not name to the software list. Maxwell deactivated (the client)
+and not mapped. Open: #74. Checked by `port:check-shop-urls` (`Deploy.md`).
+
 VIAK already sells software, at **3d-software.ch**. Nothing above knew that; it
 was all derived from the mockups. **The rework replaces that shop.** So the
 catalogue is not a blank page to be designed, it is an existing one to be moved,

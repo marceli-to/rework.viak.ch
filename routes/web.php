@@ -26,6 +26,7 @@ use App\Http\Controllers\Site\PaymentController;
 use App\Http\Controllers\Site\ProjectController;
 use App\Http\Controllers\Site\RobotsController;
 use App\Http\Controllers\Site\SearchController;
+use App\Http\Controllers\Site\ShopRedirectController;
 use App\Http\Controllers\Site\SitemapController;
 use App\Http\Controllers\Site\SoftwareController;
 use App\Http\Controllers\Site\TrainingController;
@@ -33,6 +34,18 @@ use App\Http\Middleware\SetLocaleFromUrl;
 use App\Support\SiteUrl;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
+
+/*
+ * The old licence shop, 3d-software.ch ([[ShopRedirects]], 2026-11-12):
+ * once its domain points here, every path on it is a 301 to its new page.
+ * **First**, because a route without a domain matches every host, and
+ * `/` below would otherwise take the old shop's start page.
+ */
+foreach (config('site.shop_hosts') as $host) {
+	Route::domain($host)->group(function () use ($host) {
+		Route::any('/{path?}', ShopRedirectController::class)->where('path', '.*')->name("shop.{$host}");
+	});
+}
 
 /*
  * The root redirects to the language root ([[00-foundation]]).

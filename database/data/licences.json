@@ -1371,6 +1371,7 @@
 	},
 	{
 		"software": "Maxwell Render",
+		"publish": false,
 		"products": [
 			{
 				"title": "Maxwell V5 Bundle",

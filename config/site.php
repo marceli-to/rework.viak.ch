@@ -31,6 +31,14 @@ return [
 	'canonical_host' => env('SITE_CANONICAL_HOST', 'visualisierungs-akademie.ch'),
 
 	/*
+	 * The old licence shop's hosts ([[ShopRedirects]], 2026-11-12). The
+	 * rework replaces 3d-software.ch (`05-licences.md`); at the cutover its
+	 * domain points here too, and every request on it is sent to the page
+	 * that took its place, on the canonical host.
+	 */
+	'shop_hosts' => ['3d-software.ch', 'www.3d-software.ch'],
+
+	/*
 	 * Path segments per locale, so `/de/kurs/…` can become `/en/course/…`
 	 * without either being hardcoded at a call site. The German values are the
 	 * legacy ones, unchanged, because they are what is indexed — note `kurse`

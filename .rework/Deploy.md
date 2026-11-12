@@ -110,6 +110,10 @@ client's texts for 22 more Angebot pages and their *Was ist …?* pages
 (`database/data/texts.json`). Fills empty fields only, so it is safe to rerun
 and keeps what VIAK has typed; `--force` makes the file win.
 
+**After the pull of 2026-11-12:** `php artisan migrate --force` (Maxwell
+Render unpublished, the client's ask). The 3d-software.ch redirects need
+nothing on staging: its domain does not point there.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
@@ -151,6 +155,18 @@ and keeps what VIAK has typed; `--force` makes the file win.
    when one does not land on a page, or needs more than one redirect to get
    there (the courses live under `/de/angebote` since 2026-10-29) ([[CheckLegacyUrls]], `Todo.md`, *The
    redirect map*). Under Herd, `/robots.txt` and `/favicon.ico` fail falsely.
+   **And `php artisan port:check-shop-urls --base=https://<the new server>`**
+   (2026-11-12): the old shop's 202 paths (`database/data/shop-redirects.json`,
+   from the client's page tree), each resolved and its target asked for. It
+   fails when a target is not a page; it lists the paths whose product is
+   missing and that land on their Angebot instead ([[CheckShopUrls]]).
+   **3d-software.ch moves with the DNS switch**: in Plesk, `3d-software.ch`
+   and `www.3d-software.ch` become aliases of the new site (with their
+   certificate), so the app answers them; `routes/web.php` sends every path
+   on those hosts to its new page, one 301 ([[ShopRedirects]]). Check after:
+   `curl -sI https://www.3d-software.ch/public/Bongo-2/RHN-1121` must answer
+   301 to `/de/angebote/software/bongo-2`. Before the switch the same with
+   `--resolve www.3d-software.ch:443:<new server IP>`.
 7. The new GTM container version, published together with the DNS switch
    (`11-tracking.md`, step 5). If the `purchase` event is built by then
    (`11-tracking.md`, *Step 2 worked out, 2026-11-02*): take the *form
