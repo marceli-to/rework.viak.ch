@@ -1097,3 +1097,25 @@ Marcel, on the questions this map raised:
 
 Nothing in this chunk is waiting on an answer. What it waits on is mail
 (chunk 10), for step 7.
+
+## Forms, Marcel's pass of 2026-11-12
+
+- **One field per row.** No side-by-side pairs; a longer page is fine. Done
+  on the licence form (`LicenceVariantSchema`) and the software form; 13
+  other schemas still use `Field::row` and are flattened when Marcel says.
+  A checkbox with a hint now keeps the space under it a text field has.
+- **Only what applies**: a field or section can carry `when` (a form value
+  that must be set) or `whenMeta` (a part of the saved record), read by
+  `FormNode.vue`. The software form shows *Läuft in* only once *Plugin* is
+  ticked, and *Seite «Lizenzen»* only while the Angebot has licence
+  products. A hidden field keeps its value and is still sent.
+- **The software form** opens with *Einstellungen*, open (Publizieren,
+  Beliebt, Plugin, Läuft in, Kategorien), then the shut page sections. The
+  two recommendation pickers are one *Empfehlungen* section (`flat` on
+  `OfferPicker`).
+- **Tried and taken out the same hour**: a *5/7* badge for filled fields on
+  each section (badges count records or picks, never completeness), and a
+  line above the form saying why a record is not on the site.
+- **Headings in the editor** where a field asks for them (`headings`): the
+  *Was ist …?* text has H2 and H3; `EditorHtml` keeps both. Migration
+  `2026_11_12_000006` turned the bold-line subtitles into `<h2>`.
