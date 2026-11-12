@@ -1,0 +1,126 @@
+{
+	"software": [
+		"ComfyUI",
+		"D5 Render",
+		"Figma Weave"
+	],
+	"courses": [
+		{
+			"doc": "00_fertig_Webseitentexte_ComfyUI.docx",
+			"page": "../Schulung/KI-Workflows-ComfyUI",
+			"title": "KI-Workflows mit ComfyUI",
+			"subtitle": "node based AI für komplexe Anwendungen",
+			"software": [
+				"ComfyUI"
+			],
+			"categories": [
+				"AI & Neue Workflows",
+				"Gestaltung & Bearbeitung"
+			],
+			"replaces": null,
+			"short_description": "<p>Generiere komplexe KI-Abläufe für exakte Renderings und Animationen</p><p>Für alle, die KI nicht nur ausprobieren, sondern präzise steuern wollen: Mit dem Open-Source-Tool ComfyUI baust du KI-Abläufe Node für Node selbst auf – mit voller Kontrolle über Modelle, Parameter und Daten. ArchViz-Profi Günes Direk, Partner bei Nightnurse Images, zeigt dir, wie du aus Renderings, 3D-Modellen und Skizzen geometrisch exakte Bilder, Varianten und Animationen erzeugst, die Architektur und Materialität deines Projekts respektieren. Dabei gibt er Einblick in Workflows aus der Produktion des renommierten ArchViz-Studios.</p><p>Die Visualisierungs-Akademie ist das Bildungszentrum von Nightnurse Images. Wir vermitteln Wissen direkt aus der täglichen Praxis des professionellen Visualisierungsstudios. Unsere Dozenten arbeiten aktiv in den Bereichen Modellierung, Visualisierung, Animation und Bildbearbeitung und geben ihr Know-how aus ihrem beruflichen Alltag weiter. Lerne von den Menschen hinter den professionellen Bildwelten.</p>",
+			"facts": [
+				"<p><strong>Kursziel:</strong></p><p>Nach diesem Kurs richtest du ComfyUI selbst ein, baust eigene Workflows für exakte Renderings, Varianten und Animationen und setzt sie gezielt in deinen Projekten ein.</p>",
+				"<p><strong>Kursinhalt:</strong></p><ul><li>ComfyUI einrichten: lokal vs. Cloud</li><li>Interface, Node-Logik und ComfyUI Manager</li><li>Modelle verstehen: Flux, Stable Diffusion, Checkpoints, LoRAs</li><li>Geometrie kontrollieren mit ControlNet (Depth, Canny, Normal)</li><li>Renderpasses und 3D-Modelle als Input nutzen</li><li>Stil- und Materialreferenzen mit IP-Adapter</li><li>Inpainting und Outpainting für gezielte Bildbereiche</li><li>Upscaling und Detailverbesserung für hochauflösende Renderings</li><li>Vom Standbild zur Animation mit KI-Videomodellen</li><li>Batch-Varianten: Tag/Nacht, Jahreszeiten, Materialien</li><li>Eigene Workflows aufbauen, speichern und im Team teilen</li><li>Datenschutz, Lizenzen und kommerzielle Nutzung von Modellen</li><li>Möglichkeiten und Grenzen von KI im Architekturrendering</li></ul>",
+				"<p><strong>Voraussetzungen:</strong></p><ul><li>Basiskenntnisse auf Windows oder MacOS</li><li>Erfahrung mit Rendering oder 3D-Visualisierung sowie erste Erfahrungen mit KI-Bildgenerierung</li><li>Eigener Laptop mit leistungsfähiger NVIDIA-Grafikkarte oder Zugang zu einem Cloud-Dienst für ComfyUI</li></ul>",
+				"<p><strong>Gruppengrösse:</strong></p><p>4 bis max. 8 Personen</p>"
+			],
+			"information_booking": "<p>Hast du Fragen zum Kurs? <a href=\"/de/kontakt\">Melde dich gerne bei uns.</a></p><p>Möchtest du diese Schulung statt als Gruppenkurs für dich als Einzelschulung oder in deiner Firma als massgeschneiderte Individualschulung? <a href=\"/de/kontakt\">Ruf uns an.</a> Wir finden eine passende Lösung.</p>"
+		},
+		{
+			"doc": "00_fertig_Webseitentexte_D5Render.docx",
+			"page": "../Schulung/SketchUp-D5-Render",
+			"title": "SketchUp & D5 Render",
+			"subtitle": "Vom 3D-Modell zum Hingucker",
+			"software": [
+				"D5 Render",
+				"SketchUp Pro"
+			],
+			"categories": [
+				"Architektur & Interior Design",
+				"AI & Neue Workflows"
+			],
+			"replaces": "Visualisieren mit SketchUp",
+			"short_description": "<p>Bilder und Animationen mit D5 KI-Tools für Interior Design, Architektur und Produktdesign</p><p>Mach mehr aus deinen 3D-Modellen: Mit dem Realtime-Renderer D5 und seinen integrierten KI-Tools verwandelst du Interior-, Architektur- und Produktprojekte in überzeugende Bilder und Animationen. Möbeldesigner, SketchUp- und D5-Experte Remo Kast zeigt dir in einem intensiven Tag, wie du schnell und effizient Visuals für deine Projektkommunikation erstellst.</p><p>Die Visualisierungs-Akademie ist das Bildungszentrum von Nightnurse Images. Wir vermitteln Wissen direkt aus der täglichen Praxis des professionellen Visualisierungsstudios. Unsere Dozenten arbeiten aktiv in den Bereichen Modellierung, Visualisierung, Animation und Bildbearbeitung und geben ihr Know-how aus ihrem beruflichen Alltag weiter. Lerne von den Menschen hinter den professionellen Bildwelten.</p>",
+			"facts": [
+				"<p><strong>Kursziel:</strong></p><p>Nach diesem Kurs setzt du D5 Render sicher ein, um aus deinen SketchUp-Modellen stimmungsvolle Bilder und Animationen zu erstellen, und weisst, wo dir die umfangreichen KI-Funktionen die Arbeit erleichtern.</p>",
+				"<p><strong>Kursinhalt:</strong></p><ul><li>Interface von D5 Render in deiner Hostsoftware</li><li>Werkzeugpaletten und Möglichkeiten kennenlernen</li><li>Materialien zuweisen und bearbeiten</li><li>Beleuchtung setzen</li><li>Bibliotheken für Begrünung, Menschen &amp; Objekte</li><li>Rendersettings</li><li>Tipps und Tricks für effizientes, kreatives Arbeiten mit D5</li><li>KI-Funktionen in D5 Render kennenlernen</li><li>Möglichkeiten und Grenzen von KI im Rendering</li><li>Bilder und Animationen exportieren</li></ul>",
+				"<p><strong>Voraussetzungen:</strong></p><ul><li>Basiskenntnisse auf Windows oder MacOS</li><li>Grundkenntnisse in SketchUp</li><li>Eigener Laptop mit leistungsfähiger Grafikkarte, inklusive SketchUp und D5 Render (kostenlose Version reicht)</li></ul>",
+				"<p><strong>Gruppengrösse:</strong></p><p>4 bis max. 8 Personen</p>"
+			],
+			"information_booking": "<p>Hast du Fragen zum Kurs? <a href=\"/de/kontakt\">Melde dich gerne bei uns.</a></p><p>Möchtest du diese Schulung statt als Gruppenkurs für dich als Einzelschulung oder in deiner Firma als massgeschneiderte Individualschulung? <a href=\"/de/kontakt\">Ruf uns an.</a> Wir finden eine passende Lösung.</p>"
+		},
+		{
+			"doc": "00_fertig_Webseitentexte_FigmaWeave.docx",
+			"page": "../Schulung/KI-Workflows-Figma-Weave",
+			"title": "KI-Workflows mit Figma Weave",
+			"subtitle": "Einstieg in node based Canvas",
+			"software": [
+				"Figma Weave"
+			],
+			"categories": [
+				"AI & Neue Workflows",
+				"Gestaltung & Bearbeitung",
+				"Animation & Interaktion"
+			],
+			"replaces": null,
+			"short_description": "<p>Erstelle individuelle KI-Abläufe für dein Team oder dein Unternehmen</p><p>Weg vom zufälligen Prompten, hin zum wiederholbaren Prozess: Mit Figma Weave verbindest du KI-Modelle für Bild und Video mit klassischen Bearbeitungswerkzeugen auf einem visuellen Node-Canvas. KI-Spezialist David Blum baut mit dir Schritt für Schritt eigene Abläufe für deinen kreativen Arbeitsalltag – komplett ohne Programmierkenntnisse. Am Ende verpackst du deine Workflows als einfache Weave-Tools, die dein ganzes Team ohne Vorkenntnisse nutzen kann.</p><p>Die Visualisierungs-Akademie ist das Bildungszentrum von Nightnurse Images. Wir vermitteln Wissen direkt aus der täglichen Praxis des professionellen Visualisierungsstudios. Unsere Dozenten arbeiten aktiv in den Bereichen Modellierung, Visualisierung, Animation und Bildbearbeitung und geben ihr Know-how aus ihrem beruflichen Alltag weiter. Lerne von den Menschen hinter den professionellen Bildwelten.</p>",
+			"facts": [
+				"<p><strong>Kursziel:</strong></p><p>Nach diesem Kurs baust du in Figma Weave eigene KI-Workflows für Bild und Video, setzt sie für Varianten- und Materialstudien ein und stellst sie deinem Team als einfache Weave-Tools zur Verfügung.</p>",
+				"<p><strong>Kursinhalt:</strong></p><ul><li>Node-basiertes Arbeiten vs. Prompt-Chat: warum Workflows mehr Kontrolle geben</li><li>Interface, Canvas und Logik der Nodes</li><li>KI-Modelle für Bild und Video im direkten Vergleich</li><li>Skizzen, Renderings und Fotos als Input nutzen</li><li>Prompting und Bildbeschreibung (Image Describer)</li><li>Bearbeitungs-Nodes: Masken, Compositing, Relighting, Farbkorrektur</li><li>Varianten- und Materialstudien</li><li>Vom Bild zum Video: Animationen für Präsentationen</li><li>Workflows als Weave-Tools fürs Team</li><li>Zusammenspiel mit Figma Design</li><li>Credits, Kosten, Datenschutz und Nutzungsrechte</li><li>Möglichkeiten und Grenzen von node based AI</li></ul>",
+				"<p><strong>Voraussetzungen:</strong></p><ul><li>Basiskenntnisse auf Windows oder MacOS</li><li>Erfahrung mit Bildbearbeitung oder Visualisierung ist von Vorteil, Programmierkenntnisse sind nicht nötig</li><li>Eigener Laptop mit aktuellem Browser und Figma-Account</li></ul>",
+				"<p><strong>Gruppengrösse:</strong></p><p>4 bis max. 8 Personen</p>"
+			],
+			"information_booking": "<p>Hast du Fragen zum Kurs? <a href=\"/de/kontakt\">Melde dich gerne bei uns.</a></p><p>Möchtest du diese Schulung statt als Gruppenkurs für dich als Einzelschulung oder in deiner Firma als massgeschneiderte Individualschulung? <a href=\"/de/kontakt\">Ruf uns an.</a> Wir finden eine passende Lösung.</p>"
+		},
+		{
+			"doc": "00_fertig_Webseitentexte_Photoshop-KI.docx",
+			"page": "../Schulung/Rendering-Finish-Photoshop-KI",
+			"title": "Rendering-Finish mit Photoshop & KI",
+			"subtitle": "Postproduktion wie im Profi-Studio",
+			"software": [
+				"Adobe Photoshop"
+			],
+			"categories": [
+				"Architektur & Interior Design",
+				"Gestaltung & Bearbeitung",
+				"AI & Neue Workflows"
+			],
+			"replaces": null,
+			"short_description": "<p>Effiziente Bildbearbeitung und smarte Workflows für wiederkehrende Aufgaben</p><p>Aus einem guten Rendering ein herausragendes Bild machen: In diesem Workshop bringst du deine Renderings in Photoshop auf Hochglanz, für dein Portfolio, den Wettbewerb oder Bauherrenpräsentationen. Archviz-Profi Günes Direk, Partner bei Nightnurse Images, zeigt dir, was du von Hand machst, wo KI dir Arbeit abnimmt und welche Plugins deinen Workflow deutlich beschleunigen. Dieser Kurs bietet einen exklusiven Blick hinter die Kulissen: Günes teilt Workflows, die bei Nightnurse Images, dem renommierten ArchViz-Studio, im täglich zum Einsatz kommen.</p><p>Die Visualisierungs-Akademie ist das Bildungszentrum von Nightnurse Images. Wir vermitteln Wissen direkt aus der täglichen Praxis des professionellen Visualisierungsstudios. Unsere Dozenten arbeiten aktiv in den Bereichen Modellierung, Visualisierung, Animation und Bildbearbeitung und geben ihr Know-how aus ihrem beruflichen Alltag weiter. Lerne von den Menschen hinter den professionellen Bildwelten.</p>",
+			"facts": [
+				"<p><strong>Kursziel:</strong></p><p>Nach diesem Kurs bearbeitest du deine Renderings gezielt und effizient in Photoshop, kombinierst Handarbeit mit automatisierten Workflows und KI-Tools und kennst die Möglichkeiten und Grenzen der KI in der Bildbearbeitung.</p>",
+				"<p><strong>Kursinhalt:</strong></p><ul><li>Ziele der Bildbearbeitung von Renderings in Photoshop</li><li>Grundsätzliche Bearbeitungstechniken – Handarbeit mit Photoshop</li><li>Automatisierte Workflows für effizientes Arbeiten</li><li>Photoshop-Plugins kennenlernen</li><li>Integrierte und externe KI-Tools für die Bildbearbeitung kennenlernen</li><li>Möglichkeiten und Grenzen der KI für Bildbearbeitung</li><li>Die Zukunft von ArchViz im KI-Zeitalter</li></ul>",
+				"<p><strong>Voraussetzungen:</strong></p><ul><li>Basiskenntnisse auf Windows oder MacOS</li><li>Gute Grundkenntnisse in Photoshop</li><li>Eigener Laptop inklusive aktueller Photoshop-Version (Testversion reicht)</li></ul>",
+				"<p><strong>Gruppengrösse:</strong></p><p>4 bis max. 8 Personen</p>"
+			],
+			"information_booking": "<p>Hast du Fragen zum Kurs? <a href=\"/de/kontakt\">Melde dich gerne bei uns.</a></p><p>Möchtest du diese Schulung statt als Gruppenkurs für dich als Einzelschulung oder in deiner Firma als massgeschneiderte Individualschulung? <a href=\"/de/kontakt\">Ruf uns an.</a> Wir finden eine passende Lösung.</p>"
+		},
+		{
+			"doc": "00_fertig_Webseitentexte_Enscape.docx",
+			"page": "../Schulung/Enscape-Veras-mit-Archicad",
+			"title": "Enscape & Veras",
+			"subtitle": "Vom Modell zu hochwertigen Visuals in Echtzeit",
+			"software": [
+				"Enscape",
+				"Veras"
+			],
+			"categories": [
+				"Architektur & Interior Design",
+				"Animation & Interaktion"
+			],
+			"replaces": "Enscape für Archicad",
+			"short_description": "<p>Realtime-Rendering, KI-Visualisierung &amp; Animationen für überzeugende Projekt-Präsentationen</p><p>Erwecke deine 3D-Architekturmodelle zum Leben: Mit Enscape materialisierst, beleuchtest und renderst du in Echtzeit Bauprojekte und hast sofort überzeugende Visuals für Präsentationen und Bauherrengespräche.</p><p>Die integrierte KI Veras macht daraus per Prompt neue Bilder und Videos für Material- und Variantenstudien. Realtimerender-Experte Daniel Nähring begleitet dich durch den ganzen Workflow, von den ersten Schritten bis zum fertigen Output, sodass du das Gelernte direkt im Alltag anwenden kannst.</p><p>Die Visualisierungs-Akademie ist das Bildungszentrum von Nightnurse Images. Wir vermitteln Wissen direkt aus der täglichen Praxis des professionellen Visualisierungsstudios. Unsere Dozenten arbeiten aktiv in den Bereichen Modellierung, Visualisierung, Animation und Bildbearbeitung und geben ihr Know-how aus ihrem beruflichen Alltag weiter. Lerne von den Menschen hinter den professionellen Bildwelten.</p>",
+			"facts": [
+				"<p><strong>Kursziel:</strong></p><p>Nach diesem Kurstag erstellst du effizient Visualisierungen deiner Archicad-Projekte und setzt KI gezielt ein, um Ideen schnell zu variieren. Du präsentierst deine Projekte intern und extern für Bauherrschaften, Verkauf oder dein Portfolio.</p>",
+				"<p><strong>Kursinhalt:</strong></p><ul><li>Interface von Enscape in deiner Hostsoftwar</li><li>Werkzeugpaletten und Möglichkeiten kennenlernen</li><li>Materialien zuweisen und bearbeiten</li><li>Beleuchtung setzen</li><li>Bibliotheken für Begrünung, Menschen &amp; Objekte</li><li>Darstellungsoptionen / Rendersettings</li><li>Tipps und Tricks für effizientes, kreatives Arbeiten mit Enscape</li><li>Enscape Modell für Veras vorbereiten</li><li>Oberfläche von Veras kennenlerne</li><li>Tipps &amp; Tricks für Prompting</li><li>Möglichkeiten und Grenzen von KI im Architekturrendering</li><li>Bilder und Animationen exportieren</li></ul>",
+				"<p><strong>Voraussetzungen:</strong></p><ul><li>Basiskenntnisse in Archicad</li><li>Eigener Laptop (muss den hohen Grafikanforderungen zwingend genügen) inklusive Archicad und Enscape (Demoversionen reichen)</li><li>Maus mit drei Tasten (Klickrad als klickbare 3. Taste)</li></ul>",
+				"<p><strong>Gruppengrösse:</strong></p><p>4 bis max. 8 Personen</p>"
+			],
+			"information_booking": "<p>Hast du Fragen zum Kurs? <a href=\"/de/kontakt\">Melde dich gerne bei uns.</a></p><p>Möchtest du diese Schulung statt als Gruppenkurs für dich als Einzelschulung oder in deiner Firma als massgeschneiderte Individualschulung? <a href=\"/de/kontakt\">Ruf uns an.</a> Wir finden eine passende Lösung.</p><p>Mehr Informationen zur Software, Demoversion und Lizenzen findest du bei uns im Softwarebereich.</p>"
+		}
+	],
+	"unpublish": [
+		"DaVinci Resolve Einführungskurs"
+	]
+}

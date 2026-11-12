@@ -705,3 +705,39 @@ import (`licences:import` on the migrated dev data creates nothing).
 - **Maxwell soft-deleted** (Angebot, 5 products, 13 licences). Its hosts
   (Archicad, Maya: unpublished programs) stay.
 - The Produktart tags are not set: they belong to the plugin move (step 4).
+
+### As built: steps 2 and 3, the unfinished Angebote and the texts (2026-11-12)
+
+**`catalogue:offers`** ([[ImportNewOffers]], `database/data/offers.json`),
+rerunnable like the other catalogue commands, a cutover step after the ports:
+
+- **ComfyUI, D5 Render, Figma Weave** created as Angebote, unpublished.
+  Their categories in `categories.json`, their texts in `texts.json`.
+- **Five courses, unpublished, fee 0** (#80), one per *Schulung* page of the
+  new docs and the changed Enscape doc: the H1 split at its colon into title
+  and subtitle (*SketchUp & D5 Render* / *Vom 3D-Modell zum Hingucker*), the
+  Sublead as the short description's first paragraph, the four facts as the
+  course form has them (*Kursziel*, *Kursinhalt*, *Voraussetzungen*,
+  *Gruppengrösse*), *Weitere Informationen* with *Melde dich gerne bei uns.*
+  and *Ruf uns an.* linked to Kontakt. Software and categories from the doc:
+  D5's course under D5 Render and SketchUp Pro, Enscape & Veras under both.
+  *Visualisieren mit SketchUp* and *Enscape für Archicad* stay online
+  untouched. The Enscape course is named *Enscape & Veras* from the doc's H1
+  (#76 asks whether that is the one Oliver meant).
+- **DaVinci Resolve Einführungskurs unpublished**; the DaVinci Angebot left
+  the site with it, no code needed. Legacy has the course published, so the
+  command repeats this after the ports.
+- **Photoshop stays**: the Photoshop-KI doc is the Photoshop Angebot's page,
+  now filled (it had no texts), and its new course *Rendering-Finish mit
+  Photoshop & KI* is unpublished. Photoshop's three published courses move to
+  the topic Angebote in step 6; then it has nothing published and leaves the
+  site by itself, which is the "ganzes Angebot ausblenden" Oliver asked for.
+
+The docs are read by a script in the scratchpad (not kept), as for
+`catalogue:texts`. Note: they separate key and text with U+2028, which
+Python's `splitlines()` treats as a line break.
+
+Not yet read: the changed **KI-Video** doc (step 6, its Angebot does not
+exist yet). The Enscape doc's Angebot part is unchanged. Two typos in the
+Enscape course copy kept verbatim for Oliver to fix: *Hostsoftwar*,
+*kennenlerne*.

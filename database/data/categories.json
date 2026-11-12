@@ -34,7 +34,7 @@
 		"RealFlow": ["Animation & Interaktion"],
 		"Godot": ["Animation & Interaktion"],
 		"Adobe Premiere Pro": ["Animation & Interaktion", "Gestaltung & Bearbeitung"],
-		"Adobe Photoshop": ["Gestaltung & Bearbeitung"],
+		"Adobe Photoshop": ["Architektur & Interior Design", "Gestaltung & Bearbeitung", "AI & Neue Workflows"],
 		"DaVinci Resolve": ["Gestaltung & Bearbeitung"],
 		"MyArchitectAI": ["Architektur & Interior Design", "AI & Neue Workflows"],
 		"Archicad": ["Architektur & Interior Design"],
@@ -42,7 +42,10 @@
 		"Maya": ["Animation & Interaktion"],
 		"ChatGPT": ["AI & Neue Workflows"],
 		"Perplexity": ["AI & Neue Workflows"],
-		"Midjourney": ["AI & Neue Workflows"]
+		"Midjourney": ["AI & Neue Workflows"],
+		"ComfyUI": ["AI & Neue Workflows", "Gestaltung & Bearbeitung"],
+		"D5 Render": ["Architektur & Interior Design", "AI & Neue Workflows"],
+		"Figma Weave": ["AI & Neue Workflows", "Gestaltung & Bearbeitung", "Animation & Interaktion"]
 	},
 	"products": {
 		"Bongo 2": ["Schmuck- & Produktdesign", "Animation & Interaktion"],

@@ -119,6 +119,16 @@ Rhino 9, the Rhino 9 Upgrade promo with its Streichpreis, Drakon's demo,
 hides EDU and deletes Maxwell. Nothing else to run: `search:rebuild` in the
 update line indexes the new licences.
 
+**Then, once:** `php artisan catalogue:offers`, `php artisan
+catalogue:categories`, `php artisan catalogue:texts` (each `--dry-run`
+first). The first adds ComfyUI, D5 Render and Figma Weave and five courses,
+all unpublished, and takes the DaVinci course (and with it the DaVinci
+Angebot) off the site; the second gives the three Angebote their
+categories; the third their texts and Photoshop's. Photoshop's categories
+changed in `categories.json` too, but only `--sync` applies that to a
+database that has some, and it overwrites VIAK's choices: skip unless
+Oliver asks.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
@@ -132,6 +142,11 @@ update line indexes the new licences.
    anything.** `port:courses` clears and rebuilds `events`, `courses` and
    `software` with new ids: software pages, recommendations, testimonials and
    media attached since would point at nothing, and nothing would say so.
+   **Then `php artisan catalogue:offers`** (`--dry-run` first, 2026-11-12):
+   the Angebote and courses the client is still working on, unpublished
+   (`database/data/offers.json`), and *DaVinci Resolve Einführungskurs*
+   unpublished, which the port brings back as legacy has it. Before
+   `catalogue:categories`, which gives the new Angebote their categories.
    **Then `php artisan catalogue:categories`** (`--dry-run` first):
    `port:courses` brings legacy's three categories back, and this puts the
    client's five in their place with a first assignment to software, licence
