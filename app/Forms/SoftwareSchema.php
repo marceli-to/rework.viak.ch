@@ -82,13 +82,13 @@ final class SoftwareSchema extends Schema
 				Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
 					->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
 				Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['preview' => 'url', 'filled' => true]),
+			])->with(['preview' => 'url']),
 
 			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
 			Field::section('Seite «Was ist …?»', [
 				Field::richtext('full_description')
 					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
-			])->with(['preview' => 'about_url', 'filled' => true]),
+			])->with(['preview' => 'about_url']),
 
 			// Its licence page since #71 (the client, 2026-11-12): one page per
 			// Angebot, so only for one with licence products (`whenMeta`).
@@ -98,7 +98,7 @@ final class SoftwareSchema extends Schema
 				Field::richtext('requirements')->label('Systemvoraussetzungen')
 					->with(['hint' => 'Einmal für alle Lizenzen dieses Angebots.']),
 				Field::textarea('licences_quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['preview' => 'licences_url', 'filled' => true, 'whenMeta' => 'products_count']),
+			])->with(['preview' => 'licences_url', 'whenMeta' => 'products_count']),
 
 			// Both pickers in one section, flat (Marcel, 2026-11-12): two shut
 			// sections for one idea was one too many.
@@ -113,7 +113,7 @@ final class SoftwareSchema extends Schema
 			Field::section('Metatags + SEO', [
 				Field::textarea('seo_description')->label('SEO - Beschreibung')->rules(['max:1000']),
 				Field::textarea('seo_tags')->label('SEO - Keywords')->rules(['max:1000']),
-			])->with(['filled' => true]),
+			]),
 		];
 	}
 

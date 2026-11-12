@@ -55,23 +55,12 @@ const shown = computed(() => {
 	return true;
 });
 
-/*
- * A section's badge: `count`, how many are picked in its list(s); or
- * `filled`, how many of its texts hold something, of how many, *6/8* (Marcel,
- * 2026-11-12), so what is missing shows without opening it.
- */
-const TEXTS = ['text', 'textarea', 'richtext'];
-const texts = (fields) => fields.flatMap((child) => (TEXTS.includes(child.type) ? [child] : child.fields && child.type !== 'repeater' ? texts(child.fields) : []));
-const filledText = (raw) => String(raw ?? '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() !== '';
+// A section's badge: how many are picked in its list(s), `count`. Never how
+// many fields are filled (Marcel, 2026-11-12: tried, taken out).
 const badge = computed(() => {
 	const field = props.field;
-	if (field.type !== 'section') return 0;
-	if (field.filled) {
-		const all = texts(field.fields ?? []);
-		return all.length ? `${all.filter((child) => filledText(get(props.model, child.name))).length}/${all.length}` : 0;
-	}
-	if (field.count) return [].concat(field.count).reduce((sum, name) => sum + (get(props.model, name) ?? []).length, 0);
-	return 0;
+	if (field.type !== 'section' || !field.count) return 0;
+	return [].concat(field.count).reduce((sum, name) => sum + (get(props.model, name) ?? []).length, 0);
 });
 
 const key = computed(() => props.path + props.field.name);
