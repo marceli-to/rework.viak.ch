@@ -38,6 +38,9 @@ final class EditorHtml
 			->allowElement('p')
 			->allowElement('br')
 			->allowElement('strong')
+			// Headings, where a field offers them (*Was ist …?*, Marcel 2026-11-12).
+			->allowElement('h2')
+			->allowElement('h3')
 			->allowElement('ul')
 			->allowElement('li')
 			->allowElement('a', ['href', 'target', 'rel'])

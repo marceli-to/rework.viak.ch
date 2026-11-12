@@ -51,9 +51,9 @@ class SoftwareShowcaseSeeder extends Seeder
 		// *Was ist Rhinoceros?*, a page of its own.
 		$software->setTranslations('full_description', ['de' => <<<'HTML'
 			<p>Rhinoceros, kurz Rhino oder Rhino3D, ist eine kommerzielle CAD-Software, entwickelt von Robert McNeel &amp; Associates.</p>
-			<p><strong>Woher kommt Rhino?</strong></p>
+			<h2>Woher kommt Rhino?</h2>
 			<p>Hinter Rhino steht Robert McNeel &amp; Associates, ein 1980 gegründetes Softwareunternehmen mit Sitz in Seattle. Die Firma ist bis heute in Privatbesitz und finanziert sich ausschliesslich aus eigenen Erträgen. Sie ist mit Niederlassungen von Barcelona bis Tokio sowie über 700 Händlern und Schulungspartnern weltweit präsent. Einer davon ist die Visualisierungs-Akademie Schweiz GmbH in Zürich.</p>
-			<p><strong>Für wen ist Rhino?</strong></p>
+			<h2>Für wen ist Rhino?</h2>
 			<p>Rhino wird für DesignerInnen, IngenieurInnen und Fertigungsfachleute entwickelt. Architekturbüros nutzen es für Freiform- und Wettbewerbsmodelle, Produkt- und IndustriedesignerInnen von Möbel- bis zu Bootsrumpf-Modellen. In der Uhren- und Schmuckbranche ist Rhino weit verbreitet. Dazu kommen Modellbau, 3D-Druck und CNC-Fertigung: überall dort, wo aus einer Idee ein exaktes, produzierbares Modell werden soll.</p>
 			HTML]);
 

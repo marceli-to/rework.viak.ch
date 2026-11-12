@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Models\Course;
 use App\Models\Software;
+use App\Models\User;
+use App\Support\SiteUrl;
 use App\Support\Slug;
 
 /**
@@ -100,4 +102,20 @@ it('has a text for every Angebot it names, and every one of them exists in the c
 			->and($fields['short_description'] ?? '')->toStartWith('<p>')
 			->and($fields['full_description'] ?? '')->toStartWith('<p>');
 	}
+});
+
+it('keeps the Was ist page\'s subtitles as headings, saved from the dashboard and shown on the page', function () {
+	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
+	$rhino = rhinoWithTexts();
+
+	$this->actingAs($admin)->putJson("/api/admin/software/{$rhino->uuid}", [
+		'title' => 'Rhinoceros', 'publish' => true,
+		'full_description' => '<p>Ein CAD.</p><h2>Woher kommt Rhino?</h2><p>Aus Seattle.</p><h3>Heute</h3><h4>weg</h4>',
+	])->assertOk();
+
+	expect($rhino->fresh()->getTranslation('full_description', 'de'))
+		->toBe('<p>Ein CAD.</p><h2>Woher kommt Rhino?</h2><p>Aus Seattle.</p><h3>Heute</h3>');
+
+	$this->get(SiteUrl::softwareAbout('rhinoceros'))->assertOk()
+		->assertSee('<h2>Woher kommt Rhino?</h2>', false);
 });

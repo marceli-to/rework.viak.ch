@@ -87,7 +87,7 @@ final class SoftwareSchema extends Schema
 			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
 			Field::section('Seite «Was ist …?»', [
 				Field::richtext('full_description')
-					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
+					->with(['headings' => true, 'hint' => 'Leer: keine Seite und kein Link.']),
 			])->with(['preview' => 'about_url']),
 
 			// Its licence page since #71 (the client, 2026-11-12): one page per

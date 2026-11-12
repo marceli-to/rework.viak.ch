@@ -27,7 +27,9 @@ import LinkDialog from './LinkDialog.vue';
  */
 const model = defineModel({ type: String, default: '' });
 
-defineProps({
+const props = defineProps({
+	// H2 and H3 in the bar, for a page's subtitles (*Was ist …?*, Marcel 2026-11-12).
+	headings: { type: Boolean, default: false },
 	label: { type: String, default: null },
 	required: { type: Boolean, default: false },
 	error: { type: String, default: null },
@@ -38,7 +40,7 @@ const id = useId();
 const editor = shallowRef(null);
 const content = ref(null);
 
-const active = ref({ bold: false, bulletList: false, link: false });
+const active = ref({ bold: false, bulletList: false, link: false, h2: false, h3: false });
 // The open link dialog: the link's address, and whether it needs words of its own.
 const linking = ref(null);
 
@@ -47,7 +49,7 @@ onMounted(async () => {
 
 	editor.value = new Editor({
 		element: content.value,
-		extensions: extensions(),
+		extensions: extensions({ headings: props.headings }),
 		content: model.value,
 		editorProps: {
 			attributes: {
@@ -65,6 +67,8 @@ onMounted(async () => {
 				bold: instance.isActive('bold'),
 				bulletList: instance.isActive('bulletList'),
 				link: instance.isActive('link'),
+				h2: instance.isActive('heading', { level: 2 }),
+				h3: instance.isActive('heading', { level: 3 }),
 			};
 		},
 	});
@@ -121,7 +125,15 @@ function cancelLink() {
 	editor.value?.commands.focus();
 }
 
+const heading = (level) => editor.value?.chain().focus().toggleHeading({ level }).run();
+
 const buttons = [
+	...(props.headings
+		? [
+				{ state: 'h2', title: 'Zwischentitel', text: 'H2', action: () => heading(2) },
+				{ state: 'h3', title: 'Untertitel', text: 'H3', action: () => heading(3) },
+			]
+		: []),
 	{ state: 'bold', title: 'Fett', icon: IconEditorBold, action: () => run('toggleBold') },
 	{ state: 'bulletList', title: 'Aufzählung', icon: IconEditorBulletList, action: () => run('toggleBulletList') },
 	{ state: 'link', title: 'Link einfügen/bearbeiten', icon: IconEditorLink, action: openLink },
@@ -149,14 +161,15 @@ const buttons = [
 						@mousedown.prevent
 						@click="button.action"
 					>
-						<component :is="button.icon" />
+						<span v-if="button.text" class="text-md leading-none font-bold">{{ button.text }}</span>
+						<component :is="button.icon" v-else />
 					</button>
 				</div>
 			</div>
 
 			<div
 				ref="content"
-				class="min-h-0 flex-1 cursor-text overflow-y-auto p-16 text-md text-black sm:text-lg lg:text-xl [&_.ProseMirror]:min-h-full [&_p]:mb-12 lg:[&_p]:mb-16 [&_p:last-child]:mb-0 [&_li>p]:mb-0 [&_strong]:font-bold [&_ul]:mb-12 [&_ul]:list-disc lg:[&_ul]:mb-16 [&_ul:last-child]:mb-0 [&_li]:ml-20 [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-[3px]"
+				class="min-h-0 flex-1 cursor-text overflow-y-auto p-16 text-md text-black sm:text-lg lg:text-xl [&_.ProseMirror]:min-h-full [&_p]:mb-12 lg:[&_p]:mb-16 [&_p:last-child]:mb-0 [&_li>p]:mb-0 [&_strong]:font-bold [&_h2]:mb-8 [&_h2]:font-bold [&_h3]:mb-8 [&_h3]:font-bold [&_ul]:mb-12 [&_ul]:list-disc lg:[&_ul]:mb-16 [&_ul:last-child]:mb-0 [&_li]:ml-20 [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-[3px]"
 				@click.self="content?.querySelector('[contenteditable]')?.focus()"
 			/>
 		</div>
