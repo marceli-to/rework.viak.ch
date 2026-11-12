@@ -49,7 +49,7 @@ class ImportLicences extends Command
 
 		DB::transaction(function () use ($groups): void {
 			foreach ($groups as $group) {
-				$software = $this->software($group['software'], $group['publish'] ?? true);
+				$software = $this->software($group['software'], $group['publish'] ?? true, $group['plugin'] ?? false, $group['runs_in'] ?? []);
 
 				foreach ($group['products'] as $position => $row) {
 					$product = $this->product($software, $row, $position + 1);
@@ -72,10 +72,13 @@ class ImportLicences extends Command
 	/**
 	 * An existing group by its exact name, as the course software has it
 	 * (CINEMA 4D); a new one goes to the end, published unless the file says
-	 * `"publish": false` (Maxwell Render, deactivated by the client
-	 * 2026-11-12). An existing group keeps its own setting.
+	 * `"publish": false`, and a plugin (#72) where it says `"plugin": true`,
+	 * with the programs it runs in (`runs_in`, found as `hosts` are). An
+	 * existing group keeps its own settings.
+	 *
+	 * @param  array<int, string>  $runsIn
 	 */
-	private function software(string $title, bool $publish = true): Software
+	private function software(string $title, bool $publish = true, bool $plugin = false, array $runsIn = []): Software
 	{
 		$existing = Software::query()->where('title->de', $title)->first();
 
@@ -85,7 +88,10 @@ class ImportLicences extends Command
 
 		$this->counts['software']++;
 
-		return Software::create(['title' => ['de' => $title], 'order' => (int) Software::max('order') + 1, 'publish' => $publish]);
+		$software = Software::create(['title' => ['de' => $title], 'order' => (int) Software::max('order') + 1, 'publish' => $publish, 'plugin' => $plugin]);
+		$software->hosts()->sync($this->hosts($runsIn));
+
+		return $software;
 	}
 
 	private function manufacturer(string $title): Manufacturer
@@ -106,7 +112,6 @@ class ImportLicences extends Command
 	{
 		$attributes = [
 			'manufacturer_id' => $this->manufacturer($row['manufacturer'])->id,
-			'plugin' => (bool) ($row['plugin'] ?? false),
 			'three_years_on_request' => $row['three_years_on_request'],
 			'order' => $order,
 		];

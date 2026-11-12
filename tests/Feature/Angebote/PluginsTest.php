@@ -4,94 +4,117 @@ declare(strict_types=1);
 
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
-use App\Models\Manufacturer;
 use App\Models\Software;
 use App\Models\User;
 use App\Support\Slug;
 
 /**
- * Plugins (#67, the client 2026-11-03, [[14-angebote]]): a licence product
- * marked *Plugin* stays under the Angebot it runs in, listed there under
- * *Plugins* apart from the Angebot's own *Lizenzen*, and tagged on the
- * Software list's tile.
+ * Plugins as Angebote of their own (#72, the client 2026-11-12,
+ * [[14-angebote]] *As built: step 4*): *Plugin* is the Angebot's, with the
+ * programs it runs in (*Läuft in*). Its page says *Plugin für …*, its products
+ * are listed under *Plugins* on each host's page, and the tiles say *Plugin*.
+ * Until then (#67) plugin products sat under Rhinoceros.
  */
-function rhinoWithBongo(): Software
+function angebotWithProduct(string $title, string $product, string $price, array $attributes = []): Software
 {
-	$rhino = Software::create(['title' => ['de' => 'Rhinoceros'], 'slug' => Slug::forTitles('Rhinoceros'), 'order' => 0, 'publish' => true]);
+	$software = Software::create(['title' => ['de' => $title], 'slug' => Slug::forTitles($title), 'order' => 0, 'publish' => true, ...$attributes]);
 
 	LicenceVariant::factory()->for(LicenceProduct::factory()->create([
-		'software_id' => $rhino->id, 'title' => ['de' => 'Rhinoceros 8'], 'slug' => Slug::forTitles('Rhinoceros 8'),
-	]), 'product')->create(['price' => '550.00', 'listed' => true]);
+		'software_id' => $software->id, 'title' => ['de' => $product], 'slug' => Slug::forTitles($product),
+	]), 'product')->create(['price' => $price, 'listed' => true]);
 
-	LicenceVariant::factory()->for(LicenceProduct::factory()->plugin()->create([
-		'software_id' => $rhino->id, 'title' => ['de' => 'Bongo 2'], 'slug' => Slug::forTitles('Bongo 2'),
-	]), 'product')->create(['price' => '280.00', 'listed' => true]);
-
-	return $rhino;
+	return $software;
 }
 
-it('lists an Angebot\'s plugins under Plugins, after its own licences', function () {
-	rhinoWithBongo();
+function rhinoAndBongo(): array
+{
+	$rhino = angebotWithProduct('Rhinoceros', 'Rhinoceros 9', '930.00');
+	$bongo = angebotWithProduct('Bongo', 'Bongo 2', '280.00', ['plugin' => true]);
+	$bongo->hosts()->sync([$rhino->id]);
+
+	return [$rhino, $bongo];
+}
+
+it('lists the products of the plugins that run in an Angebot under Plugins, after its own licences', function () {
+	rhinoAndBongo();
 
 	$this->get('/de/angebote/rhinoceros')->assertOk()
-		->assertSeeInOrder(['Lizenzen', 'Rhinoceros 8', 'Plugins', 'Bongo 2']);
+		->assertSeeInOrder(['Lizenzen', 'Rhinoceros 9', 'Plugins', 'Bongo 2']);
 });
 
-it('has no Plugins section without a plugin', function () {
-	rhinoWithBongo();
-	LicenceProduct::where('title->de', 'Bongo 2')->update(['plugin' => false]);
+it('has no Plugins section where nothing runs in it, and lists no plugin of an Angebot off the site', function () {
+	[, $bongo] = rhinoAndBongo();
+	$bongo->update(['publish' => false]);
 
-	$this->get('/de/angebote/rhinoceros')->assertOk()
-		->assertSeeInOrder(['Lizenzen', 'Bongo 2'])
-		->assertDontSee('Plugins');
+	$this->get('/de/angebote/rhinoceros')->assertOk()->assertDontSee('Plugins')->assertDontSee('Bongo 2');
 });
 
-it('prices an Angebot by its own licences before its plugins', function () {
-	$rhino = rhinoWithBongo();
+it('says on a plugin\'s page where it runs, linked, and only Plugin where it runs in many', function () {
+	[, $bongo] = rhinoAndBongo();
 
-	expect($rhino->fresh()->licenceFrom())->toBe('550.00');
+	$this->get('/de/angebote/bongo')->assertOk()
+		->assertSee('Plugin für')
+		->assertSee('href="/de/angebote/rhinoceros"', false);
 
-	// With nothing of its own, a plugin's price is the Angebot's.
-	LicenceProduct::where('title->de', 'Rhinoceros 8')->update(['publish' => false]);
-	expect($rhino->fresh()->licenceFrom())->toBe('280.00');
+	$vray = angebotWithProduct('V-Ray', 'V-Ray Solo', '450.00', ['plugin' => true]);
+	$this->get('/de/angebote/v-ray')->assertOk()->assertSee('Plugin')->assertDontSee('Plugin für');
 });
 
-it('tags a tile on the Software list Software or Plugin', function () {
-	rhinoWithBongo();
+it('prices an Angebot by its own licences only', function () {
+	[$rhino, $bongo] = rhinoAndBongo();
+
+	expect($rhino->fresh()->licenceFrom())->toBe('930.00')
+		->and($bongo->fresh()->licenceFrom())->toBe('280.00');
+});
+
+it('tags a plugin Plugin on its Angebot tile and its products\' tiles', function () {
+	[$rhino, $bongo] = rhinoAndBongo();
+
+	expect($bongo->offer())->toBe('Plugin')
+		->and($rhino->offer())->toBe('Software');
 
 	$this->get('/de/angebote/software')->assertOk()
 		->assertSeeInOrder(['Plugin', 'Bongo 2', 'Plugin für Rhinoceros'])
-		->assertSeeInOrder(['Software', 'Rhinoceros 8', 'für Rhinoceros']);
+		->assertSeeInOrder(['Software', 'Rhinoceros 9', 'für Rhinoceros']);
 });
 
-it('is set in the dashboard\'s product form', function () {
+it('is set on the Angebot in the dashboard, with the programs it runs in, never itself', function () {
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
-	$software = Software::create(['title' => ['de' => 'Rhinoceros'], 'order' => 1, 'publish' => true]);
-	$maker = Manufacturer::create(['title' => ['de' => 'Bongo'], 'order' => 1, 'publish' => true]);
+	[$rhino, $bongo] = rhinoAndBongo();
 
-	$uuid = $this->actingAs($admin)->postJson('/api/admin/licences', [
-		'software' => $software->uuid, 'manufacturer' => $maker->uuid, 'title' => 'Bongo 2',
-		'description' => '', 'hosts' => [], 'plugin' => true, 'publish' => true,
-	])->assertCreated()->assertJsonPath('data.plugin', true)->json('data.uuid');
+	$this->actingAs($admin)->putJson("/api/admin/software/{$bongo->uuid}", [
+		'title' => 'Bongo', 'plugin' => true, 'publish' => true, 'hosts' => [$rhino->uuid, $bongo->uuid],
+	])->assertOk()
+		->assertJsonPath('data.plugin', true)
+		->assertJsonPath('data.hosts', [$rhino->uuid]);
 
-	expect(LicenceProduct::where('uuid', $uuid)->first()->plugin)->toBeTrue();
+	expect($bongo->fresh()->hosts->pluck('id')->all())->toBe([$rhino->id]);
 });
 
-it('marks the six plugins under Rhinoceros on import', function () {
+it('imports the plugins as Angebote of their own, with where they run', function () {
+	Software::create(['title' => ['de' => 'Rhinoceros'], 'order' => 0, 'publish' => true]);
+
 	$this->artisan('licences:import')->assertSuccessful();
 
-	expect(LicenceProduct::where('plugin', true)->get()->map(fn (LicenceProduct $product) => $product->getTranslation('title', 'de'))->sort()->values()->all())
-		->toBe(['Bongo 2', 'Drakon', 'Karamba3D PRO', 'Lands Design 6', 'MatrixGold', 'VisualARQ 3']);
+	$plugins = Software::where('plugin', true)->with('hosts')->get()
+		->mapWithKeys(fn (Software $software) => [$software->getTranslation('title', 'de') => $software->hosts->map->getTranslation('title', 'de')->all()]);
+
+	expect($plugins->keys()->sort()->values()->all())
+		->toBe(['Bongo', 'Corona Renderer', 'Drakon', 'Enscape', 'Karamba3D', 'Lands Design', 'MatrixGold', 'Rhino.io', 'V-Ray', 'Veras', 'VisualARQ'])
+		->and($plugins['Bongo'])->toBe(['Rhinoceros'])
+		->and($plugins['Rhino.io'])->toBe(['CINEMA 4D'])
+		->and($plugins['V-Ray'])->toBe([])
+		->and(LicenceProduct::where('title->de', 'Bongo 2')->first()->software->getTranslation('title', 'de'))->toBe('Bongo');
 });
 
 /** With EDU in the shop (#70), an Ausbildungslizenz is no "ab" price (Marcel, 2026-11-09). */
 it('leaves an Ausbildungslizenz out of the from-price, unless there is nothing else', function () {
-	$rhino = rhinoWithBongo();
-	$product = LicenceProduct::where('title->de', 'Rhinoceros 8')->first();
+	[$rhino] = rhinoAndBongo();
+	$product = LicenceProduct::where('title->de', 'Rhinoceros 9')->first();
 	$edu = LicenceVariant::factory()->for($product, 'product')->create(['price' => '90.00', 'listed' => true, 'education' => true]);
 
-	expect($product->fresh()->fromPrice())->toBe('550.00')
-		->and($rhino->fresh()->licenceFrom())->toBe('550.00');
+	expect($product->fresh()->fromPrice())->toBe('930.00')
+		->and($rhino->fresh()->licenceFrom())->toBe('930.00');
 
 	$product->variants()->whereKeyNot($edu->id)->delete();
 	expect($product->fresh()->fromPrice())->toBe('90.00');

@@ -79,7 +79,7 @@ it('puts the five in place of the legacy three, and seeds the Angebote, products
 
 	$rhino = angebot('Rhinoceros', licence: true, course: true);
 	$rhino->categories()->attach($legacy);
-	$bongo = LicenceProduct::factory()->create(['software_id' => $rhino->id, 'title' => ['de' => 'Bongo 2']]);
+	$bongo = angebot('Bongo', licence: true);
 	$vray = angebot('V-Ray');
 	$sketchup = angebot('SketchUp Pro');
 	$both = Course::factory()->create();
@@ -97,9 +97,9 @@ it('puts the five in place of the legacy three, and seeds the Angebote, products
 	])
 		->and(Category::withTrashed()->find($legacy->id)->trashed())->toBeTrue()
 		->and(categoryTitles($rhino->categories()->get()))->toBe(['Architektur & Interior Design', 'Schmuck- & Produktdesign'])
-		// The product the file names takes the file's; the others their software's.
+		// A plugin is an Angebot of its own (#72) and takes the file's; a product its software's.
 		->and(categoryTitles($bongo->categories()->get()))->toBe(['Animation & Interaktion', 'Schmuck- & Produktdesign'])
-		->and(categoryTitles($rhino->products()->where('id', '!=', $bongo->id)->first()->categories()->get()))->toBe(['Architektur & Interior Design', 'Schmuck- & Produktdesign'])
+		->and(categoryTitles($rhino->products()->first()->categories()->get()))->toBe(['Architektur & Interior Design', 'Schmuck- & Produktdesign'])
 		// A course every software's; one without software none; VIAK's own kept.
 		->and(categoryTitles($both->categories()->get()))->toBe(['Architektur & Interior Design', 'Schmuck- & Produktdesign'])
 		->and($alone->categories()->get())->toBeEmpty()

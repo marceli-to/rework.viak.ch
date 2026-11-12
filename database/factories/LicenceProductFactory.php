@@ -25,16 +25,9 @@ class LicenceProductFactory extends Factory
 			'manufacturer_id' => fn () => Manufacturer::create(['title' => ['de' => fake()->unique()->company()], 'order' => 0, 'publish' => true])->id,
 			'title' => ['de' => $title],
 			'slug' => Slug::forTitles($title),
-			'plugin' => false,
 			'three_years_on_request' => false,
 			'publish' => true,
 			'order' => 0,
 		];
-	}
-
-	/** Runs in the Angebot it sits under (#67). */
-	public function plugin(): static
-	{
-		return $this->state(['plugin' => true]);
 	}
 }

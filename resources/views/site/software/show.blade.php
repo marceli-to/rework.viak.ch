@@ -27,8 +27,9 @@
 	  Vorhaben chips (built, then taken out by Marcel on 2026-10-29), its
 	  anchor links (the collapsibles are a short scroll) and its breadcrumb
 	  (the site has none).
-	- **Kurse, then Lizenzen, then Plugins** (the client, 2026-11-03, #67:
-	  the products marked *Plugin*), each a full-width collapsible (Marcel,
+	- **Kurse, then Lizenzen, then Plugins** (the products of the plugin
+	  Angebote that run in it, #72; until 2026-11-12 products marked *Plugin*
+	  under it, #67), each a full-width collapsible (Marcel,
 	  2026-10-29: the two columns side by side of the first version were too
 	  cramped). **Under Kurse every date is the course page's own row**
 	  (`card/event.blade.php`) with the course's name over it, teal and
@@ -80,6 +81,18 @@
 				<h1 class="font-bold">{{ $title }}</h1>
 				@if ($subtitle)
 					<h2>{{ $subtitle }}</h2>
+				@endif
+				{{-- A plugin says where it runs (#72, the client 2026-11-12:
+				     "ein Hinweis zur zugehörigen Software"), each host linked to
+				     its Angebot. One that runs in many names none. --}}
+				@if ($software->plugin)
+					<p>
+						{{ $software->hosts->isNotEmpty() ? 'Plugin für' : 'Plugin' }}
+						@foreach ($software->hosts as $host)
+							<a href="{{ \App\Support\SiteUrl::software($host->getTranslation('slug', $locale)) }}"
+								class="underline decoration-1 underline-offset-[3px] hover:no-underline sm:decoration-2 sm:underline-offset-[5px]">{{ $host->getTranslation('title', $locale) }}</a>{{ $loop->last ? '' : ',' }}
+						@endforeach
+					</p>
 				@endif
 			</div>
 
@@ -150,7 +163,7 @@
 			</x-ui.collapsible>
 		@endif
 
-		{{-- The plugins sold under it (Bongo under Rhinoceros, #67), the same rows. --}}
+		{{-- The plugin Angebote that run in it (Bongo in Rhinoceros, #72), their products in the same rows. --}}
 		@if ($plugins->isNotEmpty())
 			<x-ui.collapsible title="Plugins">
 				@foreach ($plugins as $product)

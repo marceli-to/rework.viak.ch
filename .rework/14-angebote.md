@@ -741,3 +741,35 @@ Not yet read: the changed **KI-Video** doc (step 6, its Angebot does not
 exist yet). The Enscape doc's Angebot part is unchanged. Two typos in the
 Enscape course copy kept verbatim for Oliver to fix: *Hostsoftwar*,
 *kennenlerne*.
+
+### As built: step 4, plugins as Angebote (2026-11-12)
+
+#72, replacing #67's build. Migration `2026_11_12_000003_plugins_as_angebote`;
+`licences.json` (group keys `plugin`, `runs_in`), `categories.json` and
+`texts.json` the same for a fresh import.
+
+- **`software.plugin`** and **`software_host`** (*Läuft in*,
+  [[Software::hosts]] / [[Software::plugins]]): on the Angebot form, *Plugin*
+  in *Einstellungen* and a shut *Läuft in* section of checkboxes, as the
+  product form's *Hostsoftware*. An Angebot is never its own host.
+  `licence_products.plugin` is dropped; the product form lost its tick.
+- **The product's *Hostsoftware* stays what it was**: the program an order
+  must name (the RealFlow Plugin). Not the same thing as *Läuft in*, and the
+  hints on both forms say so.
+- **Moved into Angebote of their own**: Bongo, VisualARQ, Lands Design,
+  Karamba3D, MatrixGold (all *Läuft in* Rhinoceros), Drakon (had an Angebot
+  for its courses; now holds its product too), Rhino.io (*Läuft in* CINEMA
+  4D). Each took its product's categories. Bongo, Karamba3D, VisualARQ took
+  their docs' texts (the plugin docs carry a licences intro where course docs
+  carry a course intro). Lands Design, MatrixGold, Rhino.io have no doc.
+  None has an image: grey until VIAK uploads one (#69's answer).
+- **Ticked *Plugin*, no host**: V-Ray, Corona Renderer, Enscape, Veras.
+  *Chaos Vantage* is a program, not a plugin, but sits under V-Ray, so its
+  tile reads *Plugin* too (#77).
+- **On the site**: a plugin's page says *Plugin für Rhinoceros* under its
+  title, each host linked (only hosts on the site), or *Plugin* alone. A
+  host's page lists under *Plugins* the products of the plugin Angebote on
+  the site that run in it, in the rows Marcel approved for #67. Tiles say
+  *Plugin* / *Kurs & Plugin* ([[Software::offer]]); a product tile's overlay
+  *Plugin für …* from its Angebot's hosts. *Ab CHF* on an Angebot is its own
+  products only (Rhinoceros never read Bongo's anyway).

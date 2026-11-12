@@ -247,5 +247,32 @@
 		"audiences": "Architektur- & Planungsbüros, ArchViz-Studios, Innenarchitektur & Interior Design, Grafikdesign, Fotografie, Marketing & Kommunikation",
 		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
 		"full_description": "<p>Photoshop ist eine Software für Bildbearbeitung, Retusche und Bildmontage von Adobe.</p><p><strong>Woher kommt Photoshop?</strong></p><p>Photoshop wurde von den Brüdern Thomas und John Knoll entwickelt und 1990 von Adobe auf den Markt gebracht. Heute ist die Software Teil der Adobe Creative Cloud und das Standardwerkzeug für Bildbearbeitung – ergänzt durch die generativen KI-Funktionen von Adobe Firefly. Photoshop erhältst du direkt bei Adobe.</p><p><strong>Für wen ist Photoshop?</strong></p><p>Photoshop wird für FotografInnen, GrafikerInnen, DesignerInnen und digital Artists entwickelt – für alle, die Bilder gestalten und optimieren. In der Architekturvisualisierung ist Photoshop unverzichtbar für die Postproduktion: Du korrigierst Licht und Farben, ergänzt Menschen und Vegetation und gibst deinen Renderings Atmosphäre.</p>"
+	},
+	"Bongo": {
+		"doc": "00_fertig_Webseitentexte_Bongo2.docx",
+		"short_description": "<p>Animations-Plugin für Rhino. Mit Bongo erzeugst du professionelle Animationen mit Keyframe-Technik direkt in Rhino – ohne Export. Zeige deiner Kundschaft, wie dein Design funktioniert, und rendere mit jedem Rhino-Renderer.</p>",
+		"intro": "Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten Software-Lizenzen für Bongo:",
+		"audiences": "Produkt- & Industriedesign, Schmuck- & Uhrendesign, Architektur",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"licences_intro": "Kaufe deine Bongo Lizenz direkt bei uns im Shop. Unsicher, welche Lizenz für dich passend ist? Melde dich bei uns. Wir helfen gerne weiter.",
+		"full_description": "<p>Bongo ist ein Animations-Plugin für Rhino, entwickelt von Robert McNeel &amp; Associates.</p><p><strong>Woher kommt Bongo?</strong></p><p>Bongo stammt direkt von Robert McNeel &amp; Associates, den Entwicklern von Rhino. Das Plugin ergänzt Rhino um eine Zeitleiste und Keyframe-Animation, wie man sie aus High-End-Animationspaketen kennt. Die Visualisierungs-Akademie Schweiz GmbH in Zürich vertreibt Bongo für die Schweiz.</p><p><strong>Für wen ist Bongo?</strong></p><p>Bongo wird für Rhino-Anwenderinnen und -Anwender entwickelt, die Bewegungen zeigen wollen: wie sich ein Mechanismus öffnet, ein Produkt zusammensetzt oder eine Kamera um ein Objekt fährt. Du verschiebst, skalierst und rotierst Objekte direkt im Rhino-Fenster und siehst die Animation in Echtzeit.</p>"
+	},
+	"Karamba3D": {
+		"doc": "00_fertig_Webseitentexte_Karamba3D.docx",
+		"short_description": "<p>Parametrisches Statik-Werkzeug für Rhino und Grasshopper. Mit Karamba3D führst du schnelle und genaue Element-Analysen direkt im Entwurf durch – und kombinierst Geometrie, Tragwerksberechnung und Optimierung in einem Modell.</p>",
+		"intro": "Architekturbüros, Ingenieurbüros & Tragwerksplanung",
+		"audiences": "",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"licences_intro": "Kaufe deine Karamba3D Lizenz direkt bei uns im Shop. Unsicher, welche Lizenz für dich passend ist? Melde dich bei uns. Wir helfen gerne weiter.",
+		"full_description": "<p>Karamba3D ist ein Plugin für Finite-Elemente-Analysen in Grasshopper und Rhino.</p><p><strong>Woher kommt Karamba3D?</strong></p><p>Karamba3D wurde vom Bauingenieur Clemens Preisinger in Wien entwickelt, in Zusammenarbeit mit dem Ingenieurbüro Bollinger+Grohmann. Heute wird es von der Karamba3D GmbH in Wien weiterentwickelt. Die Visualisierungs-Akademie Schweiz GmbH in Zürich vertreibt Karamba3D für die Schweiz.</p><p><strong>Für wen ist Karamba3D?</strong></p><p>Karamba3D wird für Konstruktionsfachleute in den frühen Entwurfsphasen entwickelt. Ingenieurinnen und Architekten prüfen damit Tragwerke direkt am parametrischen Modell und kombinieren die Berechnung mit Optimierungswerkzeugen wie Galapagos, Octopus oder Wallacei.</p>"
+	},
+	"VisualARQ": {
+		"doc": "00_fertig_Webseitentexte_VisualARQ.docx",
+		"short_description": "<p>Plugin, das Rhino zu einem Architektur-CAD macht. Mit VisualARQ planst du Gebäude direkt in Rhino – mit parametrischen Wänden, Treppen und Öffnungen, automatischen Plänen und Schnitten sowie IFC-Austausch. Und mit allen Vorzügen der Freiformmodellierung.</p>",
+		"intro": "Die Visualisierungs-Akademie bietet als Kompetenzzentrum für digitales Gestalten Software-Lizenzen für VisualARQ an:",
+		"audiences": "Architektur- & Planungsbüros, Innenarchitektur, Computational Designer",
+		"quote": "Die passende Software und das Wissen, sie effizient zu nutzen. Die Visualisierungs-Akademie Schweiz bietet beides, aus einer Hand.",
+		"licences_intro": "Kaufe deine VisualARQ Lizenz direkt bei uns im Shop. Unsicher, welche Lizenz für dich passend ist? Melde dich bei uns. Wir helfen gerne weiter.",
+		"full_description": "<p>VisualARQ ist ein Architektur- und BIM-Plugin für Rhino, entwickelt von Asuni in Barcelona.</p><p><strong>Woher kommt VisualARQ?</strong></p><p>VisualARQ wird von Asuni entwickelt, einem Softwarehaus in Barcelona, das eng mit McNeel Europe, dem europäischen Sitz der Rhino-Entwickler, zusammenarbeitet. Von Asuni stammt auch das Landschaftsarchitektur-Plugin Lands Design. Die Visualisierungs-Akademie Schweiz GmbH in Zürich vertreibt VisualARQ für die Schweiz.</p><p><strong>Für wen ist VisualARQ?</strong></p><p>VisualARQ wird für ArchitektInnen entwickelt, die in Rhino Architektur entwerfen. Du modellierst mit 3D-Architekturobjekten, erhältst die Projektdokumentation automatisch und tauschst Daten via IFC mit anderen BIM-Programmen aus. Ideal für Freiformarchitektur und Wettbewerbe.</p>"
 	}
 }

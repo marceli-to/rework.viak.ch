@@ -61,6 +61,7 @@ class SaveSoftwareRequest extends FormRequest
 			'seo_tags' => $de($data['seo_tags'] ?? null),
 			'publish' => (bool) ($data['publish'] ?? false),
 			'featured' => (bool) ($data['featured'] ?? false),
+			'plugin' => (bool) ($data['plugin'] ?? false),
 		];
 
 		foreach (self::RICH as $field) {
@@ -72,6 +73,16 @@ class SaveSoftwareRequest extends FormRequest
 		}
 
 		return $attributes;
+	}
+
+	/** @return array<int, int> *Läuft in*, never itself */
+	public function hostIds(): array
+	{
+		$self = $this->route('software');
+
+		return Software::query()->whereIn('uuid', $this->validated('hosts', []))
+			->when($self instanceof Software, fn ($query) => $query->whereKeyNot($self->getKey()))
+			->pluck('id')->all();
 	}
 
 	/** @return array<int, int> the ticked categories' ids */

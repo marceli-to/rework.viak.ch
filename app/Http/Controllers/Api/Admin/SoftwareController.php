@@ -22,7 +22,7 @@ class SoftwareController extends Controller
 {
 	public function show(Software $software): SoftwareFormResource
 	{
-		return new SoftwareFormResource($software->load('categories'));
+		return new SoftwareFormResource($software->load(['categories', 'hosts']));
 	}
 
 	/** A new one goes to the end of the list, as the settings list adds it. */
@@ -34,12 +34,13 @@ class SoftwareController extends Controller
 				'order' => (int) Software::max('order') + 1,
 			]);
 			$software->categories()->sync($request->categoryIds());
+			$software->hosts()->sync($request->hostIds());
 			Recommendations::sync($software, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 
 			return $software;
 		});
 
-		return (new SoftwareFormResource($software->load('categories')))->response()->setStatusCode(201);
+		return (new SoftwareFormResource($software->load(['categories', 'hosts'])))->response()->setStatusCode(201);
 	}
 
 	public function update(SaveSoftwareRequest $request, Software $software): SoftwareFormResource
@@ -47,10 +48,11 @@ class SoftwareController extends Controller
 		DB::transaction(function () use ($request, $software): void {
 			$software->update($request->softwareAttributes());
 			$software->categories()->sync($request->categoryIds());
+			$software->hosts()->sync($request->hostIds());
 			Recommendations::sync($software, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 		});
 
-		return new SoftwareFormResource($software->refresh()->load('categories'));
+		return new SoftwareFormResource($software->refresh()->load(['categories', 'hosts']));
 	}
 
 	/** Soft-deleted, and only while no course and no product uses it, as the settings list has it. */

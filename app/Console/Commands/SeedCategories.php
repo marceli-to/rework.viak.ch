@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\DB;
  * retire (unlinked, then deleted); a **software** gets the file's, as the
  * 2026-09-23 mockup's *Alle Angebote* sorts the tools (the ones it does not
  * show, by their kind); a **licence product** the file's where it names one
- * (the plugins sold under Rhinoceros), else its software's; a **course** its
+ * (none since the plugins are Angebote of their own, #72), else its software's; a **course** its
  * software's, all of them. What is left without one is listed: on dev data,
  * the eight courses with no software (#66).
  *

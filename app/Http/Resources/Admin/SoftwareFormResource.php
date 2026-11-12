@@ -46,7 +46,9 @@ class SoftwareFormResource extends JsonResource
 		}
 		$form['licence_note'] = $de('licence_note');
 
+		$form['plugin'] = $this->plugin;
 		$form['categories'] = $this->categories->pluck('uuid')->all();
+		$form['hosts'] = $this->hosts->pluck('uuid')->all();
 		$form += Recommendations::form($this->resource);
 		$form['seo_description'] = $de('seo_description');
 		$form['seo_tags'] = $de('seo_tags');

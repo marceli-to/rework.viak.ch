@@ -129,6 +129,11 @@ changed in `categories.json` too, but only `--sync` applies that to a
 database that has some, and it overwrites VIAK's choices: skip unless
 Oliver asks.
 
+The third migration of that update makes the plugins Angebote of their own
+(Bongo, VisualARQ, Lands Design, Karamba3D, MatrixGold, Rhino.io; Drakon
+takes its product), nothing to run for it. The `catalogue:texts` above then
+also fills Bongo, Karamba3D and VisualARQ.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same

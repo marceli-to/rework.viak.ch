@@ -44,14 +44,13 @@ final class LicenceProductSchema extends Schema
 			// In a collapsible, shut: two products of 39 have any (Marcel, 2026-10-09).
 			Field::section('Hostsoftware', [
 				Field::checkboxes('hosts', Software::class)->label('Hostsoftware')
-					->with(['columns' => 2, 'legend' => false, 'hint' => 'Nur für Plugins: die Programme, in denen das Plugin läuft. Bei der Bestellung muss eines davon gewählt werden. Sonst keines ankreuzen.']),
+					->with(['columns' => 2, 'legend' => false, 'hint' => 'Nur wenn bei der Bestellung ein Programm gewählt werden muss, z.B. beim RealFlow Plugin. Sonst keines ankreuzen. Wo ein Plugin läuft, steht beim Angebot unter «Läuft in».']),
 			])->with(['count' => 'hosts']),
 			// Saved on their own, each in its own form ([[LicenceVariantSchema]]).
 			Field::custom('variants'),
 			// After the licences, the last thing before *Speichern* (Marcel, 2026-10-09).
-			// *Plugin*: listed under *Plugins* on its Angebot, tagged so on its tile (#67).
+			// *Plugin* is the Angebot's since #72 ([[SoftwareSchema]]).
 			Field::row([
-				Field::checkbox('plugin')->label('Plugin'),
 				Field::checkbox('three_years_on_request')->label('3-Jahreslizenz auf Anfrage'),
 				Field::checkbox('publish')->label('Publizieren'),
 			]),
@@ -62,7 +61,7 @@ final class LicenceProductSchema extends Schema
 	{
 		return [
 			'software' => '', 'manufacturer' => '', 'title' => '', 'description' => '', 'features' => '', 'categories' => [], 'hosts' => [],
-			'plugin' => false, 'three_years_on_request' => false, 'publish' => true,
+			'three_years_on_request' => false, 'publish' => true,
 		];
 	}
 }

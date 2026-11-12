@@ -70,9 +70,19 @@ final class SoftwareSchema extends Schema
 					Field::checkbox('publish')->label('Publizieren'),
 					// *Beliebte Angebote* on the homepage, as a course's ([[04-content]]).
 					Field::checkbox('featured')->label('Beliebt'),
+					// A plugin is an Angebot of its own (#72, the client 2026-11-12).
+					Field::checkbox('plugin')->label('Plugin'),
 				]),
 				Field::checkboxes('categories', Category::class)->label('Kategorien'),
 			]),
+
+			// Where a plugin runs: *Plugin für …* on its page, and its products
+			// under *Plugins* on each host's. Shut, as the product form's
+			// *Hostsoftware*: most Angebote have none.
+			Field::section('Läuft in', [
+				Field::checkboxes('hosts', Software::class)->label('Läuft in')
+					->with(['columns' => 2, 'legend' => false, 'hint' => 'Nur für Plugins, und nur wo es an bestimmte Programme gebunden ist, z.B. Bongo an Rhinoceros. Ein Plugin für viele Programme (V-Ray): keines ankreuzen.']),
+			])->with(['count' => 'hosts']),
 
 			// Saved on their own, each action at once ([[ImageSection]]).
 			// *Das könnte dich auch interessieren* under the page and in the basket ([[Recommendations]]).
@@ -93,7 +103,7 @@ final class SoftwareSchema extends Schema
 			'title' => '', 'publish' => false, 'featured' => false,
 			'short_description' => '', 'full_description' => '', 'licence_note' => '',
 			'audiences' => '', 'intro' => '', 'courses_intro' => '', 'licences_intro' => '', 'quote' => '',
-			'categories' => [],
+			'plugin' => false, 'categories' => [], 'hosts' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
 			'seo_description' => '', 'seo_tags' => '',
 		];

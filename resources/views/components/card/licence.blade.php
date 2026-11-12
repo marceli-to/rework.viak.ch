@@ -14,7 +14,8 @@
 	picture of its own; it shows its software's. The overlay names the maker,
 	the Angebot it belongs to and the cheapest licence, net.
 
-	Over the title, **Software** or **Plugin** (the client, 2026-11-03, #67),
+	Over the title, **Software** or **Plugin** (the client, 2026-11-03, #67;
+	since #72 the Angebot's),
 	so the list says at a glance which it is, then its first category.
 --}}
 <article {{ $attributes->class(['border border-teal p-8 lg:p-16']) }}>
@@ -36,8 +37,14 @@
 					@if ($product->manufacturer)
 						<li class="py-4">{{ $product->manufacturer->getTranslation('title', $locale) }}</li>
 					@endif
-					@if ($software)
-						<li class="py-4">{{ $product->plugin ? 'Plugin für' : 'für' }} {{ $software->getTranslation('title', $locale) }}</li>
+					{{-- A plugin names where it runs, from its Angebot (#72); one that
+					     runs in many, nothing. Anything else its Angebot. --}}
+					@if ($software?->plugin)
+						@if ($software->hosts->isNotEmpty())
+							<li class="py-4">Plugin für {{ $software->hosts->map(fn ($host) => $host->getTranslation('title', $locale))->join(', ') }}</li>
+						@endif
+					@elseif ($software)
+						<li class="py-4">für {{ $software->getTranslation('title', $locale) }}</li>
 					@endif
 					@if ($from)
 						<li class="py-4">ab CHF {{ number_format((float) $from, 2, '.', "'") }} exkl. {{ config('invoice.vat_label') }}</li>

@@ -46,13 +46,16 @@ class SoftwareController extends Controller
 			->ordered()
 			->get();
 
-		// Its own licences, then the plugins that run in it, each in its own
-		// collapsible (#67).
-		[$plugins, $products] = $software->products->filter->isListed()->partition->plugin;
+		// Its own licences, then the products of the plugin Angebote that run
+		// in it (#72), each in its own collapsible. A plugin's own page says
+		// where it runs instead.
+		$plugins = $software->plugins()->onSite()->with(['products' => $this->products()])->ordered()->get()
+			->flatMap(fn (Software $plugin) => $plugin->products->filter->isListed());
 
 		return view('site.software.show', [
-			'software' => $software,
-			'products' => $products->values(),
+			// *Plugin für …*, each linked: only the hosts that have a page.
+			'software' => $software->load(['hosts' => fn ($query) => $query->onSite()->ordered()]),
+			'products' => $software->products->filter->isListed()->values(),
 			'plugins' => $plugins->values(),
 			'courses' => $courses,
 			// *Das könnte dich auch interessieren*, without the courses the

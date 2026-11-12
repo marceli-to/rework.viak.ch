@@ -33,7 +33,7 @@ class LicenceController extends Controller
 	public function index(): View
 	{
 		$products = $this->onSite()
-			->with(['categories', 'manufacturer', 'variants', 'software.media'])
+			->with(['categories', 'manufacturer', 'variants', 'software.media', 'software.hosts'])
 			->get()
 			->sortBy(fn (LicenceProduct $product) => $product->getTranslation('title', app()->getLocale()), SORT_NATURAL | SORT_FLAG_CASE)
 			->values();

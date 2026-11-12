@@ -45,14 +45,13 @@
 		"Midjourney": ["AI & Neue Workflows"],
 		"ComfyUI": ["AI & Neue Workflows", "Gestaltung & Bearbeitung"],
 		"D5 Render": ["Architektur & Interior Design", "AI & Neue Workflows"],
-		"Figma Weave": ["AI & Neue Workflows", "Gestaltung & Bearbeitung", "Animation & Interaktion"]
-	},
-	"products": {
-		"Bongo 2": ["Schmuck- & Produktdesign", "Animation & Interaktion"],
-		"VisualARQ 3": ["Architektur & Interior Design"],
-		"Lands Design 6": ["Architektur & Interior Design"],
-		"Karamba3D PRO": ["Architektur & Interior Design"],
+		"Figma Weave": ["AI & Neue Workflows", "Gestaltung & Bearbeitung", "Animation & Interaktion"],
+		"Bongo": ["Schmuck- & Produktdesign", "Animation & Interaktion"],
+		"VisualARQ": ["Architektur & Interior Design"],
+		"Lands Design": ["Architektur & Interior Design"],
+		"Karamba3D": ["Architektur & Interior Design"],
 		"MatrixGold": ["Schmuck- & Produktdesign"],
-		"Drakon": ["Schmuck- & Produktdesign"]
-	}
+		"Rhino.io": ["Schmuck- & Produktdesign", "Architektur & Interior Design", "Animation & Interaktion"]
+	},
+	"products": {}
 }

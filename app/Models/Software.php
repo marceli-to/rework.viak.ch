@@ -44,7 +44,7 @@ class Software extends Model
 		'slug', 'title', 'subtitle', 'short_description', 'full_description',
 		'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
 		'information', 'licence_note', 'seo_description', 'seo_tags',
-		'order', 'publish', 'featured',
+		'order', 'publish', 'featured', 'plugin',
 	];
 
 	public $translatable = [
@@ -55,7 +55,7 @@ class Software extends Model
 
 	protected function casts(): array
 	{
-		return ['publish' => 'boolean', 'featured' => 'boolean'];
+		return ['publish' => 'boolean', 'featured' => 'boolean', 'plugin' => 'boolean'];
 	}
 
 	/**
@@ -72,7 +72,23 @@ class Software extends Model
 		});
 	}
 
-	/** The plugins that run in it ([[LicenceProduct::hosts]]). */
+	/**
+	 * **Läuft in**: the programs a plugin Angebot runs in (#72, the client
+	 * 2026-11-12). Optional: Bongo runs in Rhinoceros, V-Ray in too many to
+	 * name. Its products are listed under *Plugins* on each of them.
+	 */
+	public function hosts(): BelongsToMany
+	{
+		return $this->belongsToMany(Software::class, 'software_host', 'software_id', 'host_id');
+	}
+
+	/** The plugin Angebote that run in it, the other side of [[Software::hosts]]. */
+	public function plugins(): BelongsToMany
+	{
+		return $this->belongsToMany(Software::class, 'software_host', 'host_id', 'software_id');
+	}
+
+	/** The products an order may name it as host of ([[LicenceProduct::hosts]]). */
 	public function hostOf(): BelongsToMany
 	{
 		return $this->belongsToMany(LicenceProduct::class, 'licence_product_host');
@@ -144,21 +160,16 @@ class Software extends Model
 
 	/**
 	 * *Lizenz ab CHF …*: the cheapest listed licence of its products
-	 * ([[LicenceProduct::fromPrice]]), **its own before its plugins** (#67):
-	 * Rhinoceros reads its own 550, not Bongo's 280. A plugin's price only
-	 * where it has nothing else.
+	 * ([[LicenceProduct::fromPrice]]). Since the plugins are Angebote of their
+	 * own (#72) these are only its own: Rhinoceros does not read Bongo's 280.
 	 */
 	public function licenceFrom(): ?string
 	{
-		$prices = fn ($products) => $products
+		return $this->products->filter->isListed()
 			->map->fromPrice()
 			->filter()
 			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
 			->first();
-
-		[$plugins, $own] = $this->products->filter->isListed()->partition->plugin;
-
-		return $prices($own) ?? $prices($plugins);
 	}
 
 	/**
@@ -221,9 +232,12 @@ class Software extends Model
 		$licences = (bool) ($this->attributes['has_licences'] ?? $this->products()->listed()->exists());
 		$courses = (bool) ($this->attributes['has_courses'] ?? $this->courses()->published()->exists());
 
+		// A plugin is a plugin wherever it is tagged (#72).
+		$kind = $this->plugin ? 'Plugin' : 'Software';
+
 		return match (true) {
-			$licences && $courses => 'Kurs & Software',
-			$licences => 'Software',
+			$licences && $courses => "Kurs & {$kind}",
+			$licences => $kind,
 			$courses => 'Kurs',
 			default => null,
 		};
