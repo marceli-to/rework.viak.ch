@@ -160,13 +160,23 @@ nothing on staging: its domain does not point there.
    from the client's page tree), each resolved and its target asked for. It
    fails when a target is not a page; it lists the paths whose product is
    missing and that land on their Angebot instead ([[CheckShopUrls]]).
-   **3d-software.ch moves with the DNS switch**: in Plesk, `3d-software.ch`
-   and `www.3d-software.ch` become aliases of the new site (with their
-   certificate), so the app answers them; `routes/web.php` sends every path
-   on those hosts to its new page, one 301 ([[ShopRedirects]]). Check after:
+   **3d-software.ch switches with it.** Today its vhost serves the old
+   Shopware from its own document root. Production starts on the same
+   Metanet host (Marcel, 2026-11-12), so: in Plesk, set the document root of
+   `3d-software.ch` (and `www.`) to the production app's `public/`, keeping
+   the certificate. The app then answers those hosts, and `routes/web.php`
+   sends every path on them to its page on visualisierungs-akademie.ch, one
+   301 ([[ShopRedirects]]). Staging is not touched: it only lives in that
+   vhost's folder, with a document root of its own. Check after:
    `curl -sI https://www.3d-software.ch/public/Bongo-2/RHN-1121` must answer
-   301 to `/de/angebote/software/bongo-2`. Before the switch the same with
-   `--resolve www.3d-software.ch:443:<new server IP>`.
+   301 to `https://visualisierungs-akademie.ch/de/angebote/software/bongo-2`.
+   **When visualisierungs-akademie.ch moves to cyon** (planned, no date):
+   either 3d-software.ch's DNS goes with it and the domain becomes an alias
+   there (nothing else changes), or it stays on Metanet and its document
+   root gets an `.htaccess` with the map's 202 rules written out, each a 301
+   to the new host. That file is frozen at writing: a product added later
+   only catches its old URL once the file is written again. Not built; a
+   command that writes it from `ShopRedirects` is a small job.
 7. The new GTM container version, published together with the DNS switch
    (`11-tracking.md`, step 5). If the `purchase` event is built by then
    (`11-tracking.md`, *Step 2 worked out, 2026-11-02*): take the *form
