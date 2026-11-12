@@ -22,46 +22,38 @@ final class LicenceVariantSchema extends Schema
 {
 	public function fields(): array
 	{
+		// **One field per row** (Marcel, 2026-11-12): pairs side by side read
+		// as a puzzle; a longer page is fine.
 		return [
 			Field::text('title')->label('Titel')->required(),
-			Field::row([
-				Field::text('sku')->label('Artikelnummer')->required()->rules(fn (?Model $variant) => [
-					'max:32',
-					Rule::unique('licence_variants', 'sku')->whereNull('deleted_at')->ignore($variant?->getKey()),
-				])->message('unique', 'Diese Artikelnummer hat bereits eine andere Lizenz.'),
-				Field::number('price')->label('Preis CHF exkl. '.config('invoice.vat_label'))->required()->rules(['min:0', 'max:99999.99', 'decimal:0,2'])
-					->with(['hint' => '0 für eine Demoversion.']),
-			])->with(['columns' => 2]),
+			Field::text('sku')->label('Artikelnummer')->required()->rules(fn (?Model $variant) => [
+				'max:32',
+				Rule::unique('licence_variants', 'sku')->whereNull('deleted_at')->ignore($variant?->getKey()),
+			])->message('unique', 'Diese Artikelnummer hat bereits eine andere Lizenz.'),
+			Field::number('price')->label('Preis CHF exkl. '.config('invoice.vat_label'))->required()->rules(['min:0', 'max:99999.99', 'decimal:0,2'])
+				->with(['hint' => '0 für eine Demoversion.']),
 			// A Streichpreis (the client, 2026-11-12): the Rhino 9 Upgrade promo.
-			Field::row([
-				Field::number('compare_price')->label('Streichpreis CHF')->rules(['min:0', 'max:99999.99', 'decimal:0,2', 'gt:price'])
-					->message('gt', 'Der Streichpreis muss höher sein als der Preis.')
-					->with(['hint' => 'Erscheint durchgestrichen neben dem Preis, z.B. bei einer Promo. Leer: keiner.']),
-			])->with(['columns' => 2]),
-			Field::row([
-				Field::select('licence_type', collect(LicenceType::cases())->mapWithKeys(fn (LicenceType $type) => [$type->value => $type->label()])->all())
-					->label('Lizenztyp')->with(['placeholder' => 'Keiner (Demo)']),
-				Field::select('access', collect(LicenceAccess::cases())->mapWithKeys(fn (LicenceAccess $access) => [$access->value => $access->label()])->all())
-					->label('Nutzung')->with(['placeholder' => 'Bitte wählen']),
-			])->with(['columns' => 2]),
+			Field::number('compare_price')->label('Streichpreis CHF')->rules(['min:0', 'max:99999.99', 'decimal:0,2', 'gt:price'])
+				->message('gt', 'Der Streichpreis muss höher sein als der Preis.')
+				->with(['hint' => 'Erscheint durchgestrichen neben dem Preis, z.B. bei einer Promo. Leer: keiner.']),
+			Field::select('licence_type', collect(LicenceType::cases())->mapWithKeys(fn (LicenceType $type) => [$type->value => $type->label()])->all())
+				->label('Lizenztyp')->with(['placeholder' => 'Keiner (Demo)']),
+			Field::select('access', collect(LicenceAccess::cases())->mapWithKeys(fn (LicenceAccess $access) => [$access->value => $access->label()])->all())
+				->label('Nutzung')->with(['placeholder' => 'Bitte wählen']),
 			Field::checkboxes('platforms', fn () => collect(Platform::cases())->mapWithKeys(fn (Platform $platform) => [$platform->value => $platform->label()])->all())
 				->label('Plattform')->with(['columns' => 4]),
-			Field::row([
-				Field::number('min_quantity')->label('Mindestmenge')->rules(['integer', 'min:1', 'max:999'])
-					->with(['hint' => 'Kleinste Stückzahl im Warenkorb, z.B. 3 bei Teams-Lizenzen. Leer: ab 1 Stück.']),
-				// The licence's text on the licence page (#71): a line or a paragraph.
-				Field::textarea('note')->label('Hinweis')->rules(['max:1000'])
-					->with(['rows' => 3, 'hint' => 'Steht unter dem Titel der Lizenz, z.B. «Nur zusammen mit einer Neulizenz».']),
-			])->with(['columns' => 2]),
-			Field::row([
-				// Not *Publizieren*: that is the product's. Unticked is an EDU or
-				// lab licence, picked only when VIAK enters an order (#36).
-				Field::checkbox('listed')->label('Im Shop bestellbar')
-					->with(['hint' => 'Ohne Haken nicht im Shop, nur für Bestellungen, die ihr selbst erfasst.']),
-				// Left out of *ab CHF …* (Marcel, 2026-11-09): Rhino read 90, its EDU Upgrade.
-				Field::checkbox('education')->label('Ausbildungslizenz')
-					->with(['hint' => 'EDU-, Lab- oder Schullizenz. Zählt nicht für den «ab»-Preis des Produkts.']),
-			])->with(['columns' => 2]),
+			Field::number('min_quantity')->label('Mindestmenge')->rules(['integer', 'min:1', 'max:999'])
+				->with(['hint' => 'Kleinste Stückzahl im Warenkorb, z.B. 3 bei Teams-Lizenzen. Leer: ab 1 Stück.']),
+			// The licence's text on the licence page (#71): a line or a paragraph.
+			Field::textarea('note')->label('Hinweis')->rules(['max:1000'])
+				->with(['rows' => 3, 'hint' => 'Steht unter dem Titel der Lizenz, z.B. «Nur zusammen mit einer Neulizenz».']),
+			// Not *Publizieren*: that is the product's. Unticked is an EDU or
+			// lab licence, picked only when VIAK enters an order (#36).
+			Field::checkbox('listed')->label('Im Shop bestellbar')
+				->with(['hint' => 'Ohne Haken nicht im Shop, nur für Bestellungen, die ihr selbst erfasst.']),
+			// Left out of *ab CHF …* (Marcel, 2026-11-09): Rhino read 90, its EDU Upgrade.
+			Field::checkbox('education')->label('Ausbildungslizenz')
+				->with(['hint' => 'EDU-, Lab- oder Schullizenz. Zählt nicht für den «ab»-Preis des Produkts.']),
 		];
 	}
 

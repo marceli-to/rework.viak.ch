@@ -99,7 +99,9 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		</template>
 	</Select>
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :hint="field.hint" :hide-label="field.legend === false" :error="error" />
-	<div v-else-if="field.type === 'checkbox' && field.hint">
+	<!-- The space under it a text field leaves (`Field.vue`): one per row, the
+	     next checkbox and *Speichern* sat on its hint (Marcel, 2026-11-12). -->
+	<div v-else-if="field.type === 'checkbox' && field.hint" class="mb-16 lg:mb-32">
 		<Checkbox v-model="value">{{ field.label }}</Checkbox>
 		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
 	</div>
