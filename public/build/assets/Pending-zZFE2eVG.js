@@ -1,0 +1,1 @@
+import{Et as e,H as t,S as n,T as r,at as i,h as a}from"./useApi-BPuI6ZR9-DeyjKSUV.js";var o={class:`font-bold text-teal`},s={__name:`Pending`,setup(s){let c=a();return(a,s)=>(t(),r(`section`,null,[n(`h1`,o,e(i(c).meta.title),1),s[0]||=n(`p`,{class:`mt-32 sm:text-lg lg:text-xl`},`Dieser Bereich ist noch nicht umgesetzt.`,-1)]))}};export{s as default};

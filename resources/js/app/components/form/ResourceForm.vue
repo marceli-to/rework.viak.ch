@@ -32,6 +32,8 @@ const props = defineProps({
 	stay: { type: Boolean, default: true },
 	// A line about the record that is not a field — where a testimonial is used.
 	note: { type: Function, default: () => null },
+	// A line above the fields, read from the saved record: the software form's *Nicht auf der Website: …*.
+	lead: { type: Function, default: () => null },
 	// A record past changing — a course date that has run. Legacy's
 	// `form.is-disabled`: the fields and *Speichern* at 40%, deleting gone.
 	locked: { type: Function, default: () => false },
@@ -62,6 +64,8 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 			</template>
 
 			<fieldset class="min-w-0" :disabled="!creating && locked(meta)" :class="{ 'pointer-events-none opacity-40 select-none': !creating && locked(meta) }">
+				<p v-if="!creating && lead(meta)" class="mb-32 text-md text-gray-600 lg:text-lg">{{ lead(meta) }}</p>
+
 				<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" :meta="meta" />
 
 				<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>

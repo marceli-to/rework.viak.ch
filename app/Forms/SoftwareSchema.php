@@ -37,6 +37,31 @@ final class SoftwareSchema extends Schema
 				},
 			]),
 			/*
+			 * **What the record is, first and open** (Marcel, 2026-11-12): it
+			 * decides what else the form shows. One field per row. *Läuft in*
+			 * only for a plugin (`when`).
+			 */
+			Field::section('Einstellungen', [
+				Field::checkbox('publish')->label('Publizieren')
+					->with(['hint' => 'Auf der Website, sobald es einen publizierten Kurs oder eine Lizenz im Shop hat.']),
+				// *Beliebte Angebote* on the homepage, as a course's ([[04-content]]).
+				Field::checkbox('featured')->label('Beliebt')
+					->with(['hint' => 'Unter «Beliebte Angebote» auf der Startseite.']),
+				// A plugin is an Angebot of its own (#72, the client 2026-11-12).
+				Field::checkbox('plugin')->label('Plugin')
+					->with(['hint' => 'Läuft in anderen Programmen, z.B. Bongo, V-Ray. Steht so auf seiner Seite und seinen Kacheln.']),
+				// Where a plugin runs: *Plugin für …* on its page, and its products
+				// under *Plugins* on each host's.
+				// Programs only: a plugin does not run in a plugin (the list was all 49 records).
+				Field::checkboxes('hosts', fn () => Software::query()->where('plugin', false)->get()
+					->mapWithKeys(fn (Software $software) => [$software->uuid => $software->getTranslation('title', 'de')])
+					->sortBy(fn (string $label) => $label, SORT_NATURAL | SORT_FLAG_CASE)
+					->all())->label('Läuft in')
+					->with(['columns' => 2, 'when' => 'plugin', 'hint' => 'Nur wo es an bestimmte Programme gebunden ist, z.B. Bongo an Rhinoceros. Ein Plugin für viele Programme (V-Ray): keines ankreuzen.']),
+				Field::checkboxes('categories', Category::class)->label('Kategorien'),
+			])->with(['open' => true]),
+
+			/*
 			 * **One section per page**, each with that page's texts in its order
 			 * and a link to the page as saved (`preview`) (Marcel, 2026-11-09,
 			 * [[14-angebote]] *The form, by page*). Only the title stands above:
@@ -57,52 +82,38 @@ final class SoftwareSchema extends Schema
 				Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
 					->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
 				Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['preview' => 'url']),
+			])->with(['preview' => 'url', 'filled' => true]),
 
 			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
 			Field::section('Seite «Was ist …?»', [
 				Field::richtext('full_description')
 					->with(['hint' => 'Zwischentitel wie «Woher kommt …?» fett, als eigene Zeile. Leer: keine Seite und kein Link.']),
-			])->with(['preview' => 'about_url']),
+			])->with(['preview' => 'about_url', 'filled' => true]),
 
-			// Its licence page since #71 (the client, 2026-11-12): one page per Angebot.
+			// Its licence page since #71 (the client, 2026-11-12): one page per
+			// Angebot, so only for one with licence products (`whenMeta`).
 			Field::section('Seite «Lizenzen»', [
 				Field::textarea('licences_lead')->label('Einleitung')->rules(['max:1000'])
 					->with(['rows' => 2, 'hint' => 'Unter dem Titel «… Lizenzen», z.B. «Corona Lizenzen für Einzelpersonen und Teams».']),
 				Field::richtext('requirements')->label('Systemvoraussetzungen')
 					->with(['hint' => 'Einmal für alle Lizenzen dieses Angebots.']),
 				Field::textarea('licences_quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['preview' => 'licences_url']),
+			])->with(['preview' => 'licences_url', 'filled' => true, 'whenMeta' => 'products_count']),
 
-			Field::section('Einstellungen', [
-				Field::row([
-					Field::checkbox('publish')->label('Publizieren'),
-					// *Beliebte Angebote* on the homepage, as a course's ([[04-content]]).
-					Field::checkbox('featured')->label('Beliebt'),
-					// A plugin is an Angebot of its own (#72, the client 2026-11-12).
-					Field::checkbox('plugin')->label('Plugin'),
-				]),
-				Field::checkboxes('categories', Category::class)->label('Kategorien'),
-			]),
-
-			// Where a plugin runs: *Plugin für …* on its page, and its products
-			// under *Plugins* on each host's. Shut, as the product form's
-			// *Hostsoftware*: most Angebote have none.
-			Field::section('Läuft in', [
-				Field::checkboxes('hosts', Software::class)->label('Läuft in')
-					->with(['columns' => 2, 'legend' => false, 'hint' => 'Nur für Plugins, und nur wo es an bestimmte Programme gebunden ist, z.B. Bongo an Rhinoceros. Ein Plugin für viele Programme (V-Ray): keines ankreuzen.']),
-			])->with(['count' => 'hosts']),
-
-			// Saved on their own, each action at once ([[ImageSection]]).
+			// Both pickers in one section, flat (Marcel, 2026-11-12): two shut
+			// sections for one idea was one too many.
 			// *Das könnte dich auch interessieren* under the page and in the basket ([[Recommendations]]).
-			...Recommendations::fields('Erscheinen unter «Das könnte dich auch interessieren» auf der Angebotsseite und im Warenkorb, sobald eine Lizenz dieses Angebots darin liegt.'),
+			Field::section('Empfehlungen', array_map(
+				fn (Field $picker) => $picker->with(['flat' => true]),
+				Recommendations::fields('Erscheinen unter «Das könnte dich auch interessieren» auf der Angebotsseite und im Warenkorb, sobald eine Lizenz dieses Angebots darin liegt.'),
+			))->with(['count' => ['recommended_courses', 'recommended_software']]),
 
 			Field::section('Bilder', [Field::custom('images')->with(['owner' => 'software'])]),
 
 			Field::section('Metatags + SEO', [
 				Field::textarea('seo_description')->label('SEO - Beschreibung')->rules(['max:1000']),
 				Field::textarea('seo_tags')->label('SEO - Keywords')->rules(['max:1000']),
-			]),
+			])->with(['filled' => true]),
 		];
 	}
 

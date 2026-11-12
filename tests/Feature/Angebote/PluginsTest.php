@@ -78,12 +78,17 @@ it('tags a plugin Plugin on its Angebot tile and its products\' tiles', function
 		->assertSeeInOrder(['Software', 'Rhinoceros 9', 'für Rhinoceros']);
 });
 
-it('is set on the Angebot in the dashboard, with the programs it runs in, never itself', function () {
+it('is set on the Angebot in the dashboard, with the programs it runs in, never a plugin', function () {
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
 	[$rhino, $bongo] = rhinoAndBongo();
 
+	// A plugin is no host, itself least of all: not among the choices.
 	$this->actingAs($admin)->putJson("/api/admin/software/{$bongo->uuid}", [
 		'title' => 'Bongo', 'plugin' => true, 'publish' => true, 'hosts' => [$rhino->uuid, $bongo->uuid],
+	])->assertJsonValidationErrors('hosts.1');
+
+	$this->actingAs($admin)->putJson("/api/admin/software/{$bongo->uuid}", [
+		'title' => 'Bongo', 'plugin' => true, 'publish' => true, 'hosts' => [$rhino->uuid],
 	])->assertOk()
 		->assertJsonPath('data.plugin', true)
 		->assertJsonPath('data.hosts', [$rhino->uuid]);

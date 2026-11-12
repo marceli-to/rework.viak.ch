@@ -26,7 +26,8 @@ const props = defineProps({
 	invalid: { type: Boolean, default: false },
 	// How many are inside, as a solid badge beside the title, open or shut
 	// (Marcel, 2026-09-29) — the Blade twin's `count`. Nothing for a zero.
-	count: { type: Number, default: 0 },
+	// Or a text, *6/8*: a form section's filled fields (Marcel, 2026-11-12).
+	count: { type: [Number, String], default: 0 },
 });
 
 const open = ref(props.expanded);

@@ -31,6 +31,9 @@ const props = defineProps({
 	error: { type: String, default: null },
 	// Where the picks show, at the head of the open list (Marcel, 2026-11-09).
 	hint: { type: String, default: null },
+	// Inside a form section with another picker (the software form's
+	// *Empfehlungen*, Marcel 2026-11-12): a heading, not a collapsible of its own.
+	flat: { type: Boolean, default: false },
 });
 
 const byValue = computed(() => Object.fromEntries(props.options.map((item) => [item.value, item])));
@@ -57,8 +60,11 @@ const available = computed(() => {
 </script>
 
 <template>
-	<Collapsible :count="rows.length" :invalid="!!error">
-		<template #title>{{ label }}</template>
+	<component :is="flat ? 'div' : Collapsible" v-bind="flat ? { class: 'mb-48' } : { count: rows.length, invalid: !!error }">
+		<template v-if="!flat" #title>{{ label }}</template>
+		<h3 v-if="flat" class="font-bold sm:text-lg lg:text-xl" :class="{ 'text-danger': error }">
+			{{ label }}<Badge v-if="rows.length" variant="solid" class="ml-12">{{ rows.length }}</Badge>
+		</h3>
 
 		<p v-if="hint" class="mt-8 text-md text-gray-600 lg:text-lg">{{ hint }}</p>
 
@@ -103,5 +109,5 @@ const available = computed(() => {
 				</li>
 			</ul>
 		</Lightbox>
-	</Collapsible>
+	</component>
 </template>

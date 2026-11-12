@@ -43,6 +43,37 @@ const props = defineProps({
 
 const CUSTOM = { images: ImageSection, variants: VariantSection };
 
+/*
+ * **Only what applies** (Marcel, 2026-11-12, the software form): `when` names
+ * a form value that must be set (*Läuft in* once *Plugin* is ticked),
+ * `whenMeta` a part of the saved record (*Seite «Lizenzen»* while it has
+ * licence products). A hidden field keeps its value and is still sent.
+ */
+const shown = computed(() => {
+	if (props.field.when && !get(props.model, props.field.when)) return false;
+	if (props.field.whenMeta && !props.meta[props.field.whenMeta]) return false;
+	return true;
+});
+
+/*
+ * A section's badge: `count`, how many are picked in its list(s); or
+ * `filled`, how many of its texts hold something, of how many, *6/8* (Marcel,
+ * 2026-11-12), so what is missing shows without opening it.
+ */
+const TEXTS = ['text', 'textarea', 'richtext'];
+const texts = (fields) => fields.flatMap((child) => (TEXTS.includes(child.type) ? [child] : child.fields && child.type !== 'repeater' ? texts(child.fields) : []));
+const filledText = (raw) => String(raw ?? '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() !== '';
+const badge = computed(() => {
+	const field = props.field;
+	if (field.type !== 'section') return 0;
+	if (field.filled) {
+		const all = texts(field.fields ?? []);
+		return all.length ? `${all.filter((child) => filledText(get(props.model, child.name))).length}/${all.length}` : 0;
+	}
+	if (field.count) return [].concat(field.count).reduce((sum, name) => sum + (get(props.model, name) ?? []).length, 0);
+	return 0;
+});
+
 const key = computed(() => props.path + props.field.name);
 const value = computed({
 	get: () => get(props.model, props.field.name),
@@ -85,7 +116,8 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 </script>
 
 <template>
-	<Field v-if="field.type === 'text'" v-model="value" :type="field.input ?? 'text'" :label="field.label" :required="field.required" :readonly="field.readonly" :hint="field.hint" :error="error" />
+	<template v-if="!shown" />
+	<Field v-else-if="field.type === 'text'" v-model="value" :type="field.input ?? 'text'" :label="field.label" :required="field.required" :readonly="field.readonly" :hint="field.hint" :error="error" />
 	<Field v-else-if="field.type === 'number'" v-model="value" type="number" :label="field.label" :required="field.required" :hint="field.hint" :error="error" />
 	<MaskedField v-else-if="field.type === 'date' || field.type === 'time'" v-model="value" :kind="field.type" :label="field.label" :required="field.required" :error="error" />
 	<Textarea v-else-if="field.type === 'textarea'" v-model="value" :label="field.label" :required="field.required" :rows="field.rows ?? 2" :mono="field.mono" :hint="field.hint" :error="error" />
@@ -106,7 +138,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
 	</div>
 	<Checkbox v-else-if="field.type === 'checkbox'" v-model="value">{{ field.label }}</Checkbox>
-	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :hint="field.hint" :error="error" />
+	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :hint="field.hint" :flat="field.flat" :error="error" />
 
 	<!-- *min.* / *max. Teilnehmer*: two columns, as legacy's `span-6` pair. -->
 	<div v-else-if="field.type === 'row' && field.columns" class="grid grid-cols-2 gap-x-16 lg:gap-x-40">
@@ -120,7 +152,7 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 
 	<!-- `count`: a section that holds one list says how many are ticked, shut or open
 	     (the product's *Hostsoftware*), as the Vorhaben's pickers do. -->
-	<Collapsible v-else-if="field.type === 'section'" :expanded="field.open" :invalid="invalid" :count="field.count ? (get(model, field.count) ?? []).length : 0">
+	<Collapsible v-else-if="field.type === 'section'" :expanded="field.open" :invalid="invalid" :count="badge">
 		<template #title>{{ field.label }}</template>
 		<div class="mt-16">
 			<!-- `preview`: the `meta` key holding the page this section fills; a link

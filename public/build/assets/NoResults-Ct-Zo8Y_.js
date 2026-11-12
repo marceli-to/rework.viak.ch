@@ -1,0 +1,1 @@
+import{G as e,H as t,T as n}from"./useApi-BPuI6ZR9-DeyjKSUV.js";var r={class:`mt-16 text-md italic sm:mt-32 sm:text-lg lg:text-xl`},i={__name:`NoResults`,setup(i){return(i,a)=>(t(),n(`p`,r,[e(i.$slots,`default`)]))}};export{i as t};

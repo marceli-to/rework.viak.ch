@@ -34,6 +34,13 @@ class SoftwareFormResource extends JsonResource
 			'licences_url' => $this->products()->listed()->exists()
 				? SiteUrl::licences($this->getTranslation('slug', 'de'), 'de')
 				: null,
+			// Why it is not on the site, said above the form (Marcel, 2026-11-12):
+			// 3ds Max is only a program courses name, and the form says so.
+			'offline' => match (true) {
+				! $this->publish => 'Nicht auf der Website: nicht publiziert.',
+				! Software::query()->onSite()->whereKey($this->getKey())->exists() => 'Nicht auf der Website: kein publizierter Kurs und keine Lizenz im Shop.',
+				default => null,
+			},
 			'title' => $de('title'),
 			'publish' => $this->publish,
 			'featured' => $this->featured,

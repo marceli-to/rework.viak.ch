@@ -1,0 +1,1 @@
+import{H as e,R as t,T as n,nt as r,w as i}from"./useApi-BPuI6ZR9-DeyjKSUV.js";var a={key:0},o={__name:`Loading`,setup(o){let s=r(!1),c=setTimeout(()=>s.value=!0,200);return t(()=>clearTimeout(c)),(t,r)=>s.value?(e(),n(`p`,a,`Wird geladen …`)):i(``,!0)}};export{o as t};
