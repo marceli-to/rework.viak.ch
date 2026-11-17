@@ -9,15 +9,9 @@
 	question.
 --}}
 <section>
-	<div class="mb-16 flex flex-wrap items-baseline justify-between gap-x-16 lg:mb-24">
-		<h2 class="font-bold">Nächste Kurstermine</h2>
-		{{-- The rows' size, not the heading's (Marcel, 2026-10-20), as the
-		     profile's *Alle Dokumente anzeigen* is. --}}
-		<a href="{{ \App\Support\SiteUrl::courses() }}" class="inline-flex items-center gap-8 text-teal hover:underline sm:text-lg lg:text-xl">
-			Mehr
-			<x-icon.arrow-right />
-		</a>
-	</div>
+	{{-- The heading alone, as *Aktuell* beside it is; the way to the Kurse
+	     page under the list (Marcel, 2026-11-17). --}}
+	<h2 class="mb-16 font-bold lg:mb-24">Nächste Kurstermine</h2>
 
 	{{--
 		**Compact** (Oliver in Roxy, 2026-11-12, built 2026-11-17: "viel zu
@@ -38,4 +32,14 @@
 			</li>
 		@endforeach
 	</ul>
+
+	{{-- Under the list, closing it on the site's black rule: *Alle Kurse und
+	     Termine* (Marcel, 2026-11-17: was *Mehr* beside the heading), the
+	     rows' size, teal, with the arrow. --}}
+	<div class="border-t border-black pt-8 sm:pt-12">
+		<a href="{{ \App\Support\SiteUrl::courses() }}" class="inline-flex items-center gap-8 text-teal hover:underline sm:text-lg lg:text-xl">
+			Alle Kurse und Termine
+			<x-icon.arrow-right />
+		</a>
+	</div>
 </section>
