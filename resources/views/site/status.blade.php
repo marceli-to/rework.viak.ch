@@ -96,11 +96,6 @@
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
 		],
 		[
-			'title' => 'Firmenschulung auf der Startseite',
-			'text' => 'Dauer, Gruppe und Preis sind wie gewünscht angepasst. Offen ist noch: Welche Kunden dürfen unter «Zuletzt geschult» genannt werden? Bis dahin bleibt diese Zeile weg.',
-			'decides' => 'Den Text des Firmenschulungs-Hinweises.',
-		],
-		[
 			'title' => 'Welche Vorhaben gibt es?',
 			'text' => 'Die Mockups zeigen sechs (Räume, Bilder, Objekte, Bewegtbild, KI, Teams), besprochen wurde nur Räume. Vorhaben werden im Dashboard angelegt; die Texte im Prototyp sind Platzhalter.',
 			'decides' => 'Nur Inhalte, keine Entwicklung.',

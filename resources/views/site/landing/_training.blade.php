@@ -22,8 +22,8 @@
 	*Pauschale, auf Anfrage* instead of *Ab CHF 2'400 pro Tag* (#40's price
 	question, answered).
 
-	Left out: the mockup's *Zuletzt geschult: Firmenname (…)*, a placeholder
-	until VIAK names clients it may show (`Open-Questions.md` #40).
+	Left out for good: the mockup's *Zuletzt geschult: Firmenname (…)*, a
+	placeholder nobody at VIAK asked for (#40 dropped, Marcel 2026-11-17).
 --}}
 <section class="mt-48 bg-gray-200/50 p-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mt-64 lg:gap-40 lg:p-24">
 	<div class="flex flex-col items-start sm:col-span-6">
