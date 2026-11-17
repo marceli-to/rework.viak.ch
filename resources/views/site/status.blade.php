@@ -87,6 +87,11 @@
 			'decides' => 'Nichts, wenn es so bleibt.',
 		],
 		[
+			'title' => 'EDU-Lizenzen: auf der Website oder nicht?',
+			'text' => 'Die Antwort zu den EDU-Lizenzen war «öffentlich», und so sind sie jetzt auf der Website: Rhinoceros 9 EDU, Rhinoceros 9 EDU Upgrade und VisualARQ 3 Educational. In der Software-Liste vom 17. November stehen die drei aber weiterhin auf N (nicht sichtbar). Gilt die Antwort oder die Liste?',
+			'decides' => 'Ob die drei EDU-Lizenzen auf der Lizenzseite stehen. Nichts, wenn sie bleiben.',
+		],
+		[
 			'title' => 'KI-Zugang zu den Daten',
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
