@@ -684,8 +684,8 @@ start date short, *Anmelden*).
 - **`News`** (title, text, link, publish, order, a picture), legacy's four
   fields; its five old rows are not ported. *Seiteninhalte → News* (the menu
   entry had waited as *pending*): the Team list's pattern, dragged into
-  order, a new item on top; the form's hint says the first two published are
-  shown (an *auf der Startseite* badge was tried and dropped, Marcel).
+  order, a new item on top; the first two published are shown. Nothing in the
+  list or the form says so (a badge and a hint were tried and dropped, Marcel).
 - **The link is picked, not typed** ([[NewsLink]]): *Seiten* (Alle Angebote,
   Kurse, Software, Firmenschulung, Über uns, Kontakt), *Angebote*, *Kurse*,
   stored as `software:{uuid}` / `course:{uuid}` / `page:{name}` and resolved

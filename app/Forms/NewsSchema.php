@@ -21,8 +21,7 @@ final class NewsSchema extends Schema
 			Field::textarea('text')->label('Text')->rules(['max:300'])->with(['rows' => 2]),
 			Field::select('link', fn () => NewsLink::options())->label('Link')
 				->with(['placeholder' => 'Kein Link', 'hint' => 'Wohin der Pfeil führt. Ist die Seite nicht auf der Website, erscheint die News ohne Pfeil.']),
-			Field::checkbox('publish')->label('Publizieren')
-				->with(['hint' => 'Auf der Startseite stehen die ersten zwei publizierten, in der Reihenfolge der Liste.']),
+			Field::checkbox('publish')->label('Publizieren'),
 
 			Field::section('Bild', [Field::custom('images')->with(['owner' => 'news'])]),
 		];

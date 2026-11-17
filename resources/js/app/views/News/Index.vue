@@ -12,9 +12,9 @@ import NoResults from '@/components/ui/NoResults.vue';
 /**
  * *Seiteninhalte → News* ([[News]]): the Team list's pattern, a row per item,
  * **dragged into the order the homepage shows**: the first two published
- * are on it (the form's hint says so; a badge for it was dropped, Marcel
- * 2026-11-17). A link whose page is not on the site says that it shows no
- * arrow.
+ * are on it. Neither a badge nor a hint says so (both tried and dropped,
+ * Marcel 2026-11-17). A link whose page is not on the site says that it
+ * shows no arrow.
  */
 const items = ref([]);
 const loading = ref(true);
