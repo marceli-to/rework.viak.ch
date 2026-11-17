@@ -96,11 +96,6 @@
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
 		],
 		[
-			'title' => 'Blog und Aktuelles',
-			'text' => 'Im Mockup-Review war Aktuelles als Einstieg in einen Blog vorgesehen, der Blog selbst war offen. Gibt es einen Blog, mit eigenen Seiten?',
-			'decides' => 'Ob Beiträge gebaut werden, und das letzte offene Element der Startseite.',
-		],
-		[
 			'title' => 'Firmenschulung auf der Startseite',
 			'text' => 'Dauer, Gruppe und Preis sind wie gewünscht angepasst. Offen ist noch: Welche Kunden dürfen unter «Zuletzt geschult» genannt werden? Bis dahin bleibt diese Zeile weg.',
 			'decides' => 'Den Text des Firmenschulungs-Hinweises.',
@@ -129,7 +124,6 @@
 	$unbuilt = [
 		['Tracking: Buchungen als Conversion', 'Laut Tag-Manager-Support (Call vom 2. November) müssen Werbe- und Analyse-Cookies nach der Zustimmung freigegeben werden. Das macht die neue Website bereits, die heutige kann es nicht. Offen bleibt: Google Ads zählt jedes abgeschickte Formular (Login, Registrierung, Newsletter, Kontakt und neu auch eine Buchung) pauschal als Conversion mit CHF 100. Damit nur Käufe mit ihrem echten Betrag zählen, meldet die Bestätigungsseite den Kauf an den Tag Manager, und dort wird die Conversion auf dieses Ereignis umgestellt. Der Plan steht, umgesetzt wird es später.', 'Zurückgestellt', false],
 		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Offen: die Herkunft jeder Buchung festhalten und die Frage «Wie wurdest du auf uns aufmerksam?».', 'Wartet auf die Tracking-Fragen', true],
-		['Blog und Aktuelles', 'Beiträge und ihre Seiten, das letzte Element der Startseite.', 'Wartet auf die Blog-Frage', false],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
 		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],

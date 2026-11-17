@@ -227,6 +227,10 @@ not confirmed. The template is cheap; the count is what drives the work.
 
 ### 22. Is there a blog, and is Aktuelles its front page?
 
+**Set aside 2026-11-17 (Marcel):** off the Projektstand. The homepage has its
+news box now (*Aktuell*, [[News]]), which is what Aktuelles was for there; a
+blog is not pursued unless VIAK asks for one.
+
 Raised in the 2026-09-23 mockup review, which marked Aktuelles *build in part*
 with the note "Blog-Einstieg, noch offen", and put "Blog?" against the
 homepage's Aktuelles strip. Nothing in the rework has a news or article model
