@@ -14,7 +14,7 @@
 		{{-- The rows' size, not the heading's (Marcel, 2026-10-20), as the
 		     profile's *Alle Dokumente anzeigen* is. --}}
 		<a href="{{ \App\Support\SiteUrl::courses() }}" class="inline-flex items-center gap-8 text-teal hover:underline sm:text-lg lg:text-xl">
-			Alle Kurse und Termine
+			Mehr
 			<x-icon.arrow-right />
 		</a>
 	</div>
