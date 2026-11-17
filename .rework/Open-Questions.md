@@ -31,7 +31,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
 | 7 | Do the historical invoice due dates matter? | Client | Cutover — `port:invoices` reports it every run |
-| 8 | Event 213 — what was it meant to be? | Client | Cutover |
+| ~~8~~ | ~~Event 213 — what was it meant to be?~~ **Settled 2026-11-17 (Marcel): ignore it.** The port skips it, as it skips all 14 two-digit-year events; never booked, never on the site | — | — |
 | 9 | The other 13 two-digit-year events: drop or restore? | Marcel | Cutover |
 | 10 | `due_at` in the port: the 541 lost, and the open/overdue | Marcel | Cutover |
 | 11 | What PHP does production run? | Marcel | Deploy |
@@ -281,7 +281,10 @@ has to run against the dump we actually cut over. If dunning, the accounting
 export and reprinted PDFs do not need them, we drop it. Full write-up in
 `Todo.md`.
 
-### 8. Event 213 — what was it meant to be?
+### ~~8. Event 213 — what was it meant to be?~~
+
+**Settled 2026-11-17 (Marcel): ignore it.** It stays skipped by the port
+(`PortCourses`, *NEEDS A DECISION — skipped*); nobody is asked.
 
 One of the 14 events lost to two-digit years. The other 13 reconstruct from a
 rule; 213 lands on a **Saturday**, and Blender Modeling has only ever run

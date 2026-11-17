@@ -131,11 +131,6 @@
 			'text' => 'Die alte Website hat das Fälligkeitsdatum bei jeder Änderung einer Rechnung überschrieben, bei den 541 bezahlten Rechnungen ist es verloren. Wird es noch gebraucht (Mahnwesen, Buchhaltung)?',
 			'decides' => 'Ob wir es beim Umzug aus Run My Accounts oder den PDFs wiederherstellen.',
 		],
-		[
-			'title' => 'Ein Kurstermin mit falschem Datum',
-			'text' => 'Ein Termin «Blender Modeling» fällt nach Korrektur der Jahreszahl auf einen Samstag, der Kurs lief aber immer Donnerstag und Freitag. Nie gebucht, nie auf der Website. Korrigieren oder streichen?',
-			'decides' => 'Nur die Kurshistorie.',
-		],
 	];
 
 	$content = [
