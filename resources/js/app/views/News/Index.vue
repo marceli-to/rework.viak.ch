@@ -59,7 +59,7 @@ onMounted(async () => {
 			v-bind="handlers(index)"
 			wide
 		>
-			<!-- The title and its badges on the left, the text, where to on the right (Marcel, 2026-11-17). -->
+			<!-- The title and its badges on the left, the text beside them (Marcel, 2026-11-17). -->
 			<div class="col-span-12 sm:col-span-4">
 				{{ item.title }}
 				<span class="mt-8 flex flex-wrap gap-8">
@@ -67,9 +67,9 @@ onMounted(async () => {
 					<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
 				</span>
 			</div>
-			<!-- The text in the middle, one line, cut with an ellipsis; whole in its title. -->
-			<div class="col-span-12 min-w-0 truncate text-gray-600 max-sm:mt-8 sm:col-span-5" :title="item.text">{{ item.text }}</div>
-			<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-3">{{ item.link_label ?? 'Kein Link' }}</div>
+			<!-- The text, one line, cut with an ellipsis; whole in its title. Where the
+			     arrow leads is in the form, not here (Marcel, 2026-11-17). -->
+			<div class="col-span-12 min-w-0 truncate pr-40 text-gray-600 max-sm:mt-8 sm:col-span-8" :title="item.text">{{ item.text }}</div>
 		</EditableListItem>
 	</section>
 </template>
