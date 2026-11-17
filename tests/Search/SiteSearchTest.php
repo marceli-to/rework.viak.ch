@@ -184,5 +184,6 @@ it('says a course\'s next date and fee, an Angebot\'s and a licence\'s prices', 
 		->and($by['Rhinoceros 8'])->toBe(['ab CHF 550.00'])
 		->and($by['Rhinoceros'])->toContain('Lizenz ab CHF 550.00');
 
-	$this->get('/de/suche?q=einstiegskurs')->assertSee('ab 12. Januar 2027 · CHF 949.00');
+	// On the result page one a line, on the right ([[row.search-hit]]).
+	$this->get('/de/suche?q=einstiegskurs')->assertSeeInOrder(['Rhino Einstiegskurs', 'ab 12. Januar 2027', 'CHF 949.00']);
 });
