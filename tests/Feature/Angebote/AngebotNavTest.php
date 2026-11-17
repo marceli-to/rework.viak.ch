@@ -109,7 +109,7 @@ it('keeps the lists\' names out of an Angebot\'s slug, and the prototype\'s URLs
 	$this->get('/de/software/rhinoceros')->assertRedirect('/de/angebote/rhinoceros')->assertStatus(301);
 });
 
-it('says Kurs ab the bookable price, else the course fee with Daten auf Anfrage, and Lizenz ab or the note', function () {
+it('says Kurs ab the bookable price, else the course fee, and Lizenz ab or the note', function () {
 	$this->travelTo('2026-10-29');
 	$twinmotion = navAngebot('Twinmotion', licence: true, course: true);
 	$twinmotion->courses()->first()->update(['fee' => '499.00']);
@@ -129,5 +129,6 @@ it('says Kurs ab the bookable price, else the course fee with Daten auf Anfrage,
 	$this->get('/de')
 		->assertSee('Lizenz direkt bei Adobe')
 		->assertSee('Kurs ab CHF 989.00')
-		->assertSee('Daten auf Anfrage');
+		// Not said on the tile (Marcel, 2026-11-17).
+		->assertDontSee('Daten auf Anfrage');
 });

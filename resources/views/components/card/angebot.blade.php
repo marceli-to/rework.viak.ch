@@ -23,8 +23,8 @@
 	then the lead and, under a grey rule, the two prices side by side.
 
 	**Kurs ab** by the hybrid of #52 ([[Software::courseFrom]]): the bookable
-	price, else the course fee with *Daten auf Anfrage*, else *Kurs auf
-	Anfrage*; nothing on an Angebot without courses. **Lizenz ab** its
+	price, else the course fee, else *Kurs auf Anfrage*; the course fee no
+	longer says *Daten auf Anfrage* (Marcel, 2026-11-17); nothing on an Angebot without courses. **Lizenz ab** its
 	cheapest listed licence, its own before its plugins (#67), else the software's *Lizenz-Hinweis* (*Lizenz
 	direkt bei Adobe*), else nothing. Net, as the Software list says them;
 	courses carry no VAT. The prices keep to the foot of the tile, so a row
@@ -72,7 +72,7 @@
 
 			<div class="mt-auto flex flex-wrap justify-between gap-x-16 gap-y-4 border-t border-gray-400 pt-8 font-bold text-teal transition-colors group-hover:text-black">
 				@if ($course)
-					<span>Kurs ab {{ $chf($course['price']) }}@unless ($course['dated'])<span class="font-normal">, Daten auf Anfrage</span>@endunless</span>
+					<span>Kurs ab {{ $chf($course['price']) }}</span>
 				@elseif ($hasCourses)
 					<span>Kurs auf Anfrage</span>
 				@endif

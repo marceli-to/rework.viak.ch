@@ -8,6 +8,7 @@ changes it raised (the others: `15-search.md`, `13-checkout.md` *Invoice only*,
 ## Status
 
 **#52 and #55 confirmed 2026-11-17 (Oliver):** *Kurs ab CHF* and *Beliebte Angebote* stay as built.
+The same day Marcel took *Daten auf Anfrage* off the tile: an undated course fee reads *Kurs ab CHF …* alone.
 
 **Planned 2026-10-29** from the client's answer, see *The client's answer,
 2026-10-29*: two levels, the nav, the URLs and *Kurs ab* settled, #66–67 open (#66 answered 2026-11-03). **Steps 1 to 4 built the same day** (*As built*, at the end): the plan is done. **Scoped 2026-10-26.** **The data built the same day** (*Built ahead of the
