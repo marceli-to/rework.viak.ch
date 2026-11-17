@@ -183,8 +183,8 @@ courses off Photoshop, the second gives them categories, the third texts.
    each with VIAK before its rental is invoiced: raise the count, or drop a
    laptop ([[CheckRentals]]). On the 2026-09-11 copy: one, event `eac2d8b5…`
    on 15.12.2026.
-   Then invoice 000419 at CHF −149.00 (`Open-Questions.md`, *pending
-   actions*).
+   Invoice 000419 at CHF −149.00 comes across as it stands (Marcel,
+   2026-11-17: ignore it).
 6. **`php artisan port:check-urls --base=https://<the new server>`**, before
    the DNS moves. Every URL legacy answers, followed on the rework. It fails
    when one does not land on a page, or needs more than one redirect to get

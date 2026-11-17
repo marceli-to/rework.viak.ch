@@ -136,11 +136,6 @@
 			'text' => 'Ein Termin «Blender Modeling» fällt nach Korrektur der Jahreszahl auf einen Samstag, der Kurs lief aber immer Donnerstag und Freitag. Nie gebucht, nie auf der Website. Korrigieren oder streichen?',
 			'decides' => 'Nur die Kurshistorie.',
 		],
-		[
-			'title' => 'Rechnung 000419 über CHF −149.00',
-			'text' => 'Ein Gutschein über CHF 648 wurde 2023 auf einen Kurs zu CHF 499 angewendet, die Rechnung steht seither offen mit einem negativen Betrag. Die neue Website lässt das nicht mehr zu, übernimmt die Rechnung aber wie sie ist.',
-			'decides' => 'Ob die Rechnung vor dem Umzug in der Buchhaltung bereinigt wird.',
-		],
 	];
 
 	$content = [

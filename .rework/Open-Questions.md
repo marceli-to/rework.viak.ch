@@ -461,8 +461,8 @@ the same breath.
   carries a CHF 80 laptop rental that was never invoiced. One booking of 710, but
   it is a negative open invoice in the live books, and per chunk 03's doctrine the
   port copies rather than recomputes — so it comes across as it stands unless
-  someone decides otherwise. Raise it with the client before the cutover. See
-  `06-bookings.md`.
+  someone decides otherwise. See `06-bookings.md`. **Settled 2026-11-17
+  (Marcel): ignore it.** It comes across as it stands; not asked, not fixed.
 - **At cutover, re-check rentals against laptop counts.** On the 2026-09-11
   copy, one active rental sits on a date whose room legacy says has **no**
   laptops — event `eac2d8b5-3c87-43a1-a8aa-ab3e2e37fd70`, 2026-12-15; the count
