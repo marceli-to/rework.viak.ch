@@ -92,11 +92,6 @@
 			'decides' => 'Ob Produkte dazukommen. Ein später erfasstes Produkt mit derselben Artikelnummer übernimmt seine alte Adresse von selbst.',
 		],
 		[
-			'title' => 'Angebote: zwei Punkte bestätigen',
-			'text' => '«Kurs ab CHF» nimmt den Preis des nächsten buchbaren Datums, ohne Datum die Kursgebühr mit «Daten auf Anfrage». «Beliebte Angebote» auf der Startseite zeigt Angebote, die selbst oder mit einem Kurs als «Beliebt» markiert sind. Passt beides?',
-			'decides' => 'Nichts, wenn es passt.',
-		],
-		[
 			'title' => 'KI-Zugang zu den Daten',
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
