@@ -39,8 +39,8 @@ const props = defineProps({
 	singleton: { type: Boolean, default: false },
 	// Fields a new record starts with beyond the schema's defaults.
 	prefill: { type: Object, default: () => ({}) },
-	// The `meta` key holding the page this form fills: *Seite ansehen* under
-	// the buttons (Marcel, 2026-11-17), as a section's `preview` has it.
+	// The `meta` key holding the page this form fills: *Seite ansehen*, a third
+	// button under the two, its note below (Marcel, 2026-11-17), as a section's `preview` has it.
 	preview: { type: String, default: null },
 });
 
@@ -71,10 +71,10 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 
 				<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 				<Button v-if="stay && !singleton" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
-				<p v-if="preview && meta[preview]" class="mt-24 text-md lg:text-lg">
-					<a :href="meta[preview]" target="_blank" rel="noopener" class="text-teal hover:text-black">Seite ansehen</a>
-					<span class="text-gray-600"> (gespeicherter Stand, nur wenn publiziert)</span>
-				</p>
+				<template v-if="preview && meta[preview]">
+					<Button :href="meta[preview]" variant="outline" target="_blank" rel="noopener" class="mt-12 w-full">Seite ansehen</Button>
+					<p class="pt-8 text-md text-gray-600 lg:text-lg">Gespeicherter Stand, nur wenn publiziert.</p>
+				</template>
 			</fieldset>
 
 			<!-- Boxes that act on the record rather than its fields: a course
