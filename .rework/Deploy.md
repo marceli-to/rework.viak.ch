@@ -144,6 +144,14 @@ The fifth moves Maxon One into an Angebot of its own. **Then run
 Architekturvisualisierung, Architekturfotografie and KI-Video and moves their
 courses off Photoshop, the second gives them categories, the third texts.
 
+**After the pull of 2026-11-17 (logos):** `php artisan migrate --force`
+(`software.logo`, and `logo` on the search's rows), **then `php artisan
+catalogue:logos`** (`--dry-run` first): Oliver's 31 logos from
+`database/data/logos/` onto the public disk (`storage/app/public/logos`),
+served at `/storage/logos/…` through the `storage` link that already serves
+the images. Rerunnable; an Angebot with a logo keeps it unless `--force`.
+Then `search:rebuild` (update line) so the search rows carry them.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
@@ -171,6 +179,9 @@ courses off Photoshop, the second gives them categories, the third texts.
    **Then `php artisan catalogue:texts`** (`--dry-run` first): the client's
    website texts onto the Angebot pages (`database/data/texts.json`). Empty
    fields only; it reports what it kept and any Angebot it did not find.
+   **Then `php artisan catalogue:logos`** (`--dry-run` first, 2026-11-17):
+   the Angebote' logos (`database/data/logos/{slug}.png`), after the port
+   has made the software records they belong to.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
    And step 7 (`search:rebuild`): the ports insert without Eloquent's

@@ -165,3 +165,15 @@ it('finds an Angebot by the texts of its licence page and its Was ist page', fun
 	expect(search('werkstätten'))->toBe(['Angebot: Rhinoceros'])
 		->and(search('yachtdesign'))->toBe(['Angebot: Rhinoceros']);
 });
+
+/** An Angebot's logo on its row and on its licence's (Oliver, 2026-11-17); none on a course. */
+it('hands out the Angebot\'s logo with its hits', function () {
+	rhino()->update(['logo' => 'rhinoceros-abc.png']);
+	Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs']]);
+
+	$logos = collect($this->getJson('/api/search?q=rhino')->json('data'))->pluck('logo', 'title');
+
+	expect($logos['Rhinoceros'])->toBe('/storage/logos/rhinoceros-abc.png')
+		->and($logos['Rhinoceros 8'])->toBe('/storage/logos/rhinoceros-abc.png')
+		->and($logos['Rhino Einstiegskurs'])->toBeNull();
+});

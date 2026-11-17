@@ -200,7 +200,10 @@
 						<li :id="`site-search-hit-${index}`" role="option" :aria-selected="index === active">
 							<a :href="hit.url" class="group mt-16 block border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl" @mouseenter="active = index">
 								<span class="grid grid-cols-12 gap-16 lg:gap-40">
-									<span class="col-span-4 font-bold transition-colors group-hover:text-teal" :class="index === active && 'text-teal'" x-text="hit.title"></span>
+									<span class="col-span-4 flex min-w-0 items-start gap-12">
+										<template x-if="hit.logo"><img :src="hit.logo" alt="" width="250" height="250" class="block size-28 shrink-0 object-contain lg:size-32"></template>
+										<span class="font-bold transition-colors group-hover:text-teal" :class="index === active && 'text-teal'" x-text="hit.title"></span>
+									</span>
 									<span class="col-span-6 text-gray-600" x-text="hit.lead && hit.lead.length > 240 ? hit.lead.slice(0, 240) + '…' : (hit.lead || '')"></span>
 									<span class="col-span-2 text-right"><span class="inline-block border border-black px-6 py-2 text-md leading-[1.2] font-bold" x-text="hit.label"></span></span>
 								</span>

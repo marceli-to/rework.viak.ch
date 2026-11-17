@@ -56,7 +56,12 @@ class SearchDocument
 		6 => ['title' => 'Software', 'url' => 'softwareIndex', 'lead' => 'Alle Lizenzen im Shop, mit Filter.', 'words' => 'Software Lizenzen Shop kaufen'],
 	];
 
-	/** @return array{type: string, title: string, body: string, lead: ?string, url: string}|null */
+	/**
+	 * `logo`: an Angebot's, on its own row and on its licences' (Oliver,
+	 * 2026-11-17); absent, as on every other kind, means none.
+	 *
+	 * @return array{type: string, title: string, body: string, lead: ?string, url: string, logo?: ?string}|null
+	 */
 	public static function for(Model $record, string $locale): ?array
 	{
 		if (method_exists($record, 'trashed') && $record->trashed()) {
@@ -96,13 +101,13 @@ class SearchDocument
 		}
 
 		// Every text of its three pages: the Angebot's, «Was ist …?», «Lizenzen».
-		return self::document('software', $software, $locale, SiteUrl::software($slug, $locale),
+		return self::withLogo(self::document('software', $software, $locale, SiteUrl::software($slug, $locale),
 			fields: [
 				'subtitle', 'short_description', 'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
 				'full_description', 'information', 'licences_lead', 'requirements', 'licences_quote', 'seo_tags',
 			],
 			lead: self::first($software, $locale, ['subtitle', 'short_description']),
-		);
+		), $software);
 	}
 
 	private static function licence(LicenceProduct $product, string $locale): ?array
@@ -117,7 +122,7 @@ class SearchDocument
 
 		$variants = $product->variants->filter(fn (LicenceVariant $variant) => $variant->listed);
 
-		return self::document('licence', $product, $locale, SiteUrl::licence($product, $locale),
+		return self::withLogo(self::document('licence', $product, $locale, SiteUrl::licence($product, $locale),
 			fields: ['description'],
 			extra: [
 				$software->getTranslation('title', $locale, false),
@@ -125,7 +130,7 @@ class SearchDocument
 				...self::titles($variants, $locale),
 			],
 			lead: $software->getTranslation('title', $locale, false),
-		);
+		), $software);
 	}
 
 	private static function project(Project $project, string $locale): ?array
@@ -202,6 +207,12 @@ class SearchDocument
 		$main = (string) preg_replace('/<(script|style|svg|form|template)\b[^>]*>.*?<\/\1>/si', ' ', $main);
 
 		return self::plain($main);
+	}
+
+	/** A document with its Angebot's logo, or null as it came. */
+	private static function withLogo(?array $document, Software $software): ?array
+	{
+		return $document === null ? null : [...$document, 'logo' => $software->logoUrl()];
 	}
 
 	/**

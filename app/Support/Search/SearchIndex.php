@@ -104,7 +104,7 @@ class SearchIndex
 	/**
 	 * The hits for a query, best first.
 	 *
-	 * @return Collection<int, object{type: string, label: string, title: string, lead: ?string, url: string, searchable_id: int}>
+	 * @return Collection<int, object{type: string, label: string, title: string, lead: ?string, url: string, logo: ?string, searchable_id: int}>
 	 */
 	public function search(string $query, string $locale, int $limit = 20): Collection
 	{
@@ -124,7 +124,7 @@ class SearchIndex
 		$starts = array_map(fn (string $word) => '\\b'.$word, $words);
 
 		$rows = DB::table('search_entries')
-			->select(['type', 'title', 'lead', 'url', 'searchable_id'])
+			->select(['type', 'title', 'lead', 'url', 'logo', 'searchable_id'])
 			->where('locale', $locale)
 			->when($against !== '', fn ($rows) => $rows->whereFullText(['title', 'body'], $against, ['mode' => 'boolean']))
 			// A short word starts a word somewhere: *KI* is *KI-Einstieg*, not *Skizze*.

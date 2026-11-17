@@ -880,3 +880,30 @@ courses as legacy does:
 own group in `licences.json`: the product out from under CINEMA 4D into an
 Angebot of its own, with its categories, the doc's texts and licence page
 texts.
+
+## Logos (Oliver, 2026-11-17)
+
+Oliver sent two sets. **The six category icons** (thick rounded strokes,
+black and white, for the homepage boxes and as stand-ins) **are not used**:
+Marcel told him they do not match the site's thin-line icons. **The software
+logos** (250px PNG, 36 files) are, "für alle Listen, Übersichten etc.".
+
+- **Stored** as `software.logo`, a file on the public disk under `logos/`,
+  not a `Media` row: the image pipeline re-encodes and crops, a logo keeps
+  its transparent ground and its shape ([[Software::logoUrl]]). Uploaded in
+  the software form's *Einstellungen*, *Logo*, saved at once as the images
+  are, *Entfernen* under it ([[SoftwareLogoController]], `LogoField.vue`).
+- **Imported** by `catalogue:logos` from `database/data/logos/{slug}.png`:
+  31 of his files, renamed to the Angebot's slug (*corona* → corona-renderer,
+  *photoshop* → adobe-photoshop). Left out: Grasshopper (no Angebot, it runs
+  in Rhino) and the white variants.
+- **Shown** ([[ui.logo]], an `<img>` in a square, `object-contain`): on
+  *Alle Angebote*'s tiles and the homepage's *Beliebte Angebote* right of the
+  title; on the Software list's tiles (the product's Angebot's); above the
+  title on the Angebot page and its Lizenzen page; before the title in the
+  search's rows and the header panel (Angebot and licence rows). Not on
+  courses: a course can belong to several programs.
+- **No logo, nothing** (Marcel): Architekturfotografie,
+  Architekturvisualisierung, KI-Video, Lands Design and Rhino.io have none,
+  and no icon, initials or grey square stands in. Oliver may still send
+  Lands Design's and Rhino.io's.

@@ -78,6 +78,8 @@
 
 		<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 			<div class="mb-12 sm:col-span-4">
+				{{-- Its logo over the title (Oliver, 2026-11-17); none where it has none. --}}
+				<x-ui.logo :src="$software->logoUrl()" class="mb-16 size-48 lg:size-64" />
 				<h1 class="font-bold">{{ $title }}</h1>
 				@if ($subtitle)
 					<h2>{{ $subtitle }}</h2>

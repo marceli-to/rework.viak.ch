@@ -19,7 +19,11 @@
 --}}
 <a href="{{ $hit->url }}" {{ $attributes->class(['group mt-16 block border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
 	<span class="flex items-start justify-between gap-16 sm:grid sm:grid-cols-12 lg:gap-40">
-		<span class="font-bold transition-colors group-hover:text-teal sm:col-span-4">{{ $hit->title }}</span>
+		{{-- An Angebot's or a licence's logo before the title (Oliver, 2026-11-17); none elsewhere. --}}
+		<span class="flex min-w-0 items-start gap-12 sm:col-span-4">
+			<x-ui.logo :src="$hit->logo ?? null" class="size-24 sm:size-28 lg:size-32" />
+			<span class="font-bold transition-colors group-hover:text-teal">{{ $hit->title }}</span>
+		</span>
 
 		@if ($hit->lead)
 			<span class="block text-gray-600 max-sm:hidden sm:col-span-6">{{ \Illuminate\Support\Str::limit($hit->lead, 240) }}</span>

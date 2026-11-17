@@ -151,6 +151,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('software/{software}', [Admin\SoftwareController::class, 'update']);
 		Route::put('software/{software}/seite/{page}', [Admin\SoftwareController::class, 'updatePage'])->whereIn('page', array_keys(SaveSoftwarePageRequest::PAGES));
 		Route::delete('software/{software}', [Admin\SoftwareController::class, 'destroy']);
+		// Its logo, saved at once ([[SoftwareLogoController]]).
+		Route::post('software/{software}/logo', [Admin\SoftwareLogoController::class, 'store']);
+		Route::delete('software/{software}/logo', [Admin\SoftwareLogoController::class, 'destroy']);
 		Route::get('software/{software}/media', [Admin\MediaController::class, 'softwareIndex']);
 		Route::post('software/{software}/media', [Admin\MediaController::class, 'softwareStore']);
 		Route::patch('software/{software}/media/order', [Admin\MediaController::class, 'softwareOrder']);

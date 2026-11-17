@@ -44,6 +44,8 @@ class SoftwareFormResource extends JsonResource
 			'licences_url' => Software::query()->sellsLicences()->whereKey($this->getKey())->exists()
 				? SiteUrl::licences($this->getTranslation('slug', 'de'), 'de')
 				: null,
+			// *Logo* in Einstellungen, saved apart from the form ([[SoftwareLogoController]]).
+			'logo_url' => $this->resource->logoUrl(),
 			'title' => $de('title'),
 			'publish' => $this->publish,
 			'featured' => $this->featured,

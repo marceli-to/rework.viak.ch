@@ -57,6 +57,8 @@ final class SoftwareSchema extends Schema
 					->all())->label('Läuft in')
 					->with(['columns' => 2, 'when' => 'plugin', 'hint' => 'Nur wo es an bestimmte Programme gebunden ist, z.B. Bongo an Rhinoceros. Ein Plugin für viele Programme (V-Ray): keines ankreuzen.']),
 				Field::checkboxes('categories', Category::class)->label('Kategorien'),
+				// In every list and overview (Oliver, 2026-11-17); saved at once, not with the form.
+				Field::custom('logo')->with(['owner' => 'software']),
 			])->with(['open' => true]),
 
 			/*

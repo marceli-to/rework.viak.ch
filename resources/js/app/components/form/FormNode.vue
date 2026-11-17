@@ -4,6 +4,7 @@ import { get, set } from '@/support/path';
 import Checkbox from './Checkbox.vue';
 import CheckboxGroup from './CheckboxGroup.vue';
 import Editor from './Editor.vue';
+import LogoField from './LogoField.vue';
 import Field from './Field.vue';
 import MaskedField from './MaskedField.vue';
 import OfferPicker from './OfferPicker.vue';
@@ -41,7 +42,7 @@ const props = defineProps({
 	meta: { type: Object, default: () => ({}) },
 });
 
-const CUSTOM = { images: ImageSection, variants: VariantSection };
+const CUSTOM = { images: ImageSection, variants: VariantSection, logo: LogoField };
 
 /*
  * **Only what applies** (Marcel, 2026-11-12, the software form): `when` names
@@ -228,5 +229,6 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 		</button>
 	</div>
 
-	<component :is="CUSTOM[field.component]" v-else-if="field.type === 'custom'" :record="record" :owner="field.owner" />
+	<!-- The logo reads its saved file from the record's `meta`; the others take only the record. -->
+	<component :is="CUSTOM[field.component]" v-else-if="field.type === 'custom'" :record="record" :owner="field.owner" v-bind="field.component === 'logo' ? { meta } : {}" />
 </template>

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -45,7 +46,7 @@ class Software extends Model
 		'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
 		'licences_lead', 'requirements', 'licences_quote',
 		'information', 'licence_note', 'seo_description', 'seo_tags',
-		'order', 'publish', 'featured', 'plugin',
+		'order', 'publish', 'featured', 'plugin', 'logo',
 	];
 
 	public $translatable = [
@@ -182,6 +183,31 @@ class Software extends Model
 			->filter()
 			->sort(fn (string $a, string $b) => bccomp($a, $b, 2))
 			->first();
+	}
+
+	/** Where its logo lives on the public disk ([[Software::logoUrl]]). */
+	public const LOGOS = 'logos';
+
+	/**
+	 * **Its logo**, as a path the site serves (`/storage/logos/…`), or null:
+	 * no logo, and nothing stands in for one (Marcel, 2026-11-17). A file on
+	 * the public disk, not a [[Media]] row: the logo keeps its transparent
+	 * ground and its exact shape ([[14-angebote]] *Logos*).
+	 */
+	public function logoUrl(): ?string
+	{
+		return $this->logo ? '/storage/'.self::LOGOS.'/'.$this->logo : null;
+	}
+
+	/** Takes a new logo file, or none, and deletes the one it replaces. */
+	public function replaceLogo(?string $file): void
+	{
+		$old = $this->logo;
+		$this->update(['logo' => $file]);
+
+		if ($old && $old !== $file) {
+			Storage::disk('public')->delete(self::LOGOS.'/'.$old);
+		}
 	}
 
 	/**

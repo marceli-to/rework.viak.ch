@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
  */
 final class Angebote
 {
-	/** @return Collection<int, array{title: string, tiles: Collection<int, array{title: string, kind: string, href: string, categories: list<int>}>}> */
+	/** @return Collection<int, array{title: string, tiles: Collection<int, array{title: string, kind: string, href: string, logo?: ?string, categories: list<int>}>}> */
 	public static function sections(): Collection
 	{
 		$tiles = self::angebote()->concat(self::courses())
@@ -48,7 +48,7 @@ final class Angebote
 			->toBase();
 	}
 
-	/** @return Collection<int, array{title: string, kind: string, href: string, categories: list<int>}> */
+	/** @return Collection<int, array{title: string, kind: string, href: string, logo?: ?string, categories: list<int>}> */
 	private static function angebote(): Collection
 	{
 		$locale = app()->getLocale();
@@ -58,6 +58,7 @@ final class Angebote
 				'title' => (string) $software->getTranslation('title', $locale),
 				'kind' => (string) $software->offer(),
 				'href' => SiteUrl::software($software->getTranslation('slug', $locale)),
+				'logo' => $software->logoUrl(),
 				'categories' => $software->categories->modelKeys(),
 			])
 			->toBase();
@@ -67,7 +68,7 @@ final class Angebote
 	 * The published courses no Angebot holds: their software, if any, is not
 	 * on the site.
 	 *
-	 * @return Collection<int, array{title: string, kind: string, href: string, categories: list<int>}>
+	 * @return Collection<int, array{title: string, kind: string, href: string, logo?: ?string, categories: list<int>}>
 	 */
 	private static function courses(): Collection
 	{

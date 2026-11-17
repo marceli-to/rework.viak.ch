@@ -26,7 +26,7 @@ class SearchController extends Controller
 		$hits = mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), 60);
 
 		return response()->json([
-			'data' => $hits->take($limit)->map(fn (object $hit) => ['type' => $hit->type, 'label' => $hit->label, 'title' => $hit->title, 'lead' => $hit->lead, 'url' => $hit->url])->values(),
+			'data' => $hits->take($limit)->map(fn (object $hit) => ['type' => $hit->type, 'label' => $hit->label, 'title' => $hit->title, 'lead' => $hit->lead, 'url' => $hit->url, 'logo' => $hit->logo])->values(),
 			'total' => $hits->count(),
 		]);
 	}
