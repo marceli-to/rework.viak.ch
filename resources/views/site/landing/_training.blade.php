@@ -17,9 +17,13 @@
 	the width allows (the label a fixed 80px), 16px in and 24 from lg. No
 	image.
 
+	**The facts are Oliver's** (Roxy, 2026-11-12, built 2026-11-17): *Dauer*
+	in place of the mockup's *Format*, from half a day, at most 10, the price
+	*Pauschale, auf Anfrage* instead of *Ab CHF 2'400 pro Tag* (#40's price
+	question, answered).
+
 	Left out: the mockup's *Zuletzt geschult: Firmenname (…)*, a placeholder
-	until VIAK names clients it may show (`Open-Questions.md` #40, which also
-	asks for the price to be confirmed).
+	until VIAK names clients it may show (`Open-Questions.md` #40).
 --}}
 <section class="mt-48 bg-gray-200/50 p-16 sm:grid sm:grid-cols-12 sm:gap-16 lg:mt-64 lg:gap-40 lg:p-24">
 	<div class="flex flex-col items-start sm:col-span-6">
@@ -31,10 +35,10 @@
 
 	<dl class="mt-32 divide-y divide-gray-400 text-lg sm:col-span-6 sm:mt-0 sm:self-center lg:text-xl">
 		@foreach ([
-			'Format' => '1 bis 2 Tage am eigenen Projekt',
-			'Gruppe' => '3 bis 12 Personen',
+			'Dauer' => 'Ab einem halben Tag',
+			'Gruppe' => 'Bis maximal 10 Personen',
 			'Ort' => 'Bei euch oder in Zürich',
-			'Preis' => "Ab CHF 2'400 pro Tag, pauschal",
+			'Preis' => 'Pauschale, auf Anfrage',
 		] as $term => $fact)
 			<div class="flex gap-16 py-10 first:pt-0 last:pb-0">
 				<dt class="w-80 shrink-0 text-gray-600">{{ $term }}</dt>

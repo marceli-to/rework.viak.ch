@@ -103,7 +103,7 @@
 		],
 		[
 			'title' => 'Firmenschulung auf der Startseite',
-			'text' => 'Ist «Ab CHF 2\'400 pro Tag, pauschal» der richtige Preis? Und welche Kunden dürfen unter «Zuletzt geschult» genannt werden? Bis dahin bleibt diese Zeile weg.',
+			'text' => 'Dauer, Gruppe und Preis sind wie gewünscht angepasst. Offen ist noch: Welche Kunden dürfen unter «Zuletzt geschult» genannt werden? Bis dahin bleibt diese Zeile weg.',
 			'decides' => 'Den Text des Firmenschulungs-Hinweises.',
 		],
 		[
