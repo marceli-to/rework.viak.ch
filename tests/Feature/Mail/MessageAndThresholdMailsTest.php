@@ -56,6 +56,21 @@ it('sends no author copy unless asked', function () {
 	Mail::assertNotQueued(EventMessageExpert::class);
 });
 
+it('copies the Kursleitung when the office asks, once each, and the author only if they asked too', function () {
+	$anna = seat($this->event);
+	$second = User::factory()->expert()->create();
+	$this->event->experts()->attach($second);
+	$admin = User::factory()->admin()->create();
+	Mail::fake();
+
+	app(PostMessage::class)->execute($this->event->refresh(), $admin, 'Raum', '<p>B12</p>', copyToExperts: true);
+
+	Mail::assertQueued(EventMessageCustomer::class, fn ($mail) => $mail->hasTo($anna->email) && ! $mail instanceof EventMessageExpert);
+	Mail::assertQueued(EventMessageExpert::class, fn ($mail) => $mail->hasTo($this->expert->email));
+	Mail::assertQueued(EventMessageExpert::class, fn ($mail) => $mail->hasTo($second->email));
+	Mail::assertQueuedCount(3);
+});
+
 it('tells the office when a date reaches its minimum and when it fills up', function () {
 	seat($this->event);
 	Mail::fake();

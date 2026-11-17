@@ -31,6 +31,7 @@ const error = ref(null);
 const subject = ref('');
 const body = ref('');
 const copyToMe = ref(false);
+const copyToExperts = ref(false);
 const attachments = ref([]);
 const errors = ref({});
 const sending = ref(false);
@@ -55,7 +56,7 @@ async function send() {
 	errors.value = {};
 
 	try {
-		await postMessage(route.params.uuid, { subject: subject.value, body: body.value, copyToMe: copyToMe.value, attachments: attachments.value });
+		await postMessage(route.params.uuid, { subject: subject.value, body: body.value, copyToMe: copyToMe.value, copyToExperts: copyToExperts.value, attachments: attachments.value });
 		toast('Die Nachricht wurde gesendet.');
 		goBack(back());
 	} catch (problem) {
@@ -102,6 +103,8 @@ async function send() {
 			<!-- `.line-after`, as on the portal: the checkbox over a black rule. -->
 			<div class="mb-16 border-b border-black pb-22 sm:pb-26 lg:mb-32 lg:pb-36">
 				<Checkbox v-model="copyToMe">Kopie der Nachricht an mich</Checkbox>
+				<!-- Oliver, 2026-11-17: the dashboard only; a date without a Kursleitung has nobody to copy. -->
+				<Checkbox v-if="page.event.experts.length" v-model="copyToExperts" class="mt-12">Kopie der Nachricht an die Kursleitung ({{ page.event.experts.join(', ') }})</Checkbox>
 			</div>
 
 			<div class="mb-16 lg:mb-32">

@@ -80,6 +80,21 @@ it('posts a message with its files, cleaned of anything but the editor\'s markup
 		->assertJsonPath('data.messages.0.attachments.0.name', 'handout.pdf');
 });
 
+it('copies the Kursleitung only when ticked', function () {
+	Booking::factory()->for($this->event)->for($this->student)->create();
+	$expert = User::factory()->expert()->create();
+	$this->event->experts()->attach($expert);
+
+	foreach (['0' => 'Ohne', '1' => 'Mit'] as $copy => $subject) {
+		$this->actingAs($this->admin)->post("/api/admin/events/{$this->event->uuid}/messages", [
+			'subject' => $subject, 'body' => '<p>x</p>', 'copy_to_experts' => $copy,
+		], ['Accept' => 'application/json'])->assertCreated();
+	}
+
+	expect(Message::query()->where('subject', 'Ohne')->sole()->recipients->pluck('id')->all())->toBe([$this->student->id])
+		->and(Message::query()->where('subject', 'Mit')->sole()->recipients->pluck('id')->sort()->values()->all())->toBe(collect([$this->student->id, $expert->id])->sort()->values()->all());
+});
+
 it('uploads course documents and removes them, but never a message\'s', function () {
 	$reply = $this->actingAs($this->admin)->post("/api/admin/events/{$this->event->uuid}/files", [
 		'files' => [UploadedFile::fake()->create('workshop.pdf', 500, 'application/pdf')],

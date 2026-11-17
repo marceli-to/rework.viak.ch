@@ -810,6 +810,10 @@ participation confirmation, so attendance has to be recorded):
     POST, the mails on [[MessagePosted]]. The body is cleaned by
     [[MessageHtml]] whatever `body_format` says. The portal's composer took
     legacy's label and lost the recipient count in its sentence the same day.
+    **Under it, *Kopie der Nachricht an die Kursleitung (names)*** (Oliver,
+    2026-11-17), dashboard only and only where the date has experts: each
+    gets the author's copy ([[EventMessageExpert]]) and is recorded as a
+    recipient. The portal has no such box, its author is the Kursleitung.
   - ***Kurs-Dokumente***: legacy's rows (Marcel, 2026-09-29, from legacy's
     page), [[FileRow]], the Vue port of the portal's `row/file`: the name
     (caption and file name where there is a caption), uploaded, size,

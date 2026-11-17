@@ -26,12 +26,13 @@ export const confirmAttendance = (event, booking) => client.post(`/admin/events/
 export const bookCustomer = (event, customer) => client.post(`/admin/events/${event}/bookings`, { customer }).then((r) => r.data.data);
 
 /** A note to everyone on the course, with its files, in one multipart POST. */
-export function postMessage(event, { subject, body, copyToMe, attachments }) {
+export function postMessage(event, { subject, body, copyToMe, copyToExperts, attachments }) {
 	const form = new FormData();
 	form.append('subject', subject);
 	form.append('body', body);
 	form.append('body_format', 'html');
 	form.append('copy_to_me', copyToMe ? '1' : '0');
+	form.append('copy_to_experts', copyToExperts ? '1' : '0');
 	attachments.forEach((file) => form.append('attachments[]', file));
 
 	return client.post(`/admin/events/${event}/messages`, form).then((r) => r.data.data);

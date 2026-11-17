@@ -76,6 +76,10 @@ class PostEventMessageRequest extends FormRequest
 			'attachments.*' => ['file', 'max:'.(32 * 1024), ...DocumentTypes::rules()],
 
 			'copy_to_me' => ['sometimes', 'boolean'],
+
+			// The dashboard's *Kopie der Nachricht an die Kursleitung* (Oliver,
+			// 2026-11-17); the portal does not send it, its author is the Kursleitung.
+			'copy_to_experts' => ['sometimes', 'boolean'],
 		];
 	}
 

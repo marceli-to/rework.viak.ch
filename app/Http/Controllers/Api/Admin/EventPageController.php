@@ -213,6 +213,7 @@ class EventPageController extends Controller
 			// what announces itself as HTML, and this path never takes text.
 			body: MessageHtml::sanitize($request->string('body')->value()),
 			copyToAuthor: $request->boolean('copy_to_me'),
+			copyToExperts: $request->boolean('copy_to_experts'),
 		);
 
 		$attach->execute($uploads, $message);

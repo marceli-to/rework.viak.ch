@@ -45,8 +45,9 @@ class PostMessage
 		string $body,
 		array $attachments = [],
 		bool $copyToAuthor = false,
+		bool $copyToExperts = false,
 	): Message {
-		$message = DB::transaction(function () use ($event, $author, $subject, $body, $attachments, $copyToAuthor): Message {
+		$message = DB::transaction(function () use ($event, $author, $subject, $body, $attachments, $copyToAuthor, $copyToExperts): Message {
 			$message = Message::create([
 				'event_id' => $event->id,
 				'user_id' => $author->id,
@@ -65,6 +66,12 @@ class PostMessage
 
 			if ($copyToAuthor) {
 				$recipients = $recipients->push($author->id)->unique();
+			}
+
+			// *Kopie an die Kursleitung*: the date's experts, from the dashboard
+			// (Oliver, 2026-11-17). They get the author's copy ([[SendMessageMails]]).
+			if ($copyToExperts) {
+				$recipients = $recipients->merge($event->experts()->pluck('users.id'))->unique();
 			}
 
 			$message->recipients()->attach($recipients->all(), ['created_at' => now()]);
