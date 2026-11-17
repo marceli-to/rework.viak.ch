@@ -10,7 +10,6 @@
 --}}
 @php
 	$review = [
-		['Startseite', '/de', 'Slider, Vorhaben, nächste Kurstermine, Firmenschulung, beliebte Angebote, Kundenmeinungen, Über uns, Newsletter'],
 		['Alle Angebote', '/de/angebote', 'Alle Angebote als Kacheln, nach den fünf Bereichen, jede mit «Kurs», «Software», «Plugin» oder beidem'],
 		['Eine Angebotsseite', '/de/angebote/rhinoceros', 'Die Texte aus den Webseitentext-Dokumenten, Kurse mit allen Daten, Lizenzen, Plugins, Kundenmeinungen. Gebucht und gekauft wird auf der Kurs- bzw. Lizenzseite'],
 		['«Was ist …?»', '/de/angebote/rhinoceros/was-ist-rhinoceros', 'Die eigene Seite zur Software, verlinkt von der Angebotsseite. Nur wo es einen Text gibt'],
