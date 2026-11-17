@@ -11,14 +11,15 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * Edited only, never created or deleted: the page belongs to the software.
  */
 const PAGES = {
-	angebot: { schema: 'software-angebot', label: 'Seite «Angebot»', preview: 'live_url' },
-	'was-ist': { schema: 'software-was-ist', label: 'Seite «Was ist …?»', preview: 'about_url' },
-	lizenzen: { schema: 'software-lizenzen', label: 'Seite «Lizenzen»', preview: 'licences_url' },
+	angebot: { schema: 'software-angebot', label: 'Seite «Angebot»', name: 'Angebot', preview: 'live_url' },
+	'was-ist': { schema: 'software-was-ist', label: 'Seite «Was ist …?»', name: 'Was ist …?', preview: 'about_url' },
+	lizenzen: { schema: 'software-lizenzen', label: 'Seite «Lizenzen»', name: 'Lizenzen', preview: 'licences_url' },
 };
 
 const route = useRoute();
 const page = computed(() => PAGES[route.params.page]);
-const heading = (meta) => (meta.title ? `${meta.title}\n${page.value.label}` : page.value.label);
+// *Anima – Angebot* (Marcel, 2026-11-17): the software and the page, on one line.
+const heading = (meta) => (meta.title ? `${meta.title} – ${page.value.name}` : page.value.label);
 </script>
 
 <template>
