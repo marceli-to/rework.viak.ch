@@ -6,33 +6,29 @@
 	width): the black rule and its spacing, then from `sm` three columns of
 	twelve, 16/40 apart.
 
-	- **4**: the title, bold, teal on hover, and under it what it is, the
-	  badge (*Angebot*, *Kurs*, *Lizenz* …).
-	- **5**: the lead, grey.
-	- **3**: its dates and prices, one a line ([[SearchFacts]]), right-aligned
-	  as the event row's fee.
+	- **4**: the title, bold, teal on hover.
+	- **6**: the lead, grey.
+	- **2**: what it is, the badge (*Angebot*, *Kurs*, *Lizenz* …), on the right.
 
-	On a phone the three stack. The whole row is the link. The header's panel
-	draws its hits on its own, in its narrower column.
+	**No dates and prices here** (Marcel, same day: tried in a third column,
+	taken out); the lead gets the room. The header's panel still says them
+	under each hit ([[SearchFacts]]).
+
+	On a phone the badge sits on the title's line, the lead under it. The
+	whole row is the link.
 --}}
 <a href="{{ $hit->url }}" {{ $attributes->class(['group mt-16 block border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl']) }}>
-	<span class="block sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-		<span class="block sm:col-span-4">
-			<span class="block font-bold transition-colors group-hover:text-teal">{{ $hit->title }}</span>
-			<x-ui.badge class="mt-8">{{ $hit->label }}</x-ui.badge>
-		</span>
+	<span class="flex items-start justify-between gap-16 sm:grid sm:grid-cols-12 lg:gap-40">
+		<span class="font-bold transition-colors group-hover:text-teal sm:col-span-4">{{ $hit->title }}</span>
 
-		{{-- No lead (a licence of one line, Rhino.io): the column stays empty, the facts keep theirs. --}}
 		@if ($hit->lead)
-			<span class="mt-8 block text-gray-600 sm:col-span-5 sm:mt-0">{{ \Illuminate\Support\Str::limit($hit->lead, 200) }}</span>
+			<span class="block text-gray-600 max-sm:hidden sm:col-span-6">{{ \Illuminate\Support\Str::limit($hit->lead, 240) }}</span>
 		@endif
 
-		@if (! empty($hit->facts))
-			<span class="mt-8 block tabular-nums sm:col-span-3 sm:col-start-10 sm:mt-0 sm:text-right">
-				@foreach ($hit->facts as $fact)
-					<span class="block">{{ $fact }}</span>
-				@endforeach
-			</span>
-		@endif
+		<span class="shrink-0 sm:col-span-2 sm:col-start-11 sm:text-right"><x-ui.badge>{{ $hit->label }}</x-ui.badge></span>
 	</span>
+
+	@if ($hit->lead)
+		<span class="mt-8 block text-gray-600 sm:hidden">{{ \Illuminate\Support\Str::limit($hit->lead, 240) }}</span>
+	@endif
 </a>

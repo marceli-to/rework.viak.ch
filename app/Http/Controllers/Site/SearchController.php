@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
-use App\Support\Search\SearchFacts;
 use App\Support\Search\SearchIndex;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -23,7 +22,7 @@ class SearchController extends Controller
 
 		return view('site.search.index', [
 			'query' => $query,
-			'hits' => mb_strlen($query) < 2 ? collect() : SearchFacts::attach($index->search($query, app()->getLocale(), 60)),
+			'hits' => mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), 60),
 		]);
 	}
 }

@@ -168,6 +168,8 @@ The panel's label reads *Website durchsuchen*, the result page's field
 **The result page full width (Marcel, 2026-11-17)**: it sat in the article's
 copy column beside an aside saying *Suche*. Now the field runs across the
 page, *21 Einträge gefunden für «rhino»* under it, and each hit is a row of
-the event list's grid (`card/event`): black rule, 4 / 5 / 3 of twelve, title
-bold with its badge under it, the lead grey, the dates and prices one a line
-on the right. Stacked on a phone. The header's panel keeps its own rows.
+the event list's grid (`card/event`): black rule, 4 / 6 / 2 of twelve, the
+title bold, the lead grey, the badge on the right. **No dates and prices on
+this page** (Marcel, same day: a third column of them was tried and taken
+out, the lead took the room); the header's panel still shows them
+([[SearchFacts]]). On a phone the badge sits on the title's line.
