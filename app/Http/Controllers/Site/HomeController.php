@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Event;
 use App\Models\Media;
+use App\Models\News;
 use App\Models\Page;
 use App\Models\Project;
 use App\Models\Software;
@@ -25,6 +26,9 @@ class HomeController extends Controller
 {
 	private const EVENTS = 6;
 
+	/** News beside the course dates: "vermutlich hätten daneben auch 2 solche Newsblöcke Platz" (Oliver). */
+	private const NEWS = 2;
+
 	public function __invoke(): View
 	{
 		$page = Page::for('home');
@@ -37,6 +41,8 @@ class HomeController extends Controller
 			'slides' => $page->media->filter->isImage()->reject(fn (Media $media) => $media->is_og)->values(),
 			'og' => $page->openGraph(),
 			'projects' => Project::query()->published()->ordered()->get(),
+			// Beside the course dates ([[News]], Oliver 2026-11-12): the first published, in their order.
+			'news' => News::query()->published()->ordered()->with('media')->limit(self::NEWS)->get(),
 			/*
 			 * *Nächste Kurstermine* (marker 3, "Autom. Widget"): the next six
 			 * Veranstaltungen anyone can book, by their first day. Published

@@ -298,7 +298,25 @@ const routes = [
 		component: () => import('@/views/Page/Testimonials.vue'),
 		meta: { title: 'Seite' },
 	},
-	pending('news', 'content.news', 'News'),
+	// The homepage's news box ([[News]], Oliver 2026-11-12).
+	{
+		path: '/dashboard/news',
+		name: 'content.news',
+		component: () => import('@/views/News/Index.vue'),
+		meta: { title: 'News' },
+	},
+	{
+		path: '/dashboard/news/erfassen',
+		name: 'content.news.create',
+		component: () => import('@/views/News/Form.vue'),
+		meta: { title: 'News erfassen' },
+	},
+	{
+		path: '/dashboard/news/:uuid',
+		name: 'content.news.edit',
+		component: () => import('@/views/News/Form.vue'),
+		meta: { title: 'News bearbeiten' },
+	},
 	{
 		path: '/dashboard/einstellungen',
 		name: 'settings',

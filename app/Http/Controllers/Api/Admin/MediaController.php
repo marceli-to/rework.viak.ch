@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\MediaResource;
 use App\Models\Course;
 use App\Models\Media;
+use App\Models\News;
 use App\Models\Page;
 use App\Models\Software;
 use App\Models\TeamMember;
@@ -54,6 +55,11 @@ class MediaController extends Controller
 		return $this->images($expert);
 	}
 
+	public function newsIndex(News $news): AnonymousResourceCollection
+	{
+		return $this->images($news);
+	}
+
 	public function teamMemberIndex(TeamMember $teamMember): AnonymousResourceCollection
 	{
 		return $this->images($teamMember);
@@ -78,6 +84,11 @@ class MediaController extends Controller
 	public function expertStore(Request $request, User $expert, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
 	{
 		return $this->upload($request, $expert, $upload, $attach, $role);
+	}
+
+	public function newsStore(Request $request, News $news, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
+	{
+		return $this->upload($request, $news, $upload, $attach, $role);
 	}
 
 	public function teamMemberStore(Request $request, TeamMember $teamMember, UploadMedia $upload, AttachMedia $attach, SetMediaRole $role): MediaResource
@@ -134,6 +145,11 @@ class MediaController extends Controller
 	public function expertOrder(Request $request, User $expert, ReorderMedia $reorder): JsonResponse
 	{
 		return $this->reorder($request, $expert, $reorder);
+	}
+
+	public function newsOrder(Request $request, News $news, ReorderMedia $reorder): JsonResponse
+	{
+		return $this->reorder($request, $news, $reorder);
 	}
 
 	public function teamMemberOrder(Request $request, TeamMember $teamMember, ReorderMedia $reorder): JsonResponse

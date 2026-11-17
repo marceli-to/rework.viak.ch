@@ -164,6 +164,16 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::put('licence-variants/{variant}', [Admin\LicenceVariantController::class, 'update']);
 		Route::delete('licence-variants/{variant}', [Admin\LicenceVariantController::class, 'destroy']);
 
+		// *Seiteninhalte → News*, the homepage's news box ([[NewsController]]).
+		Route::get('news', [Admin\NewsController::class, 'index']);
+		Route::post('news/order', [Admin\NewsController::class, 'order']);
+		Route::post('news', [Admin\NewsController::class, 'store']);
+		Route::get('news/{news}', [Admin\NewsController::class, 'show']);
+		Route::put('news/{news}', [Admin\NewsController::class, 'update']);
+		Route::delete('news/{news}', [Admin\NewsController::class, 'destroy']);
+		Route::get('news/{news}/media', [Admin\MediaController::class, 'newsIndex']);
+		Route::post('news/{news}/media', [Admin\MediaController::class, 'newsStore']);
+		Route::patch('news/{news}/media/order', [Admin\MediaController::class, 'newsOrder']);
 		Route::get('team-members', [Admin\TeamMemberController::class, 'index']);
 		Route::post('team-members/order', [Admin\TeamMemberController::class, 'order']);
 		Route::post('team-members', [Admin\TeamMemberController::class, 'store']);

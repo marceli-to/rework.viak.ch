@@ -672,3 +672,24 @@ lets a Vorhaben page pull courses *and* licences for one tool from one relation.
    `Field::image()` picks from media that already exists. The legacy crop coordinates port across unchanged — they are
    already pixels in Glide's `w,h,x,y` order. Details, and the one trap that
    would silently move 28 crops, are in `08-accounts.md`.
+
+## News on the homepage (Oliver in Roxy 2026-11-12, built 2026-11-17)
+
+Oliver asked for a news box beside *Nächste Kurstermine*: "ein kleines Bild,
+ein kleiner Text und einen Pfeil mit Link, der dann auf eine Unterseite
+führt, die von uns definiert werden kann", two side by side, the dates first
+on a phone. The dates were made compact for it the same day (one line each,
+start date short, *Anmelden*).
+
+- **`News`** (title, text, link, publish, order, a picture), legacy's four
+  fields; its five old rows are not ported. *Seiteninhalte → News* (the menu
+  entry had waited as *pending*): the Team list's pattern, dragged into
+  order, a new item on top; *auf der Startseite* on the first two published.
+- **The link is picked, not typed** ([[NewsLink]]): *Seiten* (Alle Angebote,
+  Kurse, Software, Firmenschulung, Über uns, Kontakt), *Angebote*, *Kurse*,
+  stored as `software:{uuid}` / `course:{uuid}` / `page:{name}` and resolved
+  when drawn. A page off the site gives no arrow, and the list says so.
+- **On the homepage** (`landing/_news`): from `lg` the dates in six columns,
+  *Aktuell* in the other six with the two items side by side (picture 3:2,
+  title bold, text grey, the arrow); either alone takes the width; no news,
+  no box. The whole item is the link.

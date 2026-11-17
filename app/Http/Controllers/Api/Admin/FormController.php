@@ -14,6 +14,7 @@ use App\Forms\InvoiceSchema;
 use App\Forms\LicenceProductSchema;
 use App\Forms\LicenceVariantSchema;
 use App\Forms\LocationSchema;
+use App\Forms\NewsSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\ProjectSchema;
 use App\Forms\Schema;
@@ -39,6 +40,7 @@ class FormController extends Controller
 		'course' => CourseSchema::class,
 		'testimonial' => TestimonialSchema::class,
 		'team-member' => TeamMemberSchema::class,
+		'news' => NewsSchema::class,
 		'project' => ProjectSchema::class,
 		'event' => EventSchema::class,
 		'expert' => ExpertSchema::class,

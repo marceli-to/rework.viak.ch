@@ -8,7 +8,7 @@
 	already knows about full courses, an existing seat and the laptop
 	question.
 --}}
-<section class="mt-48 lg:mt-64">
+<section>
 	<div class="mb-16 flex flex-wrap items-baseline justify-between gap-x-16 lg:mb-24">
 		<h2 class="font-bold">Nächste Kurstermine</h2>
 		{{-- The rows' size, not the heading's (Marcel, 2026-10-20), as the
