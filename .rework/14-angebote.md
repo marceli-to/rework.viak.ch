@@ -820,7 +820,8 @@ Lizenzen* and the *Sublead*, a block per licence (title, text, price, CTA),
   its line breaks; it was italic, a remark. The list's *Bemerkung* was
   already in it where it is a note (*Aktivierung auf max. 2 Computern*,
   *Inkl. 5 Simnodes*); *Mindestens 3* is the minimum, *3-Jahreslizenz* the
-  product's flag. Everything else waits for #79.
+  product's flag. The rest Oliver writes in the dashboard (#79,
+  answered 2026-11-17).
 - **New Angebot fields**, in a form section *Seite «Lizenzen»* with *Seite
   ansehen*: `licences_lead` (*Einleitung*), `requirements`
   (*Systemvoraussetzungen*, rich text, empty in every doc so far:
