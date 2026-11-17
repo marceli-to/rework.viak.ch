@@ -74,8 +74,9 @@ it('tags a plugin Plugin on its Angebot tile and its products\' tiles', function
 		->and($rhino->offer())->toBe('Software');
 
 	$this->get('/de/angebote/software')->assertOk()
-		->assertSeeInOrder(['Plugin', 'Bongo 2', 'Plugin für Rhinoceros'])
-		->assertSeeInOrder(['Software', 'Rhinoceros 9', 'für Rhinoceros']);
+		// The title, then what it is under it (Marcel, 2026-11-17), then the overlay.
+		->assertSeeInOrder(['Bongo 2', 'Plugin', 'Plugin für Rhinoceros'])
+		->assertSeeInOrder(['Rhinoceros 9', 'Software']);
 });
 
 it('is set on the Angebot in the dashboard, with the programs it runs in, never a plugin', function () {

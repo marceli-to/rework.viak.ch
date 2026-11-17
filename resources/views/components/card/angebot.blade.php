@@ -32,20 +32,20 @@
 --}}
 <article {{ $attributes->class(['flex flex-col border border-teal p-8 lg:p-16']) }}>
 	<a href="{{ \App\Support\SiteUrl::software($software->getTranslation('slug', $locale)) }}" class="group flex flex-1 flex-col text-black">
-		{{-- Its logo on the right of category and title together, its top on the
-		     category's (Oliver 2026-11-17; Marcel: side by side with both). None
-		     where it has none. --}}
+		{{-- **Title first, then its category** (Marcel, 2026-11-17), the category
+		     in a lighter grey; the logo on the right of both (Oliver's logos,
+		     same day). None where it has none. --}}
 		<header class="flex min-h-70 items-start justify-between gap-8 sm:min-h-90 lg:min-h-130">
 			<div class="min-w-0">
-				@if ($category)
-					<div class="mb-4 text-xxs leading-none font-medium text-gray-600 sm:text-sm lg:text-lg">
-						{{ $category->getTranslation('title', $locale) }}
-					</div>
-				@endif
-
 				<h2 class="text-lg leading-[1.2] break-words hyphens-auto text-teal sm:text-2xl lg:text-4xl">
 					{{ $software->getTranslation('title', $locale) }}
 				</h2>
+
+				@if ($category)
+					<div class="mt-4 text-xxs leading-[1.2] font-medium text-gray-400 sm:mt-8 sm:text-sm lg:text-lg">
+						{{ $category->getTranslation('title', $locale) }}
+					</div>
+				@endif
 			</div>
 			<x-ui.logo :src="$software->logoUrl()" class="size-32 sm:size-40 lg:size-56" />
 		</header>
