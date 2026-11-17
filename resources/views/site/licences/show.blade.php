@@ -53,9 +53,12 @@
 
 		<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
 			<div class="mb-12 sm:col-span-4">
-				{{-- The Angebot's logo over the title, as on its page (Oliver, 2026-11-17). --}}
-				<x-ui.logo :src="$software->logoUrl()" class="mb-16 size-48 lg:size-64" />
-				<h1 class="font-bold">{{ $title }}</h1>
+				{{-- The logo beside the title (Oliver, 2026-11-17; Marcel: side by side, not
+				     over it); none where it has none, and the title alone. --}}
+				<div class="flex items-center gap-12 lg:gap-16">
+					<x-ui.logo :src="$software->logoUrl()" class="size-40 lg:size-48" />
+					<h1 class="min-w-0 font-bold">{{ $title }}</h1>
+				</div>
 				<x-ui.back-link :href="\App\Support\SiteUrl::software($software->getTranslation('slug', $locale))" :label="'Alles zu '.$angebot" direction="right" class="mt-16 text-black" />
 			</div>
 
