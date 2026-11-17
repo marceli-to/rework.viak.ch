@@ -11,11 +11,14 @@
 @php
 	$review = [
 		['Startseite', '/de', 'Slider, Vorhaben, nächste Kurstermine, Firmenschulung, beliebte Angebote, Kundenmeinungen, Über uns, Newsletter'],
-		['Alle Angebote', '/de/angebote', 'Alle Angebote als Kacheln, nach den fünf Bereichen, jede mit «Kurs», «Software» oder «Kurs & Software»'],
-		['Eine Angebotsseite', '/de/angebote/rhinoceros', 'Kurse mit allen Daten, Lizenzen, Mehr über, Kundenmeinungen. Gebucht und gekauft wird auf der Kurs- bzw. Lizenzseite. Rhinoceros hat Beispielinhalte, die übrigen warten auf Texte und Bilder'],
+		['Alle Angebote', '/de/angebote', 'Alle Angebote als Kacheln, nach den fünf Bereichen, jede mit «Kurs», «Software», «Plugin» oder beidem'],
+		['Eine Angebotsseite', '/de/angebote/rhinoceros', 'Die Texte aus den Webseitentext-Dokumenten, Kurse mit allen Daten, Lizenzen, Plugins, Kundenmeinungen. Gebucht und gekauft wird auf der Kurs- bzw. Lizenzseite'],
+		['«Was ist …?»', '/de/angebote/rhinoceros/was-ist-rhinoceros', 'Die eigene Seite zur Software, verlinkt von der Angebotsseite. Nur wo es einen Text gibt'],
+		['Ein Plugin', '/de/angebote/bongo', 'Jedes Plugin ist ein eigenes Angebot, mit «Plugin für Rhinoceros», wo es an ein Programm gebunden ist. Rhinoceros listet seine Plugins'],
+		['Ein Themen-Angebot', '/de/angebote/architekturfotografie', 'Angebote ohne eigene Software, nur mit Kursen: Architekturfotografie, Architekturvisualisierung, KI-Video'],
 		['Kurse', '/de/angebote/kurse', 'Alle Kurse mit Filter, von dort jede Kursseite'],
-		['Software', '/de/angebote/software', 'Alle Lizenzen mit Filter, von dort jede Lizenzseite'],
-		['Eine Lizenzseite', '/de/angebote/software/rhinoceros-8', 'Alle Varianten einer Software mit Stückzahl und Hostsoftware, In den Warenkorb'],
+		['Software', '/de/angebote/software', 'Alle Lizenzen mit Filter, von dort die Lizenzseite ihres Angebots'],
+		['Eine Lizenzseite', '/de/angebote/software/corona-renderer', 'Eine Seite je Angebot, je Lizenz ein Block: Titel wie «Corona Solo (named)», Hinweis, Preis mit Streichpreis, Stückzahl, In den Warenkorb. Darunter einmal die Systemvoraussetzungen'],
 		['Suche', '/de/suche?q=rhino', 'Die Lupe oben rechts: Kurse und Software, mit Treffern beim Tippen und einer Ergebnisseite'],
 		['Vorhaben', '/de/vorhaben/raume-visualisieren', 'Beispiel «Räume visualisieren», Texte sind Platzhalter'],
 		['Firmenschulung', '/de/firmenschulung', 'Text, Anfrageformular, Kundenmeinungen'],
@@ -24,6 +27,7 @@
 		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte oder Rechnung'],
 		['Profil', '/de/konto', 'Gebuchte Kurse, Dokumente, Bestellungen mit «Bezahlen»'],
 		['Dashboard', '/dashboard', 'Kurse, Veranstaltungen, Kund:innen, Software, Bestellungen, Rechnungen, Seiteninhalte'],
+		['Dashboard: Software', '/dashboard/software', 'Je Angebot seine Seiten «Angebot», «Was ist …?» und «Lizenzen» zum Bearbeiten, darunter die Produkte mit ihren Lizenzen'],
 		['Firmenkurse', '/dashboard/firmenkurse', 'Kurs für eine Firma erfassen, Rechnung aus eigenen Positionen stellen und per E-Mail senden'],
 	];
 
@@ -68,14 +72,24 @@
 			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
 		],
 		[
-			'title' => 'Angebote: welche Produkte sind Plugins?',
-			'text' => 'Ein Produkt ist neu «Software» oder «Plugin» (Checkbox im Dashboard). Die Angebotsseite zeigt Kurse, Lizenzen und Plugins, die Kachel in der Software-Übersicht sagt, was es ist. Markiert sind die sechs unter Rhinoceros. Welche weiteren sind Plugins, etwa Maxwell V5, das RealFlow Plugin oder Chaos Phoenix, Vantage und Scans unter V-Ray? Und sollen Produkte ein eigenes Bild bekommen können? Heute zeigen sie das Bild ihres Angebots, die Plugins also das Rhino-Bild.',
-			'decides' => 'Wo diese Produkte stehen, und ob das Produktformular ein Bildfeld bekommt.',
+			'title' => 'Enscape: ein Kurs oder zwei?',
+			'text' => 'Der Enscape-Kurs soll heissen wie im neuen Dokument («Enscape & Veras: Vom Modell zu hochwertigen Visuals in Echtzeit»). Gleichzeitig ersetzt der neue Kurs «Enscape & Veras mit Archicad» später «Enscape für Archicad» und ist bis dahin ausgeblendet. Ist das derselbe Kurs? Dann bleibt «Enscape für Archicad» bis dahin wie er ist online.',
+			'decides' => 'Welcher Kurs den neuen Namen bekommt.',
 		],
 		[
-			'title' => 'Angebote: Lizenzseiten und Angebote mit einem Eintrag',
-			'text' => 'Sollen die Lizenzseiten die Texte von 3d-software.ch übernehmen (Beschreibung, Funktionen, Systemanforderungen), oder bleiben sie knapp, weil der Text auf der Angebotsseite steht? Und behalten Angebote mit nur einem Eintrag (formZ: eine Lizenz) ihre Angebotsseite, oder führt die Kachel direkt zur Lizenz?',
-			'decides' => 'Den Inhalt der Lizenzseiten und wohin die Kachel führt.',
+			'title' => 'Lumion View und Chaos Vantage: eigene Angebote?',
+			'text' => 'In der Software-Liste ist Lumion View ein Plugin, Lumion Pro eine Software. Wird Lumion View ein eigenes Angebot, wie die anderen Plugins? Umgekehrt Chaos Vantage: laut Liste eine Software, es steht aber unter V-Ray, das jetzt ein Plugin ist, und heisst darum auch «Plugin». Eigenes Angebot?',
+			'decides' => 'Wo die beiden stehen und wie sie heissen.',
+		],
+		[
+			'title' => 'RealFlow Plugin: eine Lizenz oder drei?',
+			'text' => 'Das RealFlow Plugin gibt es für Cinema 4D, 3ds Max und Maya. Heute ist es eine Lizenz, die Hostsoftware wird im Warenkorb gewählt. So lassen, oder drei Lizenzen?',
+			'decides' => 'Nichts, wenn es so bleibt.',
+		],
+		[
+			'title' => 'Alter Shop: 24 Artikelnummern ohne Produkt',
+			'text' => 'Alle Adressen von 3d-software.ch leiten auf die neue Website um. 24 Artikelnummern des alten Shops gibt es in unserer Liste nicht (u.a. Lumion Studio und die 3-Jahres-Lizenzen von Lumion, form•Z-Bundles, RealFlow für 3ds Max und Maya, die Rhino-Bundles). Neue Produkte, oder weg? Bis dahin landen sie auf ihrem Angebot. Die Liste ist gelb markiert in der Excel-Datei.',
+			'decides' => 'Ob Produkte dazukommen. Ein später erfasstes Produkt mit derselben Artikelnummer übernimmt seine alte Adresse von selbst.',
 		],
 		[
 			'title' => 'Angebote: zwei Punkte bestätigen',
@@ -130,7 +144,9 @@
 	];
 
 	$content = [
-		['Angebotsseiten', 'Text und Bilder je Angebot (rund 30), von Oliver. Nur Rhinoceros hat Beispielinhalte. Gepflegt im Dashboard unter Software.'],
+		['Angebotsseiten', 'Die Texte sind aus den Webseitentext-Dokumenten übernommen. Es fehlen die Bilder (alle Angebote ausser Rhinoceros) und die Texte für Lands Design und Rhino.io. Gepflegt im Dashboard unter Software.'],
+		['Lizenzen', 'Je Lizenz ein Hinweis unter dem Titel, wo es einen braucht (schreibt Oliver), und je Angebot die Systemvoraussetzungen. In den Dokumenten sind beide noch Platzhalter, auf der Website fehlen sie darum noch überall.'],
+		['Neue Kurse', 'ComfyUI, SketchUp & D5 Render, Figma Weave, Rendering-Finish mit Photoshop & KI und Enscape & Veras sind mit den Texten erfasst, aber nicht publiziert, mit Kursgebühr 0. Vor dem Publizieren: Gebühr, Kursleitung, Niveau, Sprache, Bilder und Daten.'],
 		['Vorhaben', 'Die echten Vorhaben mit Text, Bild und den passenden Kursen und Software.'],
 		['Beliebte Angebote', 'Angebote und Kurse mit «Beliebt» markieren, im Prototyp sind einige zum Zeigen markiert.'],
 		['Texte zur Software-Lieferung', 'Die Lieferung erfolgt von Hand durch das Team. Texte wie «Lieferung sofort per E-Mail» aus dem alten Shop sollten nicht übernommen werden.'],
@@ -152,7 +168,7 @@
 		['Newsletter', 'Die Anmeldungen gehen wie heute an Mailchimp. Im Prototyp werden sie nur aufgezeichnet.', false],
 		['Daten', 'Ein frischer Export der heutigen Datenbank für den Umzug (der Prototyp arbeitet mit dem Stand vom 11. September 2026), danach Kontrolle der übernommenen Kurse, Buchungen und Rechnungen.', false],
 		['Mietcomputer', 'Beim Umzug prüfen, ob gebuchte Mietcomputer die verfügbare Anzahl eines Termins übersteigen.', false],
-		['Weiterleitungen', 'Alle heutigen Adressen leiten auf die neuen um, damit Suchmaschinen und Lesezeichen weiter funktionieren.', false],
+		['Weiterleitungen', 'Alle heutigen Adressen, auch die von 3d-software.ch, leiten auf die neuen um, damit Suchmaschinen und Lesezeichen weiter funktionieren.', false],
 		['Server', 'PHP-Version, Hintergrundprozesse für Mails und PDFs, Upload-Grösse, Spamschutz des Kontaktformulars für die echte Domain.', false],
 		['Kursunterlagen', 'Die hochgeladenen Kursunterlagen in einen geschützten Speicher verschieben.', false],
 	];
@@ -162,7 +178,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 3. November 2026</div>
+			<div class="mt-8 text-gray-600">Stand 17. November 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
