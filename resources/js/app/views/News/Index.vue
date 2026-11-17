@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { fetchNewsList, saveNewsOrder } from '@/api/news';
 import { useSortable } from '@/composables/useSortable';
 import { toast } from '@/composables/useToast';
@@ -11,15 +11,14 @@ import NoResults from '@/components/ui/NoResults.vue';
 
 /**
  * *Seiteninhalte → News* ([[News]]): the Team list's pattern, a row per item,
- * **dragged into the order the homepage shows**. The first two published
- * are on the homepage and say so; a link whose page is not on the site says
- * that it shows no arrow.
+ * **dragged into the order the homepage shows**: the first two published
+ * are on it (the form's hint says so; a badge for it was dropped, Marcel
+ * 2026-11-17). A link whose page is not on the site says that it shows no
+ * arrow.
  */
 const items = ref([]);
 const loading = ref(true);
 const error = ref(null);
-
-const shown = computed(() => items.value.filter((item) => item.publish).slice(0, 2).map((item) => item.uuid));
 
 const { dragging, handlers } = useSortable(items, async (list) => {
 	try {
@@ -64,7 +63,6 @@ onMounted(async () => {
 			<div class="col-span-12 sm:col-span-4">
 				{{ item.title }}
 				<span class="mt-8 flex flex-wrap gap-8">
-					<Badge v-if="shown.includes(item.uuid)" variant="solid">auf der Startseite</Badge>
 					<Badge v-if="item.link && !item.url">Seite nicht auf der Website, ohne Pfeil</Badge>
 					<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
 				</span>
