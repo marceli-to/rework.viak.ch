@@ -1,1 +1,0 @@
-import{t as e}from"./client-DjbRBZnm.js";var t=t=>e.get(`/admin/software/${t}`).then(e=>e.data.data),n=(t,n)=>(t?e.put(`/admin/software/${t}`,n):e.post(`/admin/software`,n)).then(e=>e.data.data),r=t=>e.delete(`/admin/software/${t}`),i=t=>(n,r)=>e.put(`/admin/software/${n}/seite/${t}`,r).then(e=>e.data.data);export{i,t as n,n as r,r as t};

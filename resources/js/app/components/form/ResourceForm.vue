@@ -72,7 +72,7 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 				<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 				<Button v-if="stay && !singleton" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
 				<template v-if="preview && meta[preview]">
-					<Button :href="meta[preview]" variant="outline" target="_blank" rel="noopener" class="mt-12 w-full">Seite ansehen</Button>
+					<Button :href="meta[preview]" variant="secondary" target="_blank" rel="noopener" class="mt-12 w-full">Seite ansehen</Button>
 					<p class="pt-8 text-md text-gray-600 lg:text-lg">Gespeicherter Stand, nur wenn publiziert.</p>
 				</template>
 			</fieldset>
