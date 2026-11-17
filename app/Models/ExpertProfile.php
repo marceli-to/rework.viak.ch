@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\Search\IndexedForSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ExpertProfile extends Model
 {
 	use HasFactory;
+
+	// Its text and its *publish* / *visible* decide its user's search row ([[SearchIndex::syncRelated]]).
+	use IndexedForSearch;
 
 	protected $fillable = ['user_id', 'title', 'description', 'order', 'publish', 'visible'];
 

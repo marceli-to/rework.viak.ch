@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Support\Search;
 
+use App\Enums\Role;
 use App\Models\Course;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Project;
 use App\Models\Software;
+use App\Models\User;
 use App\Support\SiteUrl;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
@@ -19,15 +23,38 @@ use Illuminate\Support\Str;
  * list and the page it links to. **Null when the record is not on the site**,
  * by the same rule its page uses, so the search never finds a page that 404s.
  *
- * Covered for now (#56): courses, software, licences and Vorhaben. A licence
- * has no page of its own; it links to its software's.
+ * **As much as possible** (#56, Oliver 2026-11-17): courses, Angebote (every
+ * text of their three pages), licences, Vorhaben, experts, and the fixed
+ * pages ([[SearchDocument::pages]]). A licence links to its block on its
+ * Angebot's licence page.
  */
 class SearchDocument
 {
 	/** @var list<class-string<Model>> */
-	public const MODELS = [Course::class, Software::class, LicenceProduct::class, Project::class];
+	public const MODELS = [Course::class, Software::class, LicenceProduct::class, Project::class, User::class];
 
-	public const LABELS = ['course' => 'Kurs', 'software' => 'Software', 'licence' => 'Lizenz', 'project' => 'Vorhaben'];
+	public const LABELS = [
+		'course' => 'Kurs', 'software' => 'Angebot', 'licence' => 'Lizenz', 'project' => 'Vorhaben',
+		'expert' => 'Expert:in', 'page' => 'Seite',
+	];
+
+	/**
+	 * **The fixed pages** (#56): their text is read off the page itself at
+	 * `search:rebuild` ([[SearchDocument::pages]]), which every deploy runs,
+	 * so it follows the copy. The lists (Alle Angebote, Kurse, Software) are
+	 * tiles of what the search finds anyway, so they carry a lead and a few
+	 * words, not their tiles' text.
+	 *
+	 * @var array<int, array{title: string, url: string, lead: string, words?: string, read?: bool}>
+	 */
+	private const PAGES = [
+		1 => ['title' => 'Über uns', 'url' => 'about', 'lead' => 'Die Visualisierungs-Akademie seit 2003, ihre Expert:innen und das Team.', 'read' => true],
+		2 => ['title' => 'Firmenschulung', 'url' => 'training', 'lead' => 'Individualschulungen für Firmen und Einzelpersonen, massgeschneidert, bei uns oder vor Ort.', 'words' => 'Individualschulung Firmenkurs Inhouse Coaching', 'read' => true],
+		3 => ['title' => 'Kontakt', 'url' => 'contact', 'lead' => 'Adresse, Anreise, Kontaktformular und Impressum.', 'words' => 'Adresse Telefon E-Mail Anreise Impressum AGB', 'read' => true],
+		4 => ['title' => 'Alle Angebote', 'url' => 'offers', 'lead' => 'Kurse und Software nach Bereichen.', 'words' => 'Angebote Übersicht Bereiche Kategorien'],
+		5 => ['title' => 'Kurse', 'url' => 'courses', 'lead' => 'Alle Kurse und ihre Daten, mit Filter.', 'words' => 'Kurse Schulungen Kursdaten Termine Weiterbildung'],
+		6 => ['title' => 'Software', 'url' => 'softwareIndex', 'lead' => 'Alle Lizenzen im Shop, mit Filter.', 'words' => 'Software Lizenzen Shop kaufen'],
+	];
 
 	/** @return array{type: string, title: string, body: string, lead: ?string, url: string}|null */
 	public static function for(Model $record, string $locale): ?array
@@ -41,6 +68,7 @@ class SearchDocument
 			$record instanceof Software => self::software($record, $locale),
 			$record instanceof LicenceProduct => self::licence($record, $locale),
 			$record instanceof Project => self::project($record, $locale),
+			$record instanceof User => self::expert($record, $locale),
 			default => null,
 		};
 	}
@@ -67,8 +95,12 @@ class SearchDocument
 			return null;
 		}
 
+		// Every text of its three pages: the Angebot's, «Was ist …?», «Lizenzen».
 		return self::document('software', $software, $locale, SiteUrl::software($slug, $locale),
-			fields: ['subtitle', 'short_description', 'full_description', 'information', 'seo_tags'],
+			fields: [
+				'subtitle', 'short_description', 'audiences', 'intro', 'courses_intro', 'licences_intro', 'quote',
+				'full_description', 'information', 'licences_lead', 'requirements', 'licences_quote', 'seo_tags',
+			],
 			lead: self::first($software, $locale, ['subtitle', 'short_description']),
 		);
 	}
@@ -106,6 +138,70 @@ class SearchDocument
 			fields: ['teaser', 'lead', 'text', 'seo_tags'],
 			lead: self::first($project, $locale, ['teaser', 'lead']),
 		);
+	}
+
+	/** An expert's page, while it is listed ([[User::scopePubliclyListedExperts]]): name, role, text. */
+	private static function expert(User $user, string $locale): ?array
+	{
+		$listed = User::query()->publiclyListedExperts()->where('users.id', $user->getKey())->with('expertProfile')->first();
+
+		if ($listed === null) {
+			return null;
+		}
+
+		$profile = $listed->expertProfile;
+		$name = trim($listed->first_name.' '.$listed->last_name);
+
+		if ($name === '') {
+			return null;
+		}
+
+		return [
+			'type' => 'expert',
+			'title' => Str::limit($name, 250, ''),
+			'body' => collect([$profile?->title, self::plain($profile?->description)])->filter()->implode("\n"),
+			'lead' => $profile?->title ? Str::limit(self::plain($profile->title), 280) : null,
+			'url' => SiteUrl::expert($listed, $locale),
+		];
+	}
+
+	/**
+	 * The fixed pages' rows (`PAGES`), keyed by their number. A page that is
+	 * `read` is fetched through the app, as a visitor would, and its `<main>`
+	 * taken as text (no forms, scripts or pictures); one that does not answer
+	 * keeps its lead and words.
+	 *
+	 * @return array<int, array{type: string, title: string, body: string, lead: string, url: string}>
+	 */
+	public static function pages(string $locale): array
+	{
+		return collect(self::PAGES)->map(function (array $page) use ($locale) {
+			$url = SiteUrl::{$page['url']}($locale);
+
+			return [
+				'type' => 'page',
+				'title' => $page['title'],
+				'body' => trim(($page['words'] ?? '').' '.(($page['read'] ?? false) ? self::read($url) : '')),
+				'lead' => $page['lead'],
+				'url' => $url,
+			];
+		})->all();
+	}
+
+	/** A page's `<main>`, as plain text; empty when it does not answer 200. */
+	private static function read(string $url): string
+	{
+		$response = app(Kernel::class)->handle(Request::create($url));
+
+		if ($response->getStatusCode() !== 200) {
+			return '';
+		}
+
+		$html = (string) $response->getContent();
+		$main = preg_match('/<main\b.*<\/main>/s', $html, $match) ? $match[0] : '';
+		$main = (string) preg_replace('/<(script|style|svg|form|template)\b[^>]*>.*?<\/\1>/si', ' ', $main);
+
+		return self::plain($main);
 	}
 
 	/**

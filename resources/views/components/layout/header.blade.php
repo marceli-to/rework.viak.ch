@@ -183,7 +183,7 @@
 			class="absolute inset-x-0 top-full z-[150] mt-px grid grid-cols-12 gap-x-16 border-b border-black bg-white pt-24 pb-32 max-sm:hidden lg:gap-x-40 lg:pt-32 lg:pb-48">
 			{{-- As Kontakt has it: the heading bold teal in the aside, the field
 			     and its hits in the copy column (Marcel, 2026-10-26). --}}
-			<label for="site-search" class="col-span-4 font-bold text-teal">Kurs oder Software suchen</label>
+			<label for="site-search" class="col-span-4 font-bold text-teal">Website durchsuchen</label>
 			<form class="col-span-8" role="search" action="{{ \App\Support\SiteUrl::search() }}" @submit.prevent="go()">
 				<input id="site-search" x-ref="field" name="q" type="search" autocomplete="off" spellcheck="false"
 					x-model="query" @input="type()" @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)"
@@ -203,6 +203,7 @@
 									<span class="mt-2 inline-block shrink-0 border border-black px-6 py-2 text-md leading-[1.2] font-bold" x-text="hit.label"></span>
 								</span>
 								<span x-show="hit.lead" class="mt-4 block text-md text-gray-600 sm:text-lg lg:text-xl" x-text="hit.lead && hit.lead.length > 140 ? hit.lead.slice(0, 140) + '…' : hit.lead"></span>
+								<span x-show="hit.facts && hit.facts.length" class="mt-4 block text-md sm:text-lg lg:text-xl" x-text="(hit.facts || []).join(' · ')"></span>
 							</a>
 						</li>
 					</template>

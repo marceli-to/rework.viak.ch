@@ -10,6 +10,7 @@ use App\Mail\EmailVerification;
 use App\Mail\PasswordReset;
 use App\Models\Concerns\HasMedia;
 use App\Models\Concerns\HasUuid;
+use App\Support\Search\IndexedForSearch;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -58,6 +59,9 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	use HasMedia;
 	use HasUuid;
+
+	// An expert's page is in the site search (#56, 2026-11-17); everyone else has no row.
+	use IndexedForSearch;
 	use Notifiable;
 	use SoftDeletes;
 

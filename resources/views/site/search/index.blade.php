@@ -13,11 +13,11 @@
 		</x-slot:aside>
 
 		<form method="get" action="{{ \App\Support\SiteUrl::search() }}" role="search">
-			<x-form.field name="q" label="Kurs oder Software" type="search" :value="$query" autocomplete="off" autofocus class="[&::-webkit-search-cancel-button]:appearance-none" />
+			<x-form.field name="q" label="Suchbegriff" type="search" :value="$query" autocomplete="off" autofocus class="[&::-webkit-search-cancel-button]:appearance-none" />
 		</form>
 
 		@if ($query === '')
-			<p class="text-md text-gray-600 sm:text-lg lg:text-xl">Zum Beispiel «Rhino», «Visualisieren» oder «KI».</p>
+			<p class="text-md text-gray-600 sm:text-lg lg:text-xl">Zum Beispiel «Rhino», «Visualisieren», «KI» oder ein Name.</p>
 		@elseif ($hits->isEmpty())
 			<x-ui.no-results>Nichts gefunden für «{{ $query }}». Vielleicht ein anderes Wort, oder ein Blick in die <a href="{{ \App\Support\SiteUrl::courses() }}" class="underline decoration-1 underline-offset-[3px] hover:no-underline">Kurse</a>?</x-ui.no-results>
 		@else

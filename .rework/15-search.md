@@ -128,3 +128,39 @@ nav. So the proposal uses the site's own pieces:
 - **On a phone** the field is the first row of the teal menu panel
   (*Suchen*, as a placeholder), a plain form to the result page: a live
   list would sit under the keyboard.
+
+## As much as possible — #56 and #57 answered, built 2026-11-17
+
+Oliver's answer to both: **"as much as possible"**.
+
+**What is found (#56)**, added to courses, Angebote, licences and Vorhaben:
+
+- **Experts**, while listed ([[User::scopePubliclyListedExperts]]): name as
+  title, the profile's title as lead, title and text searched. `User` and
+  `ExpertProfile` carry [[IndexedForSearch]]; a profile's save re-indexes its
+  user. A role taken away without a save is mended by the next rebuild.
+  `search:rebuild` asks only users with the expert role.
+- **The fixed pages**: Über uns, Firmenschulung, Kontakt **read off the page
+  itself** at `search:rebuild` (an internal request, its `<main>` as text,
+  forms and scripts dropped), so the index follows the copy: *Anreise*,
+  *Impressum*, the team's names. Alle Angebote, Kurse and Software carry a
+  lead and a few words only: their tiles are what the search finds anyway.
+  Rows with `searchable_type` `page` ([[SearchDocument::pages]],
+  [[SearchIndex::syncPages]]); every deploy rebuilds them (step 7).
+- **Every text of an Angebot's three pages**: the newer Angebot fields
+  (Zielgruppen, Einleitungen, Zitatbox) and the licence page's (Einleitung,
+  Systemvoraussetzungen, Zitatbox), beside the Kurzbeschrieb and *Was ist …?*.
+- The badge for a software reads **Angebot** now (it is one since
+  `14-angebote.md`; *Architekturfotografie* is no software), *Expert:in* and
+  *Seite* for the new kinds. Ranked Angebot, Kurs, Vorhaben, Expert:in, Seite,
+  Lizenz on an equal title.
+
+**What a hit shows (#57)**: under the lead, in black, its dates and prices,
+as the tiles word them ([[SearchFacts]]): a course *ab 12. Januar 2027 · CHF
+949.00* or *Daten auf Anfrage*; an Angebot *Kurs ab CHF … · Lizenz ab CHF …*;
+a licence *ab CHF …*. **Worked out when shown, not stored**: dates pass and
+prices change without the record being saved. Only for the hits shown (the
+panel's six, the page's sixty), one query per kind.
+
+The panel's label reads *Website durchsuchen*, the result page's field
+*Suchbegriff*: *Kurs oder Software* no longer covered it.

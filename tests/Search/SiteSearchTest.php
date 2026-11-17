@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\Course;
+use App\Models\Event;
+use App\Models\ExpertProfile;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Project;
@@ -33,7 +35,7 @@ it('finds a course, a software, its licence and a Vorhaben, by a prefix', functi
 	Project::factory()->create(['title' => ['de' => 'Objekte entwerfen'], 'text' => ['de' => '<p>Mit <strong>Rhino</strong> &amp; Grasshopper.</p>']]);
 
 	expect(search('rhin'))->toBe([
-		'Software: Rhinoceros',
+		'Angebot: Rhinoceros',
 		'Kurs: Rhino Einstiegskurs',
 		'Lizenz: Rhinoceros 8',
 		'Vorhaben: Objekte entwerfen',
@@ -95,11 +97,12 @@ it('takes nothing from the query but letters and digits', function () {
 		->and(search('+-*"()'))->toBe([]);
 });
 
+// The software, its licence, and the six fixed pages.
 it('rebuilds the index from scratch', function () {
 	rhino();
 	DB::table('search_entries')->delete();
 
-	$this->artisan('search:rebuild')->expectsOutputToContain('2 search entries written.')->assertSuccessful();
+	$this->artisan('search:rebuild')->expectsOutputToContain('8 search entries written.')->assertSuccessful();
 });
 
 it('answers the header field as JSON, nothing under two characters', function () {
@@ -108,7 +111,7 @@ it('answers the header field as JSON, nothing under two characters', function ()
 	$this->getJson('/api/search?q=rhin')
 		->assertOk()
 		->assertJsonPath('data.0.title', 'Rhinoceros')
-		->assertJsonPath('data.0.label', 'Software')
+		->assertJsonPath('data.0.label', 'Angebot')
 		->assertJsonPath('data.0.lead', 'Freiformen für Schmuck')
 		->assertJsonPath('data.0.url', '/de/angebote/rhinoceros')
 		->assertJsonPath('total', 2);
@@ -125,7 +128,7 @@ it('shows the hits as one ranked list on the result page, kept out of search eng
 	$this->get('/de/suche?q=rhino')
 		->assertOk()
 		->assertSee('noindex', false)
-		->assertSeeInOrder(['3 Einträge gefunden', 'Rhinoceros', 'Software', 'Rhino Einstiegskurs', 'Kurs', 'Rhinoceros 8', 'Lizenz']);
+		->assertSeeInOrder(['3 Einträge gefunden', 'Rhinoceros', 'Angebot', 'Rhino Einstiegskurs', 'Kurs', 'Rhinoceros 8', 'Lizenz']);
 
 	$this->get('/de/suche?q=xyzzy')->assertOk()->assertSee('Nichts gefunden für «xyzzy»', false);
 	$this->get('/de/suche')->assertOk()->assertSee('Zum Beispiel');
@@ -133,4 +136,53 @@ it('shows the hits as one ranked list on the result page, kept out of search eng
 
 it('puts the search in the header, on every page', function () {
 	$this->get('/de/kontakt')->assertOk()->assertSee('aria-label="Suche"', false)->assertSee('id="menu-search"', false);
+});
+
+/** #56 answered 2026-11-17 (Oliver): "as much as possible". */
+it('finds an expert while listed, by name and by what the profile says', function () {
+	$profile = ExpertProfile::factory()->create(['title' => 'Architektin und Fotografin', 'description' => '<p>Sie lehrt Lichtführung.</p>']);
+	$profile->user->update(['first_name' => 'Doris', 'last_name' => 'Brunner']);
+
+	expect(search('brunner'))->toBe(['Expert:in: Doris Brunner'])
+		->and(search('lichtführung'))->toBe(['Expert:in: Doris Brunner']);
+
+	$profile->update(['visible' => false]);
+
+	expect(search('brunner'))->toBe([]);
+});
+
+it('finds the fixed pages by what they say, read off the page itself', function () {
+	app(SearchIndex::class)->syncPages();
+
+	expect(search('anreise'))->toBe(['Seite: Kontakt'])
+		->and(search('individualschulung'))->toContain('Seite: Firmenschulung')
+		->and(search('kurse'))->toContain('Seite: Kurse');
+});
+
+it('finds an Angebot by the texts of its licence page and its Was ist page', function () {
+	$rhino = rhino();
+	$rhino->update(['licences_lead' => ['de' => 'Lizenzen für Werkstätten'], 'audiences' => ['de' => 'Yachtdesign']]);
+
+	expect(search('werkstätten'))->toBe(['Angebot: Rhinoceros'])
+		->and(search('yachtdesign'))->toBe(['Angebot: Rhinoceros']);
+});
+
+/** #57 answered 2026-11-17 (Oliver): the hits show dates and prices. */
+it('says a course\'s next date and fee, an Angebot\'s and a licence\'s prices', function () {
+	$this->travelTo('2026-11-17');
+	rhino();
+	LicenceVariant::first()->update(['price' => '550.00', 'listed' => true]);
+	$course = Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'fee' => '949.00']);
+	Event::factory()->for($course)->create(['date' => '2027-01-12']);
+	Course::factory()->create(['title' => ['de' => 'Rhino Grasshopper'], 'fee' => '1200.00']);
+
+	$facts = $this->getJson('/api/search?q=rhino')->json('data');
+	$by = collect($facts)->mapWithKeys(fn (array $hit) => [$hit['title'] => $hit['facts']]);
+
+	expect($by['Rhino Einstiegskurs'])->toBe(['ab 12. Januar 2027', 'CHF 949.00'])
+		->and($by['Rhino Grasshopper'])->toBe(['Daten auf Anfrage', "CHF 1'200.00"])
+		->and($by['Rhinoceros 8'])->toBe(['ab CHF 550.00'])
+		->and($by['Rhinoceros'])->toContain('Lizenz ab CHF 550.00');
+
+	$this->get('/de/suche?q=einstiegskurs')->assertSee('ab 12. Januar 2027 · CHF 949.00');
 });

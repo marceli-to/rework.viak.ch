@@ -19,7 +19,7 @@
 		['Kurse', '/de/angebote/kurse', 'Alle Kurse mit Filter, von dort jede Kursseite'],
 		['Software', '/de/angebote/software', 'Alle Lizenzen mit Filter, von dort die Lizenzseite ihres Angebots'],
 		['Eine Lizenzseite', '/de/angebote/software/corona-renderer', 'Eine Seite je Angebot, je Lizenz ein Block: Titel wie «Corona Solo (named)», Hinweis, Preis mit Streichpreis, Stückzahl, In den Warenkorb. Darunter einmal die Systemvoraussetzungen'],
-		['Suche', '/de/suche?q=rhino', 'Die Lupe oben rechts: Kurse und Software, mit Treffern beim Tippen und einer Ergebnisseite'],
+		['Suche', '/de/suche?q=rhino', 'Die Lupe oben rechts: Angebote, Kurse, Lizenzen, Vorhaben, Expert:innen und Seiten wie Kontakt oder Firmenschulung, mit Daten und Preisen, Treffern beim Tippen und einer Ergebnisseite'],
 		['Vorhaben', '/de/vorhaben/raume-visualisieren', 'Beispiel «Räume visualisieren», Texte sind Platzhalter'],
 		['Firmenschulung', '/de/firmenschulung', 'Text, Anfrageformular, Kundenmeinungen'],
 		['Über uns', '/de/ueber-uns', 'Text, Expert:innen, Team'],
@@ -95,11 +95,6 @@
 			'title' => 'Angebote: zwei Punkte bestätigen',
 			'text' => '«Kurs ab CHF» nimmt den Preis des nächsten buchbaren Datums, ohne Datum die Kursgebühr mit «Daten auf Anfrage». «Beliebte Angebote» auf der Startseite zeigt Angebote, die selbst oder mit einem Kurs als «Beliebt» markiert sind. Passt beides?',
 			'decides' => 'Nichts, wenn es passt.',
-		],
-		[
-			'title' => 'Suche: was und wie?',
-			'text' => 'Die Suche findet heute Kurse und Software. Sollen auch Expert:innen und Seiten wie Firmenschulung gefunden werden? Und sollen die Treffer Preise und Daten zeigen, oder reichen Titel und Kurztext?',
-			'decides' => 'Was die Suche durchsucht und wie ein Treffer aussieht.',
 		],
 		[
 			'title' => 'KI-Zugang zu den Daten',

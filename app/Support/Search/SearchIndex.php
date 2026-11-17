@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Support\Search;
 
+use App\Enums\Role;
+use App\Models\ExpertProfile;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 use App\Models\Software;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -25,10 +28,14 @@ use Illuminate\Support\Facades\DB;
  * That needs nothing set on the server. A query of short words only is
  * therefore a scan of the table, which at a few hundred rows is nothing.
  *
- * **Order**: how many of the words start a word in the title; then software,
- * course, Vorhaben, licence (a licence links to its software's page, so the
- * page comes first); then the full-text relevance, a title hit weighing three
- * times a body hit.
+ * **Order**: how many of the words start a word in the title; then Angebot,
+ * course, Vorhaben, expert, page, licence (a licence links to its Angebot's
+ * licence page, so the Angebot comes first); then the full-text relevance, a
+ * title hit weighing three times a body hit.
+ *
+ * **What a hit shows besides its lead** (#57, Oliver 2026-11-17: "as much as
+ * possible") is worked out when it is shown, not stored, because dates pass
+ * ([[SearchFacts]]).
  */
 class SearchIndex
 {
@@ -58,6 +65,7 @@ class SearchIndex
 			$record instanceof LicenceVariant => [$record->product, $record->product?->software],
 			$record instanceof LicenceProduct => [$record, $record->software],
 			$record instanceof Software => [$record, ...$record->products()->get()],
+			$record instanceof ExpertProfile => [$record->user],
 			default => [$record],
 		};
 
@@ -74,16 +82,33 @@ class SearchIndex
 		DB::table('search_entries')->delete();
 
 		foreach (SearchDocument::MODELS as $model) {
-			$model::query()->lazyById(100)->each(fn (Model $record) => $this->sync($record));
+			// Of the users, only experts can have a page: no need to ask of six hundred customers.
+			$records = $model === User::class ? User::query()->withRole(Role::Expert) : $model::query();
+			$records->lazyById(100)->each(fn (Model $record) => $this->sync($record));
 		}
 
+		$this->syncPages();
+
 		return DB::table('search_entries')->count();
+	}
+
+	/** The fixed pages' rows ([[SearchDocument::pages]]), as `searchable_type` `page`. */
+	public function syncPages(): void
+	{
+		foreach ((array) config('site.locales') as $locale) {
+			foreach (SearchDocument::pages($locale) as $number => $page) {
+				DB::table('search_entries')->updateOrInsert(
+					['searchable_type' => 'page', 'searchable_id' => $number, 'locale' => $locale],
+					[...$page, 'updated_at' => now(), 'created_at' => now()],
+				);
+			}
+		}
 	}
 
 	/**
 	 * The hits for a query, best first.
 	 *
-	 * @return Collection<int, object{type: string, label: string, title: string, lead: ?string, url: string}>
+	 * @return Collection<int, object{type: string, label: string, title: string, lead: ?string, url: string, searchable_id: int}>
 	 */
 	public function search(string $query, string $locale, int $limit = 20): Collection
 	{
@@ -103,7 +128,7 @@ class SearchIndex
 		$starts = array_map(fn (string $word) => '\\b'.$word, $words);
 
 		$rows = DB::table('search_entries')
-			->select(['type', 'title', 'lead', 'url'])
+			->select(['type', 'title', 'lead', 'url', 'searchable_id'])
 			->where('locale', $locale)
 			->when($against !== '', fn ($rows) => $rows->whereFullText(['title', 'body'], $against, ['mode' => 'boolean']))
 			// A short word starts a word somewhere: *KI* is *KI-Einstieg*, not *Skizze*.
@@ -116,7 +141,7 @@ class SearchIndex
 			})
 			->orderByRaw("({$inTitle}) DESC", $starts)
 			// Level on the title: the Angebot before its courses and its licence.
-			->orderByRaw("FIELD(type, 'software', 'course', 'project', 'licence')")
+			->orderByRaw("FIELD(type, 'software', 'course', 'project', 'expert', 'page', 'licence')")
 			->when($against !== '', fn ($rows) => $rows
 				->orderByRaw('(MATCH (title) AGAINST (? IN BOOLEAN MODE) * 3 + MATCH (title, body) AGAINST (? IN BOOLEAN MODE)) DESC', [$against, $against]))
 			->orderBy('title')
