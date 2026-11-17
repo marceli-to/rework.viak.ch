@@ -833,6 +833,21 @@ Lizenzen* and the *Sublead*, a block per licence (title, text, price, CTA),
   plugin's own Angebot (Bongo, Drakon, Karamba3D, Lands Design, VisualARQ,
   Rhino.io); `port:check-shop-urls`: 202 paths, all one hop.
 
+**Flat since 2026-11-17 (Marcel): one block per licence**, as the docs
+draw it, the product level gone from the page (`card/licence-block`, which
+replaced `card/product`). Each block: the title as the docs write it,
+product + what is left of the licence's name + *(named)* / *(floating)*
+(*Corona Solo (named)*, *Corona Render Node 1 Stück (floating)*,
+*Rhinoceros 9 Vollversion*, [[LicenceVariant::blockTitle]]); a grey line
+with Lizenztyp and Nutzung without the bracket (*Jahresmietlizenz,
+Einzelplatz*) and the platforms; the *Hinweis*; *3-Jahreslizenz auf Anfrage
+erhältlich* where the product has the flag; host select, price, *Anzahl*,
+button as before. The maker and the product description left with the
+product heading (the one description was filler). A product's first block
+keeps its slug as `id`, so the old URLs and the tiles still land on it.
+One title still repeats: formZ's two *formZ 10 Pro (named)*, a Dauerlizenz
+and a Jahresmietlizenz, told apart by the grey line only.
+
 ### As built: step 6, topic Angebote and Maxon One (2026-11-12)
 
 #73. **Topic Angebote** through `catalogue:offers` (`topics` in

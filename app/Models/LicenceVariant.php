@@ -75,18 +75,68 @@ class LicenceVariant extends Model
 	 */
 	public function shopLabel(): string
 	{
+		return collect([$this->shopName(), $this->shopTerms()])->filter()->implode(', ');
+	}
+
+	/**
+	 * The label's first half: what is left of the client's name once the
+	 * words [[LicenceVariant::shopTerms]] says are gone (*Solo*, *1 Stück*,
+	 * *Upgrade (Promo)*), empty when nothing is (*floating*). A demo has no
+	 * Lizenztyp and keeps its whole name.
+	 */
+	public function shopName(): string
+	{
 		$title = (string) $this->getTranslation('title', 'de', false);
 
 		if (! $this->licence_type) {
 			return $title;
 		}
 
-		$rest = collect(explode(',', $title))
+		return collect(explode(',', $title))
 			->map(fn (string $part) => trim(Str::replace(self::SAID_ELSEWHERE, '', $part, caseSensitive: false)))
 			->filter()
 			->implode(', ');
+	}
 
-		return collect([$rest, $this->licence_type->label(), $this->access?->label()])->filter()->implode(', ');
+	/** The label's second half, Lizenztyp and Nutzung in German: *Jahresmietlizenz, Einzelplatz (named)*; nothing for a demo. */
+	public function shopTerms(): string
+	{
+		// A demo says neither: its name is all it has (*Pro Demoversion*).
+		if (! $this->licence_type) {
+			return '';
+		}
+
+		return collect([$this->licence_type?->label(), $this->access?->label()])->filter()->implode(', ');
+	}
+
+	/**
+	 * **A licence block's title on the licence page** (#71, built 2026-11-17),
+	 * as the client's docs write it (*Corona Solo (named)*, *Corona Render
+	 * Node (1 Stück)*): the product's name, what is left of the licence's, and
+	 * the vendor's word for its use in brackets, *(named)* or *(floating)*,
+	 * which tells *Corona Collection (named)* from *(floating)*. *Einzelplatz
+	 * oder Netzwerk* (every McNeel licence) has no such word: *Rhinoceros 9
+	 * Vollversion*. A demo keeps its name: *Lumion Pro Demoversion*.
+	 */
+	public function blockTitle(): string
+	{
+		$product = (string) $this->product?->getTranslation('title', app()->getLocale(), false);
+		$use = $this->licence_type && $this->access && $this->access !== LicenceAccess::Either ? '('.$this->access->value.')' : '';
+
+		return collect([$product, $this->shopName(), $use])->filter()->implode(' ');
+	}
+
+	/**
+	 * The grey line under the block's title: Lizenztyp and Nutzung without the
+	 * bracket the title already has, *Jahresmietlizenz, Einzelplatz*.
+	 */
+	public function blockTerms(): string
+	{
+		if (! $this->licence_type) {
+			return '';
+		}
+
+		return collect([$this->licence_type->label(), $this->access ? Str::before($this->access->label(), ' (') : null])->filter()->implode(', ');
 	}
 
 	public function product(): BelongsTo

@@ -123,7 +123,7 @@ it('leaves what VIAK chose alone on a rerun, and writes nothing on a dry run', f
 		->and(Category::query()->count())->toBe(5);
 });
 
-it('sells an Angebot\'s licences on its licence page, each product a block, with the way back (#71)', function () {
+it('sells an Angebot\'s licences on its licence page, each licence a block, with the way back (#71)', function () {
 	$rhino = angebot('Rhinoceros', licence: true);
 	$product = $rhino->products()->first();
 	$product->update(['description' => ['de' => '<p>Das Original.</p>']]);
@@ -138,7 +138,7 @@ it('sells an Angebot\'s licences on its licence page, each product a block, with
 	$this->get('/de/angebote/software/rhinoceros')
 		->assertOk()
 		->assertSeeInOrder(['Rhinoceros Lizenzen', 'Offizieller Schweizer Reseller.', 'Alles zu Rhinoceros', 'Lizenzen',
-			'id="rhinoceros-8"', 'Rhinoceros 8', 'von McNeel', 'Das Original.', 'Nur mit einer Neulizenz.', 'In den Warenkorb',
+			'id="rhinoceros-8"', 'Rhinoceros 8', 'Nur mit einer Neulizenz.', 'In den Warenkorb',
 			'Systemvoraussetzungen', 'Windows 11, macOS 26', '«Unsicher, welche Lizenz die richtige ist?»'], false)
 		->assertSee('href="/de/angebote/rhinoceros"', false);
 

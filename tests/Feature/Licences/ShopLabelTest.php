@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\LicenceAccess;
 use App\Enums\LicenceType;
+use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
 
 /**
@@ -27,4 +28,22 @@ it('keeps the rest of the name in front', function () use ($label) {
 
 it('leaves a demo its name', function () use ($label) {
 	expect($label('Pro Demoversion', null, LicenceAccess::Named))->toBe('Pro Demoversion');
+});
+
+/** The licence page's blocks (#71, flat since 2026-11-17): the product's name and the licence's, the rest under it. */
+it('titles a licence block with the product and what is left of the licence\'s name', function () {
+	$product = new LicenceProduct(['title' => ['de' => 'Corona']]);
+	$variant = fn (string $title, ?LicenceType $type, ?LicenceAccess $access) => (new LicenceVariant(['title' => ['de' => $title], 'licence_type' => $type, 'access' => $access]))
+		->setRelation('product', $product);
+
+	$solo = $variant('Solo, named', LicenceType::Subscription, LicenceAccess::Named);
+
+	expect($solo->blockTitle())->toBe('Corona Solo (named)')
+		->and($solo->blockTerms())->toBe('Jahresmietlizenz, Einzelplatz')
+		->and($variant('floating', LicenceType::Subscription, LicenceAccess::Floating)->blockTitle())->toBe('Corona (floating)')
+		->and($variant('1 Stück', LicenceType::Subscription, LicenceAccess::Floating)->blockTitle())->toBe('Corona 1 Stück (floating)')
+		->and($variant('Vollversion', LicenceType::Perpetual, LicenceAccess::Either)->blockTitle())->toBe('Corona Vollversion')
+		->and($variant('Vollversion', LicenceType::Perpetual, LicenceAccess::Either)->blockTerms())->toBe('Dauerlizenz, Einzelplatz oder Netzwerk')
+		->and($variant('Demoversion', null, LicenceAccess::Named)->blockTitle())->toBe('Corona Demoversion')
+		->and($variant('Demoversion', null, LicenceAccess::Named)->blockTerms())->toBe('');
 });

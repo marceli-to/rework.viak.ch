@@ -18,11 +18,12 @@
 	Drawn as the Angebot page is (`site/software/show.blade.php`), a course
 	page's teal hero and collapsibles.
 
-	**Product by product** (`card/product.blade.php`, the card staging had per
-	product): its name and maker as a heading, its description, then one row
-	per licence with its *Hinweis*, price, *Anzahl* and button. Each product
-	is anchored by its slug, which is where a product's old URL and every row
-	and tile that names it lead ([[SiteUrl::licence]]).
+	**One block per licence** (`card/licence-block.blade.php`, Marcel
+	2026-11-17, as the docs have it): *Corona Solo*, then its kind, text,
+	price and button. Until then product by product, a heading over its
+	licences' rows. A product's first block is anchored by its slug, which is
+	where its old URL and every row and tile that names it lead
+	([[SiteUrl::licence]]).
 
 	No breadcrumb (the site has none): the way back to the Angebot is the
 	link under the title. The hero takes the Angebot's picture.
@@ -67,7 +68,9 @@
 	<div class="mt-48 lg:mt-64">
 		<x-ui.collapsible title="Lizenzen">
 			@foreach ($software->products as $product)
-				<x-card.product :product="$product" />
+				@foreach ($product->variants->filter(fn ($variant) => $variant->listed)->values() as $variant)
+					<x-card.licence-block :product="$product" :variant="$variant" :anchor="$loop->first" />
+				@endforeach
 			@endforeach
 
 			{{-- The shop's prices are net, VAT goes on the invoice ([[05-licences]]). --}}
