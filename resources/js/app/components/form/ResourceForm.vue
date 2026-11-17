@@ -40,7 +40,9 @@ const props = defineProps({
 	// Fields a new record starts with beyond the schema's defaults.
 	prefill: { type: Object, default: () => ({}) },
 	// The `meta` key holding the page this form fills: *Seite ansehen*, a third
-	// button under the two, its note below (Marcel, 2026-11-17), as a section's `preview` has it.
+	// button under the two (Marcel, 2026-11-17). No note on what it shows: the
+	// key is empty while the page is not on the site, and the button waits
+	// while there are unsaved changes, so what it opens is what the form shows.
 	preview: { type: String, default: null },
 });
 
@@ -71,10 +73,7 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 
 				<Button type="submit" class="w-full" :disabled="saving">{{ saving ? 'Wird gespeichert …' : 'Speichern' }}</Button>
 				<Button v-if="stay && !singleton" variant="secondary" class="mt-12 w-full" :disabled="saving" @click="submit(true)">Speichern und Weiterbearbeiten</Button>
-				<template v-if="preview && meta[preview]">
-					<Button :href="meta[preview]" variant="secondary" target="_blank" rel="noopener" class="mt-12 w-full">Seite ansehen</Button>
-					<p class="pt-8 text-md text-gray-600 lg:text-lg">Gespeicherter Stand, nur wenn publiziert.</p>
-				</template>
+				<Button v-if="preview && meta[preview] && !dirty" :href="meta[preview]" variant="secondary" target="_blank" rel="noopener" class="mt-12 w-full">Seite ansehen</Button>
 			</fieldset>
 
 			<!-- Boxes that act on the record rather than its fields: a course

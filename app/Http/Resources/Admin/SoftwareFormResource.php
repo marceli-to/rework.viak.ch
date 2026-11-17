@@ -25,15 +25,23 @@ class SoftwareFormResource extends JsonResource
 	{
 		$de = fn (string $field) => $this->getTranslation($field, 'de', false) ?: '';
 
+		$onSite = Software::query()->onSite()->whereKey($this->getKey())->exists();
+
 		$form = [
 			'uuid' => $this->uuid,
 			'url' => SiteUrl::software($this->getTranslation('slug', 'de'), 'de'),
-			// *Seite ansehen* in the form's «Was ist …?» section: only once there is a page.
-			'about_url' => filled($this->getTranslation('full_description', 'de', false))
+			/*
+			 * *Seite ansehen* under each page form's buttons, **only while that
+			 * page opens on the site** (Marcel, 2026-11-17): the Angebot while it
+			 * is on the site ([[Software::scopeOnSite]]), «Was ist …?» then too and
+			 * once it has a text, «Lizenzen» while it sells something
+			 * ([[Software::scopeSellsLicences]]). `url` is its address either way.
+			 */
+			'live_url' => $onSite ? SiteUrl::software($this->getTranslation('slug', 'de'), 'de') : null,
+			'about_url' => $onSite && filled($this->getTranslation('full_description', 'de', false))
 				? SiteUrl::softwareAbout($this->getTranslation('slug', 'de'), 'de')
 				: null,
-			// And in «Lizenzen»: only while it sells something (#71).
-			'licences_url' => $this->products()->listed()->exists()
+			'licences_url' => Software::query()->sellsLicences()->whereKey($this->getKey())->exists()
 				? SiteUrl::licences($this->getTranslation('slug', 'de'), 'de')
 				: null,
 			'title' => $de('title'),

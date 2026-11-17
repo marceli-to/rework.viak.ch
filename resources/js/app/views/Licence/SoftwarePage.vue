@@ -11,7 +11,7 @@ import ResourceForm from '@/components/form/ResourceForm.vue';
  * Edited only, never created or deleted: the page belongs to the software.
  */
 const PAGES = {
-	angebot: { schema: 'software-angebot', label: 'Seite «Angebot»', preview: 'url' },
+	angebot: { schema: 'software-angebot', label: 'Seite «Angebot»', preview: 'live_url' },
 	'was-ist': { schema: 'software-was-ist', label: 'Seite «Was ist …?»', preview: 'about_url' },
 	lizenzen: { schema: 'software-lizenzen', label: 'Seite «Lizenzen»', preview: 'licences_url' },
 };

@@ -631,7 +631,11 @@ products, with a pencil to a form of its own
 - **Seite «Lizenzen»**: its row only while the software has products.
 
 Rows rather than buttons: everything else on that screen is a row with a
-pencil. Each form opens with *Seite ansehen*, saves only its own fields
+pencil. Each form has *Seite ansehen* as a third grey button under the two
+(at first a link above the fields), shown **only while that page opens on
+the site** and while nothing is unsaved, so it needs no note on what it shows
+(the Angebot: `onSite`; «Was ist …?»: that and a text; «Lizenzen»:
+`sellsLicences`). Each form saves only its own fields
 (`PUT software/{software}/seite/{page}`, `SaveSoftwarePageRequest`), and goes
 back to the list with the software open. The software form keeps Titel,
 Einstellungen and Empfehlungen; a save there no longer touches a page's text.

@@ -99,7 +99,6 @@ it('saves the licence page and the Was ist page from their own forms', function 
 
 	$this->putJson("/api/admin/software/{$software->uuid}/seite/was-ist", ['full_description' => '<p>Ein CAD.</p>'])
 		->assertOk()
-		->assertJsonPath('data.about_url', '/de/angebote/rhinoceros/was-ist-rhinoceros')
 		->assertJsonPath('data.licences_lead', 'Rhino Lizenzen für Teams');
 
 	$this->putJson("/api/admin/software/{$software->uuid}/seite/impressum", [])->assertNotFound();
@@ -150,13 +149,36 @@ it('saves the new texts in the Angebot page form, German only, empty as nothing'
 		'quote' => 'Die passende Software und das Wissen.',
 	]))->assertOk()
 		->assertJsonPath('data.audiences', 'Architektur- & Ingenieurbüros, Yachtdesign')
-		->assertJsonPath('data.licences_intro', '')
-		// *Seite ansehen* in the «Was ist …?» form, once there is a text.
-		->assertJsonPath('data.about_url', '/de/angebote/rhinoceros/was-ist-rhinoceros');
+		->assertJsonPath('data.licences_intro', '');
 
 	$software->refresh();
 
 	expect($software->getTranslation('courses_intro', 'de'))->toBe('Lerne Rhino in der Praxis.')
 		->and($software->getTranslation('licences_intro', 'de', false))->toBe('')
 		->and($software->getTranslation('quote', 'en'))->toBe('English stays');
+});
+
+/** *Seite ansehen* under a page form's buttons: only while that page opens (Marcel, 2026-11-17). */
+it('hands out a page\'s address to look at only while the page is on the site', function () {
+	$software = Software::create(['title' => ['de' => 'Rhinoceros'], 'full_description' => ['de' => '<p>Ein CAD.</p>']]);
+	$show = fn () => $this->actingAs($this->admin)->getJson("/api/admin/software/{$software->uuid}")->json('data');
+
+	// Unpublished: no page, though it has an address.
+	expect($show())->toMatchArray(['url' => '/de/angebote/rhinoceros', 'live_url' => null, 'about_url' => null, 'licences_url' => null]);
+
+	// Published, but nothing to offer yet: still not on the site.
+	$software->update(['publish' => true]);
+	expect($show()['live_url'])->toBeNull();
+
+	// A published course puts it on the site; no listed licence, so no licence page.
+	Course::factory()->create(['publish' => true])->software()->attach($software);
+	expect($show())->toMatchArray([
+		'live_url' => '/de/angebote/rhinoceros',
+		'about_url' => '/de/angebote/rhinoceros/was-ist-rhinoceros',
+		'licences_url' => null,
+	]);
+
+	// «Was ist …?» without a text has no page.
+	$software->update(['full_description' => ['de' => null]]);
+	expect($show()['about_url'])->toBeNull();
 });
