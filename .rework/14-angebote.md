@@ -721,7 +721,8 @@ import (`licences:import` on the migrated dev data creates nothing).
   8's two stay in the product as *Rhino 8 Vollversion* / *Rhino 8 Update*,
   unlisted (pickable in a manual order). One product, not a hidden second
   one. The Angebot's SEO filler says Rhino 9. *Ab CHF* on Rhino now reads 360.
-- EDU unlisted again (RHN-1091, 1092, 2008) as the list marks them (#75).
+- EDU unlisted again (RHN-1091, 1092, 2008) as the list marks them (#75). **Undone 2026-11-17**: #75 answered *public*, migration
+  `2026_11_17_000001_edu_licences_public`.
 - RHN-2042 Drakon *Demoversion* (0, listed), MatrixGold RHN-2043.
 - **Maxwell soft-deleted** (Angebot, 5 products, 13 licences). Its hosts
   (Archicad, Maya: unpublished programs) stay.
