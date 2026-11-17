@@ -136,6 +136,12 @@
 				{{-- Every date as the course page draws it (`card/event.blade.php`),
 				     the course's name over it (Marcel, 2026-10-29); a course with
 				     none says what its own page says. --}}
+				{{-- *… für dein ganzes Team? Firmenschulung anfragen* closes the list.
+				     When the last course has no date it shares that course's line,
+				     after *Neues Kursdatum folgt in Kürze* (Marcel, 2026-11-17);
+				     otherwise it stands under the list on its own. --}}
+				@php($teamOffer = fn () => e($title).' für dein ganzes Team? <a href="'.e(\App\Support\SiteUrl::training()).'" class="text-teal hover:text-black">Firmenschulung anfragen</a>')
+				@php($joined = $courses->last()?->events->isEmpty())
 				@foreach ($courses as $course)
 					@forelse ($course->events as $event)
 						<x-card.event :event="$event" titled />
@@ -143,15 +149,19 @@
 						<article class="relative mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 							<a href="{{ \App\Support\SiteUrl::course($course->getTranslation('slug', $locale)) }}"
 								class="mb-8 block font-bold text-teal hover:text-black sm:mb-16">{{ $course->getTranslation('title', $locale) }}</a>
-							<p>Neues Kursdatum folgt in Kürze</p>
+							<p>
+								Neues Kursdatum folgt in Kürze
+								@if ($loop->last)
+									– {!! $teamOffer() !!}
+								@endif
+							</p>
 						</article>
 					@endforelse
 				@endforeach
 
-				<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">
-					{{ $title }} für dein ganzes Team?
-					<a href="{{ \App\Support\SiteUrl::training() }}" class="text-teal hover:text-black">Firmenschulung anfragen</a>
-				</p>
+				@unless ($joined)
+					<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">{!! $teamOffer() !!}</p>
+				@endunless
 			</x-ui.collapsible>
 		@endif
 
