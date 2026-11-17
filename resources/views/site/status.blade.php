@@ -126,11 +126,6 @@
 			'text' => 'Die Website ist deutsch, die Adressen behalten das /de/. Wird es je eine englische Version geben?',
 			'decides' => 'Nichts im Moment. Ein klares Nein würde einiges vereinfachen.',
 		],
-		[
-			'title' => 'Alte Fälligkeitsdaten der Rechnungen',
-			'text' => 'Die alte Website hat das Fälligkeitsdatum bei jeder Änderung einer Rechnung überschrieben, bei den 541 bezahlten Rechnungen ist es verloren. Wird es noch gebraucht (Mahnwesen, Buchhaltung)?',
-			'decides' => 'Ob wir es beim Umzug aus Run My Accounts oder den PDFs wiederherstellen.',
-		],
 	];
 
 	$content = [

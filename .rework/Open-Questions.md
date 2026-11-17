@@ -30,7 +30,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy | Client | Copy only |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
-| 7 | Do the historical invoice due dates matter? | Client | Cutover — `port:invoices` reports it every run |
+| ~~7~~ | ~~Do the historical invoice due dates matter?~~ **Settled 2026-11-17 (Marcel): ignore it.** No reconstruction; the 541 paid invoices come across with the `due_at` they hold | — | — |
 | ~~8~~ | ~~Event 213 — what was it meant to be?~~ **Settled 2026-11-17 (Marcel): ignore it.** The port skips it, as it skips all 14 two-digit-year events; never booked, never on the site | — | — |
 | 9 | The other 13 two-digit-year events: drop or restore? | Marcel | Cutover |
 | 10 | `due_at` in the port: the 541 lost, and the open/overdue | Marcel | Cutover |
@@ -269,7 +269,11 @@ turning EN on remains a config change plus content entry. The question is now
 worth asking only for the simplification it would unlock, never for the option it
 preserves — the option is preserved either way.
 
-### 7. Do the historical invoice due dates matter?
+### ~~7. Do the historical invoice due dates matter?~~
+
+**Settled 2026-11-17 (Marcel): ignore it.** The port does not reconstruct
+them; the 541 paid invoices carry what `due_at` holds. #10's other half (the
+open and overdue invoices) is still open.
 
 `invoices.due_at` has been overwriting itself on every UPDATE since 2023, so the
 original payment deadline is gone on all 541 paid invoices. They are not
@@ -326,7 +330,7 @@ explicit reconstruction map, not a warning on stderr.
 ### 10. `due_at` in the port
 
 Two decisions beyond the column fix itself: what to do about the **541 lost**
-deadlines (see 7), and what the **open and overdue** invoices carry across.
+deadlines (see 7; **ignored, 2026-11-17**), and what the **open and overdue** invoices carry across.
 Whatever `due_at` they hold at cutover is today's date, which is wrong for all of
 them — either recompute from the booking's event start, or carry them over
 knowingly wrong. Pick one, in the port.
