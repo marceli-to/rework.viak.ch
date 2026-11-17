@@ -87,11 +87,6 @@
 			'decides' => 'Nichts, wenn es so bleibt.',
 		],
 		[
-			'title' => 'Alter Shop: 24 Artikelnummern ohne Produkt',
-			'text' => 'Alle Adressen von 3d-software.ch leiten auf die neue Website um. 24 Artikelnummern des alten Shops gibt es in unserer Liste nicht (u.a. Lumion Studio und die 3-Jahres-Lizenzen von Lumion, form•Z-Bundles, RealFlow für 3ds Max und Maya, die Rhino-Bundles). Neue Produkte, oder weg? Bis dahin landen sie auf ihrem Angebot. Die Liste ist gelb markiert in der Excel-Datei.',
-			'decides' => 'Ob Produkte dazukommen. Ein später erfasstes Produkt mit derselben Artikelnummer übernimmt seine alte Adresse von selbst.',
-		],
-		[
 			'title' => 'KI-Zugang zu den Daten',
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',

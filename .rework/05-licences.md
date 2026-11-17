@@ -442,7 +442,17 @@ on each request, else to its Angebot; categories and the old plugin tree to
 the Angebot; blog posts to the Angebot they are about; start, shop and blog
 to the software list; Kontakt, Beratung and Impressum to `/de/kontakt`; what
 the map does not name to the software list. Maxwell deactivated (the client)
-and not mapped. Open: #74. Checked by `port:check-shop-urls` (`Deploy.md`).
+and not mapped. Checked by `port:check-shop-urls` (`Deploy.md`).
+
+**The 24 article numbers without a product (#74), answered 2026-11-17**
+(Oliver, `3d-software_alle_URLs_neu.xlsx`): none become products. The 19
+he sent to their Angebot are mapped to it straight, without the `sku:`
+lookup, so the check no longer lists them as misses. Four take another
+product: ALL-1011 (Anima 3-year floating) goes to Chaos Anima, ALL-1001,
+whose block already says *3-Jahreslizenz auf Anfrage erhältlich*; LUM-10260
+to LUM-1005 (#48); `/public/Test/SW10228` to HDR-1101. Mesh2Surface and
+Penguin go to the software list. The map is edited by hand since; the
+script beside the list only wrote its first version.
 
 VIAK already sells software, at **3d-software.ch**. Nothing above knew that; it
 was all derived from the mockups. **The rework replaces that shop.** So the
