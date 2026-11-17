@@ -892,8 +892,8 @@ logos** (250px PNG, 36 files) are, "für alle Listen, Übersichten etc.".
 - **Stored** as `software.logo`, a file on the public disk under `logos/`,
   not a `Media` row: the image pipeline re-encodes and crops, a logo keeps
   its transparent ground and its shape ([[Software::logoUrl]]). Served at
-  `/logos/{file}` through the app ([[LogoController]]): staging's nginx
-  refuses `/storage/…` with 403. Uploaded in
+  `/logos/{file}` through the app ([[LogoController]]), not through the
+  `public/storage` link, which on staging pointed into the jail (403). Uploaded in
   the software form's *Einstellungen*, *Logo*, saved at once as the images
   are, *Entfernen* under it ([[SoftwareLogoController]], `LogoField.vue`).
 - **Imported** by `catalogue:logos` from `database/data/logos/{slug}.png`:

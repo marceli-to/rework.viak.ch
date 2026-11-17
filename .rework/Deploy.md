@@ -24,8 +24,16 @@ In this order, from the release directory:
    in the old place and not yet in the new one, so it is safe on every
    deploy. It names any row whose file is in neither place. Three of the dev
    seed rows always show up there, because they never had a file.
-5. `php artisan storage:link` (first deploy only; the images are served
-   from `storage/app/public`).
+5. **The `public/storage` link, relative** (first deploy only; the images
+   are served from `storage/app/public`):
+   `cd public && ln -s ../storage/app/public storage`.
+   **Not `php artisan storage:link`** on a Plesk host: it writes an absolute
+   target, and in the jailed shell that is the jail's path
+   (`/httpdocs/staging.viak.ch/storage/app/public`), which nginx outside the
+   jail cannot follow. Every `/storage/…` file then answers 403 (staging,
+   found 2026-11-17: the logos and the Open Graph images). `--relative`
+   needs `symfony/filesystem`, which the project does not have. Check with
+   `ls -l public/storage`: it must read `-> ../storage/app/public`.
 6. `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
    Safe because `env()` is read only in `config/` (`00-foundation.md`).
 7. **`php artisan search:rebuild`**: the site search's index from scratch
@@ -149,9 +157,10 @@ courses off Photoshop, the second gives them categories, the third texts.
 catalogue:logos`** (`--dry-run` first): Oliver's 31 logos from
 `database/data/logos/` onto the public disk (`storage/app/public/logos`),
 served at `/logos/…` through the app ([[LogoController]]). **Not through the
-`storage` link**: on staging nginx answers every `/storage/…` path with 403
-(found 2026-11-17, the logos and the `/storage/uploads/` Open Graph images
-alike), presumably Plesk's `disable_symlinks if_not_owner`. Rerunnable; an Angebot with a logo keeps it unless `--force`.
+`storage` link**: on staging that link pointed into the jail
+(`-> /httpdocs/staging.viak.ch/storage/app/public`) and nginx answered every
+`/storage/…` path with 403 (2026-11-17; step 5 of *Every deploy* now makes
+it relative). The route keeps the logos independent of the link either way. Rerunnable; an Angebot with a logo keeps it unless `--force`.
 Then `search:rebuild` (update line) so the search rows carry them.
 
 **The same pull brings the homepage news** (`news` table, in the migrate

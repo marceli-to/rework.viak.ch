@@ -193,7 +193,8 @@ class Software extends Model
 	 * or null: no logo, and nothing stands in for one (Marcel, 2026-11-17). A
 	 * file on the public disk, not a [[Media]] row: the logo keeps its
 	 * transparent ground and its exact shape ([[14-angebote]] *Logos*). Not
-	 * the disk's `/storage/` address, which staging's nginx refuses.
+	 * the disk's `/storage/` address, which depends on the `public/storage`
+	 * link (broken on staging until 2026-11-17, [[LogoController]]).
 	 */
 	public function logoUrl(): ?string
 	{
