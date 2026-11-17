@@ -152,6 +152,13 @@ served at `/storage/logos/…` through the `storage` link that already serves
 the images. Rerunnable; an Angebot with a logo keeps it unless `--force`.
 Then `search:rebuild` (update line) so the search rows carry them.
 
+**The same pull brings the homepage news** (`news` table, in the migrate
+above), **then `php artisan catalogue:news`** (`--dry-run` first): the two
+first items in `database/data/news.json` (*Rhino 9 jetzt verfügbar* →
+Rhinoceros, *Firmenschulung ab einem halben Tag* → Firmenschulung),
+published, so the box beside *Nächste Kurstermine* shows. Rerunnable: an
+item whose title is there already is left alone.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
@@ -182,6 +189,9 @@ Then `search:rebuild` (update line) so the search rows carry them.
    **Then `php artisan catalogue:logos`** (`--dry-run` first, 2026-11-17):
    the Angebote' logos (`database/data/logos/{slug}.png`), after the port
    has made the software records they belong to.
+   **Then `php artisan catalogue:news`** (`--dry-run` first): the homepage's
+   first two news items (`database/data/news.json`), their links by slug,
+   unless VIAK has written its own on staging and wants those instead.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
    And step 7 (`search:rebuild`): the ports insert without Eloquent's

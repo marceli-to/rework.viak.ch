@@ -93,3 +93,18 @@ it('leaves the box out when there is no news', function () {
 
 	$this->get('/de')->assertOk()->assertSee('Nächste Kurstermine')->assertDontSee('>Aktuell<', false);
 });
+
+it('adds the first news from the file, published, once', function () {
+	$rhino = Software::create(['title' => ['de' => 'Rhinoceros']]);
+
+	$this->artisan('catalogue:news', ['--dry-run' => true])->assertSuccessful();
+	expect(News::count())->toBe(0);
+
+	$this->artisan('catalogue:news')->expectsOutputToContain('Added 2 news items.')->assertSuccessful();
+	$this->artisan('catalogue:news')->expectsOutputToContain('Added 0 news items.')->assertSuccessful();
+
+	expect(News::query()->ordered()->get()->map(fn (News $news) => [$news->getTranslation('title', 'de'), $news->link, $news->publish])->all())->toBe([
+		['Rhino 9 jetzt verfügbar', 'software:'.$rhino->uuid, true],
+		['Firmenschulung ab einem halben Tag', 'page:training', true],
+	]);
+});
