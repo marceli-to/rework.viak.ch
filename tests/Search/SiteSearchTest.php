@@ -173,7 +173,7 @@ it('hands out the Angebot\'s logo with its hits', function () {
 
 	$logos = collect($this->getJson('/api/search?q=rhino')->json('data'))->pluck('logo', 'title');
 
-	expect($logos['Rhinoceros'])->toBe('/logos/rhinoceros-abc.png')
-		->and($logos['Rhinoceros 8'])->toBe('/logos/rhinoceros-abc.png')
+	expect($logos['Rhinoceros'])->toBe('/storage/logos/rhinoceros-abc.png')
+		->and($logos['Rhinoceros 8'])->toBe('/storage/logos/rhinoceros-abc.png')
 		->and($logos['Rhino Einstiegskurs'])->toBeNull();
 });

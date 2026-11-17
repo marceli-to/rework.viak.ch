@@ -892,8 +892,10 @@ logos** (250px PNG, 36 files) are, "für alle Listen, Übersichten etc.".
 - **Stored** as `software.logo`, a file on the public disk under `logos/`,
   not a `Media` row: the image pipeline re-encodes and crops, a logo keeps
   its transparent ground and its shape ([[Software::logoUrl]]). Served at
-  `/logos/{file}` through the app ([[LogoController]]), not through the
-  `public/storage` link, which on staging pointed into the jail (403). Uploaded in
+  `/storage/logos/…` through the `public/storage` link (on staging that link
+  pointed into the jail and answered 403 until 2026-11-17; a route through
+  the app was built for it that day and removed again once the link was
+  fixed). Uploaded in
   the software form's *Einstellungen*, *Logo*, saved at once as the images
   are, *Entfernen* under it ([[SoftwareLogoController]], `LogoField.vue`).
 - **Imported** by `catalogue:logos` from `database/data/logos/{slug}.png`:

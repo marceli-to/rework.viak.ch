@@ -156,11 +156,10 @@ courses off Photoshop, the second gives them categories, the third texts.
 (`software.logo`, and `logo` on the search's rows), **then `php artisan
 catalogue:logos`** (`--dry-run` first): Oliver's 31 logos from
 `database/data/logos/` onto the public disk (`storage/app/public/logos`),
-served at `/logos/…` through the app ([[LogoController]]). **Not through the
-`storage` link**: on staging that link pointed into the jail
-(`-> /httpdocs/staging.viak.ch/storage/app/public`) and nginx answered every
-`/storage/…` path with 403 (2026-11-17; step 5 of *Every deploy* now makes
-it relative). The route keeps the logos independent of the link either way. Rerunnable; an Angebot with a logo keeps it unless `--force`.
+served at `/storage/logos/…` through the `public/storage` link. That link
+must be relative (step 5 of *Every deploy*): on staging it pointed into the
+jail and nginx answered every `/storage/…` file with 403 until it was
+remade on 2026-11-17. Rerunnable; an Angebot with a logo keeps it unless `--force`.
 Then `search:rebuild` (update line) so the search rows carry them.
 
 **The same pull brings the homepage news** (`news` table, in the migrate
