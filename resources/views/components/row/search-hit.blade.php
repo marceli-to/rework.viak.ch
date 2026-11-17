@@ -10,9 +10,9 @@
 	- **6**: the lead, grey.
 	- **2**: what it is, the badge (*Angebot*, *Kurs*, *Lizenz* …), on the right.
 
-	**No dates and prices here** (Marcel, same day: tried in a third column,
-	taken out); the lead gets the room. The header's panel still says them
-	under each hit ([[SearchFacts]]).
+	**No dates and prices** (Marcel, same day: tried in a third column, taken
+	out); the lead gets the room. The header's panel draws the same row in
+	Alpine (`layout/header.blade.php`): change the two together.
 
 	On a phone the badge sits on the title's line, the lead under it. The
 	whole row is the link.

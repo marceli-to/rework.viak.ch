@@ -32,10 +32,6 @@ use Illuminate\Support\Facades\DB;
  * course, Vorhaben, expert, page, licence (a licence links to its Angebot's
  * licence page, so the Angebot comes first); then the full-text relevance, a
  * title hit weighing three times a body hit.
- *
- * **What a hit shows besides its lead** (#57, Oliver 2026-11-17: "as much as
- * possible") is worked out when it is shown, not stored, because dates pass
- * ([[SearchFacts]]).
  */
 class SearchIndex
 {

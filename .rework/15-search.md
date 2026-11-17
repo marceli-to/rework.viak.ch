@@ -155,21 +155,17 @@ Oliver's answer to both: **"as much as possible"**.
   *Seite* for the new kinds. Ranked Angebot, Kurs, Vorhaben, Expert:in, Seite,
   Lizenz on an equal title.
 
-**What a hit shows (#57)**: under the lead, in black, its dates and prices,
-as the tiles word them ([[SearchFacts]]): a course *ab 12. Januar 2027 · CHF
-949.00* or *Daten auf Anfrage*; an Angebot *Kurs ab CHF … · Lizenz ab CHF …*;
-a licence *ab CHF …*. **Worked out when shown, not stored**: dates pass and
-prices change without the record being saved. Only for the hits shown (the
-panel's six, the page's sixty), one query per kind.
+**What a hit shows (#57)**: built the same day as a line of dates and prices
+under each hit (*ab 12. Januar 2027 · CHF 949.00*, *Kurs ab … · Lizenz ab …*),
+**then taken out again by Marcel**: the result page and the panel show title,
+lead and badge. The code (`SearchFacts`, worked out when shown, not stored) is
+in commit `0c5f030` if it is wanted back.
 
-The panel's label reads *Website durchsuchen*, the result page's field
-*Suchbegriff*: *Kurs oder Software* no longer covered it.
+Both fields are labelled *Suchbegriff*: *Kurs oder Software* no longer covered it.
 
-**The result page full width (Marcel, 2026-11-17)**: it sat in the article's
-copy column beside an aside saying *Suche*. Now the field runs across the
-page, *21 Einträge gefunden für «rhino»* under it, and each hit is a row of
-the event list's grid (`card/event`): black rule, 4 / 6 / 2 of twelve, the
-title bold, the lead grey, the badge on the right. **No dates and prices on
-this page** (Marcel, same day: a third column of them was tried and taken
-out, the lead took the room); the header's panel still shows them
-([[SearchFacts]]). On a phone the badge sits on the title's line.
+**The result page and the panel full width (Marcel, 2026-11-17)**: both sat
+in the copy column beside an aside (*Suche*, *Kurs oder Software suchen*).
+Now *Suchbegriff* over a field across the page, the count, and each hit a row
+of the event list's grid (`card/event`): black rule, 4 / 6 / 2 of twelve,
+title bold, lead grey, badge on the right. On a phone (the result page; the
+panel is desktop only) the badge sits on the title's line, the lead under it.

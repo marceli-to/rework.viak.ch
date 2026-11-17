@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Support\Search\SearchFacts;
 use App\Support\Search\SearchIndex;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,7 +25,9 @@ class SearchController extends Controller
 		// All of them, to say how many; the panel lists the first few ([[siteSearch]]).
 		$hits = mb_strlen($query) < 2 ? collect() : $index->search($query, app()->getLocale(), 60);
 
-		// Dates and prices only for the ones shown ([[SearchFacts]]).
-		return response()->json(['data' => SearchFacts::attach($hits->take($limit)), 'total' => $hits->count()]);
+		return response()->json([
+			'data' => $hits->take($limit)->map(fn (object $hit) => ['type' => $hit->type, 'label' => $hit->label, 'title' => $hit->title, 'lead' => $hit->lead, 'url' => $hit->url])->values(),
+			'total' => $hits->count(),
+		]);
 	}
 }

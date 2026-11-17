@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Course;
-use App\Models\Event;
 use App\Models\ExpertProfile;
 use App\Models\LicenceProduct;
 use App\Models\LicenceVariant;
@@ -165,25 +164,4 @@ it('finds an Angebot by the texts of its licence page and its Was ist page', fun
 
 	expect(search('werkstätten'))->toBe(['Angebot: Rhinoceros'])
 		->and(search('yachtdesign'))->toBe(['Angebot: Rhinoceros']);
-});
-
-/** #57 answered 2026-11-17 (Oliver): the hits show dates and prices. */
-it('says a course\'s next date and fee, an Angebot\'s and a licence\'s prices', function () {
-	$this->travelTo('2026-11-17');
-	rhino();
-	LicenceVariant::first()->update(['price' => '550.00', 'listed' => true]);
-	$course = Course::factory()->create(['title' => ['de' => 'Rhino Einstiegskurs'], 'fee' => '949.00']);
-	Event::factory()->for($course)->create(['date' => '2027-01-12']);
-	Course::factory()->create(['title' => ['de' => 'Rhino Grasshopper'], 'fee' => '1200.00']);
-
-	$facts = $this->getJson('/api/search?q=rhino')->json('data');
-	$by = collect($facts)->mapWithKeys(fn (array $hit) => [$hit['title'] => $hit['facts']]);
-
-	expect($by['Rhino Einstiegskurs'])->toBe(['ab 12. Januar 2027', 'CHF 949.00'])
-		->and($by['Rhino Grasshopper'])->toBe(['Daten auf Anfrage', "CHF 1'200.00"])
-		->and($by['Rhinoceros 8'])->toBe(['ab CHF 550.00'])
-		->and($by['Rhinoceros'])->toContain('Lizenz ab CHF 550.00');
-
-	// Not on the result page (Marcel, 2026-11-17): the panel only.
-	$this->get('/de/suche?q=einstiegskurs')->assertSee('Rhino Einstiegskurs')->assertDontSee('ab 12. Januar 2027');
 });

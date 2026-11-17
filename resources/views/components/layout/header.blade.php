@@ -174,17 +174,18 @@
 		</div>
 		{{--
 			The search panel ([[15-search]]): white under the header's black rule,
-			its own rule at the bottom; Kontakt's two columns, the heading in the
-			aside and the field in the copy column, the hits as the site's list rows. The field is a
-			form field as everywhere on the site, bold teal on a black rule.
+			its own rule at the bottom. **Full width, drawn as the result page**
+			(Marcel, 2026-11-17; until then Kontakt's two columns): *Suchbegriff*
+			over the field, the field a form field as everywhere on the site (bold
+			teal on a black rule), the count, then each hit a row of the event
+			list's grid, 4 / 6 / 2: title, lead, badge on the right
+			([[row.search-hit]]). No dates and prices, as there.
 			Enter opens the marked hit, or the result page.
 		--}}
 		<div x-show="open" x-cloak
-			class="absolute inset-x-0 top-full z-[150] mt-px grid grid-cols-12 gap-x-16 border-b border-black bg-white pt-24 pb-32 max-sm:hidden lg:gap-x-40 lg:pt-32 lg:pb-48">
-			{{-- As Kontakt has it: the heading bold teal in the aside, the field
-			     and its hits in the copy column (Marcel, 2026-10-26). --}}
-			<label for="site-search" class="col-span-4 font-bold text-teal">Website durchsuchen</label>
-			<form class="col-span-8" role="search" action="{{ \App\Support\SiteUrl::search() }}" @submit.prevent="go()">
+			class="absolute inset-x-0 top-full z-[150] mt-px border-b border-black bg-white pt-24 pb-32 max-sm:hidden lg:pt-32 lg:pb-48">
+			<form role="search" action="{{ \App\Support\SiteUrl::search() }}" @submit.prevent="go()">
+				<label for="site-search" class="mb-4 block text-md sm:text-lg lg:text-xl">Suchbegriff</label>
 				<input id="site-search" x-ref="field" name="q" type="search" autocomplete="off" spellcheck="false"
 					x-model="query" @input="type()" @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)"
 					role="combobox" aria-controls="site-search-hits" aria-autocomplete="list"
@@ -192,24 +193,23 @@
 					class="block w-full border-b border-black bg-transparent py-4 text-lg leading-[normal] font-bold text-teal outline-hidden sm:text-xl lg:text-3xl [&::-webkit-search-cancel-button]:appearance-none">
 
 				{{-- How many, as the result page says it, then the first six (Marcel, 2026-10-26). --}}
-				<p x-show="hits.length" x-text="found" class="mt-24 mb-16 text-md text-gray-600 sm:mb-24 sm:text-lg lg:text-xl" aria-live="polite"></p>
+				<p x-show="hits.length" x-text="found" class="mt-16 text-md text-gray-600 sm:text-lg lg:mt-32 lg:text-xl" aria-live="polite"></p>
 
 				<ul id="site-search-hits" role="listbox" x-show="hits.length">
 					<template x-for="(hit, index) in hits" :key="hit.url + hit.title">
 						<li :id="`site-search-hit-${index}`" role="option" :aria-selected="index === active">
-							<a :href="hit.url" class="group block border-t border-black pt-8 pb-16 sm:pt-12" @mouseenter="active = index">
-								<span class="flex items-start justify-between gap-16">
-									<span class="font-bold group-hover:text-teal" :class="index === active && 'text-teal'" x-text="hit.title"></span>
-									<span class="mt-2 inline-block shrink-0 border border-black px-6 py-2 text-md leading-[1.2] font-bold" x-text="hit.label"></span>
+							<a :href="hit.url" class="group mt-16 block border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl" @mouseenter="active = index">
+								<span class="grid grid-cols-12 gap-16 lg:gap-40">
+									<span class="col-span-4 font-bold transition-colors group-hover:text-teal" :class="index === active && 'text-teal'" x-text="hit.title"></span>
+									<span class="col-span-6 text-gray-600" x-text="hit.lead && hit.lead.length > 240 ? hit.lead.slice(0, 240) + '…' : (hit.lead || '')"></span>
+									<span class="col-span-2 text-right"><span class="inline-block border border-black px-6 py-2 text-md leading-[1.2] font-bold" x-text="hit.label"></span></span>
 								</span>
-								<span x-show="hit.lead" class="mt-4 block text-md text-gray-600 sm:text-lg lg:text-xl" x-text="hit.lead && hit.lead.length > 140 ? hit.lead.slice(0, 140) + '…' : hit.lead"></span>
-								<span x-show="hit.facts && hit.facts.length" class="mt-4 block text-md sm:text-lg lg:text-xl" x-text="(hit.facts || []).join(' · ')"></span>
 							</a>
 						</li>
 					</template>
 				</ul>
 
-				<a x-show="hits.length" :href="resultsFor(query)" class="mt-8 inline-flex flex-col items-start hover:text-teal">
+				<a x-show="hits.length" :href="resultsFor(query)" class="mt-32 inline-flex flex-col items-start hover:text-teal lg:mt-48">
 					<span>Alle Ergebnisse für «<span x-text="query.trim()"></span>» anzeigen</span>
 					<x-icon.arrow-right class="mt-8" />
 				</a>
