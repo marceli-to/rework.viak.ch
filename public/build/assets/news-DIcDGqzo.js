@@ -1,1 +1,0 @@
-import{t as e}from"./client-r9xZ8uQl.js";var t=()=>e.get(`/admin/news`).then(e=>e.data.data),n=t=>e.get(`/admin/news/${t}`).then(e=>e.data.data),r=(t,n)=>(t?e.put(`/admin/news/${t}`,n):e.post(`/admin/news`,n)).then(e=>e.data.data),i=t=>e.post(`/admin/news/order`,{news:t}),a=t=>e.delete(`/admin/news/${t}`);export{i as a,r as i,n,t as r,a as t};

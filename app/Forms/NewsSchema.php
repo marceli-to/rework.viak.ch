@@ -21,7 +21,8 @@ final class NewsSchema extends Schema
 			Field::textarea('text')->label('Text')->rules(['max:300'])->with(['rows' => 2]),
 			Field::select('link', fn () => NewsLink::options())->label('Link')
 				->with(['placeholder' => 'Kein Link', 'hint' => 'Wohin der Pfeil führt. Ist die Seite nicht auf der Website, erscheint die News ohne Pfeil.']),
-			Field::checkbox('publish')->label('Publizieren'),
+			// `spaced`: a field's space below it, with no hint to bring it (Marcel, 2026-11-17).
+			Field::checkbox('publish')->label('Publizieren')->with(['spaced' => true]),
 
 			Field::section('Bild', [Field::custom('images')->with(['owner' => 'news'])]),
 		];

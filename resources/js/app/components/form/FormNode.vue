@@ -123,9 +123,11 @@ const add = () => rows.value.push(JSON.parse(JSON.stringify(props.field.blank)))
 	<CheckboxGroup v-else-if="field.type === 'checkboxes'" v-model="value" :label="field.label" :required="field.required" :options="field.options" :columns="field.columns" :strong="field.strong" :hint="field.hint" :hide-label="field.legend === false" :error="error" />
 	<!-- The space under it a text field leaves (`Field.vue`): one per row, the
 	     next checkbox and *Speichern* sat on its hint (Marcel, 2026-11-12). -->
-	<div v-else-if="field.type === 'checkbox' && field.hint" class="mb-16 lg:mb-32">
+	<!-- `spaced`: the same space without a hint, for a checkbox standing alone
+	     before a section (the news form's *Publizieren*); in a row it stays bare. -->
+	<div v-else-if="field.type === 'checkbox' && (field.hint || field.spaced)" class="mb-16 lg:mb-32">
 		<Checkbox v-model="value">{{ field.label }}</Checkbox>
-		<div class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
+		<div v-if="field.hint" class="pt-8 text-md text-gray-600 lg:text-lg">{{ field.hint }}</div>
 	</div>
 	<Checkbox v-else-if="field.type === 'checkbox'" v-model="value">{{ field.label }}</Checkbox>
 	<OfferPicker v-else-if="field.type === 'offers'" v-model="value" :label="field.label" :options="field.options" :hint="field.hint" :flat="field.flat" :error="error" />
