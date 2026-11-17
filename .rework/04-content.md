@@ -690,6 +690,7 @@ start date short, *Anmelden*).
   stored as `software:{uuid}` / `course:{uuid}` / `page:{name}` and resolved
   when drawn. A page off the site gives no arrow, and the list says so.
 - **On the homepage** (`landing/_news`): from `lg` the dates in six columns,
-  *Aktuell* in the other six with the two items side by side (picture 3:2,
-  title bold, text grey, the arrow); either alone takes the width; no news,
+  *Aktuell* in the other six, **one item per row on a black rule** as the
+  dates are (Marcel, same day; first built two side by side): the picture
+  small on the left when there is one, title bold, text grey, the arrow; either alone takes the width; no news,
   no box. The whole item is the link.

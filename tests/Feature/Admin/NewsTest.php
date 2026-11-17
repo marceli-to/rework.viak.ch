@@ -84,8 +84,8 @@ it('puts the first two published beside the course dates, an arrow only where it
 		->getContent();
 
 	// The first is a link to its page; the second, with none, is not.
-	expect($html)->toMatch('~<a\s+href="/de/kontakt"\s+class="group flex flex-col">.*?Erste News~s')
-		->and($html)->toMatch('~<div\s+class="group flex flex-col">\s*<h3[^>]*>Zweite News~s');
+	expect($html)->toMatch('~<a\s+href="/de/kontakt"\s+class="group flex[^"]*">.*?Erste News~s')
+		->and($html)->toMatch('~<div\s+class="group flex[^"]*">\s*<span class="block min-w-0">\s*<span[^>]*>Zweite News~s');
 });
 
 it('leaves the box out when there is no news', function () {
