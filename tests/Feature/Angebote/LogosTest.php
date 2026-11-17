@@ -71,8 +71,19 @@ it('shows the logo on the tiles, the page and in the search, and nothing without
 	$rhino->update(['logo' => 'rhinoceros-abc.png']);
 	onSiteAngebot('Lands Design');
 
-	$this->get('/de/angebote')->assertSee('/storage/logos/rhinoceros-abc.png', false);
-	$this->get('/de/angebote/rhinoceros')->assertSee('/storage/logos/rhinoceros-abc.png', false);
-	$this->get('/de/angebote/software/rhinoceros')->assertSee('/storage/logos/rhinoceros-abc.png', false);
-	$this->get('/de/angebote/lands-design')->assertOk()->assertDontSee('/storage/logos/', false);
+	$this->get('/de/angebote')->assertSee('/logos/rhinoceros-abc.png', false);
+	$this->get('/de/angebote/rhinoceros')->assertSee('/logos/rhinoceros-abc.png', false);
+	$this->get('/de/angebote/software/rhinoceros')->assertSee('/logos/rhinoceros-abc.png', false);
+	$this->get('/de/angebote/lands-design')->assertOk()->assertDontSee('/logos/', false);
+});
+
+/** Through the app, not `/storage/` (staging's nginx refuses the link, 2026-11-17). */
+it('serves a logo as stored, kept a year, and nothing else from the disk', function () {
+	Storage::disk('public')->put('logos/rhinoceros-abc.png', 'PNG');
+	Storage::disk('public')->put('uploads/secret.png', 'X');
+
+	$this->get('/logos/rhinoceros-abc.png')->assertOk()
+		->assertHeader('Cache-Control', 'immutable, max-age=31536000, public');
+	$this->get('/logos/nope.png')->assertNotFound();
+	$this->get('/logos/..%2Fuploads%2Fsecret.png')->assertNotFound();
 });

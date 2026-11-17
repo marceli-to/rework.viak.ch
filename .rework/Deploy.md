@@ -148,8 +148,10 @@ courses off Photoshop, the second gives them categories, the third texts.
 (`software.logo`, and `logo` on the search's rows), **then `php artisan
 catalogue:logos`** (`--dry-run` first): Oliver's 31 logos from
 `database/data/logos/` onto the public disk (`storage/app/public/logos`),
-served at `/storage/logos/…` through the `storage` link that already serves
-the images. Rerunnable; an Angebot with a logo keeps it unless `--force`.
+served at `/logos/…` through the app ([[LogoController]]). **Not through the
+`storage` link**: on staging nginx answers every `/storage/…` path with 403
+(found 2026-11-17, the logos and the `/storage/uploads/` Open Graph images
+alike), presumably Plesk's `disable_symlinks if_not_owner`. Rerunnable; an Angebot with a logo keeps it unless `--force`.
 Then `search:rebuild` (update line) so the search rows carry them.
 
 **The same pull brings the homepage news** (`news` table, in the migrate

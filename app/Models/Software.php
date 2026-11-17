@@ -189,14 +189,15 @@ class Software extends Model
 	public const LOGOS = 'logos';
 
 	/**
-	 * **Its logo**, as a path the site serves (`/storage/logos/…`), or null:
-	 * no logo, and nothing stands in for one (Marcel, 2026-11-17). A file on
-	 * the public disk, not a [[Media]] row: the logo keeps its transparent
-	 * ground and its exact shape ([[14-angebote]] *Logos*).
+	 * **Its logo**, as a path the site serves (`/logos/…`, [[LogoController]]),
+	 * or null: no logo, and nothing stands in for one (Marcel, 2026-11-17). A
+	 * file on the public disk, not a [[Media]] row: the logo keeps its
+	 * transparent ground and its exact shape ([[14-angebote]] *Logos*). Not
+	 * the disk's `/storage/` address, which staging's nginx refuses.
 	 */
 	public function logoUrl(): ?string
 	{
-		return $this->logo ? '/storage/'.self::LOGOS.'/'.$this->logo : null;
+		return $this->logo ? '/'.self::LOGOS.'/'.$this->logo : null;
 	}
 
 	/** Takes a new logo file, or none, and deletes the one it replaces. */

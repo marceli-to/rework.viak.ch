@@ -7,6 +7,7 @@ use App\Http\Controllers\Dev\FakeCheckoutController;
 use App\Http\Controllers\Dev\MailPreviewController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\LogoController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Site\AboutController;
 use App\Http\Controllers\Site\CheckoutController;
@@ -78,6 +79,11 @@ Route::get('/llms.txt', LlmsController::class)->name('llms');
 Route::get('/img/{path}', [ImageController::class, 'show'])
 	->where('path', '.*')
 	->name('image');
+
+// An Angebot's logo, as stored ([[LogoController]]): through the app, as the images are.
+Route::get('/logos/{file}', [LogoController::class, 'show'])
+	->where('file', '[A-Za-z0-9._-]+')
+	->name('logo');
 
 /*
  * Everything the public sees, under its locale prefix.
