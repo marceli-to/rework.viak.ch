@@ -60,15 +60,16 @@ onMounted(async () => {
 			v-bind="handlers(index)"
 			wide
 		>
-			<div class="col-span-12 sm:col-span-4">{{ item.title }}</div>
-			<div class="col-span-12 pr-40 sm:col-span-8">
-				{{ item.link_label ?? 'Kein Link' }}
+			<!-- The title and its badges on the left, where to on the right (Marcel, 2026-11-17). -->
+			<div class="col-span-12 sm:col-span-4">
+				{{ item.title }}
 				<span class="mt-8 flex flex-wrap gap-8">
 					<Badge v-if="shown.includes(item.uuid)" variant="solid">auf der Startseite</Badge>
 					<Badge v-if="item.link && !item.url">Seite nicht auf der Website, ohne Pfeil</Badge>
 					<Badge v-if="!item.publish" variant="warning">nicht publiziert</Badge>
 				</span>
 			</div>
+			<div class="col-span-12 pr-40 max-sm:mt-8 sm:col-span-8">{{ item.link_label ?? 'Kein Link' }}</div>
 		</EditableListItem>
 	</section>
 </template>
