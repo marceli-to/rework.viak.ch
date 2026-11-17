@@ -164,3 +164,10 @@ panel's six, the page's sixty), one query per kind.
 
 The panel's label reads *Website durchsuchen*, the result page's field
 *Suchbegriff*: *Kurs oder Software* no longer covered it.
+
+**The result page full width (Marcel, 2026-11-17)**: it sat in the article's
+copy column beside an aside saying *Suche*. Now the field runs across the
+page, *21 Einträge gefunden für «rhino»* under it, and each hit is a row of
+the event list's grid (`card/event`): black rule, 4 / 5 / 3 of twelve, title
+bold with its badge under it, the lead grey, the dates and prices one a line
+on the right. Stacked on a phone. The header's panel keeps its own rows.

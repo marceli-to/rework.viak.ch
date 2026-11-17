@@ -1,17 +1,19 @@
 {{--
-	The site search's result page ([[15-search]]), `/de/suche?q=…`: the
-	article with *Suche* in the aside, the field at the top of the column and
-	how many it found, then every hit as one list, ranked, each with its
-	badge, as the header's panel draws them (Marcel, 2026-10-26).
+	The site search's result page ([[15-search]]), `/de/suche?q=…`: every hit
+	as one list, in the order the index ranked them, each saying what it is
+	with its badge (Marcel, 2026-10-26, rather than groups).
+
+	**Full width since 2026-11-17** (Marcel): it sat in the article's copy
+	column beside an aside saying *Suche*, eight columns for rows that carry a
+	title, a lead and a line of dates and prices. Now the field runs across
+	the page, and each hit is a row of the event list's grid
+	(`card/event.blade.php`): black rule, 12 columns, 16/40 gap
+	([[row.search-hit]]).
 
 	Kept out of search engines: a page of results is not a page.
 --}}
 <x-layout.site title="Suche" heading="Suche" noindex>
-	<x-layout.article class="mb-48 lg:mb-64">
-		<x-slot:aside>
-			<h1 class="hidden font-bold text-teal sm:block">Suche</h1>
-		</x-slot:aside>
-
+	<div class="mb-48 lg:mb-64">
 		<form method="get" action="{{ \App\Support\SiteUrl::search() }}" role="search">
 			<x-form.field name="q" label="Suchbegriff" type="search" :value="$query" autocomplete="off" autofocus class="[&::-webkit-search-cancel-button]:appearance-none" />
 		</form>
@@ -21,7 +23,7 @@
 		@elseif ($hits->isEmpty())
 			<x-ui.no-results>Nichts gefunden für «{{ $query }}». Vielleicht ein anderes Wort, oder ein Blick in die <a href="{{ \App\Support\SiteUrl::courses() }}" class="underline decoration-1 underline-offset-[3px] hover:no-underline">Kurse</a>?</x-ui.no-results>
 		@else
-			<p class="mb-16 text-md text-gray-600 sm:mb-24 sm:text-lg lg:text-xl">{{ $hits->count() === 1 ? '1 Eintrag' : $hits->count().' Einträge' }} gefunden</p>
+			<p class="text-md text-gray-600 sm:text-lg lg:text-xl">{{ $hits->count() === 1 ? '1 Eintrag' : $hits->count().' Einträge' }} gefunden für «{{ $query }}»</p>
 
 			<div>
 				@foreach ($hits as $hit)
@@ -29,5 +31,5 @@
 				@endforeach
 			</div>
 		@endif
-	</x-layout.article>
+	</div>
 </x-layout.site>
