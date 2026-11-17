@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SaveSoftwarePageRequest;
 use App\Http\Requests\Admin\SaveSoftwareRequest;
 use App\Http\Resources\Admin\SoftwareFormResource;
 use App\Models\Software;
@@ -51,6 +52,14 @@ class SoftwareController extends Controller
 			$software->hosts()->sync($request->hostIds());
 			Recommendations::sync($software, $request->validated('recommended_courses') ?? [], $request->validated('recommended_software') ?? []);
 		});
+
+		return new SoftwareFormResource($software->refresh()->load(['categories', 'hosts']));
+	}
+
+	/** One of its pages, from that page's own form ([[SaveSoftwarePageRequest]]). */
+	public function updatePage(SaveSoftwarePageRequest $request, Software $software, string $page): SoftwareFormResource
+	{
+		$software->update($request->pageAttributes());
 
 		return new SoftwareFormResource($software->refresh()->load(['categories', 'hosts']));
 	}

@@ -39,6 +39,9 @@ const props = defineProps({
 	singleton: { type: Boolean, default: false },
 	// Fields a new record starts with beyond the schema's defaults.
 	prefill: { type: Object, default: () => ({}) },
+	// The `meta` key holding the page this form fills: *Seite ansehen* above
+	// the fields, as a section's `preview` has it (a software's page forms).
+	preview: { type: String, default: null },
 });
 
 const { back, schema, form, meta, id, errors, saving, deleting, failed, creating, dirty, submit, destroy } = useResourceForm(props);
@@ -62,6 +65,10 @@ const title = (which) => (typeof props.titles[which] === 'function' ? props.titl
 			</template>
 
 			<fieldset class="min-w-0" :disabled="!creating && locked(meta)" :class="{ 'pointer-events-none opacity-40 select-none': !creating && locked(meta) }">
+				<p v-if="preview && meta[preview]" class="mb-24 text-md lg:text-lg">
+					<a :href="meta[preview]" target="_blank" rel="noopener" class="text-teal hover:text-black">Seite ansehen</a>
+					<span class="text-gray-600"> (gespeicherter Stand, nur wenn publiziert)</span>
+				</p>
 				<FormNode v-for="(field, index) in schema.fields" :key="field.name ?? `${field.type}-${index}`" :field="field" :model="form" :errors="errors" :record="id" :meta="meta" />
 
 				<p v-if="!creating && note(meta)" class="mb-32 text-md lg:text-lg">{{ note(meta) }}</p>

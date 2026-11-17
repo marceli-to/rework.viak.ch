@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin;
 
-use App\Http\Requests\Admin\SaveSoftwareRequest;
+use App\Forms\SoftwareAboutPageSchema;
+use App\Forms\SoftwareLicencesPageSchema;
+use App\Forms\SoftwareOfferPageSchema;
 use App\Models\Software;
 use App\Support\Recommendations;
 use App\Support\SiteUrl;
@@ -13,7 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * A software as the dashboard's form holds it, the shape
- * [[SaveSoftwareRequest]] takes back ([[05-licences]]).
+ * [[SaveSoftwareRequest]] and [[SaveSoftwarePageRequest]] take back ([[05-licences]]).
  *
  * @mixin Software
  */
@@ -42,20 +44,18 @@ class SoftwareFormResource extends JsonResource
 			'products_count' => $this->products()->count(),
 		];
 
-		foreach (SaveSoftwareRequest::RICH as $field) {
-			$form[$field] = $de($field);
+		// Every page's texts, so one resource serves the software form and the
+		// three page forms; each form takes its own fields and reads the rest as meta.
+		foreach ([SoftwareOfferPageSchema::class, SoftwareAboutPageSchema::class, SoftwareLicencesPageSchema::class] as $page) {
+			foreach (array_keys((new $page)->defaults()) as $field) {
+				$form[$field] = $de($field);
+			}
 		}
-		foreach (SaveSoftwareRequest::PLAIN as $field) {
-			$form[$field] = $de($field);
-		}
-		$form['licence_note'] = $de('licence_note');
 
 		$form['plugin'] = $this->plugin;
 		$form['categories'] = $this->categories->pluck('uuid')->all();
 		$form['hosts'] = $this->hosts->pluck('uuid')->all();
 		$form += Recommendations::form($this->resource);
-		$form['seo_description'] = $de('seo_description');
-		$form['seo_tags'] = $de('seo_tags');
 
 		return $form;
 	}

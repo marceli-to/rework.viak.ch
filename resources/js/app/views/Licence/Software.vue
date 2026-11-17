@@ -3,9 +3,9 @@ import { deleteSoftware, fetchSoftware, saveSoftware } from '@/api/software';
 import ResourceForm from '@/components/form/ResourceForm.vue';
 
 /**
- * *Software erfassen* / *bearbeiten* ([[05-licences]]): its page, drawn as a
- * course page is, so the form is the course form's ([[SoftwareSchema]]). The
- * pencil on a software's collapsible on the *Software* screen opens it.
+ * *Software erfassen* / *bearbeiten* ([[05-licences]]): the record
+ * ([[SoftwareSchema]]). The pencil on a software's collapsible on the
+ * *Software* screen opens it; its pages' rows below open [[SoftwarePage]].
  */
 const counted = (count, one, many) => `${count} ${count === 1 ? one : many}`;
 const blocked = (meta) => {

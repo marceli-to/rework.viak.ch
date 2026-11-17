@@ -108,8 +108,7 @@ it('keeps the Was ist page\'s subtitles as headings, saved from the dashboard an
 	$admin = User::factory()->admin()->create(['email_verified_at' => now()]);
 	$rhino = rhinoWithTexts();
 
-	$this->actingAs($admin)->putJson("/api/admin/software/{$rhino->uuid}", [
-		'title' => 'Rhinoceros', 'publish' => true,
+	$this->actingAs($admin)->putJson("/api/admin/software/{$rhino->uuid}/seite/was-ist", [
 		'full_description' => '<p>Ein CAD.</p><h2>Woher kommt Rhino?</h2><p>Aus Seattle.</p><h3>Heute</h3><h4>weg</h4>',
 	])->assertOk();
 

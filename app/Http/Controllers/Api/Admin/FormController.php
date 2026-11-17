@@ -17,6 +17,9 @@ use App\Forms\LocationSchema;
 use App\Forms\ProfileSchema;
 use App\Forms\ProjectSchema;
 use App\Forms\Schema;
+use App\Forms\SoftwareAboutPageSchema;
+use App\Forms\SoftwareLicencesPageSchema;
+use App\Forms\SoftwareOfferPageSchema;
 use App\Forms\SoftwareSchema;
 use App\Forms\TeamMemberSchema;
 use App\Forms\TermSchema;
@@ -48,6 +51,9 @@ class FormController extends Controller
 		'licence' => LicenceProductSchema::class,
 		'licence-variant' => LicenceVariantSchema::class,
 		'software' => SoftwareSchema::class,
+		'software-angebot' => SoftwareOfferPageSchema::class,
+		'software-was-ist' => SoftwareAboutPageSchema::class,
+		'software-lizenzen' => SoftwareLicencesPageSchema::class,
 		'company-course' => CompanyCourseSchema::class,
 	];
 

@@ -49,11 +49,11 @@ it('keeps the note for a licence VIAK does not sell', function () {
 	$form = $this->actingAs($this->admin)->getJson("/api/admin/software/{$this->software->uuid}")->json('data');
 	expect($form['licence_note'])->toBe('');
 
-	$this->putJson("/api/admin/software/{$this->software->uuid}", [...$form, 'licence_note' => ' Lizenz direkt bei Adobe '])
+	$this->putJson("/api/admin/software/{$this->software->uuid}/seite/angebot", [...$form, 'licence_note' => ' Lizenz direkt bei Adobe '])
 		->assertOk()
 		->assertJsonPath('data.licence_note', 'Lizenz direkt bei Adobe');
 
-	$this->putJson("/api/admin/software/{$this->software->uuid}", [...$form, 'licence_note' => ''])->assertOk();
+	$this->putJson("/api/admin/software/{$this->software->uuid}/seite/angebot", [...$form, 'licence_note' => ''])->assertOk();
 	expect($this->software->refresh()->getTranslation('licence_note', 'de', false))->toBeEmpty();
 });
 

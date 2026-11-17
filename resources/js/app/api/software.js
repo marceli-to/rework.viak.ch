@@ -5,3 +5,5 @@ export const fetchSoftware = (uuid) => client.get(`/admin/software/${uuid}`).the
 export const saveSoftware = (uuid, form) =>
 	(uuid ? client.put(`/admin/software/${uuid}`, form) : client.post('/admin/software', form)).then((r) => r.data.data);
 export const deleteSoftware = (uuid) => client.delete(`/admin/software/${uuid}`);
+/** One of its pages, from that page's own form: `angebot`, `was-ist`, `lizenzen`. */
+export const saveSoftwarePage = (page) => (uuid, form) => client.put(`/admin/software/${uuid}/seite/${page}`, form).then((r) => r.data.data);

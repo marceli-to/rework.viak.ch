@@ -7,26 +7,18 @@ namespace App\Http\Requests\Admin;
 use App\Forms\SoftwareSchema;
 use App\Models\Category;
 use App\Models\Software;
-use App\Support\EditorHtml;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * The dashboard's software form ([[05-licences]]), in the shape
  * [[SoftwareFormResource]] hands out, written as [[SaveCourseRequest]]
  * writes a course: `['de' => …]`, so any English stays where it is.
+ *
+ * The record only: its pages' texts are saved by [[SaveSoftwarePageRequest]]
+ * since 2026-11-17, and a save here leaves them as they are.
  */
 class SaveSoftwareRequest extends FormRequest
 {
-	/**
-	 * The editor's fields, cleaned before they are stored ([[EditorHtml]]).
-	 * *Subtitel* and *Weitere Informationen* left the form on 2026-11-09 and
-	 * are not written: what they hold stays.
-	 */
-	public const RICH = ['short_description', 'full_description', 'requirements'];
-
-	/** The Angebot page's plain texts (#70) and its licence page's (#71), trimmed, empty as null. */
-	public const PLAIN = ['audiences', 'intro', 'courses_intro', 'licences_intro', 'quote', 'licences_lead', 'licences_quote'];
-
 	public function authorize(): bool
 	{
 		return $this->user()?->isAdmin() ?? false;
@@ -52,27 +44,13 @@ class SaveSoftwareRequest extends FormRequest
 	public function softwareAttributes(): array
 	{
 		$data = $this->validated();
-		$de = fn (?string $value) => ['de' => blank($value) ? null : $value];
 
-		$attributes = [
+		return [
 			'title' => ['de' => $data['title']],
-			'licence_note' => $de(isset($data['licence_note']) ? trim($data['licence_note']) : null),
-			'seo_description' => $de($data['seo_description'] ?? null),
-			'seo_tags' => $de($data['seo_tags'] ?? null),
 			'publish' => (bool) ($data['publish'] ?? false),
 			'featured' => (bool) ($data['featured'] ?? false),
 			'plugin' => (bool) ($data['plugin'] ?? false),
 		];
-
-		foreach (self::RICH as $field) {
-			$attributes[$field] = $de(EditorHtml::sanitize($data[$field] ?? null));
-		}
-
-		foreach (self::PLAIN as $field) {
-			$attributes[$field] = $de(isset($data[$field]) ? trim($data[$field]) : null);
-		}
-
-		return $attributes;
 	}
 
 	/** @return array<int, int> *Läuft in*, never itself */

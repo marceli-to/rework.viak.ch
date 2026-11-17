@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Requests\Admin\SaveSoftwarePageRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -148,6 +149,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::post('software', [Admin\SoftwareController::class, 'store']);
 		Route::get('software/{software}', [Admin\SoftwareController::class, 'show']);
 		Route::put('software/{software}', [Admin\SoftwareController::class, 'update']);
+		Route::put('software/{software}/seite/{page}', [Admin\SoftwareController::class, 'updatePage'])->whereIn('page', array_keys(SaveSoftwarePageRequest::PAGES));
 		Route::delete('software/{software}', [Admin\SoftwareController::class, 'destroy']);
 		Route::get('software/{software}/media', [Admin\MediaController::class, 'softwareIndex']);
 		Route::post('software/{software}/media', [Admin\MediaController::class, 'softwareStore']);

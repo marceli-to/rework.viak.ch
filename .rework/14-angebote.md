@@ -619,6 +619,23 @@ a save does not touch them, and the page still shows what they hold. A
 if the answer is yes. Tabs and a screen per page were weighed and left: the
 dashboard has no tabs, and one record wants one save.
 
+**Revised 2026-11-17 (Marcel): a screen per page after all.** Three shut
+sections inside the software form were still one screen doing four jobs. Each
+page is now **a row under the software in the *Software* list**, above its
+products, with a pencil to a form of its own
+(`/dashboard/software/liste/software/{uuid}/seite/{angebot|was-ist|lizenzen}`):
+
+- **Seite «Angebot»**: its texts, then **Bilder** and **Metatags + SEO**, which
+  belong to that page and moved with it;
+- **Seite «Was ist …?»**: the one text;
+- **Seite «Lizenzen»**: its row only while the software has products.
+
+Rows rather than buttons: everything else on that screen is a row with a
+pencil. Each form opens with *Seite ansehen*, saves only its own fields
+(`PUT software/{software}/seite/{page}`, `SaveSoftwarePageRequest`), and goes
+back to the list with the software open. The software form keeps Titel,
+Einstellungen and Empfehlungen; a save there no longer touches a page's text.
+
 ### The texts for every Angebot (2026-11-10)
 
 Rhino was the only page with the client's texts; the rest of the docs went in

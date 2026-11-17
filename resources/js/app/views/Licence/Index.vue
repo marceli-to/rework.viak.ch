@@ -22,7 +22,10 @@ import SearchField from '@/components/list/SearchField.vue';
  *
  * - **One collapsible per software**, by name, dimmed while not published,
  *   with its products counted; the **pencil** on it opens the software's
- *   page form ([[SoftwareSchema]]), as a course's opens the course.
+ *   form ([[SoftwareSchema]]), as a course's opens the course.
+ * - First inside, **its pages**, a row each with a pencil to that page's own
+ *   form ([[SoftwarePage]], Marcel, 2026-11-17): *Angebot*, *Was ist …?*,
+ *   and *Lizenzen* while it has products, as the page needs them.
  * - Inside, its **products**: name, maker, how many licences, the cheapest
  *   price net, *Nur manuell* when none is on the site. The **`+`** under them
  *   adds a product already filed under this software. A software only
@@ -66,6 +69,13 @@ const software = computed(() =>
 );
 
 const price = (value) => Number(value).toFixed(2);
+
+/** Its pages' rows; *Lizenzen* only with products, searched or not. */
+const pages = (entry) => [
+	{ page: 'angebot', label: 'Seite «Angebot»' },
+	{ page: 'was-ist', label: 'Seite «Was ist …?»' },
+	...(items.value.some((item) => item.software === entry.uuid) ? [{ page: 'lizenzen', label: 'Seite «Lizenzen»' }] : []),
+];
 
 onMounted(async () => {
 	try {
@@ -112,6 +122,14 @@ onMounted(async () => {
 					<!-- Room under the software's pencil before the first product's rule,
 					     which otherwise ran into it (Marcel, 2026-11-09). -->
 					<div aria-hidden="true" class="h-12 sm:h-16" />
+
+					<EditableListItem
+						v-for="row in pages(entry)"
+						:key="row.page"
+						:edit="{ name: 'licence.software.page', params: { uuid: entry.uuid, page: row.page } }"
+					>
+						{{ row.label }}
+					</EditableListItem>
 
 					<EditableListItem
 						v-for="item in entry.products"

@@ -201,6 +201,13 @@ const routes = [
 		component: () => import('@/views/Licence/Software.vue'),
 		meta: { title: 'Software bearbeiten' },
 	},
+	// Its pages, each a form of its own and a row under it in the list (Marcel, 2026-11-17).
+	{
+		path: '/dashboard/software/liste/software/:uuid/seite/:page(angebot|was-ist|lizenzen)',
+		name: 'licence.software.page',
+		component: () => import('@/views/Licence/SoftwarePage.vue'),
+		meta: { title: 'Seite bearbeiten' },
+	},
 	{
 		path: '/dashboard/software/erfassen',
 		name: 'licence.create',

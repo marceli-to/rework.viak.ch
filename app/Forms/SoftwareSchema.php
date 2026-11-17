@@ -12,11 +12,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * *Software erfassen* / *bearbeiten* ([[05-licences]]): its page, drawn as a
- * course page is, so the fields are the course form's, in its order and with
- * its labels (Marcel, 2026-10-08). What a course has and a software does not:
- * number, fee, facts, the PDF text, levels, languages, videos, and the
- * second, unlabelled column of *Weitere Informationen* (Marcel, 2026-10-08).
+ * *Software erfassen* / *bearbeiten* ([[05-licences]]): the record, what it
+ * is and what it recommends. Its pages' texts were sections here until
+ * 2026-11-17 and are forms of their own now (see below).
  */
 final class SoftwareSchema extends Schema
 {
@@ -62,43 +60,12 @@ final class SoftwareSchema extends Schema
 			])->with(['open' => true]),
 
 			/*
-			 * **One section per page**, each with that page's texts in its order
-			 * and a link to the page as saved (`preview`) (Marcel, 2026-11-09,
-			 * [[14-angebote]] *The form, by page*). Only the title stands above:
-			 * it names the record everywhere, not one page.
-			 * *Subtitel* and *Weitere Informationen* left the form: the client's
-			 * texts have neither. Their columns stay, and the page still shows
-			 * what they hold.
+			 * **The pages are forms of their own** (Marcel, 2026-11-17), each a
+			 * row under the software in the *Software* list: [[SoftwareOfferPageSchema]]
+			 * (with Bilder and SEO), [[SoftwareAboutPageSchema]],
+			 * [[SoftwareLicencesPageSchema]]. Three shut sections here were one
+			 * screen doing four jobs. What stays is the record itself.
 			 */
-			Field::section('Seite «Angebot»', [
-				Field::richtext('short_description')->label('Kurzbeschrieb'),
-				Field::textarea('audiences')->label('Zielgruppen')->rules(['max:1000'])
-					->with(['rows' => 2, 'hint' => 'Eine Zeile, zum Beispiel «Architektur- & Ingenieurbüros, Industrial Design».']),
-				Field::textarea('intro')->label('Einleitung')->rules(['max:1000'])
-					->with(['rows' => 2, 'hint' => 'Ein Satz, der zu Kurse und Lizenzen überleitet.']),
-				Field::textarea('courses_intro')->label('Einleitung Kurse')->rules(['max:1000'])->with(['rows' => 2]),
-				Field::textarea('licences_intro')->label('Einleitung Lizenzen')->rules(['max:1000'])->with(['rows' => 2]),
-				// Where the licence price would stand, when VIAK does not sell it ([[14-angebote]]).
-				Field::text('licence_note')->label('Lizenz-Hinweis')->rules(['max:100'])
-					->with(['hint' => 'Nur wenn wir die Lizenz nicht selbst verkaufen: steht statt des Preises, zum Beispiel «Lizenz direkt bei Adobe».']),
-				Field::textarea('quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['preview' => 'url']),
-
-			// Its own page since #70 (the client, 2026-11-06), linked from the Angebot's.
-			Field::section('Seite «Was ist …?»', [
-				Field::richtext('full_description')
-					->with(['headings' => true, 'hint' => 'Leer: keine Seite und kein Link.']),
-			])->with(['preview' => 'about_url']),
-
-			// Its licence page since #71 (the client, 2026-11-12): one page per
-			// Angebot, so only for one with licence products (`whenMeta`).
-			Field::section('Seite «Lizenzen»', [
-				Field::textarea('licences_lead')->label('Einleitung')->rules(['max:1000'])
-					->with(['rows' => 2, 'hint' => 'Unter dem Titel «… Lizenzen», z.B. «Corona Lizenzen für Einzelpersonen und Teams».']),
-				Field::richtext('requirements')->label('Systemvoraussetzungen')
-					->with(['hint' => 'Einmal für alle Lizenzen dieses Angebots.']),
-				Field::textarea('licences_quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
-			])->with(['preview' => 'licences_url', 'whenMeta' => 'products_count']),
 
 			// Both pickers in one section, flat (Marcel, 2026-11-12): two shut
 			// sections for one idea was one too many.
@@ -107,13 +74,6 @@ final class SoftwareSchema extends Schema
 				fn (Field $picker) => $picker->with(['flat' => true]),
 				Recommendations::fields('Erscheinen unter «Das könnte dich auch interessieren» auf der Angebotsseite und im Warenkorb, sobald eine Lizenz dieses Angebots darin liegt.'),
 			))->with(['count' => ['recommended_courses', 'recommended_software']]),
-
-			Field::section('Bilder', [Field::custom('images')->with(['owner' => 'software'])]),
-
-			Field::section('Metatags + SEO', [
-				Field::textarea('seo_description')->label('SEO - Beschreibung')->rules(['max:1000']),
-				Field::textarea('seo_tags')->label('SEO - Keywords')->rules(['max:1000']),
-			]),
 		];
 	}
 
@@ -121,12 +81,8 @@ final class SoftwareSchema extends Schema
 	{
 		return [
 			'title' => '', 'publish' => false, 'featured' => false,
-			'short_description' => '', 'full_description' => '', 'licence_note' => '',
-			'audiences' => '', 'intro' => '', 'courses_intro' => '', 'licences_intro' => '', 'quote' => '',
-			'licences_lead' => '', 'requirements' => '', 'licences_quote' => '',
 			'plugin' => false, 'categories' => [], 'hosts' => [],
 			'recommended_courses' => [], 'recommended_software' => [],
-			'seo_description' => '', 'seo_tags' => '',
 		];
 	}
 }

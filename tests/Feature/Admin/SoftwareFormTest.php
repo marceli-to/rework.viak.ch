@@ -52,18 +52,18 @@ it('makes the slug once, from the title, through any door', function () {
 		->assertJsonPath('data.url', '/de/angebote/v-ray');
 });
 
-it('saves the copy, the categories and the SEO, German only', function () {
+it('saves the record and its categories, and leaves its pages\' texts alone', function () {
 	$software = Software::create([
 		'title' => ['de' => 'Rhinoceros', 'en' => 'Rhinoceros'], 'subtitle' => ['de' => 'Alt', 'en' => 'Freeform'],
-		'information' => ['de' => '<p>Info</p>'],
+		'information' => ['de' => '<p>Info</p>'], 'full_description' => ['de' => '<p>Bleibt.</p>'],
+		'seo_description' => ['de' => 'Bleibt auch'],
 	]);
 	$category = Category::create(['title' => ['de' => 'Architektur'], 'order' => 1, 'publish' => true]);
 
 	$this->actingAs($this->admin)
 		->putJson("/api/admin/software/{$software->uuid}", softwarePayload(['categories' => [$category->uuid]]))
 		->assertOk()
-		->assertJsonPath('data.categories', [$category->uuid])
-		->assertJsonPath('data.seo_description', 'Rhino-Lizenzen und Kurse');
+		->assertJsonPath('data.categories', [$category->uuid]);
 
 	$software->refresh();
 	expect($software->featured)->toBeTrue()
@@ -71,7 +71,40 @@ it('saves the copy, the categories and the SEO, German only', function () {
 		// Off the form since 2026-11-09: a save leaves what it holds.
 		->and($software->getTranslation('subtitle', 'de'))->toBe('Alt')
 		->and($software->getTranslation('information', 'de'))->toBe('<p>Info</p>')
-		->and($software->getTranslation('full_description', 'de'))->toBe('<p>Präzision statt Polygone.</p>');
+		// The pages have their own forms since 2026-11-17: sent here, ignored.
+		->and($software->getTranslation('full_description', 'de'))->toBe('<p>Bleibt.</p>')
+		->and($software->getTranslation('seo_description', 'de'))->toBe('Bleibt auch');
+});
+
+it('saves the Angebot page with its SEO, and only that page', function () {
+	$software = Software::create(['title' => ['de' => 'Rhinoceros'], 'full_description' => ['de' => '<p>Bleibt.</p>']]);
+
+	$this->actingAs($this->admin)->putJson("/api/admin/software/{$software->uuid}/seite/angebot", [
+		'short_description' => '<p>Rhino ist das Werkzeug.</p>',
+		'seo_description' => 'Rhino-Lizenzen und Kurse',
+		'full_description' => '<p>Nicht von hier.</p>',
+	])->assertOk()
+		->assertJsonPath('data.seo_description', 'Rhino-Lizenzen und Kurse')
+		->assertJsonPath('data.short_description', '<p>Rhino ist das Werkzeug.</p>');
+
+	expect($software->refresh()->getTranslation('full_description', 'de'))->toBe('<p>Bleibt.</p>');
+});
+
+it('saves the licence page and the Was ist page from their own forms', function () {
+	$software = Software::create(['title' => ['de' => 'Rhinoceros']]);
+
+	$this->actingAs($this->admin)->putJson("/api/admin/software/{$software->uuid}/seite/lizenzen", [
+		'licences_lead' => ' Rhino Lizenzen für Teams ', 'requirements' => '<p>Windows</p>', 'licences_quote' => '',
+	])->assertOk()->assertJsonPath('data.licences_lead', 'Rhino Lizenzen für Teams');
+
+	$this->putJson("/api/admin/software/{$software->uuid}/seite/was-ist", ['full_description' => '<p>Ein CAD.</p>'])
+		->assertOk()
+		->assertJsonPath('data.about_url', '/de/angebote/rhinoceros/was-ist-rhinoceros')
+		->assertJsonPath('data.licences_lead', 'Rhino Lizenzen für Teams');
+
+	$this->putJson("/api/admin/software/{$software->uuid}/seite/impressum", [])->assertNotFound();
+	$this->actingAs(User::factory()->expert()->create())
+		->putJson("/api/admin/software/{$software->uuid}/seite/was-ist", ['full_description' => ''])->assertForbidden();
 });
 
 it('refuses a name another software has, whatever its case', function () {
@@ -95,17 +128,21 @@ it('deletes a software only while nothing uses it', function () {
 	expect(Software::find($free->id))->toBeNull();
 });
 
-it('hands out the software form', function () {
+it('hands out the software form and its pages\' forms', function () {
 	$this->actingAs($this->admin)->getJson('/api/admin/forms/software')
 		->assertOk()
 		->assertJsonPath('data.fields.0.name', 'title');
+
+	$this->getJson('/api/admin/forms/software-angebot')->assertOk()->assertJsonPath('data.fields.0.name', 'short_description');
+	$this->getJson('/api/admin/forms/software-was-ist')->assertOk()->assertJsonPath('data.defaults', ['full_description' => '']);
+	$this->getJson('/api/admin/forms/software-lizenzen')->assertOk()->assertJsonPath('data.fields.0.name', 'licences_lead');
 });
 
 /** The Angebot page's new texts (#70, [[14-angebote]] *The website texts*). */
-it('saves the new texts in the software form, German only, empty as nothing', function () {
-	$software = Software::create(['title' => ['de' => 'Rhinoceros'], 'quote' => ['en' => 'English stays']]);
+it('saves the new texts in the Angebot page form, German only, empty as nothing', function () {
+	$software = Software::create(['title' => ['de' => 'Rhinoceros'], 'full_description' => ['de' => '<p>Präzision.</p>'], 'quote' => ['en' => 'English stays']]);
 
-	$this->actingAs($this->admin)->putJson("/api/admin/software/{$software->uuid}", softwarePayload([
+	$this->actingAs($this->admin)->putJson("/api/admin/software/{$software->uuid}/seite/angebot", softwarePayload([
 		'audiences' => '  Architektur- & Ingenieurbüros, Yachtdesign ',
 		'intro' => 'Die Visualisierungs-Akademie bietet Schulungen und Lizenzen an:',
 		'courses_intro' => 'Lerne Rhino in der Praxis.',
@@ -114,7 +151,7 @@ it('saves the new texts in the software form, German only, empty as nothing', fu
 	]))->assertOk()
 		->assertJsonPath('data.audiences', 'Architektur- & Ingenieurbüros, Yachtdesign')
 		->assertJsonPath('data.licences_intro', '')
-		// *Seite ansehen* in the «Was ist …?» section, once there is a text.
+		// *Seite ansehen* in the «Was ist …?» form, once there is a text.
 		->assertJsonPath('data.about_url', '/de/angebote/rhinoceros/was-ist-rhinoceros');
 
 	$software->refresh();
