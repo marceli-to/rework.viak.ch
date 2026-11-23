@@ -2,13 +2,9 @@
 <x-layout.site title="Home" :image="$og ? '/storage/uploads/'.$og->file : null">
 	@include('site.landing._intro')
 
-	{{-- The Vorhaben tiles carry the call band beside them; without tiles
-	     the band stands alone. --}}
-	@if ($projects->isNotEmpty())
-		@include('site.landing._projects')
-	@else
-		@include('site.landing._call')
-	@endif
+	{{-- The Vorhaben boxes are in the intro now (Oliver, Roxy 2026-11-12),
+	     so the call band stands alone under it. --}}
+	@include('site.landing._call')
 
 	{{-- The course dates and, beside them, the news (Oliver, Roxy 2026-11-12):
 	     half and half from `lg`, the news two side by side; under `lg` the

@@ -695,3 +695,30 @@ start date short, *Anmelden*).
   dates are (Marcel, same day; first built two side by side): the picture
   small on the left when there is one, title bold, text grey, the arrow; either alone takes the width; no news,
   no box. The whole item is the link.
+
+## The homepage top (Oliver in Roxy 2026-11-12, built 2026-11-23)
+
+Oliver's three Roxy entries of 2026-11-12 asked for a new top; his mail of
+2026-11-20 settled the boxes (*the Vorhaben stay*, remapped onto the five
+categories, texts his). Built in `site/landing/_intro.blade.php`:
+
+- **Legacy's teal intro and its slider are gone** ("Ihre Zukunft ist
+  visuell", the copy, Swiper). `x-media.slider` and `slider.js` went with them;
+  the testimonial slider keeps its own.
+- **One picture** at the content width, darkened, standing in for the video
+  that is still to be recorded: the first non-Open-Graph image of
+  *Seiteninhalte → Startseite*. Black without one. When the video exists it
+  takes the picture's place.
+- **Over it**: *Kurse und Software für digitales Gestalten* (Kurse and
+  Software link to their lists), *Was möchtest du machen?*, the published
+  Vorhaben as small white boxes (two across, three from lg), *Alle Kurse und
+  Software von A bis Z* to `/de/angebote`.
+- **No icons** (Marcel, 2026-11-23, against Oliver's screendesign of
+  2026-11-20): they are decoration that says nothing the title does not.
+- **The call band** stands alone under it again, full width; its `beside`
+  variant went with the old tiles.
+- **The logo is 20% smaller**, everywhere, as one header serves every page.
+- **Box titles and lines are data**: Oliver renames the Vorhaben and rewrites
+  their teasers in the dashboard to match the categories (Roxy: *Architektur &
+  Interior Design: V-Ray, Enscape, Twinmotion* …). Nothing links a Vorhaben to a
+  category in code.

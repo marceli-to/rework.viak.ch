@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * The homepage's legacy parts ([[HomeController]]): the intro with its slider
- * (legacy's home hero, on `Page::for('home')`) and the footer with the
+ * The homepage's top and foot ([[HomeController]]): the intro over the first
+ * of the home hero images (`Page::for('home')`) and legacy's footer with the
  * newsletter form, which subscribes to Mailchimp in production only (#13,
  * `Accounts/NewsletterTest.php`).
  */
@@ -21,35 +21,33 @@ beforeEach(function () {
 	RateLimiter::clear('newsletter:127.0.0.1');
 });
 
-it('opens with legacy’s intro', function () {
+it('opens with the headline over the picture, Kurse and Software linked', function () {
 	$this->get('/de')
 		->assertOk()
-		->assertSeeInOrder(['Ihre Zukunft ist visuell', 'Visualisieren ist die Schlüsselkompetenz der Zukunft.', 'Wir sind führend, wenn es um Visualisierung geht.']);
+		->assertSeeInOrder(['href="/de/angebote/kurse"', 'Kurse', 'und', 'href="/de/angebote/software"', 'Software', 'für digitales Gestalten', 'href="/de/angebote"', 'Alle Kurse und Software von A bis Z'], false)
+		->assertDontSee('Ihre Zukunft ist visuell');
 });
 
-it('slides the homepage’s images in their order, and keeps the Open Graph one for the head', function () {
+it('puts the first of the homepage’s images behind it, and keeps the Open Graph one for the head', function () {
 	$page = Page::for('home');
 	Media::factory()->for($page, 'mediable')->create(['file' => 'zweites.jpg', 'sort_order' => 2]);
 	Media::factory()->for($page, 'mediable')->create(['file' => 'erstes.jpg', 'sort_order' => 1]);
-	Media::factory()->for($page, 'mediable')->create(['file' => 'teilen.jpg', 'is_og' => true]);
+	Media::factory()->for($page, 'mediable')->create(['file' => 'teilen.jpg', 'is_og' => true, 'sort_order' => 0]);
 
 	$html = $this->get('/de')
-		->assertSee('class="swiper-wrapper"', false)
 		->assertSee('<meta property="og:image" content="https://'.config('site.canonical_host').'/storage/uploads/teilen.jpg">', false)
 		->getContent();
 
-	$carousel = Str::between($html, 'class="swiper-wrapper"', 'Vorheriges Bild');
+	$intro = Str::before(Str::after($html, '<main'), 'für digitales Gestalten');
 
-	expect($carousel)->toMatch('/erstes\.jpg.*zweites\.jpg/s')
-		->not->toContain('teilen.jpg');
+	expect($intro)->toContain('erstes.jpg')
+		->not->toContain('zweites.jpg')
+		->not->toContain('teilen.jpg')
+		->and($html)->not->toContain('swiper-wrapper');
 });
 
-it('draws one image without the slider, and none at all without images', function () {
-	$this->get('/de')->assertDontSee('class="swiper-wrapper"', false);
-
-	Media::factory()->for(Page::for('home'), 'mediable')->create(['file' => 'einzig.jpg']);
-
-	$this->get('/de')->assertSee('einzig.jpg')->assertDontSee('class="swiper-wrapper"', false);
+it('draws the intro on black without images', function () {
+	$this->get('/de')->assertOk()->assertSee('für digitales Gestalten')->assertDontSee('<picture', false);
 });
 
 it('has legacy’s footer, on the homepage only', function () {
