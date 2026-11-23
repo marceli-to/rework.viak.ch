@@ -934,6 +934,4 @@ New from him, not yet built or answered:
 - **No *Plugin* filter** on the lists.
 - **The Angebot pages feel cluttered** (Rhino above all): he would rather
   separate sections by background (grey, turquoise) as the homepage does, with
-  fewer or no lines and maybe no accordions. Details to follow in Roxy; he
-  wants Roxy access again.
-- A meeting to go through the Projektstand: Monday 2026-11-23 or Wednesday.
+  fewer or no lines and maybe no accordions. Details to follow in Roxy.
