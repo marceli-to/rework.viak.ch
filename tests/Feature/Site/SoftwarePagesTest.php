@@ -63,6 +63,21 @@ it('filters by what the licences say, a both-ways licence counting as both', fun
 	expect($this->get('/de/angebote/software?licence_type=perpetual')->viewData('filter')->matching())->toBe([$either->uuid]);
 });
 
+it('filters by Software or Plugin, the tile’s own tag', function () {
+	$rhino = shopSoftware('Rhinoceros')->products()->first();
+	$bongo = shopSoftware('Bongo');
+	$bongo->update(['plugin' => true]);
+	$bongo = $bongo->products()->first();
+
+	$page = $this->get('/de/angebote/software?kind=plugin')
+		->assertOk()
+		->assertSee('Software oder Plugin');
+
+	expect($page->viewData('filter')->matching())->toBe([$bongo->uuid])
+		->and($page->viewData('filter')->options()['kind'])->toBe(['software' => 'Software', 'plugin' => 'Plugin'])
+		->and($this->get('/de/angebote/software?kind=software')->viewData('filter')->matching())->toBe([$rhino->uuid]);
+});
+
 it('offers a maker and a category only where some product carries it', function () {
 	$rhino = shopSoftware('Rhinoceros');
 	$category = Category::create(['title' => ['de' => 'Architektur'], 'order' => 1, 'publish' => true]);

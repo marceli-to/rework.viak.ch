@@ -27,10 +27,14 @@ use Illuminate\Support\Collection;
 class LicenceFilter
 {
 	/** In the order the panel draws them: the categories as links, the rest as selects. */
-	public const ATTRIBUTES = ['category', 'manufacturer', 'licence_type', 'platform', 'access'];
+	public const ATTRIBUTES = ['category', 'kind', 'manufacturer', 'licence_type', 'platform', 'access'];
 
-	/** The selects, with what each says while nothing is chosen. */
-	public const SELECTS = ['manufacturer' => 'Hersteller', 'licence_type' => 'Lizenztyp', 'platform' => 'Plattform', 'access' => 'Nutzung'];
+	/**
+	 * The selects, with what each says while nothing is chosen. *Software
+	 * oder Plugin* first (Oliver, 2026-11-20: "dass ich nach Plugins filtern
+	 * kann"), the tile's own tag ([[LicenceProduct::kind]]).
+	 */
+	public const SELECTS = ['kind' => 'Software oder Plugin', 'manufacturer' => 'Hersteller', 'licence_type' => 'Lizenztyp', 'platform' => 'Plattform', 'access' => 'Nutzung'];
 
 	/** @var array<string, array<string, string[]>>|null */
 	private ?array $facets = null;
@@ -85,6 +89,7 @@ class LicenceFilter
 
 				return [$product->uuid => [
 					'category' => $product->categories->pluck('uuid')->all(),
+					'kind' => [$product->software?->plugin ? 'plugin' : 'software'],
 					'manufacturer' => array_values(array_filter([$product->manufacturer?->uuid])),
 					'licence_type' => $licences->map(fn (LicenceVariant $variant) => $variant->licence_type?->value)->filter()->unique()->values()->all(),
 					'platform' => $licences->flatMap(fn (LicenceVariant $variant) => $variant->platforms?->map->value ?? [])->unique()->values()->all(),
@@ -142,6 +147,8 @@ class LicenceFilter
 			'category' => $this->products->flatMap->categories->unique('id')->sortBy('order')
 				->mapWithKeys(fn ($category) => [$category->uuid => $category->getTranslation('title', $locale)])
 				->all(),
+			'kind' => collect(['software' => 'Software', 'plugin' => 'Plugin'])
+				->filter(fn (string $label, string $value) => in_array($value, $present('kind'), true))->all(),
 			'manufacturer' => $this->products->pluck('manufacturer')->filter()->unique('id')
 				->mapWithKeys(fn ($maker) => [$maker->uuid => $maker->getTranslation('title', $locale)])
 				->sort()->all(),

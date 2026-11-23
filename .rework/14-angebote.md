@@ -931,7 +931,9 @@ New from him, not yet built or answered:
 - **Systemvoraussetzungen not visible** on the Lizenzen page. Expected: the
   block draws only once VIAK fills the field, and all are still placeholders.
   He also read *Bitte im Dashboard ergänzen* as Roxy; it means the dashboard.
-- **No *Plugin* filter** on the lists.
+- **No *Plugin* filter** on the lists. **Built 2026-11-23**: a select
+  *Software oder Plugin* first among the Software list's selects
+  ([[LicenceFilter]], `?kind=plugin`), read off the tile's own tag.
 - **The Angebot pages feel cluttered** (Rhino above all): he would rather
   separate sections by background (grey, turquoise) as the homepage does, with
   fewer or no lines and maybe no accordions. Details to follow in Roxy.
