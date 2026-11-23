@@ -27,7 +27,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~1~~ | ~~Is the Bildung licence tier real?~~ — **answered 2026-10-08 with 36: no tier.** EDU licences are hidden variants VIAK enters by hand. See `05-licences.md` | — | — |
 | 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly. **Urgent** since 58 (2026-10-26): the customer may now choose invoice, so unpaid orders are normal |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
-| 4 | Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy | Client | Copy only |
+| ~~4~~ | ~~Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy~~ **Answered 2026-11-20 (Oliver): the six stay, remapped onto the five categories plus Teams & Unternehmen**; he renames them and rewrites their texts in the dashboard (on the Projektstand under *Inhalte*) | — | — |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
 | 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
 | ~~7~~ | ~~Do the historical invoice due dates matter?~~ **Settled 2026-11-17 (Marcel): ignore it.** No reconstruction; the 541 paid invoices come across with the `due_at` they hold | — | — |

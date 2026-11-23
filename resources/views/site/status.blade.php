@@ -81,11 +81,6 @@
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
 		],
 		[
-			'title' => 'Welche Vorhaben gibt es?',
-			'text' => 'Die Mockups zeigen sechs (Räume, Bilder, Objekte, Bewegtbild, KI, Teams), besprochen wurde nur Räume. Vorhaben werden im Dashboard angelegt; die Texte im Prototyp sind Platzhalter.',
-			'decides' => 'Nur Inhalte, keine Entwicklung.',
-		],
-		[
 			'title' => 'Englische Version',
 			'text' => 'Die Website ist deutsch, die Adressen behalten das /de/. Wird es je eine englische Version geben?',
 			'decides' => 'Nichts im Moment. Ein klares Nein würde einiges vereinfachen.',
@@ -96,7 +91,7 @@
 		['Angebotsseiten', 'Die Texte sind aus den Webseitentext-Dokumenten übernommen. Es fehlen die Bilder (alle Angebote ausser Rhinoceros) und die Texte für Lands Design und Rhino.io. Gepflegt im Dashboard unter Software.'],
 		['Lizenzen', 'Je Lizenz ein Hinweis unter dem Titel, wo es einen braucht (schreibt Oliver), und je Angebot die Systemvoraussetzungen. In den Dokumenten sind beide noch Platzhalter, auf der Website fehlen sie darum noch überall.'],
 		['Neue Kurse', 'ComfyUI, SketchUp & D5 Render, Figma Weave, Rendering-Finish mit Photoshop & KI und Enscape & Veras sind mit den Texten erfasst, aber nicht publiziert, mit Kursgebühr 0. Vor dem Publizieren: Gebühr, Kursleitung, Niveau, Sprache, Bilder und Daten.'],
-		['Vorhaben', 'Die echten Vorhaben mit Text, Bild und den passenden Kursen und Software.'],
+		['Vorhaben', 'Die Boxen «Was möchtest du machen?» auf der Startseite sind die Vorhaben und zeigen noch die alten Titel und Zeilen («Räume visualisieren» usw.). Bitte im Dashboard unter Vorhaben umbenennen und die Texte auf die Kategorien anpassen, wie in deiner Roxy-Liste (z.B. «Architektur & Interior Design: V-Ray, Enscape, Twinmotion»), dazu je Vorhaben Text, Bild und die passenden Kurse und Software.'],
 		['Beliebte Angebote', 'Angebote und Kurse mit «Beliebt» markieren, im Prototyp sind einige zum Zeigen markiert.'],
 		['Texte zur Software-Lieferung', 'Die Lieferung erfolgt von Hand durch das Team. Texte wie «Lieferung sofort per E-Mail» aus dem alten Shop sollten nicht übernommen werden.'],
 	];
