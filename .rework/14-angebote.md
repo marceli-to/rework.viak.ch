@@ -910,5 +910,30 @@ logos** (250px PNG, 36 files) are, "für alle Listen, Übersichten etc.".
   courses: a course can belong to several programs.
 - **No logo, nothing** (Marcel): Architekturfotografie,
   Architekturvisualisierung, KI-Video, Lands Design and Rhino.io have none,
-  and no icon, initials or grey square stands in. Oliver may still send
-  Lands Design's and Rhino.io's.
+  and no icon, initials or grey square stands in. **Lands Design's and
+  Rhino.io's came 2026-11-20** (same Drive folder; `lands-design.png` is his
+  *deckend* file, `rhinoio.png` follows the Angebot's slug). His folder also
+  holds `grasshopper-250.png`, unused: Grasshopper is a course, not an Angebot.
+
+## Oliver's mail of 2026-11-20
+
+Answers #76–#78, all as built: *Enscape & Veras* is the one course that
+replaces *Enscape für Archicad*; Chaos Vantage stays under V-Ray and Lumion View
+under Lumion; the RealFlow Plugin stays one licence, host chosen in the basket.
+
+**The homepage boxes** (*Was möchtest du machen?*, the question that held the
+three open Roxy entries): **the Vorhaben stay**, remapped onto the five
+categories; Oliver rewrites their texts so Vorhaben and Angebote line up. He
+also disagrees on the icons and sent a Photoshop screendesign of the top area
+(`Screendesign_Start.png` on the mail).
+
+New from him, not yet built or answered:
+- **Systemvoraussetzungen not visible** on the Lizenzen page. Expected: the
+  block draws only once VIAK fills the field, and all are still placeholders.
+  He also read *Bitte im Dashboard ergänzen* as Roxy; it means the dashboard.
+- **No *Plugin* filter** on the lists.
+- **The Angebot pages feel cluttered** (Rhino above all): he would rather
+  separate sections by background (grey, turquoise) as the homepage does, with
+  fewer or no lines and maybe no accordions. Details to follow in Roxy; he
+  wants Roxy access again.
+- A meeting to go through the Projektstand: Monday 2026-11-23 or Wednesday.

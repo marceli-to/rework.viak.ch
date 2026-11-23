@@ -71,21 +71,6 @@
 			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
 		],
 		[
-			'title' => 'Enscape: ein Kurs oder zwei?',
-			'text' => 'Der Enscape-Kurs soll heissen wie im neuen Dokument («Enscape & Veras: Vom Modell zu hochwertigen Visuals in Echtzeit»). Gleichzeitig ersetzt der neue Kurs «Enscape & Veras mit Archicad» später «Enscape für Archicad» und ist bis dahin ausgeblendet. Ist das derselbe Kurs? Dann bleibt «Enscape für Archicad» bis dahin wie er ist online.',
-			'decides' => 'Welcher Kurs den neuen Namen bekommt.',
-		],
-		[
-			'title' => 'Lumion View und Chaos Vantage: eigene Angebote?',
-			'text' => 'In der Software-Liste ist Lumion View ein Plugin, Lumion Pro eine Software. Wird Lumion View ein eigenes Angebot, wie die anderen Plugins? Umgekehrt Chaos Vantage: laut Liste eine Software, es steht aber unter V-Ray, das jetzt ein Plugin ist, und heisst darum auch «Plugin». Eigenes Angebot?',
-			'decides' => 'Wo die beiden stehen und wie sie heissen.',
-		],
-		[
-			'title' => 'RealFlow Plugin: eine Lizenz oder drei?',
-			'text' => 'Das RealFlow Plugin gibt es für Cinema 4D, 3ds Max und Maya. Heute ist es eine Lizenz, die Hostsoftware wird im Warenkorb gewählt. So lassen, oder drei Lizenzen?',
-			'decides' => 'Nichts, wenn es so bleibt.',
-		],
-		[
 			'title' => 'EDU-Lizenzen: auf der Website oder nicht?',
 			'text' => 'Die Antwort zu den EDU-Lizenzen war «öffentlich», und so sind sie jetzt auf der Website: Rhinoceros 9 EDU, Rhinoceros 9 EDU Upgrade und VisualARQ 3 Educational. In der Software-Liste vom 17. November stehen die drei aber weiterhin auf N (nicht sichtbar). Gilt die Antwort oder die Liste?',
 			'decides' => 'Ob die drei EDU-Lizenzen auf der Lizenzseite stehen. Nichts, wenn sie bleiben.',
@@ -141,7 +126,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 17. November 2026</div>
+			<div class="mt-8 text-gray-600">Stand 23. November 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>

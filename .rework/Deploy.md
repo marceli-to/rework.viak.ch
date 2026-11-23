@@ -162,6 +162,10 @@ jail and nginx answered every `/storage/…` file with 403 until it was
 remade on 2026-11-17. Rerunnable; an Angebot with a logo keeps it unless `--force`.
 Then `search:rebuild` (update line) so the search rows carry them.
 
+**After the pull of 2026-11-23:** `php artisan catalogue:logos` again
+(`--dry-run` first): Lands Design and Rhino.io now have theirs; every Angebot
+that already has a logo is skipped.
+
 **The same pull brings the homepage news** (`news` table, in the migrate
 above), **then `php artisan catalogue:news`** (`--dry-run` first): the two
 first items in `database/data/news.json` (*Rhino 9 jetzt verfügbar* →
