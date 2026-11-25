@@ -70,9 +70,9 @@ Beyond Laravel's own keys:
 | `GOOGLEMAPS_APIKEY` | the Kontakt map; the client's key, restricted to the live site | `config/services.php` |
 | `MAILCHIMP_APIKEY`, `MAILCHIMP_LIST_ID`, `MAILCHIMP_TAGS` | the client's newsletter list: legacy's three values (list `c19300bbec`, tag `VA Newsletter`). **Production only**; elsewhere signups are logged | `08-accounts.md` |
 
-PHP 8.5 (#11, decided 2026-11-25) **once Plesk has it installed**: set the
-production domain to 8.5 in Plesk, and its crontab to
-`/opt/plesk/php/8.5/bin/php`. Until then 8.3, and the Composer pin stays at 8.3
+PHP 8.3 (#11, Marcel 2026-11-25: 8.3 for the moment), as staging: set the
+production domain to 8.3 in Plesk, and its crontab to
+`/opt/plesk/php/8.3/bin/php`. 8.5 later, once the host has it installed
 (`00-foundation.md`).
 
 ## Staging (since 2026-10-30)
