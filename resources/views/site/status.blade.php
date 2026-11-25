@@ -12,7 +12,7 @@
 	$review = [
 		['Über uns', '/de/ueber-uns', 'Text, Expert:innen, Team'],
 		['Kontakt', '/de/kontakt', 'Adresse, Karte, Kontaktformular'],
-		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte oder Rechnung'],
+		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte, TWINT oder Rechnung'],
 		['Profil', '/de/konto', 'Gebuchte Kurse, Dokumente, Bestellungen mit «Bezahlen»'],
 		['Dashboard', '/dashboard', 'Kurse, Veranstaltungen, Kund:innen, Software, Bestellungen, Rechnungen, Seiteninhalte'],
 		['Dashboard: Software', '/dashboard/software', 'Je Angebot seine Seiten «Angebot», «Was ist …?» und «Lizenzen» zum Bearbeiten, darunter die Produkte mit ihren Lizenzen'],
@@ -92,7 +92,7 @@
 	];
 
 	$launch = [
-		['Kreditkarte', 'Stripe-Schlüssel und Webhook im Stripe-Konto von VIAK einrichten. Im Prototyp läuft die Zahlung über eine Testseite, es wird nichts belastet.', true],
+		['Kreditkarte und TWINT', 'Stripe-Schlüssel und Webhook im Stripe-Konto von VIAK einrichten und dort TWINT einschalten. Im Prototyp läuft die Zahlung über Stripes Testmodus, es wird nichts belastet.', true],
 		['Buchhaltung', 'Run My Accounts: Kartenzahlungen werden dort verbucht. Bis zum Go-live wird nichts an die Buchhaltung geschickt.', false],
 		['Mails', 'Im Prototyp gehen alle Mails an eine Testadresse, nie an Kund:innen.', false],
 		['Newsletter', 'Die Anmeldungen gehen wie heute an Mailchimp. Im Prototyp werden sie nur aufgezeichnet.', false],
