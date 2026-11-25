@@ -28,6 +28,8 @@
         <env name="TURNSTILE_SITE_KEY" value=""/>
         <env name="TURNSTILE_SECRET_KEY" value=""/>
         <env name="TURNSTILE_HOSTNAMES" value=""/>
+        <env name="STRIPE_SECRET" value=""/>
+        <env name="STRIPE_WEBHOOK_SECRET" value=""/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
