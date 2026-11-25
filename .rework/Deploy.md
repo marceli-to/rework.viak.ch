@@ -100,7 +100,7 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
   dashboard **in test mode** (event `checkout.session.completed`) and put its
   `whsec_…` in `STRIPE_WEBHOOK_SECRET`; without it the confirmation page still
   settles a payment when the customer comes back. Then `php artisan
-  config:cache`.
+  optimize:clear` (staging runs uncached).
 - **Feedback widget**: Roxy (`roxy.kimiyu.ch`) loads on every page of the site
   and the dashboard on staging only (`components/layout/feedback.blade.php`).
   Nothing to remove at cutover.
@@ -115,7 +115,7 @@ Update:
 
 ```
 php artisan optimize:clear && git pull && composer install --no-dev -o \
-  && php artisan migrate --force && php artisan search:rebuild && php artisan optimize
+  && php artisan migrate --force && php artisan search:rebuild && php artisan optimize:clear
 ```
 
 **`optimize:clear` first, before the pull, on every update.** `composer
@@ -130,7 +130,14 @@ system temp dir when it cannot create one there. Ruled out 2026-11-25:
 exact cause is not proven; a likely one is the jailed shell, which sees the
 app under a different path than the web server (as the `public/storage`
 symlink showed), so a cache built in one view of the paths misleads the next
-command. `optimize` builds config, events, routes and views in one go.
+command.
+
+**And `optimize:clear` last: staging runs uncached** (Marcel, 2026-11-25:
+with the caches built, the site does not work after a deploy; clearing them
+at the end is what does). Uncached is a little slower and changes nothing
+else, which is fine for a prototype. `.env` edits then apply without
+`config:cache`. Production is a different host: whether it can cache is
+checked there, not assumed from staging.
 
 **Once, after the pull that brings the website texts (2026-11-09):**
 `php artisan catalogue:categories --sync` (`--dry-run` first). The client's
