@@ -152,7 +152,7 @@
 		<template x-if="pricing && items.length && licences.length && pricing.licence_total > 0">
 			<div class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="sm:col-span-4" x-text="$store.basket.licencePayment === 'invoice' ? 'Software, auf Rechnung' : 'Software, jetzt per Kreditkarte'">Software, jetzt per Kreditkarte</div>
+					<div class="sm:col-span-4" x-text="$store.basket.licencePayment === 'invoice' ? 'Software, auf Rechnung' : 'Software, jetzt per Kreditkarte oder TWINT'">Software, jetzt per Kreditkarte oder TWINT</div>
 					<div class="sm:col-span-8 sm:text-right" x-text="`CHF ${pricing.licence_total}`"></div>
 				</div>
 				<div class="mt-8 sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">

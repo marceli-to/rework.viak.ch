@@ -65,13 +65,13 @@
 				     invoiced at once, a course when it is confirmed. --}}
 				<div class="sm:col-span-8">
 					<p x-show="$store.basket.items.length">
-						Unsere Rechnungen können entweder mittels QR-Einzahlungsschein oder per
-						Kreditkarte bezahlt werden. Die Rechnungsstellung erfolgt, sobald die
+						Unsere Rechnungen können mittels QR-Einzahlungsschein, per Kreditkarte
+						oder mit TWINT bezahlt werden. Die Rechnungsstellung erfolgt, sobald die
 						Durchführung eines Kurses feststeht.
 					</p>
 					<p x-show="$store.basket.licences.length" :class="$store.basket.items.length && 'mt-16'">
-						Software bezahlst du per Kreditkarte, gleich nach der Zusammenfassung,
-						oder per Rechnung. Die Rechnung und die Lizenzen erhältst du per E-Mail.
+						Software bezahlst du per Kreditkarte oder mit TWINT, gleich nach der
+						Zusammenfassung, oder per Rechnung. Die Rechnung und die Lizenzen erhältst du per E-Mail.
 					</p>
 
 					{{-- The choice (#58), only when the licences cost something:
@@ -81,7 +81,7 @@
 						<x-form.checkbox type="radio" id="licence_payment_card" name="licence_payment" value="card"
 							x-bind:checked="$store.basket.licencePayment === 'card'"
 							@change="$store.basket.setLicencePayment('card')">
-							Per Kreditkarte
+							Per Kreditkarte oder TWINT
 						</x-form.checkbox>
 						<x-form.checkbox type="radio" id="licence_payment_invoice" name="licence_payment" value="invoice"
 							x-bind:checked="$store.basket.licencePayment === 'invoice'"

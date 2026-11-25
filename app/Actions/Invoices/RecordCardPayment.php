@@ -67,6 +67,7 @@ class RecordCardPayment
 				'status' => InvoiceStatus::Paid,
 				'paid_at' => now(),
 				'card_payment' => $payment->reference,
+				'card_payment_method' => $payment->method,
 			])->save();
 
 			LicenceOrder::query()->where('invoice_id', $invoice->id)->whereNull('paid_at')->update(['paid_at' => now()]);
@@ -85,6 +86,6 @@ class RecordCardPayment
 	/** @return array<string, mixed> */
 	private function context(CardPayment $payment): array
 	{
-		return ['invoice' => $payment->invoice, 'amount' => $payment->amount, 'currency' => $payment->currency, 'reference' => $payment->reference];
+		return ['invoice' => $payment->invoice, 'amount' => $payment->amount, 'currency' => $payment->currency, 'reference' => $payment->reference, 'method' => $payment->method];
 	}
 }

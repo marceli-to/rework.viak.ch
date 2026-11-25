@@ -54,8 +54,8 @@
 						Lizenzen an {{ $email }}.
 					@elseif ($byInvoice && $order->invoice)
 						Vielen Dank für Deine Bestellung {{ $order->number }}. Die Rechnung ist per
-						E-Mail unterwegs, Du kannst sie mit dem QR-Einzahlungsschein oder per
-						Kreditkarte bezahlen. Die Lizenzen senden wir an {{ $email }}.
+						E-Mail unterwegs, Du kannst sie mit dem QR-Einzahlungsschein, per
+						Kreditkarte oder mit TWINT bezahlen. Die Lizenzen senden wir an {{ $email }}.
 					@elseif ($confirming)
 						Vielen Dank für Deine Bestellung {{ $order->number }}. Sobald Deine Zahlung
 						bestätigt ist, erhältst Du eine E-Mail. Die Lizenzen senden wir an {{ $email }}.

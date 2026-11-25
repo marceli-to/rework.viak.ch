@@ -41,8 +41,8 @@
   </tr>
 </table>
 @if ($invoice)
-<p>Die Rechnung für die Kurskosten findest Du im Anhang.<br>Falls Du die Rechnung lieber mit Kreditkarte bezahlen möchtest, dann klicke bitte auf den nachfolgenden Link.</p>
-<p class="py-2x"><a href="{{ $payment }}" target="_blank" class="button button-primary" style="text-decoration: none;"><strong>Zahlung per Kreditkarte</strong></a></p>
+<p>Die Rechnung für die Kurskosten findest Du im Anhang.<br>Falls Du die Rechnung lieber mit Kreditkarte oder TWINT bezahlen möchtest, dann klicke bitte auf den nachfolgenden Link.</p>
+<p class="py-2x"><a href="{{ $payment }}" target="_blank" class="button button-primary" style="text-decoration: none;"><strong>Mit Kreditkarte oder TWINT bezahlen</strong></a></p>
 @endif
 <p>Bei Fragen stehen wir Dir gerne zur Verfügung.</p>
 <p>Möchtest Du weitere Schulungen besuchen? Verwalte Deine Kurse und Deine persönlichen Daten bequem und einfach unter: <a href="{{ $portal }}" target="_blank" style="color: #000000; text-decoration: none; font-weight:bold"><strong>visualisierungs-akademie.ch/profil</strong></a></p>

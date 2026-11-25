@@ -6,7 +6,8 @@ namespace App\Support\Payments;
 
 /**
  * What a payment provider reports about a paid checkout ([[PaymentGateway]]):
- * which invoice it was for, how much was taken and under which reference.
+ * which invoice it was for, how much was taken, under which reference, and
+ * with what: `card` or `twint`.
  * Read from the provider, never from the browser.
  */
 final class CardPayment
@@ -16,5 +17,6 @@ final class CardPayment
 		public readonly int $amount,
 		public readonly string $currency,
 		public readonly string $reference,
+		public readonly string $method = 'card',
 	) {}
 }

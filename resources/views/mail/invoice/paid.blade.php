@@ -25,13 +25,13 @@
   </tr>
   <tr>
     <td>Bezahlt per</td>
-    <td>Kreditkarte</td>
+    <td>{{ $invoice->paidOnlineWith() }}</td>
   </tr>
 </table>
 <p>Möchtest Du weitere Schulungen besuchen? Verwalte Deine Kurse und Deine persönlichen Daten bequem und einfach unter: <a href="{{ $portal }}" target="_blank" style="color: #000000; text-decoration: none; font-weight:bold"><strong>visualisierungs-akademie.ch/konto</strong></a></p>
 @else
 <h1>Zahlungseingang</h1>
-<p>Folgende Rechnung wurde per Kreditkarte bezahlt:</p>
+<p>Folgende Rechnung wurde per {{ $invoice->paidOnlineWith() }} bezahlt:</p>
 <table class="content-table" cellpadding="0" cellspacing="0">
   <tr>
     <td width="120">Rechnung</td>

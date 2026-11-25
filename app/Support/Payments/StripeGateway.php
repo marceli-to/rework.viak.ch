@@ -36,9 +36,10 @@ class StripeGateway implements PaymentGateway
 		$session = $this->stripe->checkout->sessions->create([
 			'mode' => 'payment',
 			'submit_type' => 'pay',
-			// Card only, as the site promises (*Per Kreditkarte*). The API of
-			// 2026-09-30 (stripe-php 22) dropped `payment_method_types`.
-			'allowed_payment_method_types' => ['card'],
+			// Card or TWINT, as the site offers them (Marcel, 2026-11-25). The
+			// API of 2026-09-30 (stripe-php 22) dropped `payment_method_types`.
+			// TWINT must also be switched on in the Stripe account.
+			'allowed_payment_method_types' => ['card', 'twint'],
 			'locale' => 'de',
 			'customer_email' => $invoice->user?->email,
 			'client_reference_id' => $invoice->uuid,
@@ -64,7 +65,7 @@ class StripeGateway implements PaymentGateway
 
 	public function paidSession(string $session): ?CardPayment
 	{
-		return $this->payment($this->stripe->checkout->sessions->retrieve($session));
+		return $this->payment($this->session($session));
 	}
 
 	public function webhookPayment(string $payload, ?string $signature): ?CardPayment
@@ -79,7 +80,14 @@ class StripeGateway implements PaymentGateway
 			return null;
 		}
 
-		return $this->payment($event->data->object);
+		// Read again, expanded: the event's copy does not say which method paid.
+		return $this->payment($this->session((string) $event->data->object->id));
+	}
+
+	/** The session with the payment method behind it, which names card or TWINT. */
+	private function session(string $id): Session
+	{
+		return $this->stripe->checkout->sessions->retrieve($id, ['expand' => ['payment_intent.payment_method']]);
 	}
 
 	/** In centimes, as Stripe counts: legacy's `(int) ($total * 100)`, without the float. */
@@ -94,11 +102,14 @@ class StripeGateway implements PaymentGateway
 			return null;
 		}
 
+		$intent = $session->payment_intent;
+
 		return new CardPayment(
 			invoice: (string) $session->client_reference_id,
 			amount: (int) $session->amount_total,
 			currency: (string) $session->currency,
-			reference: (string) ($session->payment_intent ?: $session->id),
+			reference: (string) (is_object($intent) ? $intent->id : ($intent ?: $session->id)),
+			method: is_object($intent) && is_object($intent->payment_method) ? (string) $intent->payment_method->type : 'card',
 		);
 	}
 }

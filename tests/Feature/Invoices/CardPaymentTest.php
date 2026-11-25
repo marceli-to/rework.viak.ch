@@ -16,6 +16,7 @@ use App\Support\Accounting\AccountingSystem;
 use App\Support\Payments\CardPayment;
 use App\Support\Payments\FakePaymentGateway;
 use App\Support\Payments\PaymentGateway;
+use App\Support\Payments\StripeGateway;
 use App\Support\SiteUrl;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -179,4 +180,15 @@ it('mails the payment as legacy did', function () {
 		->assertSeeInHtml('Wir haben deine Zahlung erhalten')
 		->assertSeeInHtml('Kreditkarte');
 	(new InvoicePaidNotification($this->invoice))->assertSeeInHtml('Folgende Rechnung wurde per Kreditkarte bezahlt');
+});
+
+it('names TWINT when TWINT paid, in the invoice, both mails and the books', function () {
+	$owed = StripeGateway::centimes((string) $this->invoice->grand_total);
+
+	$paid = app(RecordCardPayment::class)->execute(new CardPayment($this->invoice->uuid, $owed, 'chf', 'pi_twint', 'twint'));
+
+	expect($paid->card_payment_method)->toBe('twint')
+		->and($paid->paidOnlineWith())->toBe('TWINT');
+	(new InvoicePaidConfirmation($paid))->assertSeeInHtml('TWINT');
+	(new InvoicePaidNotification($paid))->assertSeeInHtml('Folgende Rechnung wurde per TWINT bezahlt');
 });

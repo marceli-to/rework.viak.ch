@@ -77,7 +77,7 @@ class RunMyAccounts implements AccountingSystem
 		Http::withToken($this->apiKey)->acceptJson()->post($url, [
 			'datepaid' => ($invoice->paid_at ?? now())->toIso8601String(),
 			'amount_paid' => (string) $invoice->grand_total,
-			'memo' => 'Zahlung via Kreditkarte',
+			'memo' => 'Zahlung via '.$invoice->paidOnlineWith(),
 			'payment_accno' => '1107',
 		])->throw();
 	}

@@ -286,3 +286,26 @@ button, as a course invoice has).
   auf Rechnung* rather than *jetzt per Kreditkarte*.
 - Tests in `LicenceCheckoutTest`: by invoice when chosen; a value that is
   not offered refused; card still the default; the step shows both.
+
+## TWINT beside the card (2026-11-25)
+
+Marcel: the online payment offers **TWINT as well as the card**. Legacy only
+ever asked Stripe for `card`. TWINT pays at once in CHF, so nothing about
+settling changes: the same return page and webhook, the same
+[[RecordCardPayment]].
+
+- `StripeGateway::checkout` sends `allowed_payment_method_types: [card, twint]`
+  (API 2026-09-30, stripe-php 22, refuses the old `payment_method_types`).
+  The Stripe account must have TWINT on; the test account has it.
+- **Which one paid is stored**: `invoices.card_payment_method` (`card` or
+  `twint`), read from the session with `payment_intent.payment_method`
+  expanded (the webhook's copy is re-read for it). `Invoice::paidOnlineWith()`
+  says *Kreditkarte* or *TWINT*, and the receipt, the office's
+  *Zahlungseingang*, the licence order mail and the memo in Run My Accounts
+  use it. Older payments have null, which reads as *Kreditkarte*.
+- Texts: *Per Kreditkarte oder TWINT* in the payment step and the summary;
+  QR, card or TWINT in the confirmation, the course confirmation mail, the
+  order mail and `llms.txt`; the mails' button reads *Mit Kreditkarte oder
+  TWINT bezahlen*; the invoice payment page is *Online bezahlen* (legacy's
+  *Kreditkartenzahlung*).
+- The local fake has no TWINT; it records a card.

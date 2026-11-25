@@ -63,7 +63,7 @@ Beyond Laravel's own keys:
 | `SITE_CANONICAL_HOST` | defaults to `visualisierungs-akademie.ch`, which is right | `config/site.php` |
 | `GTM_ID` | `GTM-M3L7WVP`, unless #29 says otherwise | `11-tracking.md` |
 | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `TURNSTILE_HOSTNAMES` | the local pair; hostnames = the live one only, also registered on the widget | `Open-Questions.md`, *pending actions* |
-| `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET` | live key, and the webhook at `/stripe/webhook` registered with Stripe. Production without a key throws | `13-checkout.md` |
+| `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET` | live key, and the webhook at `/stripe/webhook` registered with Stripe. Production without a key throws. **TWINT switched on** in VIAK's Stripe account (Settings → Payment methods): the payment page asks for card and TWINT, and Stripe refuses a method the account lacks | `13-checkout.md` |
 | `RMA_API_*`, `RMA_INVOICE_PREFIX` | the client's live accounting. **Production only** | `03-invoices.md` |
 | `MAIL_*`, `MAIL_ADMIN_ADDRESS` | real SMTP; the office address. `MAIL_CATCH_ALL` is ignored in production, and on any other server it is where every mail goes | `10-mail.md` |
 | `DOCUMENTS_QR_IBAN`, `INVOICE_VAT_RATE` | the invoice's QR bill and rate | `03-invoices.md` |

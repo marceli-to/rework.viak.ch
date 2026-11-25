@@ -1,5 +1,6 @@
 {{--
-	*Kreditkartenzahlung*, legacy's `web/pages/payment/index.blade.php` and
+	*Online bezahlen* (legacy's *Kreditkartenzahlung*; card or TWINT since
+	2026-11-25), legacy's `web/pages/payment/index.blade.php` and
 	`info.blade.php` ([[PaymentController]]), drawn in the checkout steps'
 	rows ([[checkout.summary]]): *Schritt 1/1*, a row per line, the total,
 	*Weiter zur Zahlung*.
@@ -10,7 +11,7 @@
 	both. Settled or cancelled, the page says so instead (legacy's `info`).
 	Back from Stripe's *Zurück*, legacy's cancel page's sentence is on top.
 --}}
-<x-layout.site title="Kreditkartenzahlung" heading="Kreditkartenzahlung" auth>
+<x-layout.site title="Online bezahlen" heading="Online bezahlen" auth>
 	@if (! $invoice->isPending())
 		<x-layout.article>
 			<x-slot:aside>
@@ -26,7 +27,7 @@
 	@else
 		<x-layout.article>
 			<x-slot:aside>
-				<h1 class="hidden font-bold text-teal sm:block">Kreditkartenzahlung</h1>
+				<h1 class="hidden font-bold text-teal sm:block">Online bezahlen</h1>
 			</x-slot:aside>
 
 			@if ($cancelled)

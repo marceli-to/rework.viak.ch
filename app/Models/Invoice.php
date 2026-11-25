@@ -43,7 +43,7 @@ class Invoice extends Model
 
 	protected $fillable = [
 		'number', 'user_id', 'company_course_id', 'status', 'date', 'due_at',
-		'paid_at', 'card_payment', 'cancelled_at', 'cancellation_reason', 'replaced_by_invoice_id',
+		'paid_at', 'card_payment', 'card_payment_method', 'cancelled_at', 'cancellation_reason', 'replaced_by_invoice_id',
 		'invoice_address', 'net', 'discount', 'vat', 'grand_total', 'filename',
 	];
 
@@ -167,6 +167,16 @@ class Invoice extends Model
 	public function isPaid(): bool
 	{
 		return $this->status === InvoiceStatus::Paid;
+	}
+
+	/**
+	 * What paid it online, as the mails and the books say it: *TWINT*, or
+	 * *Kreditkarte* for a card and for every payment from before TWINT
+	 * ([[RecordCardPayment]]).
+	 */
+	public function paidOnlineWith(): string
+	{
+		return $this->card_payment_method === 'twint' ? 'TWINT' : 'Kreditkarte';
 	}
 
 	public function isCancelled(): bool
