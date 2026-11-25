@@ -114,11 +114,13 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
 Update:
 
 ```
-git pull && composer install --no-dev -o && php artisan optimize:clear \
+php artisan optimize:clear && git pull && composer install --no-dev -o \
   && php artisan migrate --force && php artisan search:rebuild && php artisan optimize
 ```
 
-**`optimize:clear` first, on every update.** Rebuilding the caches over the
+**`optimize:clear` first, before the pull, on every update.** `composer
+install` runs `package:discover`, which writes `bootstrap/cache/packages.php`,
+so clearing after it is too late. Rebuilding the caches over the
 old ones printed `tempnam(): file created in the system's temporary
 directory` after every deploy (2026-11-17 to 2026-11-25), and clearing them
 first is what makes it go away (Marcel). Laravel writes each cache file
