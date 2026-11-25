@@ -10,17 +10,6 @@
 --}}
 @php
 	$review = [
-		['Alle Angebote', '/de/angebote', 'Alle Angebote als Kacheln, nach den fünf Bereichen, jede mit «Kurs», «Software», «Plugin» oder beidem'],
-		['Eine Angebotsseite', '/de/angebote/rhinoceros', 'Die Texte aus den Webseitentext-Dokumenten, Kurse mit allen Daten, Lizenzen, Plugins, Kundenmeinungen. Gebucht und gekauft wird auf der Kurs- bzw. Lizenzseite'],
-		['«Was ist …?»', '/de/angebote/rhinoceros/was-ist-rhinoceros', 'Die eigene Seite zur Software, verlinkt von der Angebotsseite. Nur wo es einen Text gibt'],
-		['Ein Plugin', '/de/angebote/bongo', 'Jedes Plugin ist ein eigenes Angebot, mit «Plugin für Rhinoceros», wo es an ein Programm gebunden ist. Rhinoceros listet seine Plugins'],
-		['Ein Themen-Angebot', '/de/angebote/architekturfotografie', 'Angebote ohne eigene Software, nur mit Kursen: Architekturfotografie, Architekturvisualisierung, KI-Video'],
-		['Kurse', '/de/angebote/kurse', 'Alle Kurse mit Filter, von dort jede Kursseite'],
-		['Software', '/de/angebote/software', 'Alle Lizenzen mit Filter, von dort die Lizenzseite ihres Angebots'],
-		['Eine Lizenzseite', '/de/angebote/software/corona-renderer', 'Eine Seite je Angebot, je Lizenz ein Block: Titel wie «Corona Solo (named)», Hinweis, Preis mit Streichpreis, Stückzahl, In den Warenkorb. Darunter einmal die Systemvoraussetzungen'],
-		['Suche', '/de/suche?q=rhino', 'Die Lupe oben rechts: Angebote, Kurse, Lizenzen, Vorhaben, Expert:innen und Seiten wie Kontakt oder Firmenschulung, mit Daten und Preisen, Treffern beim Tippen und einer Ergebnisseite'],
-		['Vorhaben', '/de/vorhaben/raume-visualisieren', 'Beispiel «Räume visualisieren», Texte sind Platzhalter'],
-		['Firmenschulung', '/de/firmenschulung', 'Text, Anfrageformular, Kundenmeinungen'],
 		['Über uns', '/de/ueber-uns', 'Text, Expert:innen, Team'],
 		['Kontakt', '/de/kontakt', 'Adresse, Karte, Kontaktformular'],
 		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte oder Rechnung'],
@@ -121,7 +110,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 23. November 2026</div>
+			<div class="mt-8 text-gray-600">Stand 25. November 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
