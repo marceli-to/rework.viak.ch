@@ -65,6 +65,11 @@
 			'decides' => 'Ob die drei EDU-Lizenzen auf der Lizenzseite stehen. Nichts, wenn sie bleiben.',
 		],
 		[
+			'title' => 'Kundenmeinungen aus Google',
+			'text' => 'Die Kundenmeinungen auf Startseite, Firmenschulung und Kursseiten sind gebaut und werden im Dashboard gepflegt. Unser Vorschlag: Wir übernehmen die Google-Bewertungen, die das Widget auf der heutigen Website zeigt, einmalig als Entwürfe (Zitat, Name und, wo es im Text steht, der Kurs). VIAK wählt im Dashboard aus, welche erscheinen. Eine laufende Verbindung zu Google empfehlen wir nicht: Die öffentliche Schnittstelle liefert nur die fünf neuesten Bewertungen, für alle braucht es Zugriff auf das Google-Unternehmensprofil von VIAK. Einmalig übernehmen, oder sollen neue Google-Bewertungen laufend dazukommen?',
+			'decides' => 'Ob wir die Bewertungen einmal als Entwürfe übernehmen oder eine Verbindung zu Google einrichten.',
+		],
+		[
 			'title' => 'KI-Zugang zu den Daten',
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
