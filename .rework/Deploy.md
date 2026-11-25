@@ -70,7 +70,8 @@ Beyond Laravel's own keys:
 | `GOOGLEMAPS_APIKEY` | the Kontakt map; the client's key, restricted to the live site | `config/services.php` |
 | `MAILCHIMP_APIKEY`, `MAILCHIMP_LIST_ID`, `MAILCHIMP_TAGS` | the client's newsletter list: legacy's three values (list `c19300bbec`, tag `VA Newsletter`). **Production only**; elsewhere signups are logged | `08-accounts.md` |
 
-Still open: which PHP production runs (#11).
+PHP 8.3, as staging on the same host (#11, decided 2026-11-25): set the
+production domain to 8.3 in Plesk, and its crontab to `/opt/plesk/php/8.3/bin/php`.
 
 ## Staging (since 2026-10-30)
 

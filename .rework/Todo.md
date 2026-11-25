@@ -7,9 +7,8 @@ detail to act on without redoing the investigation.
 
 ## Restore the 14 events lost to two-digit years
 
-**Blocks the production migration. Not a chunk 02 decision — the port keeps
-skipping and reporting until then. Marcel to confirm the reconstruction before
-cutover.**
+**Decided 2026-11-25: dropped** (Open-Questions #9). `port:courses` drops the
+14 by id and reports it; the record below stays for the reasoning.
 
 ### What happened
 
@@ -87,9 +86,9 @@ that the cutover run is free to ignore.
 
 ## Fix `invoices.due_at` before the data goes to production
 
-**Blocks the production migration. Same shape as the events above: nothing in the
-build is waiting on it, but the port that produces the production database has to
-have an answer written into it.**
+**Decided 2026-11-25** (Open-Questions #7 and #10): the paid ones stay as they
+are, the open/overdue ones get the deadline they were issued with, recomputed
+by `port:invoices` with legacy's rules and checked against their PDFs.
 
 ### What happened
 

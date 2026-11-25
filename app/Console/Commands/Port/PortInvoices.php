@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Support\LegacyInvoiceAddress;
 use App\Support\LegacyTime;
 use App\Support\Vat;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -107,6 +108,8 @@ class PortInvoices extends Command
 		$usersByUuid = User::withTrashed()->pluck('id', 'uuid');
 		$legacyUsers = $legacy->table('users')->pluck('uuid', 'id');
 
+		$dueDates = $this->reconstructedDueDates($legacy);
+
 		foreach ($legacy->table('invoices')->orderBy('id')->get() as $row) {
 			$bookingUuid = $legacyBookings[$row->booking_id] ?? null;
 			$booking = $bookingUuid === null ? null : ($bookingsByUuid[$bookingUuid] ?? null);
@@ -128,9 +131,9 @@ class PortInvoices extends Command
 				'user_id' => $this->userIdFor($row, $booking, $usersByUuid, $legacyUsers),
 				'status' => InvoiceStatus::from($row->status),
 				'date' => $row->date,
-				// Verbatim, knowingly wrong on every row — see the finding
-				// below and `Todo.md`. Deciding it here would bury it.
-				'due_at' => $row->due_at,
+				// Reconstructed for open and overdue invoices, verbatim (and
+				// knowingly wrong) for the rest: see reconstructedDueDates().
+				'due_at' => $dueDates[$row->id] ?? $row->due_at,
 				'paid_at' => LegacyTime::local($row->paid_at),
 				'cancelled_at' => LegacyTime::local($row->cancelled_at),
 				'cancellation_reason' => $this->cancellationReason($row),
@@ -386,15 +389,64 @@ class PortInvoices extends Command
 		}
 	}
 
+	/** Legacy's `config('invoice.payment_period')`, which never changed. */
+	private const LEGACY_PAYMENT_PERIOD = 10;
+
+	/** Legacy master 33bb76b, live from this day: the deadline moved before the event. */
+	private const EVENT_DEADLINE_SINCE = '2026-05-03';
+
 	/**
-	 * `due_at` is carried across knowingly wrong, because it is wrong in the
-	 * source on every row and repairing it is a decision nobody has made yet
-	 * (`Todo.md`, and question 10 in `Open-Questions.md`).
+	 * The deadline each open or overdue invoice was issued with, keyed by
+	 * legacy invoice id (Open-Questions #10, decided 2026-11-25).
 	 *
-	 * Both checks look for the *signature* of the self-overwriting column
-	 * rather than for a particular date, so they still work on a fresher dump:
-	 * a deadline that equals the moment the row was last written is not a
-	 * deadline anybody set.
+	 * Legacy set `due_at` correctly at creation, printed it on the PDF as
+	 * *Zahlbar bis* and sent it to Run My Accounts as `duedate`; only the row
+	 * lost it afterwards, to MySQL's implicit ON UPDATE. So the deadline is
+	 * recomputed with legacy's own rules, by the invoice's date:
+	 *
+	 * - a rental or cancellation-fee invoice: `date + 10` (`RentalInvoice`,
+	 *   `Invoice::cancel()` in legacy);
+	 * - a course invoice before 2026-05-03: `date + 10`;
+	 * - a course invoice since: the later of `date + 10` and `event - 10`
+	 *   (`Invoice::getDueAt()`, the rule [[RaiseInvoiceForBooking]] keeps).
+	 *
+	 * A cancellation-fee invoice is told apart by its booking being
+	 * cancelled: the course invoice of a cancelled booking is cancelled
+	 * itself, so it is never pending. On the 2026-09-11 dump the result
+	 * matched *Zahlbar bis* on all 11 of the 12 PDFs that exist (000419 has
+	 * none). Paid ones stay verbatim (#7, ignored).
+	 *
+	 * @return array<int, string>
+	 */
+	private function reconstructedDueDates($legacy): array
+	{
+		return $legacy->table('invoices as i')
+			->join('bookings as b', 'b.id', '=', 'i.booking_id')
+			->join('events as e', 'e.id', '=', 'b.event_id')
+			->whereIn('i.status', ['OPEN', 'OVERDUE'])
+			->get(['i.id', 'i.date', 'i.is_rental', 'b.cancelled_at', 'e.date as event_date'])
+			->mapWithKeys(function (object $row): array {
+				$date = Carbon::parse($row->date)->startOfDay();
+				$floor = $date->copy()->addDays(self::LEGACY_PAYMENT_PERIOD);
+
+				$isCourseInvoice = ! $row->is_rental && $row->cancelled_at === null;
+
+				if (! $isCourseInvoice || $date->lt(self::EVENT_DEADLINE_SINCE) || $row->event_date === null) {
+					return [$row->id => $floor->toDateString()];
+				}
+
+				$beforeEvent = Carbon::parse($row->event_date)->startOfDay()->subDays(self::LEGACY_PAYMENT_PERIOD);
+
+				return [$row->id => $beforeEvent->max($floor)->toDateString()];
+			})
+			->all();
+	}
+
+	/**
+	 * Both halves of `due_at` are decided, so both are reported as accepted:
+	 * the paid deadlines stay lost (#7), the pending ones are reconstructed
+	 * (#10). The checks look for the *signature* of the self-overwriting
+	 * column rather than a date, so they still count on a fresher dump.
 	 */
 	private function reportDueDates($legacy): void
 	{
@@ -403,26 +455,14 @@ class PortInvoices extends Command
 			->whereRaw('ABS(TIMESTAMPDIFF(HOUR, due_at, paid_at)) <= 2')
 			->count();
 
-		$pending = $legacy->table('invoices')
-			->whereIn('status', ['OPEN', 'OVERDUE'])
-			->whereRaw('DATE(due_at) = DATE(updated_at)')
-			->orderBy('date')
-			->get(['number', 'status', 'date', 'due_at']);
+		$pending = count($this->reconstructedDueDates($legacy));
 
 		if ($paidWithLostDeadline > 0) {
-			$this->findings[] = "due_at: {$paidWithLostDeadline} paid invoices have a deadline within 2h of their payment — the original is gone, overwritten by MySQL's implicit ON UPDATE. Ported verbatim; decide before cutover whether to reconstruct (Todo.md)";
+			$this->accepted[] = "due_at: {$paidWithLostDeadline} paid invoices carry a deadline overwritten by MySQL's implicit ON UPDATE; ported verbatim (Open-Questions #7)";
 		}
 
-		if ($pending->isNotEmpty()) {
-			$oldest = $pending->first();
-
-			$this->findings[] = sprintf(
-				'due_at: %d open/overdue invoices carry a deadline equal to the day they were last touched, because the column bumped itself on every write — so none of them could ever fall due. Oldest is %s, dated %s and still %s. These are live money: recompute from the event start, or carry them over knowingly wrong. Pick one, in the port (Todo.md)',
-				$pending->count(),
-				$oldest->number,
-				$oldest->date,
-				$oldest->status,
-			);
+		if ($pending > 0) {
+			$this->accepted[] = "due_at: {$pending} open/overdue invoices get the deadline they were issued with, recomputed by legacy's rules (Open-Questions #10)";
 		}
 	}
 

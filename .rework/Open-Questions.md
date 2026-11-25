@@ -32,9 +32,9 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~6~~ | ~~Will EN ever be implemented?~~ **Answered 2026-11-25 (client meeting): not in the foreseeable future; leave the code and URL structure intact.** Nothing to simplify away | — | — |
 | ~~7~~ | ~~Do the historical invoice due dates matter?~~ **Settled 2026-11-17 (Marcel): ignore it.** No reconstruction; the 541 paid invoices come across with the `due_at` they hold | — | — |
 | ~~8~~ | ~~Event 213 — what was it meant to be?~~ **Settled 2026-11-17 (Marcel): ignore it.** The port skips it, as it skips all 14 two-digit-year events; never booked, never on the site | — | — |
-| 9 | The other 13 two-digit-year events: drop or restore? | Marcel | Cutover |
-| 10 | `due_at` in the port: the 541 lost, and the open/overdue | Marcel | Cutover |
-| 11 | What PHP does production run? | Marcel | Deploy |
+| ~~9~~ | ~~The other 13 two-digit-year events: drop or restore?~~ **Decided 2026-11-25: dropped**, all 14 with 213. `PortCourses::DROPPED_TWO_DIGIT_YEAR` lists them by id; a new one in a fresher dump is still a finding | — | — |
+| ~~10~~ | ~~`due_at` in the port: the 541 lost, and the open/overdue~~ **Decided 2026-11-25: reconstructed** for the open/overdue ones with legacy's own rules, which match *Zahlbar bis* on every PDF; the 541 paid stay as they are (#7). `PortInvoices::reconstructedDueDates()` | — | — |
+| ~~11~~ | ~~What PHP does production run?~~ **Decided 2026-11-25: 8.3**, as staging on the same Metanet host (Plesk's `/opt/plesk/php/8.3`). The pin stays; raise it only when the host moves | — | — |
 | ~~12~~ | ~~What is actually in `courses.reviews`?~~ — **answered 2026-09-21: an Elfsight widget embed**, on all 32 non-empty rows, 23 distinct widget ids. Not testimonial data at all. Replaced by 18 | — | — |
 | ~~13~~ | ~~Is the Mailchimp newsletter sync still in scope?~~ **Answered 2026-10-30: yes, as before.** Built the same day; see `08-accounts.md`, *The newsletter sync* | — | — |
 | ~~14~~ | ~~Should an admin cancelling for a student charge the penalty?~~ — **answered 2026-09-24: the admin decides, per cancellation.** See `07-dashboard.md` | — | — |
@@ -328,7 +328,13 @@ sync at all, or whether `subscribe_newsletter` is just a flag the admin can read
 
 ## For Marcel
 
-### 9. The other 13 two-digit-year events: drop or restore?
+### ~~9. The other 13 two-digit-year events: drop or restore?~~
+
+**Decided 2026-11-25: dropped.** All 14, with 213 (#8): in the past, never on
+the site, never booked, and four of them repeat attempts at one course, so
+restoring would put duplicates into the history. `port:courses` drops them by
+id (`DROPPED_TWO_DIGIT_YEAR`) and says so; any other two-digit-year event in a
+fresher dump is still skipped as *NEEDS A DECISION*.
 
 They reconstruct reliably — `events.date + 2000 years` is the mistyped day, and
 the Thu+Fri course pattern fills in the rest; the table is in `Todo.md`. Roughly
@@ -339,7 +345,15 @@ course entered three times, 294/295 one SketchUp course entered twice).
 `port:courses` has to stop skipping silently — an explicit drop list or an
 explicit reconstruction map, not a warning on stderr.
 
-### 10. `due_at` in the port
+### ~~10. `due_at` in the port~~
+
+**Decided 2026-11-25: reconstructed.** Legacy set `due_at` right at creation,
+printed it as *Zahlbar bis* and sent it to Run My Accounts; only the row lost
+it. So `port:invoices` recomputes each open/overdue invoice's deadline with
+legacy's rules: `date + 10` for rentals, cancellation fees and course invoices
+before 2026-05-03; since then (legacy 33bb76b) the later of `date + 10` and
+`event - 10`. On the 2026-09-11 dump that matches the PDF on all 11 of the 12
+that have one (000419 has none). The paid ones stay as they are (#7).
 
 Two decisions beyond the column fix itself: what to do about the **541 lost**
 deadlines (see 7; **ignored, 2026-11-17**), and what the **open and overdue** invoices carry across.
@@ -347,7 +361,10 @@ Whatever `due_at` they hold at cutover is today's date, which is wrong for all o
 them — either recompute from the booking's event start, or carry them over
 knowingly wrong. Pick one, in the port.
 
-### 11. What PHP does production run?
+### ~~11. What PHP does production run?~~
+
+**Decided 2026-11-25: 8.3.** Production starts on the Metanet host staging
+runs on, and staging runs Plesk's 8.3 (`Deploy.md`). The pin stays.
 
 The rework is pinned to 8.3 because Herd serves 8.3 locally. If production runs
 8.4, raise the pin. Only bites at deploy time.

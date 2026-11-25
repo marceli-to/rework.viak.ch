@@ -42,6 +42,15 @@ class PortCourses extends Command
 	/** @var array<int, string> */
 	private array $findings = [];
 
+	/**
+	 * The 14 events typed with two-digit years in 2025 and early 2026
+	 * (`Todo.md`), dropped by decision (Open-Questions #8 and #9, 2026-11-25):
+	 * all in the past, none ever visible on the site, none booked, and four
+	 * of them repeat attempts at the same course. Listed by id so that a new
+	 * one in a fresher dump is still caught below as a finding.
+	 */
+	private const DROPPED_TWO_DIGIT_YEAR = [202, 203, 204, 205, 207, 208, 209, 210, 211, 212, 213, 288, 294, 295];
+
 	public function handle(): int
 	{
 		$legacy = DB::connection('legacy');
@@ -288,6 +297,10 @@ class PortCourses extends Command
 				continue;
 			}
 
+			if (in_array($row->id, self::DROPPED_TWO_DIGIT_YEAR, true)) {
+				continue;
+			}
+
 			$dates = $legacy->table('event_dates')->where('event_id', $row->id)->orderBy('date')->get();
 
 			// `events.date` is nullable in legacy, which let half-created events
@@ -461,6 +474,13 @@ class PortCourses extends Command
 		}
 
 		$this->table(['table', 'legacy', 'ported', ''], $rows);
+
+		// Counted from legacy, so a dry run says it too.
+		$dropped = $legacy->table('events')->whereIn('id', self::DROPPED_TWO_DIGIT_YEAR)->count();
+
+		if ($dropped > 0) {
+			$this->components->info("{$dropped} of the skipped events have two-digit years and are dropped by decision (Open-Questions #9).");
+		}
 
 		if ($this->findings === []) {
 			$this->components->info('No data-quality findings.');
