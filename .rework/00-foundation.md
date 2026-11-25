@@ -20,7 +20,7 @@ Built. `rework.viak.ch.test` serves, `php artisan test` green, `npm run build` c
 
 | | Legacy (viak.ch) | Rework |
 |---|---|---|
-| PHP | 8.2 | 8.3 (platform-pinned) |
+| PHP | 8.2 | 8.5 served, 8.4 floor (platform-pinned) |
 | Laravel | 11 | 13.31 |
 | MySQL | 5.7 (:3306) | 8.0.40 (:3307) |
 | Frontend (admin) | Vue 2.7, Vuex 3, vue-router 3 | Vue 3.5, Pinia 4, vue-router 5 |
@@ -34,15 +34,22 @@ Installed: `laravel/fortify`, `spatie/laravel-translatable`, `spatie/laravel-slu
 `spatie/image`. Everything else gets added by the chunk that needs it — dompdf,
 swiss-qr-bill, stripe and the excel exporter land with chunks 03/04.
 
-### Why PHP is pinned to 8.3
+### Why PHP is pinned
 
-`composer config platform.php 8.3.31`. The CLI here is 8.4 but Herd serves the site
-with 8.3, and without the pin Composer locks a `>= 8.4.1` platform requirement that
-the webserver then fails on. Pinning also makes the lockfile reproducible against a
-declared target rather than against whatever CLI happens to be installed.
+`composer config platform.php 8.4.0`, and `require.php` `^8.4`. The pin makes the
+lockfile reproducible against a declared target rather than against whatever CLI
+happens to be installed (the CLI here is 8.4); without it Composer locks whatever
+the CLI allows, and the webserver then fails on it.
 
-**Open:** what PHP does production actually run? If it is 8.4, raise the pin. This is
-the kind of thing that only bites at deploy time.
+**8.5 since 2026-11-25** (Open-Questions #11): the Metanet host offers 8.4 and 8.5,
+and 8.5 has security support a year longer (to the end of 2029). The locked
+packages allowed it unchanged and the suite passed on 8.5.12 with no deprecation.
+Was 8.3, because Herd served the site with it; Herd now isolates the site on 8.5
+(`herd isolate 8.5`, and `herd secure`: without its own certificate, https fell
+into legacy's `*.viak.ch.test` block on 8.3). Site, staging and production run
+8.5. **The floor is 8.4, not 8.5**, because the CLI here is 8.4 and Herd's
+isolation does not reach it: with `^8.5` Composer's platform check stops
+`php artisan` and `composer dev`. Raise it when the CLI is on 8.5.
 
 ## Databases
 

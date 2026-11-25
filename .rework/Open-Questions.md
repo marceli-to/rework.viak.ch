@@ -34,7 +34,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | ~~8~~ | ~~Event 213 — what was it meant to be?~~ **Settled 2026-11-17 (Marcel): ignore it.** The port skips it, as it skips all 14 two-digit-year events; never booked, never on the site | — | — |
 | ~~9~~ | ~~The other 13 two-digit-year events: drop or restore?~~ **Decided 2026-11-25: dropped**, all 14 with 213. `PortCourses::DROPPED_TWO_DIGIT_YEAR` lists them by id; a new one in a fresher dump is still a finding | — | — |
 | ~~10~~ | ~~`due_at` in the port: the 541 lost, and the open/overdue~~ **Decided 2026-11-25: reconstructed** for the open/overdue ones with legacy's own rules, which match *Zahlbar bis* on every PDF; the 541 paid stay as they are (#7). `PortInvoices::reconstructedDueDates()` | — | — |
-| ~~11~~ | ~~What PHP does production run?~~ **Decided 2026-11-25: 8.3**, as staging on the same Metanet host (Plesk's `/opt/plesk/php/8.3`). The pin stays; raise it only when the host moves | — | — |
+| ~~11~~ | ~~What PHP does production run?~~ **Decided 2026-11-25: 8.5.** The host offers 8.4 and 8.5; Herd, staging and production run 8.5, the Composer floor is 8.4 for the local CLI (`00-foundation.md`, `Deploy.md`) | — | — |
 | ~~12~~ | ~~What is actually in `courses.reviews`?~~ — **answered 2026-09-21: an Elfsight widget embed**, on all 32 non-empty rows, 23 distinct widget ids. Not testimonial data at all. Replaced by 18 | — | — |
 | ~~13~~ | ~~Is the Mailchimp newsletter sync still in scope?~~ **Answered 2026-10-30: yes, as before.** Built the same day; see `08-accounts.md`, *The newsletter sync* | — | — |
 | ~~14~~ | ~~Should an admin cancelling for a student charge the penalty?~~ — **answered 2026-09-24: the admin decides, per cancellation.** See `07-dashboard.md` | — | — |
@@ -363,11 +363,10 @@ knowingly wrong. Pick one, in the port.
 
 ### ~~11. What PHP does production run?~~
 
-**Decided 2026-11-25: 8.3.** Production starts on the Metanet host staging
-runs on, and staging runs Plesk's 8.3 (`Deploy.md`). The pin stays.
-
-The rework is pinned to 8.3 because Herd serves 8.3 locally. If production runs
-8.4, raise the pin. Only bites at deploy time.
+**Decided 2026-11-25: 8.5.** The Metanet host offers 8.4 and 8.5; 8.5 has
+security support a year longer, the locked packages allow it and the suite
+passes on it. The site, staging and production run it; the Composer floor is
+8.4 so the local 8.4 CLI keeps working (`00-foundation.md`, `Deploy.md`).
 
 ### ~~18. Do the Elfsight review widgets come across, get replaced, or go?~~
 
