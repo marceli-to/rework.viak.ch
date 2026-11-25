@@ -29,7 +29,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | ~~4~~ | ~~Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy~~ **Answered 2026-11-20 (Oliver): the six stay, remapped onto the five categories plus Teams & Unternehmen**; he renames them and rewrites their texts in the dashboard (on the Projektstand under *Inhalte*) | — | — |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |
-| 6 | Will EN ever be implemented? | Client | Nothing — a *never* would let us simplify |
+| ~~6~~ | ~~Will EN ever be implemented?~~ **Answered 2026-11-25 (client meeting): not in the foreseeable future; leave the code and URL structure intact.** Nothing to simplify away | — | — |
 | ~~7~~ | ~~Do the historical invoice due dates matter?~~ **Settled 2026-11-17 (Marcel): ignore it.** No reconstruction; the 541 paid invoices come across with the `due_at` they hold | — | — |
 | ~~8~~ | ~~Event 213 — what was it meant to be?~~ **Settled 2026-11-17 (Marcel): ignore it.** The port skips it, as it skips all 14 two-digit-year events; never booked, never on the site | — | — |
 | 9 | The other 13 two-digit-year events: drop or restore? | Marcel | Cutover |
@@ -259,7 +259,12 @@ is assumed but not confirmed.
 **Decides:** the media field in chunk 04's field kit is the thin part; the
 pipeline behind it is the thick one. Worth pinning down before building either.
 
-### 6. Will EN ever be implemented?
+### ~~6. Will EN ever be implemented?~~
+
+**Answered 2026-11-25 (client meeting): no EN in the foreseeable future, but
+the code and URL structure stay intact.** Not a *never*, so the translatable
+columns, the `{de, en}` Resource maps and the `/de/` prefix stay as they are;
+nothing is simplified away. Taken off *Projektstand*.
 
 Answered for *this* rework — the admin edits DE only and the public site is DE —
 but the data model stays translatable so the decision can be reversed cheaply.

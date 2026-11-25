@@ -74,11 +74,6 @@
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
 		],
-		[
-			'title' => 'Englische Version',
-			'text' => 'Die Website ist deutsch, die Adressen behalten das /de/. Wird es je eine englische Version geben?',
-			'decides' => 'Nichts im Moment. Ein klares Nein würde einiges vereinfachen.',
-		],
 	];
 
 	$content = [

@@ -151,4 +151,5 @@ production database without a silent skip in it.
    `role:admin`). Does the rework ship EN publicly?~~ — **answered 2026-09-16:
    no.** The rework ships DE. The translation maps this chunk introduced stay
    exactly as they are; only the admin UI drops to one locale. See
-   `04-content.md`.
+   `04-content.md`. **Confirmed 2026-11-25 (client meeting):** no EN in the
+   foreseeable future, code and URL structure left intact.

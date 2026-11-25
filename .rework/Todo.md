@@ -516,9 +516,9 @@ items that are ours rather than the client's.
 - ~~English on the public site~~ — **answered 2026-09-16: not in this rework.**
   The admin edits DE only; the data model stays translatable so the decision can
   be reversed cheaply. See `04-content.md`.
-- **Will EN ever be implemented?** Still worth asking the client. Nothing waits
-  on it — the translatable columns and the `{de, en}` Resource maps are staying
-  either way — but a firm never would let a later chunk simplify them away.
+- ~~**Will EN ever be implemented?**~~ **Answered 2026-11-25 (client meeting):
+  not in the foreseeable future, code and URL structure kept intact.** Not a
+  never, so the translatable columns and the `{de, en}` Resource maps stay.
 - ~~Does the client want to build pages we have not designed?~~ —
   **answered 2026-09-16: no.** The no-Statamic decision in `04-content.md` is
   settled rather than assumed.
