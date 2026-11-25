@@ -92,7 +92,7 @@
 	];
 
 	$launch = [
-		['Kreditkarte und TWINT', 'Die neue Website zahlt über das bestehende Stripe-Konto von VIAK, mit demselben Schlüssel wie heute. Neu im Live-Modus des Kontos: TWINT einschalten und einen Webhook einrichten (die heutige Website hat keinen). Dafür brauchen wir kurz Zugang zum Stripe-Dashboard, oder jemand von VIAK macht es mit uns. Auf der Testumgebung läuft beides schon im Testmodus desselben Kontos, es wird nichts belastet.', true],
+		['Kreditkarte und TWINT', 'Die neue Website zahlt über das bestehende Stripe-Konto von VIAK, mit demselben Schlüssel wie heute. Neu im Live-Modus des Kontos: TWINT einschalten und einen Webhook einrichten (die heutige Website hat keinen), das machen wir. Auf der Testumgebung läuft beides schon im Testmodus desselben Kontos, es wird nichts belastet.', false],
 		['Buchhaltung', 'Run My Accounts: Kartenzahlungen werden dort verbucht. Bis zum Go-live wird nichts an die Buchhaltung geschickt.', false],
 		['Mails', 'Im Prototyp gehen alle Mails an eine Testadresse, nie an Kund:innen.', false],
 		['Newsletter', 'Die Anmeldungen gehen wie heute an Mailchimp. Im Prototyp werden sie nur aufgezeichnet.', false],
