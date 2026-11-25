@@ -70,6 +70,11 @@
 			'decides' => 'Ob wir die Bewertungen einmal als Entwürfe übernehmen oder eine Verbindung zu Google einrichten.',
 		],
 		[
+			'title' => 'Mietlizenzen, die bald auslaufen',
+			'text' => 'Die Bestellungen aus dem Shop 3d-software.ch werden beim Go-live übernommen, auch die Jahresmietlizenzen (rund 120 Kundinnen und Kunden im letzten Jahr). Die neue Website führt eine Mietlizenz wie heute der Shop: als Bestellung mit Datum, ohne Ablaufdatum und ohne Erinnerung. Eine Verlängerung ist eine neue Bestellung. Wie erinnert VIAK heute an eine Verlängerung: der Hersteller, VIAK von Hand, oder niemand? Unser Vorschlag, falls es hilft: eine Liste «Mietlizenzen, die bald auslaufen» im Backoffice, berechnet aus Bestelldatum plus ein Jahr, ohne automatische E-Mails. VIAK schreibt die Kundinnen und Kunden selbst an.',
+			'decides' => 'Ob wir die Liste bauen. Ohne sie bleibt es wie heute.',
+		],
+		[
 			'title' => 'KI-Zugang zu den Daten',
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (MCP-Server), heute nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Christoph richtet ihn in Claude für die ganze Firma ein. Jede Person meldet sich dann einmal mit ihrem eigenen VIAK-Konto an, Claude arbeitet in ihrem Namen, und jeder Aufruf wird protokolliert. Unser Vorschlag: nur Admins erhalten Zugang. Was soll der Zugang können? Welche Fragen soll er beantworten, und darf er auch etwas ändern (z.B. eine Lizenz als versendet markieren, eine Buchung erfassen)? Am einfachsten eine Liste mit Beispielen aus dem Alltag im Büro.',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt, und wer ihn nutzen darf.',
@@ -98,7 +103,7 @@
 		['Buchhaltung', 'Run My Accounts: Kartenzahlungen werden dort verbucht. Bis zum Go-live wird nichts an die Buchhaltung geschickt.', false],
 		['Mails', 'Im Prototyp gehen alle Mails an eine Testadresse, nie an Kund:innen.', false],
 		['Newsletter', 'Die Anmeldungen gehen wie heute an Mailchimp. Im Prototyp werden sie nur aufgezeichnet.', false],
-		['Daten', 'Ein frischer Export der heutigen Datenbank für den Umzug (der Prototyp arbeitet mit dem Stand vom 11. September 2026), danach Kontrolle der übernommenen Kurse, Buchungen und Rechnungen.', false],
+		['Daten', 'Ein frischer Export der heutigen Datenbank für den Umzug (der Prototyp arbeitet mit dem Stand vom 11. September 2026), danach Kontrolle der übernommenen Kurse, Buchungen und Rechnungen. Am selben Tag ein Export des Shops 3d-software.ch: seine Bestellungen und Kundinnen und Kunden kommen mit (bestehende Konten werden über die E-Mail-Adresse zusammengeführt), dazu eine Liste der Bestellungen, deren Status wir angenommen haben.', false],
 		['Mietcomputer', 'Beim Umzug prüfen, ob gebuchte Mietcomputer die verfügbare Anzahl eines Termins übersteigen.', false],
 		['Weiterleitungen', 'Alle heutigen Adressen, auch die von 3d-software.ch, leiten auf die neuen um, damit Suchmaschinen und Lesezeichen weiter funktionieren.', false],
 		['Server', 'PHP-Version, Hintergrundprozesse für Mails und PDFs, Upload-Grösse, Spamschutz des Kontaktformulars für die echte Domain.', false],
