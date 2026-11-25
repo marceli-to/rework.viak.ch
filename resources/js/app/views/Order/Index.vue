@@ -11,6 +11,7 @@ import IconPlus from '@/components/icons/Plus.vue';
 import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
+import PaymentBadge from '@/components/order/PaymentBadge.vue';
 import SearchField from '@/components/list/SearchField.vue';
 
 /**
@@ -21,7 +22,9 @@ import SearchField from '@/components/list/SearchField.vue';
  *
  * *Offene Bestellungen* comes oldest first, as a queue is worked; the sent
  * ones newest first, paged as *Rechnungen*. A row says what was ordered as
- * one comma-separated line; payment and dispatch are on the order's page. The
+ * one comma-separated line, and whether it is paid: VIAK sends before or after
+ * payment, per order (#2, 2026-11-25), so the list has to say which is which.
+ * Dispatch itself is on the order's page. The
  * `+` asks for the customer first: an order taken by mail or phone belongs to
  * an account.
  */
@@ -115,7 +118,8 @@ watch(search, load, { immediate: true });
 					<div class="col-span-12 sm:col-span-2">Nummer</div>
 					<div class="col-span-12 sm:col-span-2">Datum</div>
 					<div class="col-span-12 sm:col-span-3">Kunde</div>
-					<div class="col-span-12 sm:col-span-5">Lizenzen</div>
+					<div class="col-span-12 sm:col-span-3">Lizenzen</div>
+					<div class="col-span-12 sm:col-span-2">Zahlung</div>
 				</div>
 				<EditableListItem v-for="order in lists[group.status].rows" :key="order.uuid" :show="{ name: 'backoffice.order.show', params: { uuid: order.uuid } }" wide>
 					<div class="col-span-12 sm:col-span-2">
@@ -124,7 +128,8 @@ watch(search, load, { immediate: true });
 					<div class="col-span-12 sm:col-span-2">{{ shortDate(order.date) }}</div>
 					<div class="col-span-12 sm:col-span-3">{{ order.customer.name }}<template v-if="order.customer.city">, {{ order.customer.city }}</template></div>
 					<!-- What was ordered as one line of text, no badges (Marcel, 2026-10-08). -->
-					<div class="col-span-12 pr-40 sm:col-span-5">{{ order.lines.join(', ') }}</div>
+					<div class="col-span-12 sm:col-span-3">{{ order.lines.join(', ') }}</div>
+					<div class="col-span-12 pr-40 sm:col-span-2"><PaymentBadge :payment="order.payment" /></div>
 				</EditableListItem>
 				<NoResults v-if="!lists[group.status].rows.length">{{ search ? 'Keine Bestellungen gefunden.' : group.empty }}</NoResults>
 

@@ -25,7 +25,7 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | # | Question | Owner | Blocks |
 |---|---|---|---|
 | ~~1~~ | ~~Is the Bildung licence tier real?~~ — **answered 2026-10-08 with 36: no tier.** EDU licences are hidden variants VIAK enters by hand. See `05-licences.md` | — | — |
-| 2 | Licence dispatch before or after payment? | Client | Chunk 05, partly. **Urgent** since 58 (2026-10-26): the customer may now choose invoice, so unpaid orders are normal |
+| ~~2~~ | ~~Licence dispatch before or after payment?~~ **Answered 2026-11-25 (VIAK, via Marcel): both, VIAK decides per order.** Nothing is held back; *Offene Bestellungen* shows each order's payment badge; checkout, confirmation, order mail and `llms.txt` no longer promise a time (*nach Zahlungseingang* gone). See `13-checkout.md` | — | — |
 | 3 | Discount codes and student pricing on licences? | Client | Nothing — the line already holds a discount |
 | ~~4~~ | ~~Which of the six Vorhaben are real? — **narrowed 2026-09-23**: the template is settled on Räume (title, text, offer list); the other five were not discussed. **Built 2026-10-07** as a dashboard module, so the count no longer costs work: VIAK creates the ones that are real, with its own copy~~ **Answered 2026-11-20 (Oliver): the six stay, remapped onto the five categories plus Teams & Unternehmen**; he renames them and rewrites their texts in the dashboard (on the Projektstand under *Inhalte*) | — | — |
 | ~~5~~ | ~~What does "image handling (frontend output)" mean?~~ — **answered 2026-09-18**, see 15 | — | — |

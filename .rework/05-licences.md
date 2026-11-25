@@ -672,8 +672,9 @@ same morph pattern `course_taxonomy` already uses.
 something manual, and when a customer says the licence never arrived, the
 question is who sent it and when.
 
-Whether `state` gains a third value — dispatch before or after payment — is open
-question 2 in `Open-Questions.md`.
+Whether `state` gains a third value — dispatch before or after payment — was
+question 2: **no** (2026-11-25). VIAK does both and decides per order, so
+nothing is held back and the worklist shows each order's payment instead.
 
 ### `software` outgrows being a taxonomy
 

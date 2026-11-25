@@ -55,15 +55,13 @@
 					@elseif ($byInvoice && $order->invoice)
 						Vielen Dank für Deine Bestellung {{ $order->number }}. Die Rechnung ist per
 						E-Mail unterwegs, Du kannst sie mit dem QR-Einzahlungsschein oder per
-						Kreditkarte bezahlen. Die Lizenzen senden wir nach Zahlungseingang an
-						{{ $email }}.
+						Kreditkarte bezahlen. Die Lizenzen senden wir an {{ $email }}.
 					@elseif ($confirming)
 						Vielen Dank für Deine Bestellung {{ $order->number }}. Sobald Deine Zahlung
-						bestätigt ist, erhältst Du eine E-Mail, und wir senden die Lizenzen an
-						{{ $email }}.
+						bestätigt ist, erhältst Du eine E-Mail. Die Lizenzen senden wir an {{ $email }}.
 					@else
 						Deine Bestellung {{ $order->number }} ist erfasst, aber noch nicht bezahlt.
-						Die Lizenzen senden wir nach Zahlungseingang an {{ $email }}.
+						Die Lizenzen senden wir an {{ $email }}.
 					@endif
 				</p>
 

@@ -453,6 +453,8 @@ items that are ours rather than the client's.
   fulfilment is a human forwarding a key. Dispatch first risks handing over a key
   that is never paid for; dispatch second makes the customer wait an invoice cycle.
   Decides whether fulfilment hangs off *paid* or off *ordered*. Client question.
+  **Answered 2026-11-25: both, per order.** Fulfilment hangs off *ordered*;
+  the worklist shows payment (#2).
 - ~~What a licence actually is~~ — **answered 2026-09-17.** Products have
   **variants** (Einzelplatz / Netzwerk / Studierende) at their own prices; some
   software is **not directly purchasable** — "Preis auf Anfrage" is real and is

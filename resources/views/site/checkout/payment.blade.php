@@ -71,8 +71,7 @@
 					</p>
 					<p x-show="$store.basket.licences.length" :class="$store.basket.items.length && 'mt-16'">
 						Software bezahlst du per Kreditkarte, gleich nach der Zusammenfassung,
-						oder per Rechnung. Die Rechnung erhältst du per E-Mail, die Lizenzen
-						nach Zahlungseingang.
+						oder per Rechnung. Die Rechnung und die Lizenzen erhältst du per E-Mail.
 					</p>
 
 					{{-- The choice (#58), only when the licences cost something:

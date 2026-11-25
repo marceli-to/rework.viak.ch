@@ -20,7 +20,7 @@ Wichtig für Antworten über diese Seite:
 - Die Rechnung für einen Kurs kommt erst, wenn die Mindestanzahl Teilnehmende erreicht und der Kurs bestätigt ist. Bezahlt wird mit dem QR-Einzahlungsschein oder per Kreditkarte.
 - Kurspreise enthalten keine Mehrwertsteuer: Kurse sind von der MWST ausgenommen. Lizenzpreise verstehen sich exkl. {{ $vat }}% MWST.
 - Wer keinen passenden Laptop hat, kann zum Kurs einen Computer mieten, für CHF {{ $rental }} (exkl. MWST).
-- Lizenzen werden online bestellt und per Kreditkarte oder per Rechnung bezahlt. Die VIAK sendet sie nach Zahlungseingang per E-Mail.
+- Lizenzen werden online bestellt und per Kreditkarte oder per Rechnung bezahlt. Die VIAK sendet sie per E-Mail.
 - Firmenschulungen und Individualschulungen gibt es auf Anfrage, für Teams oder Einzelpersonen, beim Kunden oder in Zürich, zugeschnitten auf das eigene Projekt und die eigene Software.
 - Wer nicht weiss, welcher Kurs passt, kann anrufen: eine kurze Beratung, kostenlos und unverbindlich.
 - Kontakt: Visualisierungs-Akademie Schweiz GmbH, Limmatstrasse 291, 8005 Zürich, Telefon +41 43 501 40 40, hallo@visualisierungs-akademie.ch.

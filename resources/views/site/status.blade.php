@@ -39,12 +39,6 @@
 			'decides' => 'Die Antworten der Frage und ihre Auswertung im Dashboard.',
 		],
 		[
-			'title' => 'Software: Versand vor oder nach Zahlungseingang?',
-			'go_live' => true,
-			'text' => 'Software kann jetzt per Kreditkarte oder per Rechnung bezahlt werden, die Kund:in wählt in der Kasse. Mit der Rechnung ist eine unbezahlte Bestellung der Normalfall, dazu kommen abgebrochene Kartenzahlungen und Bestellungen, die das Team im Dashboard erfasst. Werden die Lizenzen sofort versendet oder erst nach Zahlungseingang? Die Bestätigung in der Kasse und die E-Mail sagen heute «nach Zahlungseingang».',
-			'decides' => 'Ob die Versandliste im Dashboard unbezahlte Bestellungen zurückhält, und was Bestätigung und E-Mail versprechen.',
-		],
-		[
 			'title' => 'Software: Zahlungsfrist der Rechnung?',
 			'text' => 'Eine Software-Rechnung ist heute 10 Tage nach Rechnungsdatum fällig. Eine Kurs-Rechnung ist 10 Tage vor dem Kurs fällig (frühestens 10 Tage nach Rechnungsdatum), bei Software gibt es kein solches Datum. Bleibt es bei 10 Tagen, oder gilt für Software eine andere Frist?',
 			'decides' => 'Das Fälligkeitsdatum auf der Software-Rechnung.',
@@ -93,7 +87,6 @@
 	$unbuilt = [
 		['Tracking: Buchungen als Conversion', 'Laut Tag-Manager-Support (Call vom 2. November) müssen Werbe- und Analyse-Cookies nach der Zustimmung freigegeben werden. Das macht die neue Website bereits, die heutige kann es nicht. Offen bleibt: Google Ads zählt jedes abgeschickte Formular (Login, Registrierung, Newsletter, Kontakt und neu auch eine Buchung) pauschal als Conversion mit CHF 100. Damit nur Käufe mit ihrem echten Betrag zählen, meldet die Bestätigungsseite den Kauf an den Tag Manager, und dort wird die Conversion auf dieses Ereignis umgestellt. Der Plan steht, umgesetzt wird es später.', 'Zurückgestellt', false],
 		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Die Frage «Wie wurdest du auf uns aufmerksam?» steht auf der Bestätigungsseite, mit Platzhalter-Antworten. Offen: die Herkunft jeder Buchung festhalten und die Auswertung im Dashboard.', 'Wartet auf die Tracking-Fragen', true],
-		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
 		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];

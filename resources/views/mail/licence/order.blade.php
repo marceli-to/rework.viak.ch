@@ -48,7 +48,7 @@
 @elseif ($paid)
 <p>Die Rechnung liegt bei, sie ist bereits bezahlt. Wir senden Dir die Lizenzen in Kürze an {{ $order->deliveryEmail() }}.</p>
 @else
-<p>Die Rechnung liegt bei. Du kannst sie mit dem QR-Einzahlungsschein oder per Kreditkarte bezahlen. Die Lizenzen senden wir Dir nach Zahlungseingang.</p>
+<p>Die Rechnung liegt bei. Du kannst sie mit dem QR-Einzahlungsschein oder per Kreditkarte bezahlen. Die Lizenzen senden wir Dir an {{ $order->deliveryEmail() }}.</p>
 <p class="py-2x"><a href="{{ $payment }}" target="_blank" class="button button-primary" style="text-decoration: none;"><strong>Zahlung per Kreditkarte</strong></a></p>
 @endif
 <p>Deine Bestellungen findest Du jederzeit in Deinem Profil: <a href="{{ $portal }}" target="_blank" style="color: #000000; text-decoration: none; font-weight:bold"><strong>visualisierungs-akademie.ch/konto</strong></a></p>

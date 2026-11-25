@@ -192,7 +192,8 @@ customer who has one): number and date, the lines, the amount with
 *Bezahlt* / *Rechnung offen* / *Kostenlos* and *Versendet* / *Nicht versendet*,
 and *Bezahlen* while the invoice is open.
 
-Still open: dispatch is not held back for an unpaid order (#2, the client);
+Dispatch is not held back for an unpaid order, and need not be (#2, answered
+2026-11-25: VIAK decides per order). Still open:
 orders cannot be cancelled; VIAK gets no reminder of unpaid orders (Marcel,
 2026-10-20: none wanted, the dashboard shows *Rechnung offen*).
 
@@ -240,10 +241,12 @@ button, as a course invoice has).
   *Per Rechnung* or *Per Karte* (courses are invoiced either way). The summary
   and its button follow it (*Bestellen* rather than *Bestellen und bezahlen*).
 - The confirmation and the mails say the invoice follows, for both parts.
-- Dispatch: today nothing holds a licence back for an unpaid order (#2). With
-  invoice as a chosen option rather than an abandoned card, #2 stops being
-  theoretical: VIAK will see paid and unpaid orders on the worklist and must
-  decide what it sends.
+- Dispatch: nothing holds a licence back for an unpaid order. **#2 answered
+  2026-11-25: VIAK sends before or after payment, per order.** So *Offene
+  Bestellungen* carries a *Zahlung* column (`PaymentBadge`: Bezahlt, Rechnung
+  offen, Kostenlos), and no customer text promises a time: the payment step,
+  the confirmation, the order mail and `llms.txt` say the licences are sent to
+  the delivery address, not *nach Zahlungseingang*.
 
 **Questions** (in `Open-Questions.md`):
 
@@ -266,9 +269,9 @@ button, as a course invoice has).
   mails as before, **no Stripe**, straight to the confirmation.
 - **The mail needed nothing**: it already attaches the invoice and, for an
   unpaid one, offers the QR bill or the card button and says the licences
-  follow payment (`mail/licence/order`). That sentence is #2's answer
-  written down early; if VIAK sends before payment, it changes here and on
-  the confirmation.
+  follow payment (`mail/licence/order`). That sentence was #2's answer
+  written down early; #2 came back *both* (2026-11-25), so it now names the
+  address and no time.
 - **The confirmation** says the invoice is on its way, QR or card, licences
   after payment, with *Jetzt bezahlen* under it as for a waiting order.
 - **The choice is on the payment step**, under *Zahlungsoptionen*: *Per
