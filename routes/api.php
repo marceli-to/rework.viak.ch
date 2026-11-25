@@ -226,6 +226,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('licence-orders/{order}', [Admin\LicenceOrderController::class, 'show']);
 		Route::patch('licence-orders/{order}/cancel', [Admin\LicenceOrderController::class, 'cancel']);
 		Route::patch('licence-order-items/{item}/dispatch', [Admin\LicenceOrderController::class, 'dispatch']);
+		Route::get('rental-renewals', [Admin\RentalRenewalController::class, 'index']);
+		Route::post('licence-order-items/{item}/remind', [Admin\RentalRenewalController::class, 'remind']);
 		Route::get('customers/{customer}/licence-orders/create', [Admin\LicenceOrderController::class, 'create']);
 		Route::post('customers/{customer}/licence-orders', [Admin\LicenceOrderController::class, 'store']);
 		Route::get('exports/courses', [Admin\ExportController::class, 'courses']);

@@ -424,6 +424,31 @@ That is a fair v1 trade — the licence's real state lives with the vendor anywa
 but it is a deliberate departure from the mockup, not an oversight. **Do not
 "fix" it later without asking.**
 
+### Rentals due for renewal — built 2026-11-25
+
+The one exception the client asked for (#83, 2026-11-25: "build the list,
+maybe even with the reminder process"). It does **not** make a licence a
+record: nothing about a lifespan is stored, the year is worked out from the
+order ([[RentalRenewals]]).
+
+- **Where**: *Backoffice → Bestellungen*, a fourth list, *Mietlizenzen, die
+  bald auslaufen*, shut with its count. The search does not reach it.
+- **What counts**: a line whose variant is a *Jahresmietlizenz*, or a line
+  with no variant whose title says *miet* (the shop's old versions). Price 0
+  is a demo and never counts; a cancelled order never counts.
+- **When**: the order's date plus one year; listed from 60 days before to 30
+  days after, soonest first. Imported shop orders count alike, so the first
+  list after cutover holds the shop's rentals.
+- **Renewed**: the same customer ordered the same variant (or a line of the
+  same title) later, on an order not cancelled. The row goes.
+- **The reminder is a button** (Marcel, 2026-11-25: option 2 of none, a
+  button, automatic). *Erinnerung senden*, with a confirm, sends
+  [[RentalRenewalReminder]] to the order's customer: the line, the order,
+  the end date and *Lizenz verlängern*, which opens the product's block on
+  its licence page (the software list for a line without a variant).
+  `reminded_at` / `reminded_by` on the line; the row shows *Erinnert am … von
+  …*, and *Nochmals erinnern* sends again.
+
 ## The real catalogue — 2026-09-29
 
 The client went through their existing shop with Claude and sent the result as a

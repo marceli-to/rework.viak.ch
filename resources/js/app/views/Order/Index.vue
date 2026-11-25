@@ -12,6 +12,7 @@ import ListHeader from '@/components/list/ListHeader.vue';
 import Loading from '@/components/ui/Loading.vue';
 import NoResults from '@/components/ui/NoResults.vue';
 import PaymentBadge from '@/components/order/PaymentBadge.vue';
+import RentalRenewals from '@/components/order/RentalRenewals.vue';
 import SearchField from '@/components/list/SearchField.vue';
 
 /**
@@ -27,6 +28,9 @@ import SearchField from '@/components/list/SearchField.vue';
  * Dispatch itself is on the order's page. The
  * `+` asks for the customer first: an order taken by mail or phone belongs to
  * an account.
+ *
+ * *Mietlizenzen, die bald auslaufen* (#83) sits last, its own list and its
+ * own load ([[RentalRenewals]]); the search does not reach it.
  */
 const route = useRoute();
 const router = useRouter();
@@ -137,6 +141,8 @@ watch(search, load, { immediate: true });
 					{{ lists[group.status].more ? 'Wird geladen …' : `Weitere laden (${lists[group.status].rows.length} von ${lists[group.status].total})` }}
 				</Button>
 			</Collapsible>
+
+			<RentalRenewals v-if="!search" />
 		</div>
 
 		<CustomerPicker v-if="picking" title="Bestellung erfassen für" action="Weiter" @pick="pick" @close="picking = false" />

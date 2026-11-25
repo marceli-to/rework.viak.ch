@@ -20,7 +20,7 @@ class LicenceOrderItem extends Model
 	use HasFactory;
 	use HasUuid;
 
-	protected $fillable = ['licence_order_id', 'licence_variant_id', 'title', 'sku', 'host', 'price', 'quantity', 'position', 'dispatched_at', 'dispatched_by'];
+	protected $fillable = ['licence_order_id', 'licence_variant_id', 'title', 'sku', 'host', 'price', 'quantity', 'position', 'dispatched_at', 'dispatched_by', 'reminded_at', 'reminded_by'];
 
 	protected function casts(): array
 	{
@@ -29,6 +29,7 @@ class LicenceOrderItem extends Model
 			'quantity' => 'integer',
 			'position' => 'integer',
 			'dispatched_at' => 'datetime',
+			'reminded_at' => 'datetime',
 		];
 	}
 
@@ -46,6 +47,12 @@ class LicenceOrderItem extends Model
 	public function dispatcher(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'dispatched_by');
+	}
+
+	/** Who sent the last renewal reminder ([[RentalRenewals]]). */
+	public function reminder(): BelongsTo
+	{
+		return $this->belongsTo(User::class, 'reminded_by');
 	}
 
 	public function isDispatched(): bool

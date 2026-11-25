@@ -15,3 +15,9 @@ export const cancelOrder = (uuid) => client.patch(`/admin/licence-orders/${uuid}
 
 /** *Versendet*, per line, and back. Answers with the whole order. */
 export const setDispatched = (item, dispatched) => client.patch(`/admin/licence-order-items/${item}/dispatch`, { dispatched }).then((r) => r.data.data);
+
+/** *Mietlizenzen, die bald auslaufen*, soonest first ([[RentalRenewalController]]). */
+export const fetchRenewals = () => client.get('/admin/rental-renewals').then((r) => r.data.data);
+
+/** *Erinnerung senden* for one line. Answers with its row. */
+export const sendRenewalReminder = (item) => client.post(`/admin/licence-order-items/${item}/remind`).then((r) => r.data.data);
