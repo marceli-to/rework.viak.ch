@@ -111,19 +111,24 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
 - **Logins for the client**: the dev accounts (`Test-Users.md`), which came
   with the dump.
 
-Update: `git pull && composer install --no-dev -o && php artisan migrate --force
-&& php artisan search:rebuild && php artisan config:cache && php artisan
-route:cache && php artisan view:cache`.
+Update:
 
-**If a cache command prints `tempnam(): file created in the system's temporary
-directory`** (seen 2026-11-17 and 2026-11-25): Laravel writes each cache file
-through a temp file beside it, and PHP falls back to `/tmp` when it cannot
-write in `bootstrap/cache`. It is not `open_basedir` (none is set on staging's
-shell, checked 2026-11-25). Check `ls -la bootstrap/cache`: the folder and its
-files must belong to `dsoftwa:psacln`, the SSH user. `php artisan
-optimize:clear && php artisan optimize` cleared it on 2026-11-25; if it comes
-back, a file there was written by another user (a Plesk task, PHP-FPM) and
-needs `chown`.
+```
+git pull && composer install --no-dev -o && php artisan optimize:clear \
+  && php artisan migrate --force && php artisan search:rebuild && php artisan optimize
+```
+
+**`optimize:clear` first, on every update.** Rebuilding the caches over the
+old ones printed `tempnam(): file created in the system's temporary
+directory` after every deploy (2026-11-17 to 2026-11-25), and clearing them
+first is what makes it go away (Marcel). Laravel writes each cache file
+through a temp file beside it in `bootstrap/cache` and PHP falls back to the
+system temp dir when it cannot create one there. Ruled out 2026-11-25:
+`open_basedir` (none set) and the folder's owner (all `dsoftwa:psacln`). The
+exact cause is not proven; a likely one is the jailed shell, which sees the
+app under a different path than the web server (as the `public/storage`
+symlink showed), so a cache built in one view of the paths misleads the next
+command. `optimize` builds config, events, routes and views in one go.
 
 **Once, after the pull that brings the website texts (2026-11-09):**
 `php artisan catalogue:categories --sync` (`--dry-run` first). The client's
