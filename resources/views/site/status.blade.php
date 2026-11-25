@@ -71,8 +71,8 @@
 		],
 		[
 			'title' => 'KI-Zugang zu den Daten',
-			'text' => 'Die Website hat einen Zugang für KI-Assistenten (z.B. Claude), nur für Admins und nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Welche Fragen soll er beantworten, darf er auch etwas ändern, und wer bei VIAK nutzt ihn mit welchem Programm?',
-			'decides' => 'Welche Werkzeuge der Zugang bekommt und wer einen Schlüssel erhält.',
+			'text' => 'Die Website hat einen Zugang für KI-Assistenten (MCP-Server), heute nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Christoph richtet ihn in Claude für die ganze Firma ein. Jede Person meldet sich dann einmal mit ihrem eigenen VIAK-Konto an, Claude arbeitet in ihrem Namen, und jeder Aufruf wird protokolliert. Unser Vorschlag: nur Admins erhalten Zugang. Was soll der Zugang können? Welche Fragen soll er beantworten, und darf er auch etwas ändern (z.B. eine Lizenz als versendet markieren, eine Buchung erfassen)? Am einfachsten eine Liste mit Beispielen aus dem Alltag im Büro.',
+			'decides' => 'Welche Werkzeuge der Zugang bekommt, und wer ihn nutzen darf.',
 		],
 	];
 

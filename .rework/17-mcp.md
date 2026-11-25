@@ -8,7 +8,8 @@ is still to come from the client** (#64).
 
 **Plumbing built 2026-10-26** (*As built*, below): the server, the tokens, the
 call log and four read-only tools. What it should do beyond that waits on #64
-and #65.
+and #65. **2026-11-25:** to go company wide in claude.ai through OAuth, admins
+only (proposed); recorded, not built (*Company wide in claude.ai*, below).
 
 ## Proposed shape
 
@@ -90,3 +91,27 @@ token as `Authorization: Bearer …`. For Claude Code, for instance:
 Clients that only speak OAuth (claude.ai's connectors) cannot use a bearer
 token; `laravel/mcp` can serve OAuth through Passport if that is the client
 VIAK picks, which is a second step, not a rebuild.
+
+## Company wide in claude.ai — meeting of 2026-11-25 (recorded, not built)
+
+Christoph would set the server up **company wide** with Project Room's latest
+implementation (`../projects.nightnurse.ch/.rework/15-mcp.md`, *OAuth for
+claude.ai connectors*, 2026-11-06). That is a claude.ai organisation
+connector: an org admin adds `https://visualisierungs-akademie.ch/mcp` once
+under *Admin settings → Connectors* (no client id or secret, dynamic
+registration); everyone in that claude.ai organisation then sees it, clicks
+*Connect* once and signs in with their own VIAK account. Who *sees* it is
+Christoph's org; who can *use* it is decided here, at sign-in.
+
+claude.ai speaks only OAuth, so this needs Project Room's step copied:
+Passport next to Sanctum (`auth:sanctum,api` on `/mcp`), `Mcp::oauthRoutes()`,
+redirect URIs limited to claude.ai / claude.com (and ChatGPT's, if wanted), a
+consent screen after the normal login, *Verbundene Apps* on *Mein Profil*, and
+`php artisan passport:keys` once on the server (into `Deploy.md` when built).
+The personal bearer tokens for Claude Code stay. About a day.
+
+**Proposed (Marcel, 2026-11-25): admins only, no 2FA.** VIAK has no 2FA and
+none is planned; the gate is an active admin account, the same as the
+dashboard's. **What the server should be capable of is still to be defined
+with VIAK (#64)**; asked on *Projektstand* for everyday examples from the
+office. Not built until that is answered.
