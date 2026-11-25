@@ -36,12 +36,17 @@ swiss-qr-bill, stripe and the excel exporter land with chunks 03/04.
 
 ### Why PHP is pinned
 
-`composer config platform.php 8.4.0`, and `require.php` `^8.4`. The pin makes the
+`composer config platform.php 8.3.31`, and `require.php` `^8.3`. The pin makes the
 lockfile reproducible against a declared target rather than against whatever CLI
 happens to be installed (the CLI here is 8.4); without it Composer locks whatever
 the CLI allows, and the webserver then fails on it.
 
-**8.5 since 2026-11-25** (Open-Questions #11): the Metanet host offers 8.4 and 8.5,
+**Staying at 8.3 until the host has 8.5** (2026-11-25, later): the 8.4 floor
+below was pushed and staging failed on it. Plesk there has 7.3 to 8.3 only, so
+the pin went back to `8.3.31` / `^8.3`. Herd serving 8.5 is fine with that.
+Raise the pin (to 8.4, see below) in the same deploy that moves staging to 8.5.
+
+**8.5 decided 2026-11-25** (Open-Questions #11): Metanet offers 8.4 and 8.5,
 and 8.5 has security support a year longer (to the end of 2029). The locked
 packages allowed it unchanged and the suite passed on 8.5.12 with no deprecation.
 Was 8.3, because Herd served the site with it; Herd now isolates the site on 8.5

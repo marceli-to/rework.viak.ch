@@ -70,9 +70,10 @@ Beyond Laravel's own keys:
 | `GOOGLEMAPS_APIKEY` | the Kontakt map; the client's key, restricted to the live site | `config/services.php` |
 | `MAILCHIMP_APIKEY`, `MAILCHIMP_LIST_ID`, `MAILCHIMP_TAGS` | the client's newsletter list: legacy's three values (list `c19300bbec`, tag `VA Newsletter`). **Production only**; elsewhere signups are logged | `08-accounts.md` |
 
-PHP 8.5 (#11, decided 2026-11-25): set the production domain to 8.5 in Plesk,
-and its crontab to `/opt/plesk/php/8.5/bin/php`. `composer install` refuses
-anything older than 8.4.
+PHP 8.5 (#11, decided 2026-11-25) **once Plesk has it installed**: set the
+production domain to 8.5 in Plesk, and its crontab to
+`/opt/plesk/php/8.5/bin/php`. Until then 8.3, and the Composer pin stays at 8.3
+(`00-foundation.md`).
 
 ## Staging (since 2026-10-30)
 
@@ -83,11 +84,16 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
 `viak_staging` is left alone.
 
 - **Jailed SSH shell**, `$HOME` is `/` (the vhost root). The default `php` is
-  7.4; `~/.bashrc` puts `/opt/plesk/php/8.5/bin` first and `~/.bash_profile`
+  7.4; `~/.bashrc` puts `/opt/plesk/php/8.3/bin` first and `~/.bash_profile`
   sources it. Cron and the domain's PHP setting are separate: the crontab line
-  calls `/opt/plesk/php/8.5/bin/php artisan schedule:run`, and the domain is on
-  8.5 in Plesk.
-- **The move from 8.3 to 8.5** (2026-11-25), once, **before** pulling the
+  calls `/opt/plesk/php/8.3/bin/php artisan schedule:run`, and the domain is on
+  8.3 in Plesk.
+- **Not installed yet: 8.4 and 8.5** (`ls /opt/plesk/php/` on 2026-11-25:
+  7.3 to 8.3). A pin of `^8.4` pulled onto 8.3 stops every request and every
+  `artisan` in `vendor/composer/platform_check.php`; it was reverted the same
+  day. Someone with admin rights on the host installs 8.5 (Plesk: Tools &
+  Settings, Updates, Add/Remove Components) before anything below.
+- **The move from 8.3 to 8.5**, once Plesk has 8.5, **before** pulling the
   commit that raises the pin (`composer install` on 8.3 refuses it). Four
   places, all needed: the domain's PHP version in Plesk (8.5, FPM); the path
   in `~/.bashrc`; the crontab line; then a new shell and `php -v` must say
