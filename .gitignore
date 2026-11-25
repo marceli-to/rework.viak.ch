@@ -27,6 +27,7 @@ Thumbs.db
 
 # Rework
 /.rework/history/mockup/assets
+/.rework/*.sql
 
 storage/app/glide-cache
 INSTALL.txt
