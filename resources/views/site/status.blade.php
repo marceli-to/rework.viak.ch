@@ -35,8 +35,8 @@
 		[
 			'title' => '«Wie wurdest du auf uns aufmerksam?»',
 			'go_live' => true,
-			'text' => 'Welche Antworten sollen zur Auswahl stehen, und ist die Frage freiwillig? Gewünscht war ein Popup; wir empfehlen ein Feld in der Zusammenfassung der Kasse, das unterbricht den Kauf nicht.',
-			'decides' => 'Die Frage im Kaufprozess und ihre Auswertung im Dashboard.',
+			'text' => 'Welche Antworten sollen zur Auswahl stehen? Die Frage kommt freiwillig auf die Bestätigungsseite nach dem Kauf, sie unterbricht den Kauf nicht. Sie wird jeder Kund:in einmal gestellt. Gebaut ist sie mit Platzhalter-Antworten.',
+			'decides' => 'Die Antworten der Frage und ihre Auswertung im Dashboard.',
 		],
 		[
 			'title' => 'Software: Versand vor oder nach Zahlungseingang?',
@@ -92,7 +92,7 @@
 
 	$unbuilt = [
 		['Tracking: Buchungen als Conversion', 'Laut Tag-Manager-Support (Call vom 2. November) müssen Werbe- und Analyse-Cookies nach der Zustimmung freigegeben werden. Das macht die neue Website bereits, die heutige kann es nicht. Offen bleibt: Google Ads zählt jedes abgeschickte Formular (Login, Registrierung, Newsletter, Kontakt und neu auch eine Buchung) pauschal als Conversion mit CHF 100. Damit nur Käufe mit ihrem echten Betrag zählen, meldet die Bestätigungsseite den Kauf an den Tag Manager, und dort wird die Conversion auf dieses Ereignis umgestellt. Der Plan steht, umgesetzt wird es später.', 'Zurückgestellt', false],
-		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Offen: die Herkunft jeder Buchung festhalten und die Frage «Wie wurdest du auf uns aufmerksam?».', 'Wartet auf die Tracking-Fragen', true],
+		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Die Frage «Wie wurdest du auf uns aufmerksam?» steht auf der Bestätigungsseite, mit Platzhalter-Antworten. Offen: die Herkunft jeder Buchung festhalten und die Auswertung im Dashboard.', 'Wartet auf die Tracking-Fragen', true],
 		['Versand erst nach Zahlung', 'Die Versandliste hält unbezahlte Bestellungen zurück.', 'Wartet auf die Versand-Frage', false],
 		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],

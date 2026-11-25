@@ -295,6 +295,10 @@ Route::prefix('{locale}')
 
 					Route::get('confirmation', [CheckoutController::class, 'confirmation'])
 						->name("{$locale}.checkout.confirmation");
+
+					// *Wie wurdest du auf uns aufmerksam?* ([[11-tracking]] step 4).
+					Route::post('confirmation', [CheckoutController::class, 'storeHeardFrom'])
+						->name("{$locale}.checkout.heard-from");
 				});
 
 			/*

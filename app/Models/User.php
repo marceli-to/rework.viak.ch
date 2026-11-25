@@ -74,6 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		return [
 			'email_verified_at' => 'datetime',
 			'deactivated_at' => 'datetime',
+			'heard_from_at' => 'datetime',
 			'password' => 'hashed',
 			'gender' => Gender::class,
 			'subscribe_newsletter' => 'boolean',

@@ -13,6 +13,7 @@ use App\Events\LicenceOrderPlaced;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounts\StoreAddressRequest;
 use App\Http\Requests\Bookings\CompleteCheckoutRequest;
+use App\Http\Requests\Site\StoreHeardFromRequest;
 use App\Models\Country;
 use App\Support\CheckoutSession;
 use App\Support\Payments\PaymentGateway;
@@ -247,6 +248,32 @@ class CheckoutController extends Controller
 			'confirming' => $request->filled('session_id') && ! ($order?->isPaid() ?? false),
 			'byInvoice' => CheckoutSession::licencePayment() === LicencePayment::Invoice,
 			'email' => $order?->deliveryEmail(),
+			// Once per customer ([[11-tracking]] step 4): gone once answered.
+			'askHeardFrom' => $user->heard_from === null,
+			'heardFromOptions' => config('tracking.heard_from'),
 		]);
+	}
+
+	/**
+	 * *Wie wurdest du auf uns aufmerksam?*, answered on the confirmation page
+	 * ([[11-tracking]] step 4). After the purchase, so it cannot cost one, and
+	 * stored on the customer: a first answer stands, a second post changes
+	 * nothing.
+	 */
+	public function storeHeardFrom(StoreHeardFromRequest $request): RedirectResponse
+	{
+		$user = $request->user();
+
+		if ($user->heard_from === null) {
+			$key = $request->validated('heard_from');
+
+			$user->forceFill([
+				'heard_from' => $key,
+				'heard_from_other' => $key === 'andere' ? trim((string) $request->validated('heard_from_other')) : null,
+				'heard_from_at' => now(),
+			])->save();
+		}
+
+		return redirect(SiteUrl::checkout('confirmation').'#aufmerksam')->with('heard_from_thanks', true);
 	}
 }

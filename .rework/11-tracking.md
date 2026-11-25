@@ -296,20 +296,32 @@ Whether storing click ids against a customer record needs a line in the
 Datenschutzerklärung is the client's (or their privacy advisor's) call; the
 current one already covers *Zählpixel* and Google/Meta generally.
 
-### Step 4 — "Wie wurdest du auf uns aufmerksam?"
+### Step 4 — "Wie wurdest du auf uns aufmerksam?" (built 2026-11-25)
 
-- A **question on the summary step**, not a popup: a single-choice field just
-  above *Buchen*, with *Andere* opening a short text field. A modal in the last
-  step of a checkout is the one place a popup costs sales. If the client wants
-  a popup anyway, it is the same data and the same column.
-- Stored on the `Checkout`: `heard_from` (a key) and `heard_from_other`
-  (text). Optional or required is the client's call; recommendation is
-  optional with no preselection, since a forced answer is a random one.
-- Asked **once per customer**: shown on a user's first checkout only, since the
-  question is about how they found VIAK, not how they found this course. A
-  returning customer's later checkouts inherit nothing and show nothing.
+- **On the confirmation page, after the purchase** (decided 2026-11-25, which
+  closes #32): neither the popup the client asked for nor the field on the
+  summary step we first proposed. After *Buchen* the question cannot cost a
+  sale. Every online purchase lands there, by invoice or by card, a card
+  payment cancelled on Stripe's page included (`?abgebrochen`). It costs some
+  answers: a buyer who closes the tab, or never comes back from Stripe, is
+  not asked.
+- **Optional by its place**: the purchase is done, so there is nothing to
+  require it for. No preselection, since a forced or defaulted answer is a
+  random one. Sending the form without a choice is refused, not stored.
+- **Stored on the customer**, not the `Checkout`: `users.heard_from` (a key),
+  `heard_from_other` (the text behind *Andere*) and `heard_from_at`. A
+  software-only purchase makes no `Checkout`, a mixed basket makes a
+  `Checkout` and a `LicenceOrder`, and the question is about how someone found
+  VIAK, not this purchase. The report (step 5) reaches revenue through the
+  user.
+- **Asked once per customer**: the form shows while `heard_from` is null; a
+  first answer stands, a second post changes nothing
+  (`CheckoutController::storeHeardFrom`).
 - The options live in `config/tracking.php` as key → label, so the stored key
-  survives a relabel. The client supplies the list.
+  survives a relabel. **The current list is a placeholder**; the client
+  supplies the real one (#31).
+- Bookings the team enters in the dashboard are never asked; the self-reported
+  source covers online buyers only.
 
 ### Step 5 — Seeing it: a dashboard report
 
@@ -337,7 +349,7 @@ step 3 records them.
    except the GTM access question.
 2. Step 2's `purchase` event, then the container changes by whoever holds the
    account, prepared unpublished.
-3. Step 4 once the client sends the option list.
+3. Step 4: built; the placeholder options swapped for the client's list.
 4. Step 5.
 5. At cutover: publish the new container version together with the switch.
 
@@ -350,9 +362,10 @@ Also in `Open-Questions.md` as #29 to #32.
   UTM templates.
 - **#30 Which networks, exactly?** Google Ads and Meta today; LinkedIn,
   ChatGPT, anything else planned?
-- **#31 The answer options** for *Wie wurdest du auf uns aufmerksam?*, and
-  whether it is optional.
-- **#32 Popup, or a field in the last checkout step?** Recommendation: the field.
+- **#31 The answer options** for *Wie wurdest du auf uns aufmerksam?*. It is
+  optional by being asked after the purchase.
+- ~~**#32 Popup, or a field in the last checkout step?**~~ Neither: the
+  confirmation page (2026-11-25).
 
 Kurzfassung für den Kunden, zum Weiterleiten:
 
@@ -363,6 +376,6 @@ Kurzfassung für den Kunden, zum Weiterleiten:
 > lädt ohne Einwilligung. Die heutige Website bleibt so, wie sie ist; korrigiert
 > wird das mit der neuen Website. Dort: echte Kauf-Events mit Betrag, eigene Erfassung der
 > Herkunft (UTM, Klick-IDs) bei jeder Buchung, die Frage «Wie wurdest du auf uns
-> aufmerksam?» im letzten Buchungsschritt und eine Auswertung im Dashboard.
+> aufmerksam?» auf der Bestätigungsseite nach dem Kauf und eine Auswertung im Dashboard.
 > Wir brauchen: Zugang zum Tag Manager (oder die Agentur), die Liste der
 > Werbekanäle und die Antwortoptionen für die Frage.

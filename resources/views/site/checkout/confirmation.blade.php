@@ -76,6 +76,46 @@
 				@endif
 			@endif
 
+			{{--
+				*Wie wurdest du auf uns aufmerksam?* ([[11-tracking]] step 4): after
+				the purchase, so it cannot cost one, optional by being here, and
+				asked once per customer. Not legacy's: legacy has no such question,
+				so it is drawn from the site's own controls, the payment step's
+				radios and the form field, and nothing new.
+			--}}
+			@if (session('heard_from_thanks'))
+				<p id="aufmerksam" class="mt-16">Danke für Deine Antwort.</p>
+			@elseif ($askHeardFrom)
+				<form id="aufmerksam" method="POST" action="{{ \App\Support\SiteUrl::checkout('confirmation') }}"
+					class="mt-32 lg:mt-40" x-data="{ choice: @js(old('heard_from')) }">
+					@csrf
+					<fieldset>
+						<legend class="font-bold">Wie bist Du auf uns aufmerksam geworden?</legend>
+
+						<div class="mt-16 space-y-8">
+							@foreach ($heardFromOptions as $key => $label)
+								<x-form.checkbox type="radio" id="heard_from_{{ $key }}" name="heard_from" :value="$key"
+									:checked="old('heard_from') === $key" x-model="choice">
+									{{ $label }}
+								</x-form.checkbox>
+							@endforeach
+						</div>
+
+						@error('heard_from')
+							<div class="pt-8 text-md text-danger lg:text-lg">{{ $message }}</div>
+						@enderror
+					</fieldset>
+
+					<div class="mt-16" x-cloak x-show="choice === 'andere'">
+						<x-form.field name="heard_from_other" label="Wie?" maxlength="255" />
+					</div>
+
+					<div class="mt-16">
+						<x-ui.button type="submit">Senden</x-ui.button>
+					</div>
+				</form>
+			@endif
+
 			<p class="mt-16">
 				<a href="{{ \App\Support\SiteUrl::courses() }}" title="Zum Kursangebot"
 					class="underline decoration-1 underline-offset-[3px] hover:no-underline">

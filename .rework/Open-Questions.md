@@ -53,8 +53,8 @@ doc with the reasoning. Nothing in chunk 06 waits on the client.
 | 25 | ~~Firmenschulung's URL, and does it launch before cutover?~~ **Answered 2026-10-06**: `/de/firmenschulung`, `/de/individualschulungen` 301s to it; built | Marcel | Built |
 | 29 | Who manages the GTM container `GTM-M3L7WVP` and the ad accounts, VIAK or an agency? | Client | `11-tracking.md` step 2's container changes, and UTM templates on campaigns |
 | 30 | Which ad networks, exactly? Google Ads and Meta today; LinkedIn, ChatGPT, others planned? | Client | Nothing in code; which tags go into GTM |
-| 31 | The answer options for *Wie wurdest du auf uns aufmerksam?*, and is it optional? | Client | `11-tracking.md` step 4 |
-| 32 | That question as a popup (as asked) or a field on the summary step (recommended)? | Client | `11-tracking.md` step 4 |
+| 31 | The answer options for *Wie wurdest du auf uns aufmerksam?* (optional by being asked after the purchase) | Client | Built with placeholder options in `config/tracking.php`; swap in the client's list |
+| ~~32~~ | ~~That question as a popup (as asked) or a field on the summary step (recommended)?~~ **Answered 2026-11-25: neither, the confirmation page after the purchase.** Built the same day, stored on the customer. See `11-tracking.md` step 4 | — | — |
 | ~~33~~ | ~~Prices and article numbers~~ — **answered 2026-10-08: delivered, net** (*Preis ex. MWST*), all 107 unique. The import is unblocked | — | — |
 | ~~34~~ | ~~A 3-year licence: fixed price, or 3× annual?~~ — **answered 2026-10-08: neither.** "3-Jahreslizenz auf Anfrage erhältlich" is a note on the product; one select | — | — |
 | ~~35~~ | ~~What does "buying" a demo mean?~~ — **answered 2026-10-08: a free order.** No payment, no invoice is the proposal, see `05-licences.md`, *A free order* | — | — |
