@@ -308,3 +308,20 @@ item whose title is there already is left alone.
    (`VIAK_F{Firmenkurs id}`, beside the accounts' `VIAK_{user id}`) the way it
    takes a new student's, and that the `F` suits their bookkeeping
    (`16-firmenkurse.md`).
+9. **Stripe, in the account's live mode** (`13-checkout.md`, *TWINT beside
+   the card*). Marcel has dashboard access; nothing is needed from VIAK. It is
+   the account the live site already uses, and the same steps that were done
+   in test mode for staging (2026-11-25):
+   - **TWINT on**: Settings → Payment methods. The payment page asks for card
+     and TWINT, and Stripe refuses a method the account lacks.
+   - **The webhook**, new (the live site has none): Entwickler/innen →
+     Webhooks (*Ereignisziel erstellen*): *Ihr Konto*, *Momentaufnahme*, the
+     newest API version, the one event `checkout.session.completed`, type
+     *Webhook-Endpunkt*, URL `https://visualisierungs-akademie.ch/stripe/webhook`.
+   - **Production's `.env`**: `STRIPE_SECRET=sk_live_…` (the live site's
+     secret key) and `STRIPE_WEBHOOK_SECRET=whsec_…` (the new endpoint's
+     signing secret), then rebuild the config cache.
+   - **Check**: the first real payment after the switch. In the dashboard
+     the webhook's delivery must read `200`, and the invoice must be paid in
+     the Backoffice. Not a test payment of our own: in production it would
+     post to Run My Accounts too, and a Stripe refund does not undo that.
