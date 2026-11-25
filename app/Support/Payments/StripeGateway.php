@@ -36,7 +36,9 @@ class StripeGateway implements PaymentGateway
 		$session = $this->stripe->checkout->sessions->create([
 			'mode' => 'payment',
 			'submit_type' => 'pay',
-			'payment_method_types' => ['card'],
+			// Card only, as the site promises (*Per Kreditkarte*). The API of
+			// 2026-09-30 (stripe-php 22) dropped `payment_method_types`.
+			'allowed_payment_method_types' => ['card'],
 			'locale' => 'de',
 			'customer_email' => $invoice->user?->email,
 			'client_reference_id' => $invoice->uuid,
