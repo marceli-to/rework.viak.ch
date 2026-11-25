@@ -18,8 +18,8 @@ it('imports the whole catalogue into the course software it already has', functi
 
 	// 107 until the list of 2026-11-12: Maxwell's 13 gone, Rhino 9's two and Drakon's demo added.
 	expect(LicenceVariant::count())->toBe(97)
-		// Rhino 8's two kept hidden; the three EDU public again (#75, 2026-11-17).
-		->and(LicenceVariant::where('listed', false)->count())->toBe(12)
+		// Rhino 8's two kept hidden; Rhino 9's two EDU public, VisualARQ Educational hidden (#81, 2026-11-25).
+		->and(LicenceVariant::where('listed', false)->count())->toBe(13)
 		->and(LicenceVariant::where('education', true)->count())->toBe(12)
 		->and(LicenceVariant::where('price', 0)->count())->toBe(11)
 		->and(Manufacturer::count())->toBe(15)

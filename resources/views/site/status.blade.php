@@ -21,54 +21,6 @@
 
 	$questions = [
 		[
-			'title' => 'Tracking: wer verwaltet den Tag Manager?',
-			'go_live' => true,
-			'text' => 'Die heutige Website misst Besuche und Werbung über den Google Tag Manager (GTM-M3L7WVP) mit Cookie-Banner. Verwaltet VIAK den Container und die Werbekonten selbst, oder eine Agentur?',
-			'decides' => 'Wer die Anpassungen im Tag Manager macht und die Kampagnen-Links (UTM) einrichtet.',
-		],
-		[
-			'title' => 'Tracking: welche Werbenetzwerke?',
-			'go_live' => true,
-			'text' => 'Heute Google Ads und Meta. Kommen LinkedIn, ChatGPT oder andere dazu?',
-			'decides' => 'Welche Tags in den Tag Manager kommen.',
-		],
-		[
-			'title' => '«Wie wurdest du auf uns aufmerksam?»',
-			'go_live' => true,
-			'text' => 'Welche Antworten sollen zur Auswahl stehen? Die Frage kommt freiwillig auf die Bestätigungsseite nach dem Kauf, sie unterbricht den Kauf nicht. Sie wird jeder Kund:in einmal gestellt. Gebaut ist sie mit Platzhalter-Antworten.',
-			'decides' => 'Die Antworten der Frage und ihre Auswertung im Dashboard.',
-		],
-		[
-			'title' => 'Software: Zahlungsfrist der Rechnung?',
-			'text' => 'Eine Software-Rechnung ist heute 10 Tage nach Rechnungsdatum fällig. Eine Kurs-Rechnung ist 10 Tage vor dem Kurs fällig (frühestens 10 Tage nach Rechnungsdatum), bei Software gibt es kein solches Datum. Bleibt es bei 10 Tagen, oder gilt für Software eine andere Frist?',
-			'decides' => 'Das Fälligkeitsdatum auf der Software-Rechnung.',
-		],
-		[
-			'title' => 'Software: Gutscheincodes und Studierendenpreise?',
-			'text' => 'Gutscheincodes sollen auch für Software gelten (siehe «Noch nicht gebaut»). Zwei Punkte dazu: Die Software-Preise sind exkl. MWST. Zieht ein Gutschein über CHF 50 vom Preis exkl. MWST ab (die Kund:in spart dann CHF 54.05) oder vom Endbetrag? Und gilt ein fester Betrag bei Kursen und Software im selben Warenkorb zuerst für die Software, die sofort bezahlt wird? Ausserdem: Gibt es Preise für Studierende?',
-			'decides' => 'Wie ein Gutschein auf Software angerechnet wird, und ob es eine Preisregel für Studierende braucht.',
-		],
-		[
-			'title' => 'Bundles: mit eigenem Preis?',
-			'text' => '«Das könnte dich auch interessieren» ist gebaut: VIAK wählt je Software und je Kurs im Dashboard passende Kurse und Software aus, sie erscheinen auf der Angebotsseite und im Warenkorb (Beispiel: Rhinoceros). Die Kund:innen stellen sich ihr Bundle so selbst zusammen. Soll ein selbst zusammengestelltes Bundle günstiger sein, oder genügen die Empfehlungen? Und sollen sie auch auf den Kursseiten erscheinen (etwa eine Rhino-Lizenz beim Rhino-Kurs)?',
-			'decides' => 'Ob es eine Preisregel für Bundles braucht (wie bei den Gutscheincodes für Software) oder nur die Empfehlungen, und wo sie erscheinen.',
-		],
-		[
-			'title' => 'EDU-Lizenzen: auf der Website oder nicht?',
-			'text' => 'Die Antwort zu den EDU-Lizenzen war «öffentlich», und so sind sie jetzt auf der Website: Rhinoceros 9 EDU, Rhinoceros 9 EDU Upgrade und VisualARQ 3 Educational. In der Software-Liste vom 17. November stehen die drei aber weiterhin auf N (nicht sichtbar). Gilt die Antwort oder die Liste?',
-			'decides' => 'Ob die drei EDU-Lizenzen auf der Lizenzseite stehen. Nichts, wenn sie bleiben.',
-		],
-		[
-			'title' => 'Kundenmeinungen aus Google',
-			'text' => 'Die Kundenmeinungen auf Startseite, Firmenschulung und Kursseiten sind gebaut und werden im Dashboard gepflegt. Unser Vorschlag: Wir übernehmen die Google-Bewertungen, die das Widget auf der heutigen Website zeigt, einmalig als Entwürfe (Zitat, Name und, wo es im Text steht, der Kurs). VIAK wählt im Dashboard aus, welche erscheinen. Eine laufende Verbindung zu Google empfehlen wir nicht: Die öffentliche Schnittstelle liefert nur die fünf neuesten Bewertungen, für alle braucht es Zugriff auf das Google-Unternehmensprofil von VIAK. Einmalig übernehmen, oder sollen neue Google-Bewertungen laufend dazukommen?',
-			'decides' => 'Ob wir die Bewertungen einmal als Entwürfe übernehmen oder eine Verbindung zu Google einrichten.',
-		],
-		[
-			'title' => 'Mietlizenzen, die bald auslaufen',
-			'text' => 'Die Bestellungen aus dem Shop 3d-software.ch werden beim Go-live übernommen, auch die Jahresmietlizenzen (rund 120 Kundinnen und Kunden im letzten Jahr). Die neue Website führt eine Mietlizenz wie heute der Shop: als Bestellung mit Datum, ohne Ablaufdatum und ohne Erinnerung. Eine Verlängerung ist eine neue Bestellung. Wie erinnert VIAK heute an eine Verlängerung: der Hersteller, VIAK von Hand, oder niemand? Unser Vorschlag, falls es hilft: eine Liste «Mietlizenzen, die bald auslaufen» im Backoffice, berechnet aus Bestelldatum plus ein Jahr, ohne automatische E-Mails. VIAK schreibt die Kundinnen und Kunden selbst an.',
-			'decides' => 'Ob wir die Liste bauen. Ohne sie bleibt es wie heute.',
-		],
-		[
 			'title' => 'KI-Zugang zu den Daten',
 			'text' => 'Die Website hat einen Zugang für KI-Assistenten (MCP-Server), heute nur lesend: Kurstermine, Buchungen, offene Rechnungen, offene Lizenzbestellungen. Christoph richtet ihn in Claude für die ganze Firma ein. Jede Person meldet sich dann einmal mit ihrem eigenen VIAK-Konto an, Claude arbeitet in ihrem Namen, und jeder Aufruf wird protokolliert. Unser Vorschlag: nur Admins erhalten Zugang. Was soll der Zugang können? Welche Fragen soll er beantworten, und darf er auch etwas ändern (z.B. eine Lizenz als versendet markieren, eine Buchung erfassen)? Am einfachsten eine Liste mit Beispielen aus dem Alltag im Büro.',
 			'decides' => 'Welche Werkzeuge der Zugang bekommt, und wer ihn nutzen darf.',
@@ -81,13 +33,17 @@
 		['Neue Kurse', 'ComfyUI, SketchUp & D5 Render, Figma Weave, Rendering-Finish mit Photoshop & KI und Enscape & Veras sind mit den Texten erfasst, aber nicht publiziert, mit Kursgebühr 0. Vor dem Publizieren: Gebühr, Kursleitung, Niveau, Sprache, Bilder und Daten.'],
 		['Vorhaben', 'Die Boxen «Was möchtest du machen?» auf der Startseite sind die Vorhaben und zeigen noch die alten Titel und Zeilen («Räume visualisieren» usw.). Bitte im Dashboard unter Vorhaben umbenennen und die Texte auf die Kategorien anpassen, wie in deiner Roxy-Liste (z.B. «Architektur & Interior Design: V-Ray, Enscape, Twinmotion»), dazu je Vorhaben Text, Bild und die passenden Kurse und Software.'],
 		['Beliebte Angebote', 'Angebote und Kurse mit «Beliebt» markieren, im Prototyp sind einige zum Zeigen markiert.'],
+		['Kundenmeinungen', 'VIAK erfasst die Kundenmeinungen von Hand im Dashboard, auch die aus Google. Es gibt keine Übernahme und keine Verbindung zu Google.'],
+		['«Wie wurdest du auf uns aufmerksam?»', 'Die Frage ist gebaut, mit Platzhalter-Antworten. VIAK schickt uns die Antworten, die zur Auswahl stehen sollen.'],
+		['Tag Manager und Werbenetzwerke', 'VIAK verwaltet den Google Tag Manager und die Werbekonten selbst und entscheidet, welche Werbenetzwerke dazukommen.'],
 		['Texte zur Software-Lieferung', 'Die Lieferung erfolgt von Hand durch das Team. Texte wie «Lieferung sofort per E-Mail» aus dem alten Shop sollten nicht übernommen werden.'],
 	];
 
 	$unbuilt = [
 		['Tracking: Buchungen als Conversion', 'Laut Tag-Manager-Support (Call vom 2. November) müssen Werbe- und Analyse-Cookies nach der Zustimmung freigegeben werden. Das macht die neue Website bereits, die heutige kann es nicht. Offen bleibt: Google Ads zählt jedes abgeschickte Formular (Login, Registrierung, Newsletter, Kontakt und neu auch eine Buchung) pauschal als Conversion mit CHF 100. Damit nur Käufe mit ihrem echten Betrag zählen, meldet die Bestätigungsseite den Kauf an den Tag Manager, und dort wird die Conversion auf dieses Ereignis umgestellt. Der Plan steht, umgesetzt wird es später.', 'Zurückgestellt', false],
-		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Die Frage «Wie wurdest du auf uns aufmerksam?» steht auf der Bestätigungsseite, mit Platzhalter-Antworten. Offen: die Herkunft jeder Buchung festhalten und die Auswertung im Dashboard.', 'Wartet auf die Tracking-Fragen', true],
-		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
+		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Die Frage «Wie wurdest du auf uns aufmerksam?» steht auf der Bestätigungsseite, mit Platzhalter-Antworten. Offen: die Herkunft jeder Buchung festhalten und die Auswertung im Dashboard.', 'Offen', true],
+		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt wird vom Preis exkl. MWST abgezogen und steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
+		['Mietlizenzen, die bald auslaufen', 'Eine Liste im Backoffice, berechnet aus Bestelldatum plus ein Jahr, auch für die aus dem Shop übernommenen Bestellungen. Ob dazu eine Erinnerung an die Kund:innen kommt, legen wir beim Bauen fest.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];
 
@@ -114,8 +70,10 @@
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
 
 		<div class="mt-16 flex flex-wrap gap-8">
-			<x-ui.badge>{{ count($questions) }} Fragen an VIAK</x-ui.badge>
-			<x-ui.badge variant="danger">{{ collect($questions)->where('go_live', true)->count() }} davon vor dem Go-live</x-ui.badge>
+			<x-ui.badge>{{ count($questions) }} {{ count($questions) === 1 ? 'Frage' : 'Fragen' }} an VIAK</x-ui.badge>
+			@if (collect($questions)->where('go_live', true)->isNotEmpty())
+				<x-ui.badge variant="danger">{{ collect($questions)->where('go_live', true)->count() }} davon vor dem Go-live</x-ui.badge>
+			@endif
 			<x-ui.badge>{{ count($unbuilt) }} noch nicht gebaut</x-ui.badge>
 		</div>
 	</x-layout.article>
@@ -168,7 +126,7 @@
 	<section class="mt-48 lg:mt-64">
 		<header class="mb-8 sm:text-lg lg:text-xl">
 			<h2 class="font-bold">Inhalte</h2>
-			<p class="mt-8">Was VIAK im Dashboard selbst pflegt. Die Funktionen sind fertig, es fehlen die Texte und Bilder.</p>
+			<p class="mt-8">Was VIAK selbst pflegt oder uns liefert. Die Funktionen sind fertig, es fehlen die Texte, Bilder und Antworten.</p>
 		</header>
 
 		@foreach ($content as [$title, $text])

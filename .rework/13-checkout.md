@@ -218,6 +218,9 @@ Kurse").
 - **Not on course pages yet**, though a course can carry picks: whether they
   show there is the client's question (*Projektstand*), as is whether a
   bundle is cheaper. No price rule is built; if it comes, it touches #3.
+  **Answered 2026-11-25 (VIAK): no price rule for bundles.** The
+  recommendations are all there is. Whether they show on course pages was
+  not answered and is off the Projektstand: they stay off until asked.
 - Dev data: Rhinoceros recommends its three courses and V-Ray, Twinmotion,
   Enscape, Maxwell.
 

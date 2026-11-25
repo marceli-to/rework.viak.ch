@@ -222,7 +222,7 @@
 						],
 						"note": null,
 						"min_quantity": null,
-						"listed": true,
+						"listed": false,
 						"education": true
 					}
 				]
