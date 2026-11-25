@@ -89,9 +89,18 @@ its `public/`. Database `viak_rework_staging`; the old legacy staging's
 - **Cache headers for `/build/assets/`** come from `public/.htaccess`
   (the plan allows no nginx directives). If a server serves static files from
   nginx directly, Apache never sees them: set a year's `Cache-Control` there.
-- **`APP_ENV=staging`**: Stripe, Run My Accounts and Mailchimp are fakes
-  whatever the .env holds, GTM is off, robots say `Disallow: /`, and every mail
-  goes to `MAIL_CATCH_ALL` (Marcel). Mailgun SMTP as legacy's staging had it.
+- **`APP_ENV=staging`**: Run My Accounts and Mailchimp are fakes whatever the
+  .env holds, GTM is off, robots say `Disallow: /`, and every mail goes to
+  `MAIL_CATCH_ALL` (Marcel). Mailgun SMTP as legacy's staging had it.
+- **Stripe on staging is the .env's choice**: no `STRIPE_SECRET` means the
+  fake (its *Bezahlen* settles at once, no card page); a **test** key
+  (`sk_test_…`) means Stripe's real test page, test cards only
+  (`4242 4242 4242 4242`). A live key is refused outside production. For the
+  webhook, register `https://staging.viak.ch/stripe/webhook` in the Stripe
+  dashboard **in test mode** (event `checkout.session.completed`) and put its
+  `whsec_…` in `STRIPE_WEBHOOK_SECRET`; without it the confirmation page still
+  settles a payment when the customer comes back. Then `php artisan
+  config:cache`.
 - **Feedback widget**: Roxy (`roxy.kimiyu.ch`) loads on every page of the site
   and the dashboard on staging only (`components/layout/feedback.blade.php`).
   Nothing to remove at cutover.
