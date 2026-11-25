@@ -5,13 +5,13 @@
 	 * Payment and dispatch as badges, in the words the dashboard's order list
 	 * and customer page use ([[viak-portals-mirror-dashboard]]).
 	 */
-	$payment = match (true) {
-		$order->isCancelled() => ['Storniert', 'neutral'],
-		$order->invoice === null => ['Kostenlos', 'neutral'],
-		$order->isPaid() => ['Bezahlt', 'success'],
-		$order->invoice->isCancelled() => ['Storniert', 'neutral'],
-		default => ['Rechnung offen', 'warning'],
-	};
+	$payment = [
+		'cancelled' => ['Storniert', 'neutral'],
+		'free' => ['Kostenlos', 'neutral'],
+		'paid' => ['Bezahlt', 'success'],
+		'open' => ['Rechnung offen', 'warning'],
+	][$order->payment()];
+	$total = $order->grandTotal();
 	$sent = $order->items->every(fn ($item) => $item->dispatched_at !== null);
 @endphp
 
@@ -39,10 +39,10 @@
 			     across and down, as the event row draws its state
 			     (`row/event`, Marcel, 2026-10-20). --}}
 			<div>
-				@if ($order->invoice)
-					<div>CHF {{ number_format((float) $order->invoice->grand_total, 2, '.', '') }}</div>
+				@if ($total !== null)
+					<div>CHF {{ number_format((float) $total, 2, '.', '') }}</div>
 				@endif
-				<div @class(['flex flex-wrap items-start gap-8', 'mt-4' => $order->invoice])>
+				<div @class(['flex flex-wrap items-start gap-8', 'mt-4' => $total !== null])>
 					<x-ui.badge :variant="$payment[1]">{{ $payment[0] }}</x-ui.badge>
 					@unless ($order->isCancelled())
 						<x-ui.badge :variant="$sent ? 'success' : 'neutral'">{{ $sent ? 'Versendet' : 'Nicht versendet' }}</x-ui.badge>

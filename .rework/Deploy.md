@@ -206,6 +206,19 @@ item whose title is there already is left alone.
    **Then `php artisan catalogue:news`** (`--dry-run` first): the homepage's
    first two news items (`database/data/news.json`), their links by slug,
    unless VIAK has written its own on staging and wants those instead.
+   **Then `php artisan port:shop`** (`--dry-run` first, 2026-11-25): the
+   orders and customers of 3d-software.ch (`05-licences.md`, *The old
+   shop's orders*). Take the shop's database dump **the same day**, as close
+   to switching its domain as possible: orders placed after the dump are lost.
+   It is `dsoftwa_before` on the shop's own server (phpMyAdmin in Plesk; the
+   `3d-software` database on db01 is a 2024 leftover). Check
+   `SELECT MAX(order_date_time) FROM \`order\`` is that day, load it into a
+   database of its own with `SET FOREIGN_KEY_CHECKS=0;` in front, point
+   `SHOP_DB_*` at it. After `port:users`, so customers merge onto the VIAK
+   accounts by email. Hand VIAK the list it writes
+   (`storage/app/private/port/shop-orders.csv`): orders it counted as sent or
+   paid, payments left open, the orders now in *Offene Bestellungen*. Drop
+   the shop database afterwards.
 3. **Step 4 of *Every deploy* again** (`media:move-attachments`), in case
    the storage was copied rather than ported.
    And step 7 (`search:rebuild`): the ports insert without Eloquent's

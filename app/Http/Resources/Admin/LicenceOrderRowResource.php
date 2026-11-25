@@ -26,7 +26,7 @@ class LicenceOrderRowResource extends JsonResource
 			'date' => $this->created_at?->toDateString(),
 			'customer' => ['name' => $this->user->name, 'city' => $this->user->city],
 			'lines' => $this->items->map(fn (LicenceOrderItem $item) => $item->description())->all(),
-			'total' => $this->invoice ? (string) $this->invoice->grand_total : '0.00',
+			'total' => $this->grandTotal() ?? '0.00',
 			'payment' => LicenceOrderResource::payment($this->resource),
 			'open' => $this->isCancelled() ? 0 : $this->items->whereNull('dispatched_at')->count(),
 			'cancelled' => $this->isCancelled(),

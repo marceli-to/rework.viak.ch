@@ -62,6 +62,21 @@ return [
 			'timezone' => '+00:00',
 		],
 
+		// 3d-software.ch's Shopware database, read once at cutover by
+		// `port:shop` ([[PortShop]], `.rework/Deploy.md`). Shopware writes UTC.
+		'shop' => [
+			'driver' => 'mysql',
+			'host' => env('SHOP_DB_HOST', '127.0.0.1'),
+			'port' => env('SHOP_DB_PORT', '3307'),
+			'database' => env('SHOP_DB_DATABASE', 'sw_shop'),
+			'username' => env('SHOP_DB_USERNAME', 'root'),
+			'password' => env('SHOP_DB_PASSWORD', ''),
+			'charset' => 'utf8mb4',
+			'collation' => 'utf8mb4_unicode_ci',
+			'strict' => false,
+			'timezone' => '+00:00',
+		],
+
 		'mysql' => [
 			'driver' => 'mysql',
 			'url' => env('DB_URL'),

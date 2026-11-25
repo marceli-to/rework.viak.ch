@@ -103,10 +103,17 @@ async function dispatch(item, dispatched) {
 			<div class="col-span-12 sm:col-span-4">
 				<div class="text-md text-gray-600 lg:text-lg">Rechnung</div>
 				<div class="flex flex-wrap items-center gap-x-8 gap-y-4">
-					<span v-if="order.invoice"><a v-if="order.invoice.document" :href="order.invoice.document" class="hover:text-teal">{{ order.invoice.number }}</a><template v-else>{{ order.invoice.number }}</template>, <span class="tabular-nums">{{ chf(order.invoice.grand_total) }}</span></span>
+					<!-- From 3d-software.ch ([[PortShop]]): the shop invoiced it, so its total stands here. -->
+					<span v-if="order.shop">3d-software.ch, <span class="tabular-nums">{{ chf(order.shop.total) }}</span></span>
+					<span v-else-if="order.invoice"><a v-if="order.invoice.document" :href="order.invoice.document" class="hover:text-teal">{{ order.invoice.number }}</a><template v-else>{{ order.invoice.number }}</template>, <span class="tabular-nums">{{ chf(order.invoice.grand_total) }}</span></span>
 					<PaymentBadge :payment="order.payment" />
 				</div>
 			</div>
+		</div>
+
+		<div v-if="order.comment" class="mt-16 text-lg leading-[1.4] lg:text-xl">
+			<div class="text-md text-gray-600 lg:text-lg">Bemerkung</div>
+			<p class="whitespace-pre-line">{{ order.comment }}</p>
 		</div>
 
 		<div class="mt-32 sm:mt-48">

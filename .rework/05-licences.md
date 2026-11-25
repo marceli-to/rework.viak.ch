@@ -465,6 +465,63 @@ question 2 below. We do not scrape them from the old shop: the client owns the
 numbers and should hand them over.
 **2026-10-08: handed over**, net, in the updated list.
 
+### The old shop's orders — built 2026-11-25
+
+`php artisan port:shop` ([[PortShop]]) brings 3d-software.ch's orders and
+customers over at cutover, after `port:users` (`Deploy.md`). It reads the
+shop's Shopware 6.5 database through the `shop` connection (`SHOP_DB_*`).
+
+**The right database.** The shop runs on `dsoftwa_before` on its own server
+(its `.env.local.php`-style override; plain `.env` says the Shopware default
+`root:root@localhost/shopware`). A database `3d-software` on db01.metanet.ch
+looks like it but is a leftover: everything in it stops on 2024-02-16. Check a
+dump before using it: `SELECT MAX(order_date_time) FROM \`order\`` must be
+the day it was taken. Load it with `SET FOREIGN_KEY_CHECKS=0` first: one
+media row in the shop's own data breaks a foreign key. Dumps go in
+`.rework/` and are gitignored (`.rework/*.sql`): customer data.
+
+**What it held on 2026-11-25:** 3,062 orders from 2020-04-29 to that day,
+1,850 customer emails, 3,301 lines (2,245 on a licence in our catalogue;
+the rest are old versions, Rhino 6/7 and the like, kept as sold). Rentals
+(*Jahresmietlizenz*) are about half the lines since 2025, 123 customers in
+the last twelve months. **The shop has no subscription**: a renewal is the
+customer ordering again (168 of 346 customer-and-licence pairs did), which
+is what [[#Meine Lizenzen is history]] assumes. Prices are net, one payment
+and one delivery per order, no shipping.
+
+**Decided with Marcel, 2026-11-25:**
+
+- **Accounts merge by email**, case ignored: the VIAK account where there is
+  one (its own data untouched), else a new account from the newest billing
+  address, without a mail. **Shop passwords carry over** (bcrypt, as
+  Laravel): 1,193 of the new accounts can log in with theirs; guests use
+  *Passwort vergessen*. The address counts as verified (licences went to it).
+- **The shop's number is the order number**, six digits (13101 → `013101`);
+  new orders continue after the highest.
+- **No invoice is raised** and nothing goes to Run My Accounts: the shop
+  invoiced. The order keeps the shop's `total` (with VAT), shown where an
+  invoice's total would be, and the customer's `comment` (licence keys,
+  other delivery addresses turn up there), shown on the dashboard's order
+  page. `shop_order_id` marks it; [[LicenceOrder::payment]] reads its
+  payment from `paid_at` alone, so it is *Kostenlos* only at a total of 0.
+- **The shop's states were not kept up**, so: an order older than **three
+  months** counts as sent, an open payment older than **twelve months** as
+  paid, both counted back from the newest order in the dump. Marcel:
+  "ignore those, but to be safe create a list". Each run writes
+  `storage/app/private/port/shop-orders.csv` (semicolons, BOM: opens in
+  Excel) with every order where it assumed something or that stays open.
+  On the 2026-11-25 dump: 505 rows; 459 assumed sent, 220 assumed paid
+  (CHF 282,650, nearly all 2020 rows from the old Shopware 5 move), 17
+  payments left open (CHF 60,126), 12 orders on the worklist, 4 cancelled
+  orders the shop shows as paid (refund to check).
+- A cancelled order comes in cancelled and unpaid, so it raises no
+  *von Hand zurückzahlen*; the list names the paid ones.
+
+Rerunnable: it deletes the orders it made and imports again; accounts it
+made are matched by email next time. It refuses when an order entered here
+holds a shop number. **Not run against the local database** that staging
+dumps are made from: it would put real customers on staging.
+
 ### What is in it
 
 | | |

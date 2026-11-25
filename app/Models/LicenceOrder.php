@@ -25,13 +25,14 @@ class LicenceOrder extends Model
 	use HasFactory;
 	use HasUuid;
 
-	protected $fillable = ['number', 'user_id', 'invoice_id', 'invoice_address', 'delivery_email', 'entered_by', 'paid_at', 'cancelled_at', 'cancelled_by'];
+	protected $fillable = ['number', 'user_id', 'invoice_id', 'invoice_address', 'delivery_email', 'entered_by', 'paid_at', 'total', 'comment', 'cancelled_at', 'cancelled_by'];
 
 	protected function casts(): array
 	{
 		return [
 			'invoice_address' => 'array',
 			'paid_at' => 'datetime',
+			'total' => 'decimal:2',
 			'cancelled_at' => 'datetime',
 		];
 	}
@@ -65,6 +66,40 @@ class LicenceOrder extends Model
 	public function isCancelled(): bool
 	{
 		return $this->cancelled_at !== null;
+	}
+
+	/** Brought over from 3d-software.ch ([[PortShop]]): the shop invoiced it, not us. */
+	public function isFromShop(): bool
+	{
+		return $this->shop_order_id !== null;
+	}
+
+	/**
+	 * `cancelled`, `free`, `paid` or `open`, for the badges in the dashboard
+	 * and the profile. Free is an order with no invoice (#35), **unless it came
+	 * from the shop**: those have no invoice here at all, so only a total of 0
+	 * makes them free, and `paid_at` says the rest.
+	 */
+	public function payment(): string
+	{
+		return match (true) {
+			$this->isCancelled() => 'cancelled',
+			$this->isFromShop() => match (true) {
+				bccomp((string) $this->total, '0', 2) <= 0 => 'free',
+				$this->paid_at !== null => 'paid',
+				default => 'open',
+			},
+			$this->invoice_id === null => 'free',
+			$this->isPaid() => 'paid',
+			$this->invoice?->isCancelled() ?? false => 'cancelled',
+			default => 'open',
+		};
+	}
+
+	/** What the customer pays, VAT included: the invoice's, or the shop's for an imported order. */
+	public function grandTotal(): ?string
+	{
+		return $this->invoice ? (string) $this->invoice->grand_total : ($this->total !== null ? (string) $this->total : null);
 	}
 
 	public function isPaid(): bool
