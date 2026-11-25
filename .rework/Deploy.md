@@ -106,6 +106,16 @@ Update: `git pull && composer install --no-dev -o && php artisan migrate --force
 && php artisan search:rebuild && php artisan config:cache && php artisan
 route:cache && php artisan view:cache`.
 
+**If a cache command prints `tempnam(): file created in the system's temporary
+directory`** (seen 2026-11-17 and 2026-11-25): Laravel writes each cache file
+through a temp file beside it, and PHP falls back to `/tmp` when it cannot
+write in `bootstrap/cache`. It is not `open_basedir` (none is set on staging's
+shell, checked 2026-11-25). Check `ls -la bootstrap/cache`: the folder and its
+files must belong to `dsoftwa:psacln`, the SSH user. `php artisan
+optimize:clear && php artisan optimize` cleared it on 2026-11-25; if it comes
+back, a file there was written by another user (a Plesk task, PHP-FPM) and
+needs `chown`.
+
 **Once, after the pull that brings the website texts (2026-11-09):**
 `php artisan catalogue:categories --sync` (`--dry-run` first). The client's
 texts changed the tags of eight Angebote; `--sync` lets the file win over what
