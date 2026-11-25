@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Support\CourseFilter;
+use App\Support\Recommendations;
 use App\Support\SiteUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -90,6 +91,10 @@ class CourseController extends Controller
 			// *Kundenmeinungen*: the published testimonials about this course
 			// ([[Course::testimonialsAbout]]).
 			'testimonials' => $course->testimonialsAbout()->published()->ordered()->get(),
+			// *Das könnte dich auch interessieren*: what VIAK picked in the
+			// course's form, as under a software's page ([[Recommendations]];
+			// Marcel, 2026-11-25, after the client settled no bundle price).
+			'recommended' => Recommendations::for([$course], [$course->id]),
 			/*
 			 * Two flat id lists rather than a query per card. Both are empty for
 			 * a guest, which is the common case and costs nothing.

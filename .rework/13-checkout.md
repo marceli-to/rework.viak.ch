@@ -219,8 +219,10 @@ Kurse").
   show there is the client's question (*Projektstand*), as is whether a
   bundle is cheaper. No price rule is built; if it comes, it touches #3.
   **Answered 2026-11-25 (VIAK): no price rule for bundles.** The
-  recommendations are all there is. Whether they show on course pages was
-  not answered and is off the Projektstand: they stay off until asked.
+  recommendations are all there is. **On course pages since 2026-11-25**
+  (Marcel; the client left that half unanswered): the same collapsible after
+  *Kundenmeinungen*, without the course itself, nothing when nothing is
+  picked. The course form's hint says so.
 - Dev data: Rhinoceros recommends its three courses and V-Ray, Twinmotion,
   Enscape, Maxwell.
 

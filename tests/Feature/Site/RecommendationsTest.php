@@ -10,12 +10,13 @@ use App\Models\Recommendation;
 use App\Models\Software;
 use App\Models\User;
 use App\Support\Recommendations;
+use App\Support\SiteUrl;
 use Illuminate\Support\Str;
 
 /**
  * *Das könnte dich auch interessieren* (client, 2026-10-20): picked in the
- * software and course forms, shown under the software's page and in the
- * basket ([[Recommendations]]).
+ * software and course forms, shown under the software's or the course's
+ * page and in the basket ([[Recommendations]]).
  */
 function onSiteSoftware(string $title): Software
 {
@@ -95,4 +96,16 @@ it('recommends from a course in the basket, picked in the course form', function
 
 	$this->postJson('/api/basket/recommendations', ['items' => [['event' => $event->uuid]]])
 		->assertJsonPath('html', fn (string $html) => str_contains($html, 'Rhinoceros'));
+});
+
+it('shows the picks under the course page too', function () {
+	$this->course->update(['slug' => ['de' => 'rhino-einstiegskurs']]);
+	$next = Course::factory()->create(['title' => ['de' => 'Rhino für Profis']]);
+
+	$this->get(SiteUrl::course('rhino-einstiegskurs'))->assertOk()->assertDontSee('Das könnte dich auch interessieren');
+
+	Recommendations::sync($this->course, [$next->uuid], [$this->rhino->uuid]);
+
+	$this->get(SiteUrl::course('rhino-einstiegskurs'))->assertOk()
+		->assertSeeInOrder(['Das könnte dich auch interessieren', 'Rhino für Profis', 'Rhinoceros']);
 });

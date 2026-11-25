@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\DB;
 /**
  * *Das könnte dich auch interessieren* (client, 2026-10-20, `13-checkout.md`):
  * the courses and software VIAK picks for a software or a course, in its form,
- * shown under the software's page and in the basket. Customers put their own
+ * shown under the software's or the course's page and in the basket. Customers put their own
  * bundle together from them, in place of the shop's fixed bundles. No price
- * rule: whether a bundle is cheaper is the client's open question.
+ * rule (the client, 2026-11-25: none).
  *
  * Picked as a Vorhaben's offers are: two ordered lists, courses then software
  * (`Field::offers`), kept in one `recommendations` table whatever the owner.
@@ -31,8 +31,8 @@ final class Recommendations
 	 * The two pickers, for the software form and the course form alike: the
 	 * Vorhaben's (`Field::offers`), courses then software. `$where` is the
 	 * sentence at the head of each, saying where the picks show (Marcel,
-	 * 2026-11-09): an Angebot's on its page and in the basket, a course's in
-	 * the basket only.
+	 * 2026-11-09): on the owner's page and in the basket (a course's on its
+	 * page too since 2026-11-25).
 	 *
 	 * @return array<int, Field>
 	 */

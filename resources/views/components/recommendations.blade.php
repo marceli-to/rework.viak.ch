@@ -4,8 +4,8 @@
 	*Das könnte dich auch interessieren* ([[Recommendations]]): the courses
 	and software VIAK picks, in *Beliebte Angebote*'s grid and cards
 	(`landing/_featured`), each tagged *Kurs* or *Software*, **without their
-	pictures** (`plain`, Marcel 2026-10-20). Used under a software's page and
-	in the basket.
+	pictures** (`plain`, Marcel 2026-10-20). Used under a software's page, a
+	course's page and in the basket.
 --}}
 <div {{ $attributes->class(['grid grid-cols-12 gap-16 lg:gap-40']) }}>
 	@foreach ($courses as $course)

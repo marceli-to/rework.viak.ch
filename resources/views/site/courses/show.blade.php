@@ -186,6 +186,15 @@
 			</x-ui.collapsible>
 		@endif
 
+		{{-- Picked in the course's form ([[Recommendations]], Marcel 2026-11-25):
+		     the software for it, the next course, as under a software's page.
+		     Not in legacy, which had no picks. --}}
+		@if ($recommended['courses']->isNotEmpty() || $recommended['software']->isNotEmpty())
+			<x-ui.collapsible title="Das könnte dich auch interessieren">
+				<x-recommendations :courses="$recommended['courses']" :software="$recommended['software']" class="mt-16 sm:mt-32" />
+			</x-ui.collapsible>
+		@endif
+
 		{{-- `.content-list-item` + `nav.browse`: a `#969696` rule, a grey label
 		     and the neighbouring courses pushed to the two edges. Legacy wraps
 		     at the ends of the catalogue rather than hiding an arrow. --}}
