@@ -12,7 +12,7 @@ use App\Models\User;
  * Team mockup's three parts. Who the experts are and in what order is
  * `ExpertPagesTest`'s; this is the page around them.
  */
-it('renders the three parts in the mockup’s order, and the nav lights Über uns', function () {
+it('renders the three parts, the team before the experts, and the nav lights Über uns', function () {
 	$expert = User::factory()->expert()->create(['first_name' => 'Remo', 'last_name' => 'Kast']);
 	ExpertProfile::factory()->for($expert)->create();
 	TeamMember::factory()->create(['name' => 'Nina Muster']);
@@ -20,7 +20,7 @@ it('renders the three parts in the mockup’s order, and the nav lights Über un
 	$response = $this->get('/de/ueber-uns')
 		->assertOk()
 		->assertSee('<title>Über uns • Visualisierungs-Akademie</title>', false)
-		->assertSeeInOrder(['Seit 20 Jahren dabei und doch brandneu!', 'Experten', 'Remo Kast', 'Team', 'Nina Muster']);
+		->assertSeeInOrder(['Seit 20 Jahren dabei und doch brandneu!', 'Team', 'Nina Muster', 'Experten', 'Remo Kast']);
 
 	expect($response->getContent())->toMatch('/<a[^>]*href="\/de\/ueber-uns"[^>]*text-teal/s')
 		->and($response->getContent())->not->toContain('href="/de/experten"');
