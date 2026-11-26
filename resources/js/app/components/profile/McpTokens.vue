@@ -79,9 +79,10 @@ async function revoke(token) {
 
 			<article v-for="token in tokens" :key="token.id" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="font-bold sm:col-span-4">{{ token.name }}</div>
-					<div class="sm:col-span-3">erstellt {{ token.created_at }}</div>
-					<div class="sm:col-span-3">{{ token.last_used_at ? `zuletzt ${token.last_used_at}` : 'noch nie benutzt' }}</div>
+					<div class="sm:col-span-10">
+						<div class="font-bold">{{ token.name }}</div>
+						<div>erstellt {{ token.created_at }}, {{ token.last_used_at ? `zuletzt ${token.last_used_at}` : 'noch nie benutzt' }}</div>
+					</div>
 					<div class="mt-16 sm:col-span-2 sm:mt-0 sm:flex sm:justify-end">
 						<Button variant="danger" @click="revoke(token)">Widerrufen</Button>
 					</div>

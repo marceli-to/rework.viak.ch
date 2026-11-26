@@ -41,9 +41,10 @@ async function disconnect(app) {
 
 			<article v-for="app in apps" :key="app.id" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<div class="font-bold sm:col-span-4">{{ app.name }}</div>
-					<div class="sm:col-span-3">verbunden {{ app.connected_at }}</div>
-					<div class="sm:col-span-3">zuletzt {{ app.last_used_at }}</div>
+					<div class="sm:col-span-10">
+						<div class="font-bold">{{ app.name }}</div>
+						<div>verbunden {{ app.connected_at }}, zuletzt {{ app.last_used_at }}</div>
+					</div>
 					<div class="mt-16 sm:col-span-2 sm:mt-0 sm:flex sm:justify-end">
 						<Button variant="danger" @click="disconnect(app)">Trennen</Button>
 					</div>
