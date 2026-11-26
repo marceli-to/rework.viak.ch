@@ -9,7 +9,14 @@ spend brings in.
 banner come across, with findings 2, 4 and 5 fixed. Steps 2 to 5 wait on #29 to
 #32. **Step 2's `purchase` event worked out 2026-11-02 and deliberately not
 built yet** (*Step 2 worked out*, below): without it Ads still counts every
-form as a CHF 100 conversion after cutover, a booking among them. **Scoped 2026-09-29** from the client's input (below) and a read of
+form as a CHF 100 conversion after cutover, a booking among them.
+**2026-11-26 (Marcel): step 5 dropped as planned.** Google's own reports answer
+*woher kommen die Kunden* once step 2 sends `purchase` with its value; a report
+of our own adds only the buyers GA4 never sees and the *aufmerksam* answers,
+which does not justify a screen at VIAK's size. Next in tracking: **step 2,
+then step 3** (cheap, and attribution not recorded from go-live is lost); in
+place of step 5 a small count of the *aufmerksam* answers in the dashboard
+(*Step 5*, below). **Scoped 2026-09-29** from the client's input (below) and a read of
 what the live site sends today. Nothing in the rework tracks anything yet, and
 **that is a parity gap**, not a neutral starting point: the live site runs a
 Google Tag Manager container and a cookie banner, and the rework's layout
@@ -323,9 +330,19 @@ current one already covers *Zählpixel* and Google/Meta generally.
 - Bookings the team enters in the dashboard are never asked; the self-reported
   source covers online buyers only.
 
-### Step 5 — Seeing it: a dashboard report
+### Step 5 — Seeing it: a dashboard report (dropped 2026-11-26)
 
-A dashboard screen (Vue, [[07-dashboard]]) over a date range: checkouts and
+**Dropped as planned (Marcel, 2026-11-26).** Once step 2 sends `purchase`
+with its value, GA4 shows purchases and revenue by source, medium and campaign,
+which is what the client asked for. What only a report of ours would add: the
+buyers GA4 never sees (no marketing consent, ad blockers; Consent Mode only
+models them) and the *aufmerksam* answers. Not worth a screen at VIAK's size.
+**Instead:** a small count of the *aufmerksam* answers somewhere in the
+dashboard, since nothing else shows them. The full report below is built only
+if VIAK finds GA4 is not enough. Step 3 is built regardless: it is cheap, and
+attribution not recorded from go-live cannot be recovered.
+
+The original plan, kept for reference: a dashboard screen (Vue, [[07-dashboard]]) over a date range: checkouts and
 revenue grouped by self-reported source, and by `utm_source` / click-id
 network, side by side, with a CSV export. Without this the data exists and
 nobody looks at it. GA4 and the ad networks keep their own reports; this one is
@@ -345,12 +362,13 @@ step 3 records them.
 
 ## Order of work
 
-1. Step 1 (parity) and step 3 (attribution capture): no client input needed
-   except the GTM access question.
+1. Step 1 (parity, built) and step 3 (attribution capture): no client input
+   needed except the GTM access question (#29, answered: VIAK's).
 2. Step 2's `purchase` event, then the container changes by whoever holds the
    account, prepared unpublished.
 3. Step 4: built; the placeholder options swapped for the client's list.
-4. Step 5.
+4. ~~Step 5~~ dropped (2026-11-26): a count of the *aufmerksam* answers in
+   the dashboard instead; GA4 does the rest.
 5. At cutover: publish the new container version together with the switch.
 
 ## Questions for the client
