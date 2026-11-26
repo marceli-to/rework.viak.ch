@@ -937,3 +937,26 @@ New from him, not yet built or answered:
 - **The Angebot pages feel cluttered** (Rhino above all): he would rather
   separate sections by background (grey, turquoise) as the homepage does, with
   fewer or no lines and maybe no accordions. Details to follow in Roxy.
+
+## Systemvoraussetzungen (Oliver, 2026-11-26)
+
+Oliver sent `systemvoraussetzungen_import.csv` (and an HTML preview of the
+same): 95 article numbers, 28 products, one HTML block per product
+(*Betriebssystem*, *Hostsoftware*, *Hardware (minimum)*, a link to the
+maker's page). Copied to `database/data/requirements.csv`; imported by
+`catalogue:requirements` ([[ImportRequirements]], `--dry-run`, `--force`).
+
+- Every article number exists; together they cover **all 24 Angebote with
+  licences**. Two Rhino numbers (RHN-1002, RHN-1012) are not in the file,
+  which does not matter: the text is per Angebot.
+- **Once per Angebot** stays (the client, 2026-11-12). Where an Angebot
+  holds several products with texts of their own, each block goes under an
+  `h3` with the product's name, in the file's order: **V-Ray** (V-Ray, Chaos
+  Vantage, Chaos Phoenix, Chaos Scans Materialbibliothek), **Lumion**
+  (Lumion View, Lumion Pro), **RealFlow** (RealFlow 10.5, RealFlow Plugin).
+  Cinema 4D and Maxon One share one text and each get it whole.
+- The dashboard's *Systemvoraussetzungen* editor now offers headings, so
+  those `h3` survive a save.
+- Cleaned through [[EditorHtml]] on the way in, as the editor does; links
+  keep `target="_blank"`.
+- Rerunnable: an Angebot with requirements keeps them unless `--force`.

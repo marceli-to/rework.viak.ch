@@ -17,7 +17,7 @@ final class SoftwareLicencesPageSchema extends Schema
 			Field::textarea('licences_lead')->label('Einleitung')->rules(['max:1000'])
 				->with(['rows' => 2, 'hint' => 'Unter dem Titel «… Lizenzen», z.B. «Corona Lizenzen für Einzelpersonen und Teams».']),
 			Field::richtext('requirements')->label('Systemvoraussetzungen')
-				->with(['hint' => 'Einmal für alle Lizenzen dieses Angebots.']),
+				->with(['headings' => true, 'hint' => 'Einmal für alle Lizenzen dieses Angebots.']),
 			Field::textarea('licences_quote')->label('Zitatbox')->rules(['max:1000'])->with(['rows' => 2]),
 		];
 	}

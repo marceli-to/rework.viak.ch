@@ -239,6 +239,12 @@ tables), **then once `php artisan passport:keys`** and the two `curl` checks
 under *Every deploy*. Then the connector can be added in claude.ai
 (`17-mcp.md`, *Connecting claude.ai*).
 
+**After the pull of 2026-11-26 (Systemvoraussetzungen): `php artisan
+catalogue:requirements`** (`--dry-run` first): Oliver's texts from
+`database/data/requirements.csv` onto the 24 Angebote with licences
+(`14-angebote.md`, *Systemvoraussetzungen*). Rerunnable; an Angebot that has
+requirements keeps them unless `--force`.
+
 ## The cutover (once)
 
 1. **A fresh production dump and storage snapshot**, taken at the same
