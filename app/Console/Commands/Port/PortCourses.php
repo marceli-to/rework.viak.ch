@@ -30,8 +30,17 @@ use Illuminate\Support\Facades\DB;
  *
  * **Legacy uuids are carried across, not regenerated.** They are the route key
  * ([[HasUuid]]), so a fresh one would break every bookmarked and emailed link
- * on cutover day. They are also the only stable identifier the later ports can
- * join on, since auto-increment ids are not preserved.
+ * on cutover day.
+ *
+ * **So are legacy ids** (2026-11-26): every row that comes from a legacy row
+ * keeps its id, so the rework and the live site name the same course, event
+ * or taxonomy by the same number, and what is made on staging can be carried
+ * to production by id ([[01-schema]] *Ids*). New rows continue above
+ * legacy's highest.
+ *
+ * **Runs after `port:users`**, so the Kursleitung of each event finds its
+ * user. On an empty database the other way round dropped every
+ * `event_expert` link (found 2026-11-26 rehearsing the cutover).
  */
 class PortCourses extends Command
 {
@@ -138,6 +147,7 @@ class PortCourses extends Command
 				// Legacy calls the label `description` on every taxonomy table,
 				// and has neither an `order` nor a `publish` column for them.
 				$created = $model::create([
+					'id' => $row->id,
 					'title' => $this->translated($row->description),
 					'order' => $row->order ?? 0,
 					'publish' => (bool) ($row->publish ?? true),
@@ -163,6 +173,7 @@ class PortCourses extends Command
 			// Locations are the one legacy table with no uuid of its own, so
 			// these are newly minted. Nothing links to a location by uuid.
 			$map[$row->id] = Location::create([
+				'id' => $row->id,
 				'description' => $this->translated($row->description),
 				'address' => $this->translated($row->address),
 				'map' => $row->map,
@@ -183,6 +194,7 @@ class PortCourses extends Command
 
 		foreach ($legacy->table('courses')->whereNull('deleted_at')->orderBy('id')->get() as $row) {
 			$course = Course::create([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'number' => $row->number,
 				'slug' => $this->translated($row->slug),
@@ -266,6 +278,7 @@ class PortCourses extends Command
 
 		foreach ($rows as $row) {
 			CourseVideo::create([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'course_id' => $course->id,
 				'title' => $this->translated($row->title),
@@ -342,6 +355,7 @@ class PortCourses extends Command
 			$state = $this->resolveState($legacy, $row);
 
 			$event = Event::create([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'deleted_at' => LegacyTime::local($row->deleted_at),
 				'date' => $dates->first()->date ?? $row->date,

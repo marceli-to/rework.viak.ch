@@ -85,7 +85,8 @@ class PortMessages extends Command
 				continue;
 			}
 
-			$message = Message::create([
+			$message = Message::forceCreate([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'event_id' => $eventId,
 				'user_id' => $authorId,

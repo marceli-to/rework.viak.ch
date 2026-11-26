@@ -250,15 +250,28 @@ requirements keeps them unless `--force`.
 1. **A fresh production dump and storage snapshot**, taken at the same
    moment (the local copy is from 2026-09-11). Point `LEGACY_DB_*` and
    `LEGACY_STORAGE_PATH` at them.
-2. The ports, in dependency order: `port:courses`, `port:users`,
-   `port:invoices`, `port:documents`, `port:media`, `port:messages`. Each
-   has `--dry-run`. Each one reports findings, and every finding is a decision.
-   `port:messages` writes attachments to the private disk itself.
-   **Run them on an empty database, and not again once VIAK has edited
-   anything.** `port:courses` clears and rebuilds `events`, `courses` and
-   `software` with new ids: software pages, recommendations, testimonials and
-   media attached since would point at nothing, and nothing would say so.
-   **Then `php artisan catalogue:offers`** (`--dry-run` first, 2026-11-12):
+2. The ports, in dependency order: `port:users`, `port:courses`,
+   **`port:users` again**, `port:invoices`, `port:documents`, `port:media`,
+   `port:messages` (`01-schema.md`, *Order*: the first `port:users` brings
+   the people so each event finds its Kursleitung, the second the bookings).
+   Each has `--dry-run`. Each one reports findings, and every finding is a
+   decision. `port:messages` writes attachments to the private disk itself.
+   Every ported row keeps **legacy's id** (`01-schema.md`, *Ids*), which Run
+   My Accounts' customer numbers depend on. **Run them on an empty database.**
+   **Then `php artisan catalogue:offers`** (`--dry-run` first): the new
+   courses (ComfyUI and the others), unpublished, so the content below finds
+   them by slug.
+   **Then the content from staging** (`01-schema.md`, *Content from
+   staging*): on staging `php artisan content:export` (it prints the folder,
+   `storage/app/private/content/<date>`), copy that folder to production,
+   there `php artisan content:import <folder> --dry-run`, read the dropped
+   links, then without `--dry-run`. The Angebote, licences, categories,
+   testimonials, news, Vorhaben, team and pages are then staging's, with
+   their images and logos. **This replaces the `catalogue:*` steps below**
+   (`categories`, `texts`, `logos`, `news`, `requirements`): staging already
+   holds their result and everything VIAK edited after. They stay described
+   for a fresh setup without staging.
+   **The `catalogue:*` steps, only without a staging export:** `php artisan catalogue:offers` (`--dry-run` first, 2026-11-12):
    the Angebote and courses the client is still working on, unpublished
    (`database/data/offers.json`), and *DaVinci Resolve Einführungskurs*
    unpublished, which the port brings back as legacy has it. Before

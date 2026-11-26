@@ -21,8 +21,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Ports people and the seats they hold ([[01-schema]]). Runs after
- * `port:courses`, because every booking points at an event.
+ * Ports people and the seats they hold ([[01-schema]]). **Runs twice**: before
+ * `port:courses` for the people (its events need their Kursleitung), and after
+ * it for the bookings, which point at events. Rows keep legacy's ids.
  *
  * Idempotent in the same way: clears its own tables and re-imports, so it can
  * be re-run against a fresher dump. Reconciliation is the point — every
@@ -65,10 +66,13 @@ class PortUsers extends Command
 	{
 		$legacy = DB::connection('legacy');
 
-		if (Event::count() === 0) {
-			$this->components->error('No events in the target database. Run `port:courses` first — every booking points at one.');
+		// Runs twice at the cutover ([[01-schema]] *Order*): first on an empty
+		// database, for the people, so that `port:courses` finds each event's
+		// Kursleitung; then after it, for the bookings, which point at events.
+		$withBookings = Event::withTrashed()->exists();
 
-			return self::FAILURE;
+		if (! $withBookings) {
+			$this->components->warn('No events yet: people, addresses and codes only. Run `port:users` again after `port:courses` for the bookings.');
 		}
 
 		if ($this->option('dry-run')) {
@@ -80,8 +84,8 @@ class PortUsers extends Command
 		// Unguarded because the port assigns `uuid`, which is deliberately not
 		// fillable: it is the public route key and must never be settable from
 		// a request. Here it has to carry across from legacy unchanged.
-		Model::unguarded(function () use ($legacy): void {
-			DB::transaction(function () use ($legacy): void {
+		Model::unguarded(function () use ($legacy, $withBookings): void {
+			DB::transaction(function () use ($legacy, $withBookings): void {
 
 				$this->clear();
 
@@ -89,11 +93,15 @@ class PortUsers extends Command
 				$userMap = $this->portUsers($legacy);
 				$this->portAddresses($legacy, $userMap);
 				$codeMap = $this->portDiscountCodes($legacy);
-				$this->portBookings($legacy, $userMap, $codeMap);
+				if ($withBookings) {
+					$this->portBookings($legacy, $userMap, $codeMap);
+				}
 			});
 		});
 
-		$this->reconcile($legacy);
+		if ($withBookings) {
+			$this->reconcile($legacy);
+		}
 
 		return self::SUCCESS;
 	}
@@ -145,6 +153,13 @@ class PortUsers extends Command
 			// already inserted the experts it found on events, and they must
 			// keep the ids those `event_expert` rows point at.
 			$user = User::withTrashed()->firstOrNew(['email' => $row->email]);
+
+			// Legacy's id, for a user not here yet ([[01-schema]] *Ids*): Run
+			// My Accounts files every customer as `VIAK_{user id}`, so a new
+			// number would book a customer's next invoice on someone else.
+			if (! $user->exists) {
+				$user->id = $row->id;
+			}
 
 			$user->fill([
 				'first_name' => $row->firstname,
@@ -230,6 +245,7 @@ class PortUsers extends Command
 			}
 
 			UserAddress::create([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'user_id' => $userMap[$row->user_id],
 				'first_name' => $row->firstname,
@@ -264,6 +280,7 @@ class PortUsers extends Command
 			}
 
 			$map[$row->code] = DiscountCode::create([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'code' => $row->code,
 				'type' => $type,
@@ -338,6 +355,7 @@ class PortUsers extends Command
 			}
 
 			Booking::create([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'number' => $row->number,
 				'event_id' => $eventId,

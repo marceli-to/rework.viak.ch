@@ -52,8 +52,8 @@ of rows. A count check cannot see a column it does not read.
 ### Legacy uuids are carried across, not regenerated
 
 `uuid` is the route key ([[HasUuid]]), so minting fresh ones would break every
-bookmarked and emailed link on cutover day. It is also the only stable join
-between the two ports, since auto-increment ids are not preserved.
+bookmarked and emailed link on cutover day. It is also the join between the
+ports, which works on a database built before ids were kept too.
 
 This was a live bug in `port:courses` until now: it created courses and events
 with new uuids, and `port:users` could not match a single booking to its event.
@@ -63,6 +63,58 @@ from a request.
 
 `locations` is the one legacy table with no uuid; those are newly minted, and
 nothing links to a location by uuid.
+
+### Ids: legacy's, since 2026-11-26
+
+Until 2026-11-26 the ports carried uuids and let auto-increment number the
+rows, so the rework and the live site named the same row differently: against
+the 2026-09-11 dump 566 of 573 users, all 569 invoices and 200 of 344 events
+had another id. **That would have misfiled customers in the books:** Run My
+Accounts knows every customer as `VIAK_{user id}`
+(`../viak.ch/app/Actions/RMA/CreateInvoice.php:52`, [[RunMyAccounts]]), so an
+existing customer's next invoice would have gone to someone else's number.
+
+Every row that comes from one legacy row now keeps its id: users, addresses,
+discount codes, bookings, courses, course videos, events, locations, the
+taxonomies, invoices, messages, user documents. Rows made later continue above
+legacy's highest. Not `media` (it merges legacy's `images` and `files`, whose
+ids overlap), nor rows legacy has no table for (`event_dates` is rebuilt from
+its own, expert profiles come out of `users`). Rehearsed on an empty database
+2026-11-26: id and uuid agree with legacy for every ported row.
+
+### Order: `port:users` twice
+
+`port:courses` links each event to its Kursleitung (`event_expert`) and needs
+the users for it; `port:users` ports bookings and needs the events. On the
+empty database of the cutover, `port:courses` first dropped **every**
+Kursleitung link (14 experts, found 2026-11-26 rehearsing; the local database
+never showed it because its users were there from an earlier run). So:
+`port:users` (people, addresses, codes; it skips the bookings while there are
+no events and says so), `port:courses`, `port:users` again (now with the
+bookings). Then the rest ([[Deploy]] *The cutover*).
+
+### Content from staging (2026-11-26)
+
+What VIAK edits on staging and the live site does not have comes from staging
+at the cutover, on top of the ports (Marcel): the Angebote with their licences
+(software, licence products and variants, manufacturers, hosts), the five
+categories, and the Seiteninhalte (testimonials, news, Vorhaben, team, the
+pages), with their images and logos. Kurse, Veranstaltungen, users, bookings,
+invoices and experts are the live site's and come from the ports.
+
+`content:export` on staging writes one folder (`content.json` and `files/`);
+`content:import <folder>` on production empties those tables and refills them
+with staging's rows **and ids** ([[ContentBundle]], [[ExportContent]],
+[[ImportContent]]). Their links to courses (an Angebot's or category's courses,
+Vorhaben, recommendations, testimonials about a course) find the course by
+uuid, else by slug, and a link to a course production lacks is dropped and
+listed. `media` keeps its other rows; the bundle's images get new ids. It
+refuses while licence orders exist (their lines point at the variants it
+replaces), so it runs before `port:shop`. `--dry-run` shows the counts and the
+dropped links. It replaces the `catalogue:*` steps at the cutover except
+`catalogue:offers`, which makes the new courses the Angebote link to.
+Tested in `tests/Feature/Port/ContentBundleTest.php`; rehearsed 2026-11-26 from
+the local database into a freshly ported one.
 
 ### Soft-deleted rows are ported, still soft-deleted
 
@@ -139,15 +191,16 @@ stands out instead of disappearing into a check somebody switched off.
 Both ports print a table and a findings list rather than a success message.
 
 ```
+php artisan port:users            # countries, users, addresses, codes
 php artisan port:courses          # courses, events, taxonomies, locations
-php artisan port:users            # countries, users, addresses, codes, bookings
+php artisan port:users            # again: now the bookings
 php artisan port:users --dry-run  # reconcile only, writes nothing
 ```
 
-`port:users` refuses to run if the events table is empty, since every booking
-points at one. Users are matched on **email** rather than created blind:
-`port:courses` has already inserted the experts it found on events, and they
-must keep the ids those `event_expert` rows point at.
+`port:users` ports no bookings while the events table is empty (every booking
+points at one); it ports the people and says to run it again after
+`port:courses` (*Order*, above). Users are matched on **email** rather than
+created blind, so a second run updates them in place and keeps their ids.
 
 Password hashes carry across unchanged, so everyone's existing password keeps
 working; Laravel rehashes on next login if the cost has changed.

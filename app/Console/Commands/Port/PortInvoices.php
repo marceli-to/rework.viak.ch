@@ -98,8 +98,8 @@ class PortInvoices extends Command
 
 	private function portInvoices($legacy): void
 	{
-		// Bookings carry their legacy uuid, which is the only stable join
-		// between the two ports — auto-increment ids are not preserved.
+		// Bookings carry their legacy uuid and, since 2026-11-26, their id; the
+		// uuid stays the join, so a port run on an older database still works.
 		$bookingsByUuid = Booking::withTrashed()->get(['id', 'uuid', 'user_id', 'event_id'])->keyBy('uuid');
 		$legacyBookings = $legacy->table('bookings')->pluck('uuid', 'id');
 
@@ -123,6 +123,8 @@ class PortInvoices extends Command
 			$invoice = new Invoice;
 
 			$invoice->forceFill([
+				// Legacy's id as well as its uuid and number ([[01-schema]] *Ids*).
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'number' => $row->number,
 				// The invoice's own user, not the booking's. They agree on all

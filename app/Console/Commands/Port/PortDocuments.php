@@ -145,7 +145,8 @@ class PortDocuments extends Command
 				$row, $legacyInvoices, $invoices, $legacyBookings, $bookings,
 			);
 
-			UserDocument::create([
+			UserDocument::forceCreate([
+				'id' => $row->id,
 				'uuid' => $row->uuid,
 				'user_id' => $userId,
 				'type' => $type,
