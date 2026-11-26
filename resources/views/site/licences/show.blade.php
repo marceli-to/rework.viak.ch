@@ -82,11 +82,30 @@
 			<p class="mt-32 sm:mt-48 sm:text-lg lg:text-xl">Alle Preise exkl. {{ config('invoice.vat_label') }}</p>
 		</x-ui.collapsible>
 
-		{{-- Once per Angebot, not per licence (the client, 2026-11-12). --}}
+		{{-- Once per Angebot, not per licence (the client, 2026-11-12).
+
+		     Oliver's blocks are a bold label in a paragraph of its own
+		     (*Betriebssystem (mindestens):*) and a list or a sentence under it
+		     ([[ImportRequirements]]). Rich text's spacing alone glued each list
+		     to the next label and left the label floating above its own list
+		     (Marcel, 2026-11-26: "unfinished"). So here, and only here: a label
+		     sits tight on what it heads (4/8px), a group starts 24/32px below
+		     the last, and a sentence that introduces a list (*Zusätzlich:*)
+		     sits tight on it too. A product's heading (V-Ray, Lumion, RealFlow
+		     hold several) is teal over a rule, as the licence blocks' titles. --}}
 		@if (filled(strip_tags((string) $requirements)))
 			<x-ui.collapsible title="Systemvoraussetzungen">
 				<div class="sm:grid sm:grid-cols-12 sm:gap-16 lg:gap-40">
-					<x-ui.rich-text :html="$requirements" class="sm:col-span-8" />
+					<x-ui.rich-text :html="$requirements" @class([
+						'sm:col-span-8',
+						'[&_ul]:mb-12 lg:[&_ul]:mb-16 [&_ul:last-child]:mb-0',
+						'[&_p:has(>strong:only-child)]:mb-4 lg:[&_p:has(>strong:only-child)]:mb-8',
+						'[&_p:has(>strong:only-child):not(:first-child)]:mt-24 lg:[&_p:has(>strong:only-child):not(:first-child)]:mt-32',
+						'[&_p:has(+ul)]:mb-4 lg:[&_p:has(+ul)]:mb-8',
+						'[&_h3]:mb-16 [&_h3]:text-teal lg:[&_h3]:mb-24',
+						'[&_h3:not(:first-child)]:mt-40 [&_h3:not(:first-child)]:border-t [&_h3:not(:first-child)]:border-black [&_h3:not(:first-child)]:pt-16 lg:[&_h3:not(:first-child)]:mt-56 lg:[&_h3:not(:first-child)]:pt-24',
+						'[&_h3+p]:mt-0!',
+					]) />
 				</div>
 			</x-ui.collapsible>
 		@endif
