@@ -14,7 +14,7 @@ import { toast } from '@/composables/useToast';
  * from claude.ai, by signing in there. Trennen ends it; the next use asks
  * for consent again.
  *
- * Laid out as [[McpTokens]] above it: shut, with the count.
+ * Laid out as [[McpTokens]] above it: shut, no count.
  */
 const apps = ref([]);
 
@@ -32,7 +32,7 @@ async function disconnect(app) {
 
 <template>
 	<div class="mt-48 lg:mt-64">
-		<Collapsible :count="apps.length">
+		<Collapsible>
 			<template #title>Verbundene Apps</template>
 
 			<p class="mt-16 text-md sm:text-lg lg:text-xl">

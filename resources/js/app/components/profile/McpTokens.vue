@@ -12,7 +12,7 @@ import { toast } from '@/composables/useToast';
  * *MCP-Zugang* under *Mein Profil* ([[17-mcp]]): the admin's own tokens for
  * the MCP server, one per AI client, each revocable ([[McpTokenController]]).
  *
- * Shut, with the count, as the dashboard's lists are. A new token is shown
+ * Shut, without a count (Marcel, 2026-11-26). A new token is shown
  * once, in a read-only field under the list, with the address to enter
  * beside it; Sanctum keeps only its hash, so there is no showing it again.
  *
@@ -70,7 +70,7 @@ async function revoke(token) {
 
 <template>
 	<div class="mt-48 lg:mt-64">
-		<Collapsible :count="tokens.length">
+		<Collapsible>
 			<template #title>MCP-Zugang</template>
 
 			<p class="mt-16 text-md sm:text-lg lg:text-xl">
