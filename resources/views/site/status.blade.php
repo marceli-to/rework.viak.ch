@@ -10,13 +10,14 @@
 --}}
 @php
 	$review = [
-		['Über uns', '/de/ueber-uns', 'Text, Expert:innen, Team'],
+		['Über uns', '/de/ueber-uns', 'Text, Team, Expert:innen (das Team neu zuerst)'],
 		['Kontakt', '/de/kontakt', 'Adresse, Karte, Kontaktformular'],
 		['Warenkorb und Kasse', '/de/checkout/basket', 'Kurse und Software in einem Warenkorb, Anmeldung erst bei «Weiter», Software per Kreditkarte, TWINT oder Rechnung'],
 		['Profil', '/de/konto', 'Gebuchte Kurse, Dokumente, Bestellungen mit «Bezahlen»'],
 		['Dashboard', '/dashboard', 'Kurse, Veranstaltungen, Kund:innen, Software, Bestellungen, Rechnungen, Seiteninhalte'],
 		['Dashboard: Software', '/dashboard/software', 'Je Angebot seine Seiten «Angebot», «Was ist …?» und «Lizenzen» zum Bearbeiten, darunter die Produkte mit ihren Lizenzen'],
 		['Mietlizenzen, die bald auslaufen', '/dashboard/bestellungen', 'Unter Bestellungen: jede Jahresmietlizenz, deren Jahr in den nächsten 60 Tagen endet oder in den letzten 30 Tagen geendet hat (Bestelldatum plus ein Jahr), bis die Kund:in sie wieder bestellt. Je Lizenz «Erinnerung senden»: eine E-Mail mit dem Ablaufdatum und einem Link zum Verlängern'],
+		['Systemvoraussetzungen', '/de/angebote/software/v-ray', 'Auf jeder Lizenzseite unter den Lizenzen, aus Olivers Liste übernommen. Bei V-Ray, Lumion und RealFlow je ein Untertitel pro Produkt'],
 		['Firmenkurse', '/dashboard/firmenkurse', 'Kurs für eine Firma erfassen, Rechnung aus eigenen Positionen stellen und per E-Mail senden'],
 	];
 
@@ -42,7 +43,7 @@
 
 	$unbuilt = [
 		['Tracking: Buchungen als Conversion', 'Laut Tag-Manager-Support (Call vom 2. November) müssen Werbe- und Analyse-Cookies nach der Zustimmung freigegeben werden. Das macht die neue Website bereits, die heutige kann es nicht. Offen bleibt: Google Ads zählt jedes abgeschickte Formular (Login, Registrierung, Newsletter, Kontakt und neu auch eine Buchung) pauschal als Conversion mit CHF 100. Damit nur Käufe mit ihrem echten Betrag zählen, meldet die Bestätigungsseite den Kauf an den Tag Manager, und dort wird die Conversion auf dieses Ereignis umgestellt. Der Plan steht, umgesetzt wird es später.', 'Zurückgestellt', false],
-		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Die Frage «Wie wurdest du auf uns aufmerksam?» steht auf der Bestätigungsseite, mit Platzhalter-Antworten. Offen: die Herkunft jeder Buchung festhalten und die Auswertung im Dashboard.', 'Offen', true],
+		['Tracking: Herkunft der Kund:innen', 'Tag Manager und Cookie-Banner sind gebaut, wie auf der heutigen Website, aber mit einer Kategorie für Marketing-Cookies, die bisher fehlte. Die Frage «Wie wurdest du auf uns aufmerksam?» steht auf der Bestätigungsseite, mit Platzhalter-Antworten. Offen: die Herkunft jeder Buchung festhalten (aus den Werbelinks). Ausgewertet wird in Google Analytics, sobald die Käufe dorthin gemeldet werden; eine eigene Auswertung im Dashboard bauen wir nicht, nur eine Übersicht der Antworten auf «Wie wurdest du auf uns aufmerksam?».', 'Offen', true],
 		['Gutscheincodes für Software', 'Je Code wählt VIAK, ob er für Kurse, für Software oder für beides gilt. Der Rabatt wird vom Preis exkl. MWST abgezogen und steht auf der Software-Rechnung, die Kreditkarte wird um denselben Betrag weniger belastet. Ein Code zählt pro Bestellung einmal, auch bei einer Bestellung nur mit Software. Die bestehenden Codes gelten weiter nur für Kurse.', 'Offen', false],
 		['Mails zu Bestellungen aus dem Dashboard', 'Bestellungen aus dem Shop schicken Mails an Kund:in und Büro. Bestellungen, die das Team im Dashboard erfasst, schicken noch keine.', 'Offen', false],
 	];
@@ -64,7 +65,7 @@
 	<x-layout.article>
 		<x-slot:aside>
 			<h1 class="hidden font-bold text-teal sm:block">Projektstand</h1>
-			<div class="mt-8 text-gray-600">Stand 25. November 2026</div>
+			<div class="mt-8 text-gray-600">Stand 26. November 2026</div>
 		</x-slot:aside>
 
 		<p>Die neue Website ist fast fertig. Hier steht, was noch offen ist: was wir anschauen möchten, auf welche Antworten wir warten, was noch nicht gebaut ist und was vor dem Go-live zu tun bleibt.</p>
