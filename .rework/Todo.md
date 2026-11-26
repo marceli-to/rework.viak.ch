@@ -588,3 +588,16 @@ The steps themselves are in `Deploy.md`; this list is what is still to build or 
   different once software is sold (Marcel, 2026-09-29). **The two *invoice paid*
   mails come with it**: legacy sends them only after a card payment
   (`10-mail.md`).
+
+---
+
+## A product note on a free demo licence (seen 2026-11-26)
+
+On staging's Enscape licence page (`/de/angebote/software/enscape`) every
+licence block ends with *3-Jahreslizenz auf Anfrage erhältlich*, the free
+**Enscape Demoversion** included, where it makes no sense. The note looks like
+it is the product's, shown under each of its licences, rather than a note per
+licence ([[05-licences]], `card/licence-block`). Not looked into: decide
+whether the note belongs on the licence (and move it there for the paid ones)
+or the block should skip it for a price of 0. Raised by Marcel's screenshot
+the same day the Systemvoraussetzungen went in.
