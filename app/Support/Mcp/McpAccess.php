@@ -6,6 +6,8 @@ namespace App\Support\Mcp;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Laravel\Mcp\Server\Registrar;
+use Laravel\Passport\AccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 
 /**
@@ -25,6 +27,11 @@ use Laravel\Sanctum\PersonalAccessToken;
  *   account, shuts the token without anyone having to revoke it.
  *
  * The dashboard's own session is untouched: it never goes through a token.
+ *
+ * **OAuth tokens** (the claude.ai connector, Passport) get the same answer
+ * from [[admitsOAuth]]: the `mcp:use` scope instead of the ability, the same
+ * admin who is not deactivated. No 2FA (VIAK has none, Marcel 2026-11-25).
+ * Passport's guard is named on `/mcp` only, so such a token opens nothing else.
  */
 class McpAccess
 {
@@ -38,8 +45,16 @@ class McpAccess
 			return false;
 		}
 
-		$user = $token->tokenable;
+		return self::isAdmitted($token->tokenable);
+	}
 
+	public static function admitsOAuth(AccessToken $token, ?User $user): bool
+	{
+		return $token->can(Registrar::OAUTH_SCOPE) && self::isAdmitted($user);
+	}
+
+	public static function isAdmitted(mixed $user): bool
+	{
 		return $user instanceof User && $user->isAdmin() && ! $user->isDeactivated();
 	}
 }

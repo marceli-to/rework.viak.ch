@@ -238,6 +238,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])
 		Route::get('profile/mcp-tokens', [Admin\McpTokenController::class, 'index']);
 		Route::post('profile/mcp-tokens', [Admin\McpTokenController::class, 'store']);
 		Route::delete('profile/mcp-tokens/{token}', [Admin\McpTokenController::class, 'destroy'])->whereNumber('token');
+		// The admin's own OAuth connections, the claude.ai connector ([[17-mcp]]).
+		Route::get('profile/connected-apps', [Admin\ConnectedAppController::class, 'index']);
+		Route::delete('profile/connected-apps/{client}', [Admin\ConnectedAppController::class, 'destroy']);
 
 		Route::get('settings', [Admin\SettingController::class, 'index']);
 		Route::post('settings/{kind}', [Admin\SettingController::class, 'store']);

@@ -19,7 +19,8 @@ import { toast } from '@/composables/useToast';
  * And the two put together as Claude Code's command, to copy and paste into
  * a terminal: `--scope user` so it answers in every folder, not only the one
  * it was added in. Claude Code takes a bearer token; claude.ai and Claude
- * Desktop's connectors want OAuth, which is not built (#65).
+ * Desktop's connectors use OAuth instead and need no token from here: they
+ * show under [[ConnectedApps]].
  */
 const tokens = ref([]);
 const name = ref('');
@@ -73,7 +74,7 @@ async function revoke(token) {
 			<template #title>MCP-Zugang</template>
 
 			<p class="mt-16 text-md sm:text-lg lg:text-xl">
-				Ein Token pro KI-Programm (zum Beispiel Claude auf dem Büro-Laptop). Es kann nur lesen: Veranstaltungen, Buchungen, offene Rechnungen und Lizenzbestellungen.
+				Ein Token pro KI-Programm im Terminal (zum Beispiel Claude Code auf dem Büro-Laptop). Claude im Browser braucht keins, es meldet sich selbst an. Ein Token kann nur lesen: Veranstaltungen, Buchungen, offene Rechnungen und Lizenzbestellungen.
 			</p>
 
 			<article v-for="token in tokens" :key="token.id" class="mt-16 border-t border-black pt-8 leading-[1.5] sm:mt-32 sm:pt-16 sm:text-lg sm:leading-[1.4] lg:text-xl">

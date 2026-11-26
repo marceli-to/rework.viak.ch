@@ -14,6 +14,7 @@ use App\Support\Payments\PaymentGateway;
 use App\Support\Payments\StripeGateway;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Sanctum\Sanctum;
 use RuntimeException;
@@ -29,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
 		$this->registerPaymentGateway();
 		$this->registerNewsletterList();
 		$this->registerTelescopeLocally();
+
+		// OAuth serves the claude.ai connector only: the authorization-code flow, no device codes ([[17-mcp]]).
+		Passport::$deviceCodeGrantEnabled = false;
 	}
 
 	/**
@@ -138,6 +142,13 @@ class AppServiceProvider extends ServiceProvider
 		Sanctum::authenticateAccessTokensUsing(
 			fn (PersonalAccessToken $token, bool $isValid): bool => McpAccess::admits($token, $isValid, request()),
 		);
+
+		// OAuth for the claude.ai connector ([[17-mcp]]). Short-lived access
+		// tokens that claude.ai renews; a connection unused for 90 days lapses.
+		// The consent screen is ours: Passport ships none.
+		Passport::authorizationView('site.auth.oauth-authorize');
+		Passport::tokensExpireIn(now()->addHour());
+		Passport::refreshTokensExpireIn(now()->addDays(90));
 	}
 
 	/**

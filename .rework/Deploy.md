@@ -42,12 +42,24 @@ In this order, from the release directory:
    import or the ports write rows without saving them through Eloquent. A
    second on a few hundred rows, safe at any time.
 
-**The MCP server** (`17-mcp.md`) needs nothing at deploy, but two things on
+**The MCP server** (`17-mcp.md`) needs nothing at deploy, but these things on
 the server: the web server must pass the `Authorization` header through
 (`public/.htaccess` does it for Apache; nginx passes it by default), and
 `storage/logs/mcp.log-*` is the record of every call, a year of files, so it
 belongs in whatever backs up the server. `route:cache` picks up
 `routes/ai.php`, which the package loads itself.
+
+**Once per server: `php artisan passport:keys`** (since 2026-11-26, the
+claude.ai connector's OAuth). It writes `storage/oauth-private.key` and
+`storage/oauth-public.key` (gitignored, mode 600). **Keep them across deploys
+and back them up:** new keys end every claude.ai connection, and everyone has
+to connect again. Never `--force` them on a running server. Check afterwards:
+`curl -i -X POST https://<host>/mcp` answers 401 with
+`WWW-Authenticate: Bearer realm="mcp", resource_metadata=…`, and
+`curl https://<host>/.well-known/oauth-authorization-server` returns JSON
+(the host must not keep `/.well-known` for itself; Plesk only claims
+`/.well-known/acme-challenge`). At the cutover the production server needs its
+own keys, and connections made on staging do not carry over.
 
 **Once per server:** one crontab line, `* * * * * php artisan schedule:run`.
 The schedule starts the queue worker every minute (`00-foundation.md`,
@@ -220,6 +232,12 @@ first items in `database/data/news.json` (*Rhino 9 jetzt verfügbar* →
 Rhinoceros, *Firmenschulung ab einem halben Tag* → Firmenschulung),
 published, so the box beside *Nächste Kurstermine* shows. Rerunnable: an
 item whose title is there already is left alone.
+
+**After the pull of 2026-11-26 (MCP over OAuth):** the update line as usual
+(`composer install` brings `laravel/passport`, `migrate` the four `oauth_*`
+tables), **then once `php artisan passport:keys`** and the two `curl` checks
+under *Every deploy*. Then the connector can be added in claude.ai
+(`17-mcp.md`, *Connecting claude.ai*).
 
 ## The cutover (once)
 

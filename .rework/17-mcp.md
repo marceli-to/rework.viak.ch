@@ -7,9 +7,11 @@ is still to come from the client** (#64).
 ## Status
 
 **Plumbing built 2026-10-26** (*As built*, below): the server, the tokens, the
-call log and four read-only tools. What it should do beyond that waits on #64
-and #65. **2026-11-25:** to go company wide in claude.ai through OAuth, admins
-only (proposed); recorded, not built (*Company wide in claude.ai*, below).
+call log and four read-only tools. What it should do beyond that waits on #64.
+**2026-11-25:** to go company wide in claude.ai through OAuth, admins only.
+**OAuth built 2026-11-26** (*OAuth as built*, below): the claude.ai connector
+works against the same four tools. #65 is answered by it: claude.ai, VIAK's
+admins.
 
 ## Proposed shape
 
@@ -114,4 +116,61 @@ The personal bearer tokens for Claude Code stay. About a day.
 none is planned; the gate is an active admin account, the same as the
 dashboard's. **What the server should be capable of is still to be defined
 with VIAK (#64)**; asked on *Projektstand* for everyday examples from the
-office. Not built until that is answered.
+office. OAuth was built ahead of that (Marcel, 2026-11-26), so the connector
+can be set up and tried with the four tools while the answer is out.
+
+## OAuth as built — 2026-11-26
+
+Project Room's step (`../projects.nightnurse.ch/.rework/15-mcp.md`, commit
+0411089) copied, with VIAK's gate instead of Nightnurse's:
+
+- **`laravel/passport` ^13.10** next to Sanctum. Guard `api` (driver
+  `passport`) in `config/auth.php`; `/mcp` runs `auth:sanctum,api`, and no
+  other route names `api`, so an OAuth token opens `/mcp` and nothing else
+  (tested with a real token against `/api/admin/courses` and `/api/profile`).
+  `User` keeps Sanctum's `HasApiTokens`; Passport's guard only needs
+  `withAccessToken()`, which that trait has.
+- **`Mcp::oauthRoutes()`** in `routes/ai.php`:
+  `/.well-known/oauth-protected-resource[/mcp]`,
+  `/.well-known/oauth-authorization-server`, `POST /oauth/register` (dynamic
+  client registration). A 401 on `/mcp` carries `resource_metadata`.
+  `config/mcp.php` accepts **claude.ai and claude.com redirect addresses
+  only**; ChatGPT's two would be one line each if VIAK ever wants it.
+- Authorization code + PKCE (S256), public clients. **Access tokens 1 hour,
+  refresh tokens 90 days** ([[AppServiceProvider]]); device-code grant off and
+  its migration not published.
+- **The gate** ([[AdmitOAuthToMcp]], [[McpAccess::admitsOAuth]]): the
+  `mcp:use` scope, an admin, not deactivated. The same rule as the personal
+  tokens, so losing the role or the account ends both at once. **No 2FA**
+  (Marcel, 2026-11-25).
+- **Signing in**: `/oauth/authorize` is on the `web` guard, so a signed-out
+  browser goes through the site's normal login and comes back via
+  `intended()` ([[LoginResponse]]). Then **the consent screen**
+  `site/auth/oauth-authorize.blade.php`, on the login page's layout: what the
+  client can read and that it changes nothing, *Zugriff erlauben*,
+  *Abbrechen*. Anyone but an active admin sees *Nicht verfügbar* and only
+  *Abbrechen*.
+- **The call log** writes `token: oauth` and the client's id for an OAuth
+  call ([[LogMcpCall]]).
+- **Mein Profil → *Verbundene Apps*** ([[ConnectedApps]],
+  [[ConnectedAppController]], `GET|DELETE /api/admin/profile/connected-apps`):
+  the clients the admin still holds a live token for (unexpired access token,
+  or unexpired refresh token), *verbunden* and *zuletzt* (the newest access
+  token, renewed hourly while in use), and *Trennen*, which revokes access
+  and refresh tokens; reconnecting asks for consent again. *MCP-Zugang*
+  above it now says the personal tokens are for Claude Code in a terminal,
+  and Claude in the browser needs none.
+- Personal tokens for Claude Code keep working unchanged.
+- Tests: `tests/Feature/Mcp/McpOAuthTest.php` (metadata and the 401 header,
+  registration allowlist, the full code/PKCE/token/refresh round trip with a
+  tool call, the gate both ways, the consent screen, *Verbundene Apps*). They
+  generate Passport keys if missing.
+- **Deploy**: `passport:keys` once per server, kept across deploys
+  (`Deploy.md`, *Every deploy* and *After the pull of 2026-11-26*).
+
+**Connecting claude.ai** (Christoph, as admin of VIAK's claude.ai
+organisation): *Admin settings → Connectors → Add custom connector*, address
+`https://<host>/mcp`, no client id or secret (dynamic registration). Each
+admin then clicks *Connect* once, signs in with their VIAK account and allows
+access. On staging that is `https://staging.viak.ch/mcp` (staging's data, for
+trying it); production's address after the cutover.

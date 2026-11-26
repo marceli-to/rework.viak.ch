@@ -42,6 +42,13 @@ return [
 			'driver' => 'session',
 			'provider' => 'users',
 		],
+
+		// OAuth access tokens (Passport). Only the MCP server uses this guard,
+		// for the claude.ai connector ([[17-mcp]]); no other route names it.
+		'api' => [
+			'driver' => 'passport',
+			'provider' => 'users',
+		],
 	],
 
 	/*
